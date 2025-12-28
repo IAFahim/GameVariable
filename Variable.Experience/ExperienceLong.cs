@@ -22,6 +22,19 @@ public struct ExperienceLong :
 
     /// <summary>The current level.</summary>
     public int Level;
+    
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float GetMin() => 0;
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float GetCurrent() => Current;
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float GetMax() => Max;
+
 
     /// <summary>
     ///     Creates a new experience tracker.

@@ -36,6 +36,19 @@ public struct Timer :
 
     /// <summary>The target duration.</summary>
     public float Duration;
+    
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float GetMin() => 0;
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float GetCurrent() => (int)Current;
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float GetMax() => (int)Duration;
+
 
     /// <summary>
     ///     Creates a new timer with the specified duration.

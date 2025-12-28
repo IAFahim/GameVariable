@@ -39,6 +39,19 @@ public struct Cooldown :
 
     /// <summary>The total cooldown duration.</summary>
     public float Duration;
+    
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float GetMin() => 0;
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float GetCurrent() => Current;
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float GetMax() => Duration;
+
 
     /// <summary>
     ///     Creates a new cooldown with the specified duration.

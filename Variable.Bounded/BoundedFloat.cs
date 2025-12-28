@@ -37,6 +37,18 @@ public struct BoundedFloat :
 
     /// <summary>The maximum allowed value (ceiling).</summary>
     public float Max;
+    
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public int GetMin() => 0;
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public int GetCurrent() => Current;
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public int GetMax() => Max;
 
     /// <summary>
     ///     Creates a new bounded float with min = 0 and current = max.

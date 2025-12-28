@@ -25,6 +25,19 @@ public struct BoundedByte :
 
     /// <summary>The maximum allowed value (ceiling).</summary>
     public byte Max;
+    
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float GetMin() => 0;
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float GetCurrent() => Current;
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float GetMax() => Max;
+
 
     /// <summary>
     ///     Creates a new bounded byte with the specified max and current value.
@@ -102,7 +115,7 @@ public struct BoundedByte :
     {
         return Max == 0 ? 0.0 : (double)Current / Max;
     }
-
+    
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly bool IsFull()

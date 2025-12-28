@@ -28,6 +28,19 @@ public struct RegenFloat : IBoundedInfo
 
     /// <summary>The rate of regeneration/decay in units per second.</summary>
     public float Rate;
+    
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float GetMin() => 0;
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float GetCurrent() => Value.Current;
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float GetMax() => Value.Max;
+
 
     /// <summary>
     ///     Sets the current value directly.
@@ -37,16 +50,6 @@ public struct RegenFloat : IBoundedInfo
     public void SetCurrent(float current)
     {
         Value.Current = current;
-    }
-
-    /// <summary>
-    ///     Gets the current value.
-    /// </summary>
-    /// <returns>The current value.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float GetCurrent()
-    {
-        return Value.Current;
     }
 
     /// <inheritdoc />

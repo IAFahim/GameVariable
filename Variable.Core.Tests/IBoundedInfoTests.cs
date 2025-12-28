@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Variable.Core.Tests;
 
 public class IBoundedInfoTests
@@ -27,11 +29,24 @@ public class IBoundedInfoTests
     /// <summary>
     ///     A test implementation of IBoundedInfo for testing the interface contract.
     /// </summary>
-    private struct TestBounded : IBoundedInfo
+    private readonly struct TestBounded : IBoundedInfo
     {
         public readonly float Current;
         public readonly float Min;
         public readonly float Max;
+        
+        /// <inheritdoc />
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int GetMin() => 0;
+
+        /// <inheritdoc />
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int GetCurrent() => Current;
+
+        /// <inheritdoc />
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int GetMax() => Max;
+
 
         public TestBounded(float min, float max, float current)
         {
