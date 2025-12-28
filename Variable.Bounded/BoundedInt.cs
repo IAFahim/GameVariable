@@ -1,387 +1,402 @@
-using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using Variable.Core;
+namespace Variable.Bounded;
 
-namespace Variable.Bounded
+/// <summary>
+///     A bounded integer value that is clamped between a configurable minimum and maximum.
+///     Ideal for discrete values like item counts, levels, skill points, and currencies.
+/// </summary>
+/// <remarks>
+///     <para>The value is automatically clamped on construction and arithmetic operations.</para>
+///     <para>Arithmetic uses <c>long</c> internally to prevent integer overflow.</para>
+///     <para>This struct is blittable and can be used in Unity ECS, Burst jobs, and network serialization.</para>
+/// </remarks>
+/// <example>
+///     <code>
+/// // Inventory slot: 0 to 64 items
+/// var stack = new BoundedInt(64, 0, 32);
+/// stack += 50; // Clamped to 64
+/// 
+/// // Karma: -100 to +100
+/// var karma = new BoundedInt(100, -100, 0);
+/// karma -= 150; // Clamped to -100
+/// </code>
+/// </example>
+[Serializable]
+[StructLayout(LayoutKind.Sequential)]
+[DebuggerDisplay("{Current} [{Min}, {Max}]")]
+public struct BoundedInt :
+    IBoundedInfo,
+    IEquatable<BoundedInt>,
+    IComparable<BoundedInt>,
+    IComparable,
+    IFormattable,
+    IConvertible
 {
+    /// <summary>The current value, always clamped between <see cref="Min" /> and <see cref="Max" />.</summary>
+    public int Current;
+
+    /// <summary>The minimum allowed value (floor).</summary>
+    public int Min;
+
+    /// <summary>The maximum allowed value (ceiling).</summary>
+    public int Max;
+
     /// <summary>
-    /// A bounded integer value that is clamped between a configurable minimum and maximum.
-    /// Ideal for health, ammo, level, score, and similar discrete game mechanics.
+    ///     Creates a new bounded int with min = 0 and current = max.
     /// </summary>
-    /// <remarks>
-    /// <para>The value is automatically clamped on construction and arithmetic operations.</para>
-    /// <para>This struct is blittable and can be used in Unity ECS, Burst jobs, and network serialization.</para>
-    /// <para>Arithmetic operations use <c>long</c> internally to prevent integer overflow.</para>
-    /// </remarks>
-    /// <example>
-    /// <code>
-    /// // Ammo clip: 0 to 30
-    /// var ammo = new BoundedInt(30, 0, 30);
-    /// ammo--; // Fire shot
-    /// 
-    /// // Karma system: -100 to 100
-    /// var karma = new BoundedInt(100, -100, 0);
-    /// karma += 10; // Good deed
-    /// </code>
-    /// </example>
-    [Serializable]
-    [StructLayout(LayoutKind.Sequential)]
-    [DebuggerDisplay("{Current} [{Min}, {Max}]")]
-    public struct BoundedInt :
-        IBoundedInfo,
-        IEquatable<BoundedInt>,
-        IComparable<BoundedInt>,
-        IComparable,
-        IFormattable,
-        IConvertible
+    /// <param name="max">The maximum allowed value.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public BoundedInt(int max)
     {
-        /// <summary>The current value, always clamped between <see cref="Min"/> and <see cref="Max"/>.</summary>
-        public int Current;
+        Max = max;
+        Min = 0;
+        Current = max;
+    }
 
-        /// <summary>The minimum allowed value (floor).</summary>
-        public int Min;
+    /// <summary>
+    ///     Creates a new bounded int with min = 0.
+    /// </summary>
+    /// <param name="max">The maximum allowed value.</param>
+    /// <param name="current">The initial current value. Will be clamped to [0, max].</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public BoundedInt(int max, int current)
+    {
+        Max = max;
+        Min = 0;
+        Current = current > max ? max : current < 0 ? 0 : current;
+    }
 
-        /// <summary>The maximum allowed value (ceiling).</summary>
-        public int Max;
+    /// <summary>
+    ///     Creates a new bounded int with specified bounds and current value.
+    /// </summary>
+    /// <param name="max">The maximum allowed value.</param>
+    /// <param name="min">The minimum allowed value.</param>
+    /// <param name="current">The initial current value. Will be clamped to [min, max].</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public BoundedInt(int max, int min, int current)
+    {
+        Min = min;
+        Max = max;
+        Current = current > max ? max : current < min ? min : current;
+    }
 
-        /// <summary>
-        /// Creates a new bounded integer with min = 0 and current = max.
-        /// </summary>
-        /// <param name="max">The maximum allowed value.</param>
+    /// <summary>
+    ///     Clamps the current value to the valid range [Min, Max].
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Normalize()
+    {
+        Current = Current > Max ? Max : Current < Min ? Min : Current;
+    }
+
+    /// <summary>
+    ///     Deconstructs the bounded value into its components.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly void Deconstruct(out int current, out int min, out int max)
+    {
+        current = Current;
+        min = Min;
+        max = Max;
+    }
+
+    /// <summary>
+    ///     Gets the range between min and max.
+    /// </summary>
+    public readonly int Range
+    {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public BoundedInt(int max)
-        {
-            Max = max;
-            Min = 0;
-            Current = max;
-        }
+        get => Max - Min;
+    }
 
-        /// <summary>
-        /// Creates a new bounded integer with min = 0.
-        /// </summary>
-        /// <param name="max">The maximum allowed value.</param>
-        /// <param name="current">The initial current value. Will be clamped to [0, max].</param>
+    /// <summary>
+    ///     Gets the amount remaining until max.
+    /// </summary>
+    public readonly int Remaining
+    {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public BoundedInt(int max, int current)
+        get => Max - Current;
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly double GetRatio()
+    {
+        var range = Max - Min;
+        return range == 0 ? 0.0 : (double)(Current - Min) / range;
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly bool IsFull()
+    {
+        return Current == Max;
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly bool IsEmpty()
+    {
+        return Current == Min;
+    }
+
+    /// <summary>Implicitly converts the bounded int to its current value.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static implicit operator int(in BoundedInt value)
+    {
+        return value.Current;
+    }
+
+    /// <inheritdoc />
+    public readonly override string ToString()
+    {
+        return $"{Current}/{Max}";
+    }
+
+    /// <inheritdoc />
+    public readonly string ToString(string format, IFormatProvider formatProvider)
+    {
+        if (string.IsNullOrEmpty(format)) format = "G";
+
+        switch (format.ToUpperInvariant())
         {
-            Max = max;
-            Min = 0;
-            Current = current > max ? max : current < 0 ? 0 : current;
+            case "R": return GetRatio().ToString("P", formatProvider);
+            case "C": return $"{Current}/{Max}";
+            case "F": return $"{Current} [{Min}, {Max}]";
+            default: return ToString();
         }
+    }
 
-        /// <summary>
-        /// Creates a new bounded integer with specified bounds and current value.
-        /// </summary>
-        /// <param name="max">The maximum allowed value.</param>
-        /// <param name="min">The minimum allowed value.</param>
-        /// <param name="current">The initial current value. Will be clamped to [min, max].</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public BoundedInt(int max, int min, int current)
-        {
-            Min = min;
-            Max = max;
-            Current = current > max ? max : current < min ? min : current;
-        }
+    /// <inheritdoc />
+    public readonly override bool Equals(object obj)
+    {
+        return obj is BoundedInt other && Equals(in other);
+    }
 
-        /// <summary>
-        /// Clamps the current value to the valid range [Min, Max].
-        /// Call this after directly modifying <see cref="Current"/>.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Normalize()
-        {
-            Current = Current > Max ? Max : Current < Min ? Min : Current;
-        }
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly bool Equals(BoundedInt other)
+    {
+        return Equals(in other);
+    }
 
-        /// <summary>
-        /// Deconstructs the bounded value into its components.
-        /// </summary>
-        /// <param name="current">The current value.</param>
-        /// <param name="min">The minimum bound.</param>
-        /// <param name="max">The maximum bound.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Deconstruct(out int current, out int min, out int max)
-        {
-            current = Current;
-            min = Min;
-            max = Max;
-        }
+    /// <summary>Compares equality with another bounded int using ref parameter.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly bool Equals(in BoundedInt other)
+    {
+        return Current == other.Current && Min == other.Min && Max == other.Max;
+    }
 
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public double GetRatio()
-        {
-            var range = Max - Min;
-            return range == 0 ? 0.0 : (double)(Current - Min) / range;
-        }
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly int CompareTo(BoundedInt other)
+    {
+        return CompareTo(in other);
+    }
 
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsFull() => Current == Max;
+    /// <summary>Compares with another bounded int using ref parameter.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly int CompareTo(in BoundedInt other)
+    {
+        var cmp = Current.CompareTo(other.Current);
+        if (cmp != 0) return cmp;
+        cmp = Min.CompareTo(other.Min);
+        return cmp != 0 ? cmp : Max.CompareTo(other.Max);
+    }
 
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsEmpty() => Current == Min;
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly int CompareTo(object obj)
+    {
+        if (obj is BoundedInt other) return CompareTo(in other);
+        throw new ArgumentException($"Object must be of type {nameof(BoundedInt)}");
+    }
 
-        /// <summary>
-        /// Implicitly converts the bounded integer to its current value.
-        /// </summary>
-        /// <param name="value">The bounded integer.</param>
-        /// <returns>The current value.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator int(BoundedInt value)
-        {
-            return value.Current;
-        }
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly override int GetHashCode()
+    {
+        return HashCode.Combine(Current, Min, Max);
+    }
 
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            return $"{Current}/{Max}";
-        }
+    /// <inheritdoc />
+    public readonly TypeCode GetTypeCode()
+    {
+        return TypeCode.Int32;
+    }
 
-        /// <summary>
-        /// Formats the bounded value as a string.
-        /// </summary>
-        /// <param name="format">
-        /// Format string: "R" for ratio as percentage, "C" for current/max, 
-        /// "F" for full format with min, or standard numeric formats.
-        /// </param>
-        /// <param name="formatProvider">The format provider.</param>
-        /// <returns>The formatted string.</returns>
-        public string ToString(string format, IFormatProvider formatProvider)
-        {
-            if (string.IsNullOrEmpty(format)) format = "G";
+    /// <inheritdoc />
+    readonly bool IConvertible.ToBoolean(IFormatProvider provider)
+    {
+        return Current != 0;
+    }
 
-            switch (format.ToUpperInvariant())
-            {
-                case "R": return GetRatio().ToString("P", formatProvider);
-                case "C": return $"{Current}/{Max}";
-                case "F": return $"{Current} [{Min}, {Max}]";
-                default: return ToString();
-            }
-        }
+    /// <inheritdoc />
+    readonly byte IConvertible.ToByte(IFormatProvider provider)
+    {
+        return (byte)Current;
+    }
 
-        /// <inheritdoc/>
-        public override bool Equals(object obj)
-        {
-            return obj is BoundedInt other && Equals(other);
-        }
+    /// <inheritdoc />
+    readonly char IConvertible.ToChar(IFormatProvider provider)
+    {
+        return (char)Current;
+    }
 
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals(BoundedInt other)
-        {
-            return Current == other.Current && Min == other.Min && Max == other.Max;
-        }
+    /// <inheritdoc />
+    readonly DateTime IConvertible.ToDateTime(IFormatProvider provider)
+    {
+        throw new InvalidCastException();
+    }
 
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int CompareTo(BoundedInt other)
-        {
-            var cmp = Current.CompareTo(other.Current);
-            if (cmp != 0) return cmp;
-            cmp = Min.CompareTo(other.Min);
-            return cmp != 0 ? cmp : Max.CompareTo(other.Max);
-        }
+    /// <inheritdoc />
+    readonly decimal IConvertible.ToDecimal(IFormatProvider provider)
+    {
+        return Current;
+    }
 
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int CompareTo(object obj)
-        {
-            if (obj is BoundedInt other) return CompareTo(other);
-            throw new ArgumentException($"Object must be of type {nameof(BoundedInt)}");
-        }
+    /// <inheritdoc />
+    readonly double IConvertible.ToDouble(IFormatProvider provider)
+    {
+        return Current;
+    }
 
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Current, Min, Max);
-        }
+    /// <inheritdoc />
+    readonly short IConvertible.ToInt16(IFormatProvider provider)
+    {
+        return (short)Current;
+    }
 
-        /// <inheritdoc/>
-        public TypeCode GetTypeCode()
-        {
-            return TypeCode.Int32;
-        }
+    /// <inheritdoc />
+    readonly int IConvertible.ToInt32(IFormatProvider provider)
+    {
+        return Current;
+    }
 
-        /// <inheritdoc/>
-        bool IConvertible.ToBoolean(IFormatProvider provider)
-        {
-            return Current != 0;
-        }
+    /// <inheritdoc />
+    readonly long IConvertible.ToInt64(IFormatProvider provider)
+    {
+        return Current;
+    }
 
-        /// <inheritdoc/>
-        byte IConvertible.ToByte(IFormatProvider provider)
-        {
-            return (byte)Current;
-        }
+    /// <inheritdoc />
+    readonly sbyte IConvertible.ToSByte(IFormatProvider provider)
+    {
+        return (sbyte)Current;
+    }
 
-        /// <inheritdoc/>
-        char IConvertible.ToChar(IFormatProvider provider)
-        {
-            return (char)Current;
-        }
+    /// <inheritdoc />
+    readonly float IConvertible.ToSingle(IFormatProvider provider)
+    {
+        return Current;
+    }
 
-        /// <inheritdoc/>
-        DateTime IConvertible.ToDateTime(IFormatProvider provider)
-        {
-            throw new InvalidCastException();
-        }
+    /// <inheritdoc />
+    readonly string IConvertible.ToString(IFormatProvider provider)
+    {
+        return ToString("G", provider);
+    }
 
-        /// <inheritdoc/>
-        decimal IConvertible.ToDecimal(IFormatProvider provider)
-        {
-            return Current;
-        }
+    /// <inheritdoc />
+    readonly object IConvertible.ToType(Type conversionType, IFormatProvider provider)
+    {
+        return Convert.ChangeType(Current, conversionType, provider);
+    }
 
-        /// <inheritdoc/>
-        double IConvertible.ToDouble(IFormatProvider provider)
-        {
-            return Current;
-        }
+    /// <inheritdoc />
+    readonly ushort IConvertible.ToUInt16(IFormatProvider provider)
+    {
+        return (ushort)Current;
+    }
 
-        /// <inheritdoc/>
-        short IConvertible.ToInt16(IFormatProvider provider)
-        {
-            return (short)Current;
-        }
+    /// <inheritdoc />
+    readonly uint IConvertible.ToUInt32(IFormatProvider provider)
+    {
+        return (uint)Current;
+    }
 
-        /// <inheritdoc/>
-        int IConvertible.ToInt32(IFormatProvider provider)
-        {
-            return Current;
-        }
+    /// <inheritdoc />
+    readonly ulong IConvertible.ToUInt64(IFormatProvider provider)
+    {
+        return (ulong)Current;
+    }
 
-        /// <inheritdoc/>
-        long IConvertible.ToInt64(IFormatProvider provider)
-        {
-            return Current;
-        }
+    /// <summary>Determines whether two bounded ints are equal.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator ==(in BoundedInt left, in BoundedInt right)
+    {
+        return left.Equals(in right);
+    }
 
-        /// <inheritdoc/>
-        sbyte IConvertible.ToSByte(IFormatProvider provider)
-        {
-            return (sbyte)Current;
-        }
+    /// <summary>Determines whether two bounded ints are not equal.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator !=(in BoundedInt left, in BoundedInt right)
+    {
+        return !left.Equals(in right);
+    }
 
-        /// <inheritdoc/>
-        float IConvertible.ToSingle(IFormatProvider provider)
-        {
-            return Current;
-        }
+    /// <summary>Determines whether one bounded int is less than another.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator <(in BoundedInt left, in BoundedInt right)
+    {
+        return left.CompareTo(in right) < 0;
+    }
 
-        /// <inheritdoc/>
-        string IConvertible.ToString(IFormatProvider provider)
-        {
-            return ToString("G", provider);
-        }
+    /// <summary>Determines whether one bounded int is less than or equal to another.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator <=(in BoundedInt left, in BoundedInt right)
+    {
+        return left.CompareTo(in right) <= 0;
+    }
 
-        /// <inheritdoc/>
-        object IConvertible.ToType(Type conversionType, IFormatProvider provider)
-        {
-            return Convert.ChangeType(Current, conversionType, provider);
-        }
+    /// <summary>Determines whether one bounded int is greater than another.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator >(in BoundedInt left, in BoundedInt right)
+    {
+        return left.CompareTo(in right) > 0;
+    }
 
-        /// <inheritdoc/>
-        ushort IConvertible.ToUInt16(IFormatProvider provider)
-        {
-            return (ushort)Current;
-        }
+    /// <summary>Determines whether one bounded int is greater than or equal to another.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator >=(in BoundedInt left, in BoundedInt right)
+    {
+        return left.CompareTo(in right) >= 0;
+    }
 
-        /// <inheritdoc/>
-        uint IConvertible.ToUInt32(IFormatProvider provider)
-        {
-            return (uint)Current;
-        }
+    /// <summary>Increments the current value by 1, clamped to max.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static BoundedInt operator ++(in BoundedInt a)
+    {
+        return a + 1;
+    }
 
-        /// <inheritdoc/>
-        ulong IConvertible.ToUInt64(IFormatProvider provider)
-        {
-            return (ulong)Current;
-        }
+    /// <summary>Decrements the current value by 1, clamped to min.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static BoundedInt operator --(in BoundedInt a)
+    {
+        return a - 1;
+    }
 
-        /// <summary>Determines whether two bounded integers are equal.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(BoundedInt left, BoundedInt right)
-        {
-            return left.Equals(right);
-        }
+    /// <summary>Adds a value to the bounded int, clamping the result. Uses long to prevent overflow.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static BoundedInt operator +(in BoundedInt a, int b)
+    {
+        var result = (long)a.Current + b;
+        if (result > a.Max) result = a.Max;
+        else if (result < a.Min) result = a.Min;
+        return new BoundedInt(a.Max, a.Min, (int)result);
+    }
 
-        /// <summary>Determines whether two bounded integers are not equal.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(BoundedInt left, BoundedInt right)
-        {
-            return !left.Equals(right);
-        }
+    /// <summary>Adds a value to the bounded int, clamping the result.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static BoundedInt operator +(int b, in BoundedInt a)
+    {
+        return a + b;
+    }
 
-        /// <summary>Determines whether one bounded integer is less than another.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <(BoundedInt left, BoundedInt right)
-        {
-            return left.CompareTo(right) < 0;
-        }
-
-        /// <summary>Determines whether one bounded integer is less than or equal to another.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <=(BoundedInt left, BoundedInt right)
-        {
-            return left.CompareTo(right) <= 0;
-        }
-
-        /// <summary>Determines whether one bounded integer is greater than another.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >(BoundedInt left, BoundedInt right)
-        {
-            return left.CompareTo(right) > 0;
-        }
-
-        /// <summary>Determines whether one bounded integer is greater than or equal to another.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >=(BoundedInt left, BoundedInt right)
-        {
-            return left.CompareTo(right) >= 0;
-        }
-
-        /// <summary>Increments the current value by 1, clamped to max.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedInt operator ++(BoundedInt a)
-        {
-            return a + 1;
-        }
-
-        /// <summary>Decrements the current value by 1, clamped to min.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedInt operator --(BoundedInt a)
-        {
-            return a - 1;
-        }
-
-        /// <summary>Adds a value to the bounded integer, clamping the result. Uses long internally to prevent overflow.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedInt operator +(BoundedInt a, int b)
-        {
-            var res = (long)a.Current + b;
-            if (res > a.Max) res = a.Max;
-            else if (res < a.Min) res = a.Min;
-            return new BoundedInt(a.Max, a.Min, (int)res);
-        }
-
-        /// <summary>Adds a value to the bounded integer, clamping the result.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedInt operator +(int b, BoundedInt a)
-        {
-            return a + b;
-        }
-
-        /// <summary>Subtracts a value from the bounded integer, clamping the result.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedInt operator -(BoundedInt a, int b)
-        {
-            return a + -b;
-        }
+    /// <summary>Subtracts a value from the bounded int, clamping the result.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static BoundedInt operator -(in BoundedInt a, int b)
+    {
+        return a + -b;
     }
 }

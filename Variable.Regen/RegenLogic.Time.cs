@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Variable.Regen;
 
 public static partial class RegenLogic

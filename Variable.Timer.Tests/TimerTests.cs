@@ -2,6 +2,17 @@ namespace Variable.Timer.Tests;
 
 public class TimerTests
 {
+    #region ToString Tests
+
+    [Fact]
+    public void ToString_ReturnsFormattedString()
+    {
+        var timer = new Timer(10f, 5f);
+        Assert.Equal("5.00/10.00", timer.ToString());
+    }
+
+    #endregion
+
     #region Construction Tests
 
     [Fact]
@@ -154,17 +165,6 @@ public class TimerTests
         var b = new Timer(10f, 6f);
         Assert.False(a.Equals(b));
         Assert.True(a != b);
-    }
-
-    #endregion
-
-    #region ToString Tests
-
-    [Fact]
-    public void ToString_ReturnsFormattedString()
-    {
-        var timer = new Timer(10f, 5f);
-        Assert.Equal("5/10", timer.ToString());
     }
 
     #endregion

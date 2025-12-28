@@ -1,888 +1,557 @@
-# GameVariable
+<div align="center">
 
-**GameVariable** is a modular, high-performance C# library designed to handle common game state variables with ease. From health bars and ammo clips to experience curves and cooldowns, GameVariable provides the structs and logic you need to build robust game systems. Unity ECS compatible, and can be used with any game engine or multiplayer framework.
+# 🎮 GameVariable
 
+### High-Performance Game State Management for C#
 
+[![NuGet](https://img.shields.io/nuget/v/Variable.Core?color=blue&label=NuGet)](https://www.nuget.org/packages/Variable.Core)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![.NET](https://img.shields.io/badge/.NET-Standard%202.1+-purple.svg)](https://dotnet.microsoft.com/)
+[![Unity](https://img.shields.io/badge/Unity-ECS%20Compatible-black.svg)](https://unity.com/)
 
-## Packages
+**Zero-allocation structs for health bars, cooldowns, experience systems, and more.**
 
-| Package | Description |
-| :--- | :--- |
-| `Variable.Core` | Core interfaces and types. |
-| `Variable.Bounded` | `BoundedFloat`, `BoundedInt` for clamped values (HP, MP). |
-| `Variable.Stat` | `StatLogic` for RPG stats and modifiers. |
-| `Variable.Inventory` | Logic for capacity and transfers. |
-| `Variable.Timer` | `Cooldown`, `Timer` for time tracking. |
-| `Variable.Experience` | Leveling and XP systems. |
-| `Variable.Range` | `RangeFloat`, `RangeInt` for min/max randomization. |
-| `Variable.Regen` | `RegenFloat` for auto-regeneration/decay. |
-| `Variable.Reservoir` | `ReservoirInt`, `ReservoirFloat` for ammo/batteries. |
+[Quick Start](#-quick-start) •
+[Packages](#-packages) •
+[Examples](#-examples) •
+[API Reference](#-api-reference) •
+[Contributing](#-contributing)
+
+</div>
 
 ---
 
-## Architecture
+## ✨ Why GameVariable?
+
+Building game systems means managing **bounded values** everywhere—health that can't go negative, cooldowns that tick down, experience that overflows into levels. GameVariable provides battle-tested primitives that handle all the edge cases, so you can focus on gameplay.
+
+<table>
+<tr>
+<td width="50%">
+
+### ❌ Without GameVariable
+```csharp
+// Manual clamping everywhere
+health -= damage;
+if (health < 0) health = 0;
+if (health > maxHealth) health = maxHealth;
+
+// Manual timer logic
+cooldown -= deltaTime;
+if (cooldown < 0) cooldown = 0;
+bool canUse = cooldown <= 0;
+
+// Manual regen with edge cases
+mana += regenRate * deltaTime;
+if (mana > maxMana) mana = maxMana;
+```
+
+</td>
+<td width="50%">
+
+### ✅ With GameVariable
+```csharp
+// Auto-clamped, natural syntax
+health -= damage;
+if (health.IsEmpty()) Die();
+
+// Built-in timer semantics
+cooldown.Tick(deltaTime);
+if (cooldown.IsFull()) UseAbility();
+
+// One-liner regeneration
+mana.Tick(deltaTime); // Automatic!
+```
+
+</td>
+</tr>
+</table>
+
+### 🎯 Key Features
+
+| Feature | Description |
+|---------|-------------|
+| **🚀 Zero Allocation** | Pure `struct` types—no heap, no GC pressure |
+| **⚡ Burst Compatible** | Works with Unity's Burst compiler & DOTS/ECS |
+| **🔧 Operator Overloads** | Natural syntax: `hp -= 10`, `timer++`, `ammo--` |
+| **📊 Built-in Ratios** | `GetRatio()` for health bars, progress indicators |
+| **🎨 Serializable** | `[Serializable]` for Unity Inspector & save systems |
+| **🌐 Network Ready** | Blittable structs for easy network serialization |
+
+---
+
+## 🚀 Quick Start
+
+### Installation
+
+```bash
+# Install all packages
+dotnet add package Variable.Core
+dotnet add package Variable.Bounded
+dotnet add package Variable.Timer
+dotnet add package Variable.Regen
+dotnet add package Variable.Experience
+dotnet add package Variable.Reservoir
+
+# Or install just what you need
+dotnet add package Variable.Bounded
+```
+
+### Basic Usage
+
+```csharp
+using Variable.Bounded;
+using Variable.Timer;
+using Variable.Regen;
+
+// Health: auto-clamped between 0 and 100
+var health = new BoundedFloat(100f);
+health -= 25f;                    // Take damage
+Console.WriteLine(health);        // "75/100"
+Console.WriteLine(health.GetRatio()); // 0.75
+
+// Cooldown: 3 second ability
+var fireball = new Cooldown(3f);
+fireball.Tick(deltaTime);         // Count down
+if (fireball.IsFull()) {          // Ready when 0
+    CastFireball();
+    fireball.Reset();             // Start cooldown
+}
+
+// Mana: regenerates 10/sec
+var mana = new RegenFloat(100f, 50f, 10f);
+mana.Tick(deltaTime);             // Auto-regenerate
+```
+
+---
+
+## 📦 Packages
 
 ```mermaid
-graph TD
+graph LR
     subgraph Core["🔷 Variable.Core"]
-        IBoundedInfo[IBoundedInfo]
+        IBoundedInfo["IBoundedInfo<br/>IsFull() | IsEmpty() | GetRatio()"]
     end
-
-    subgraph Packages["📦 Packages"]
-        Bounded["Variable.Bounded<br/>BoundedFloat, BoundedInt, ..."]
-        Stat["Variable.Stat<br/>StatLogic"]
-        Timer["Variable.Timer<br/>Timer, Cooldown"]
-        Range["Variable.Range<br/>RangeFloat, RangeInt, ..."]
-        Regen["Variable.Regen<br/>RegenFloat, RegenInt"]
-        Reservoir["Variable.Reservoir<br/>ReservoirFloat, ReservoirInt"]
-        Experience["Variable.Experience<br/>ExperienceInt, ExperienceLong"]
-        Inventory["Variable.Inventory<br/>InventoryLogic"]
-    end
-
-    Bounded --> IBoundedInfo
-    Timer --> IBoundedInfo
-    Range --> IBoundedInfo
-    Regen --> IBoundedInfo
-    Reservoir --> IBoundedInfo
-    Experience --> IBoundedInfo
-
-    style Core fill:#4a9eff,stroke:#333,stroke-width:2px
-    style Bounded fill:#90EE90,stroke:#333
-    style Timer fill:#FFB6C1,stroke:#333
-    style Range fill:#DDA0DD,stroke:#333
-    style Regen fill:#F0E68C,stroke:#333
-    style Reservoir fill:#87CEEB,stroke:#333
-    style Experience fill:#FFA07A,stroke:#333
-    style Stat fill:#98FB98,stroke:#333
-    style Inventory fill:#B0C4DE,stroke:#333
+    
+    Bounded["📊 Variable.Bounded"] --> Core
+    Timer["⏱️ Variable.Timer"] --> Core
+    Range["📏 Variable.Range"] --> Core
+    Regen["♻️ Variable.Regen"] --> Bounded
+    Reservoir["🔋 Variable.Reservoir"] --> Bounded
+    Experience["⭐ Variable.Experience"] --> Core
+    Stat["📈 Variable.Stat"]
+    Inventory["🎒 Variable.Inventory"]
+    
+    style Core fill:#4a9eff,stroke:#2980b9,stroke-width:2px,color:#fff
+    style Bounded fill:#2ecc71,stroke:#27ae60,color:#fff
+    style Timer fill:#e74c3c,stroke:#c0392b,color:#fff
+    style Range fill:#9b59b6,stroke:#8e44ad,color:#fff
+    style Regen fill:#f39c12,stroke:#d68910,color:#fff
+    style Reservoir fill:#3498db,stroke:#2980b9,color:#fff
+    style Experience fill:#e67e22,stroke:#d35400,color:#fff
+    style Stat fill:#1abc9c,stroke:#16a085,color:#fff
+    style Inventory fill:#95a5a6,stroke:#7f8c8d,color:#fff
 ```
+
+| Package | Types | Use Cases |
+|---------|-------|-----------|
+| **Variable.Core** | `IBoundedInfo` | Base interface for all bounded types |
+| **Variable.Bounded** | `BoundedFloat`, `BoundedInt`, `BoundedDouble`, `BoundedLong`, `BoundedShort`, `BoundedByte` | Health, mana, stamina, armor, shields |
+| **Variable.Timer** | `Timer`, `Cooldown` | Ability cooldowns, buffs, casting times |
+| **Variable.Range** | `RangeFloat`, `RangeInt` | Temperature (-50 to 50), volume (0 to 1) |
+| **Variable.Regen** | `RegenFloat`, `RegenLogic` | Auto-regenerating resources, decay |
+| **Variable.Reservoir** | `ReservoirFloat`, `ReservoirInt` | Ammo clips + reserves, batteries |
+| **Variable.Experience** | `ExperienceInt`, `ExperienceLong` | XP, leveling, skill progression |
+| **Variable.Stat** | `StatLogic` | RPG stats with flat/% modifiers |
+| **Variable.Inventory** | `InventoryLogic` | Capacity management, transfers |
+
+---
+
+## 💡 Examples
+
+### 🏥 Health System
+
+```csharp
+public struct Player
+{
+    public BoundedFloat Health;
+    public BoundedFloat Shield;
+    
+    public void TakeDamage(float damage)
+    {
+        // Damage shields first
+        if (Shield > 0)
+        {
+            float absorbed = Math.Min(Shield, damage);
+            Shield -= absorbed;
+            damage -= absorbed;
+        }
+        
+        // Remaining damage hits health
+        Health -= damage;
+        
+        if (Health.IsEmpty())
+            Die();
+    }
+}
+
+// Usage
+var player = new Player
+{
+    Health = new BoundedFloat(100f),
+    Shield = new BoundedFloat(50f)
+};
+
+player.TakeDamage(75f);  // Shield: 0, Health: 75
+```
+
+### ⚔️ Ability Cooldown
+
+```csharp
+public struct Ability
+{
+    public Cooldown Cooldown;
+    public float ManaCost;
+    
+    public bool TryUse(ref BoundedFloat mana)
+    {
+        if (!Cooldown.IsFull()) return false;  // On cooldown
+        if (mana < ManaCost) return false;     // Not enough mana
+        
+        mana -= ManaCost;
+        Cooldown.Reset();  // Start cooldown
+        return true;
+    }
+    
+    public void Update(float deltaTime)
+    {
+        Cooldown.Tick(deltaTime);
+    }
+}
+
+// Usage
+var fireball = new Ability
+{
+    Cooldown = new Cooldown(3f),  // 3 second cooldown
+    ManaCost = 25f
+};
+
+var mana = new BoundedFloat(100f, 80f);
+
+if (fireball.TryUse(ref mana))
+    SpawnFireball();
+```
+
+### 🔫 Ammo & Reloading
+
+```csharp
+public struct Weapon
+{
+    public ReservoirInt Ammo;
+    
+    public bool TryFire()
+    {
+        if (Ammo.Volume.IsEmpty()) return false;
+        Ammo.Volume--;
+        return true;
+    }
+    
+    public void Reload()
+    {
+        Ammo.Refill();  // Transfer from reserve to magazine
+    }
+}
+
+// Usage
+var pistol = new Weapon
+{
+    Ammo = new ReservoirInt(12, 12, 36)  // 12/12 mag, 36 reserve
+};
+
+pistol.TryFire();  // 11/12, 36 reserve
+pistol.Reload();   // 12/12, 35 reserve
+```
+
+### ⭐ Experience & Leveling
+
+```csharp
+public struct Character
+{
+    public ExperienceInt Experience;
+    
+    public void GainXP(int amount)
+    {
+        Experience = Experience + amount;
+        
+        while (Experience.IsFull())
+        {
+            LevelUp();
+        }
+    }
+    
+    private void LevelUp()
+    {
+        int overflow = Experience.Current - Experience.Max;
+        int newLevel = Experience.Level + 1;
+        int newMax = newLevel * 1000;  // Linear scaling
+        
+        Experience = new ExperienceInt(newMax, overflow, newLevel);
+        
+        Console.WriteLine($"Level Up! Now level {newLevel}");
+    }
+}
+
+// Usage
+var hero = new Character
+{
+    Experience = new ExperienceInt(1000, 0, 1)  // Level 1, 0/1000 XP
+};
+
+hero.GainXP(1500);  // Level 2! (500/2000 XP)
+```
+
+### 🌡️ Temperature with Negative Range
+
+```csharp
+// Temperature system: -50°C to 50°C
+var temperature = new RangeFloat(-50f, 50f, 20f);  // Starting at 20°C
+
+temperature -= 30f;  // Now -10°C (cold!)
+temperature += 100f; // Clamped to 50°C (max)
+
+float freezeProgress = temperature.GetRatio();  // 0.0 = -50°C, 1.0 = 50°C
+
+if (temperature.Current < 0)
+    ApplyFrostbite();
+```
+
+### 🛡️ RPG Stats with Modifiers
+
+```csharp
+// Base stat with modifiers
+float baseStrength = 10f;
+float flatBonus = 5f;        // +5 from equipment
+float percentBonus = 0.2f;   // +20% from buff
+float percentMult = 1.1f;    // x1.1 from passive
+
+float finalStrength = StatLogic.Calculate(
+    baseStrength, 
+    flatBonus, 
+    percentBonus, 
+    percentMult
+);
+// Result: (10 + 5) * (1 + 0.2) * 1.1 = 19.8
+```
+
+---
+
+## 🔧 API Reference
+
+### BoundedFloat / BoundedInt
+
+```csharp
+// Construction
+var hp = new BoundedFloat(100f);           // Max=100, Min=0, Current=100
+var hp = new BoundedFloat(100f, 50f);      // Max=100, Min=0, Current=50  
+var hp = new BoundedFloat(100f, -50f, 0f); // Max=100, Min=-50, Current=0
+
+// Properties
+hp.Current   // The current value
+hp.Min       // The minimum bound
+hp.Max       // The maximum bound
+
+// Methods
+hp.IsFull()    // Current == Max
+hp.IsEmpty()   // Current == Min
+hp.GetRatio()  // (Current - Min) / (Max - Min)
+hp.Normalize() // Re-clamp after direct modification
+
+// Operators
+hp += 10f;  hp -= 10f;  hp++;  hp--;
+
+// Implicit conversion
+float current = hp;  // Returns Current
+```
+
+### Timer / Cooldown
+
+```csharp
+// Timer: counts UP from 0 to Duration
+var timer = new Timer(5f);      // 5 second timer
+timer.Tick(deltaTime);          // Add time
+timer.IsFull();                 // true when >= Duration
+timer.Reset();                  // Set to 0
+timer.Finish();                 // Set to Duration
+
+// Cooldown: counts DOWN from Duration to 0  
+var cd = new Cooldown(3f);      // 3 second cooldown
+cd.Tick(deltaTime);             // Subtract time
+cd.IsFull();                    // true when <= 0 (ready!)
+cd.Reset();                     // Set to Duration (start cooldown)
+cd.Finish();                    // Set to 0 (skip cooldown)
+```
+
+### RegenFloat
+
+```csharp
+// Auto-regenerating value
+var mana = new RegenFloat(100f, 50f, 10f);  // Max, Current, Rate
+mana.Tick(deltaTime);  // Regenerates 10/sec
+
+// Decay (negative rate)
+var poison = new RegenFloat(100f, 100f, -5f);  // Decays 5/sec
+```
+
+---
+
+## 🏗️ Architecture
 
 ### Design Philosophy
 
-- **🎯 Pure Data Structs**: All types are unmanaged `structs` — no heap allocations, GC-friendly
-- **⚡ Burst Compatible**: All code is fully compatible with Unity's Burst compiler and DOTS/ECS
-- **🔄 Zero Dependencies**: Each package is standalone with minimal cross-dependencies
-- **📐 Single Responsibility**: Logic is separated from data (use `StatLogic`, not methods on stats)
-- **🎮 Game-First API**: Intuitive operators (`hp -= 10`, `timer++`) for natural game code
+| Principle | Implementation |
+|-----------|----------------|
+| **Pure Data** | All types are `struct` with only data fields |
+| **Logic Separation** | Static `*Logic` classes contain algorithms |
+| **Zero Allocation** | No `new` on heap, no closures, no boxing |
+| **Burst Compatible** | `[MethodImpl(AggressiveInlining)]` everywhere |
+| **Fail Safe** | Values auto-clamp, no invalid states possible |
+
+### Memory Layout
+
+```csharp
+// All structs are sequential and blittable
+[StructLayout(LayoutKind.Sequential)]
+public struct BoundedFloat  // 12 bytes
+{
+    public float Current;   // 4 bytes
+    public float Min;       // 4 bytes
+    public float Max;       // 4 bytes
+}
+
+// Perfect for Unity ECS components
+public struct HealthComponent : IComponentData
+{
+    public BoundedFloat Value;
+}
+```
 
 ---
 
-## 100 Game Mechanics Examples
+## 🎮 Unity Integration
 
-Here is how you can implement 100 common game mechanics using the **GameVariable** ecosystem.
+### ECS/DOTS Example
 
-### 1-10: Core Player Stats
-
-**1. Health (HP)**
-*The universal survival metric.*
 ```csharp
+using Unity.Entities;
+using Unity.Burst;
 using Variable.Bounded;
-
-// Max 100, Current 100
-BoundedFloat hp = new BoundedFloat(100f); 
-hp -= 10f; // Take damage
-if (hp.IsEmpty()) Die();
-```
-
-**2. Mana (MP)**
-*The resource for special abilities.*
-```csharp
 using Variable.Regen;
 
-// Max 100, Current 100, Regens 5 per second
-RegenFloat mana = new RegenFloat(100f, 100f, 5f); 
-mana.Tick(Time.deltaTime); // Auto-regen
-```
+public struct Health : IComponentData
+{
+    public BoundedFloat Value;
+}
 
-**3. Stamina**
-*Physical exertion limit.*
-```csharp
-using Variable.Regen;
+public struct Mana : IComponentData
+{
+    public RegenFloat Value;
+}
 
-// Fast regen (20/sec)
-RegenFloat stamina = new RegenFloat(100f, 100f, 20f);
-if (stamina >= 10f) {
-    stamina.Value -= 10f; // Sprint cost
-    Sprint();
+[BurstCompile]
+public partial struct RegenerationSystem : ISystem
+{
+    [BurstCompile]
+    public void OnUpdate(ref SystemState state)
+    {
+        float dt = SystemAPI.Time.DeltaTime;
+        
+        foreach (var mana in SystemAPI.Query<RefRW<Mana>>())
+        {
+            mana.ValueRW.Value.Tick(dt);
+        }
+    }
 }
 ```
 
-**4. Experience (XP)**
-*Progress toward the next state.*
-```csharp
-using Variable.Experience;
+### MonoBehaviour Example
 
-// Current Level 1, 0 XP, Target 1000
-ExperienceInt xp = new ExperienceInt(1, 0, 1000);
-// Add 500 XP, with a formula for next level requirement (e.g., level * 1000)
-if (xp.Add(500, level => level * 1000)) LevelUp(); 
-```
-
-**5. Time/Timer**
-*Countdown or count-up.*
 ```csharp
+using UnityEngine;
+using Variable.Bounded;
 using Variable.Timer;
 
-// 60 second countdown
-Timer timer = new Timer(60f);
-timer.Tick(Time.deltaTime);
-if (timer.IsFinished) EndGame();
-```
-
-**6. Ammo/Clip**
-*Shots available before reload.*
-```csharp
-using Variable.Reservoir;
-
-// Clip 30, Reserve 120
-ReservoirInt ammo = new ReservoirInt(30, 30, 120);
-if (ammo > 0) {
-    ammo.Volume--; // Shoot
-} else {
-    ammo.Refill(); // Reload from reserve
+public class PlayerController : MonoBehaviour
+{
+    [SerializeField] private float maxHealth = 100f;
+    [SerializeField] private float dashCooldown = 2f;
+    
+    private BoundedFloat _health;
+    private Cooldown _dashCd;
+    
+    void Start()
+    {
+        _health = new BoundedFloat(maxHealth);
+        _dashCd = new Cooldown(dashCooldown);
+    }
+    
+    void Update()
+    {
+        _dashCd.Tick(Time.deltaTime);
+        
+        if (Input.GetKeyDown(KeyCode.Space) && _dashCd.IsFull())
+        {
+            Dash();
+            _dashCd.Reset();
+        }
+    }
+    
+    public void TakeDamage(float amount)
+    {
+        _health -= amount;
+        
+        if (_health.IsEmpty())
+            Die();
+    }
 }
-```
-
-**7. Currency (Soft)**
-*Gold, Credits.*
-```csharp
-using Variable.Bounded;
-
-// Wallet cap 9999
-BoundedInt gold = new BoundedInt(9999, 0);
-gold += 100; // Loot
-```
-
-**8. Cooldown**
-*Time until an action is available.*
-```csharp
-using Variable.Timer;
-
-Cooldown dashCd = new Cooldown(3f); // 3s cooldown
-if (dashCd.IsReady) {
-    Dash();
-    dashCd.Restart();
-}
-dashCd.Tick(Time.deltaTime);
-```
-
-**9. Shield/Barrier**
-*Secondary health layer.*
-```csharp
-using Variable.Regen;
-
-// 50 Shield, regens 10/sec
-RegenFloat shield = new RegenFloat(50f, 50f, 10f);
-// Custom logic: Stop regen if damaged recently
-if (Time.time - lastDamageTime > 3f) shield.Tick(Time.deltaTime);
-```
-
-**10. Level**
-*The discrete tier of power.*
-```csharp
-using Variable.Bounded;
-
-// Max level 99
-BoundedInt level = new BoundedInt(99, 1);
-```
-
-### 11-30: Survival & Simulation Attributes
-
-**11. Hunger/Satiety**
-*Decay over time.*
-```csharp
-using Variable.Regen;
-
-// Decays 1 per second
-RegenFloat hunger = new RegenFloat(100f, 100f, -1f);
-hunger.Tick(Time.deltaTime);
-```
-
-**12. Thirst/Hydration**
-*Faster decay than hunger.*
-```csharp
-using Variable.Regen;
-
-// Decays 2 per second
-RegenFloat thirst = new RegenFloat(100f, 100f, -2f);
-```
-
-**13. Oxygen/Breath**
-*Depletes only in specific states.*
-```csharp
-using Variable.Bounded;
-
-BoundedFloat oxygen = new BoundedFloat(100f);
-if (isUnderwater) oxygen -= 10f * Time.deltaTime;
-else oxygen += 20f * Time.deltaTime; // Refill surface
-```
-
-**14. Energy/Sleep**
-*Long-term stamina.*
-```csharp
-using Variable.Bounded;
-
-BoundedFloat energy = new BoundedFloat(100f);
-// Sleep restores energy
-void Sleep() => energy.Current = energy.Max;
-```
-
-**15. Temperature**
-*Body heat vs. Environment.*
-```csharp
-using Variable.Range;
-
-RangeFloat bodyTemp = new RangeFloat(35f, 42f, 37f); // Min 35 (hypo), Max 42 (hyper), Current 37
-```
-
-**16. Toxicity/Radiation**
-*Accumulation of harmful status.*
-```csharp
-using Variable.Bounded;
-
-BoundedFloat rads = new BoundedFloat(1000f, 0f);
-rads += 5f * Time.deltaTime; // Standing in waste
-```
-
-**17. Weight/Encumbrance**
-*Inventory load.*
-```csharp
-using Variable.Bounded;
-
-BoundedFloat weight = new BoundedFloat(100f, 0f); // Max 100kg
-bool isOverencumbered => weight.IsFull();
-```
-
-**18. Durability**
-*Item health.*
-```csharp
-using Variable.Bounded;
-
-BoundedInt durability = new BoundedInt(100, 100);
-durability--; // Use item
-if (durability.IsEmpty()) BreakItem();
-```
-
-**19. Sanity/Stress**
-*Mental health metric.*
-```csharp
-using Variable.Bounded;
-
-BoundedFloat sanity = new BoundedFloat(100f, 100f);
-sanity -= horrorAmount;
-```
-
-**20. Hygiene**
-*Cleanliness level.*
-```csharp
-using Variable.Regen;
-
-RegenFloat hygiene = new RegenFloat(100f, 100f, -0.5f); // Slow decay
-```
-
-**21. Bladder**
-*Waste accumulation.*
-```csharp
-using Variable.Regen;
-
-// Fills up over time (Positive rate)
-RegenFloat bladder = new RegenFloat(100f, 0f, 2f);
-```
-
-**22. Fuel**
-*Vehicle or machine resource.*
-```csharp
-using Variable.Reservoir;
-
-ReservoirFloat fuel = new ReservoirFloat(50f, 50f, 200f); // Tank 50, Jerry cans 200
-```
-
-**23. Battery/Charge**
-*Electronic device power.*
-```csharp
-using Variable.Reservoir;
-
-ReservoirFloat battery = new ReservoirFloat(100f, 100f, 500f); // 100% charge, 5 spares
-```
-
-**24. Spoilage**
-*Freshness of food items.*
-```csharp
-using Variable.Timer;
-
-Timer freshness = new Timer(300f); // 5 minutes until rot
-```
-
-**25. Age**
-*Biological lifespan.*
-```csharp
-using Variable.Bounded;
-
-BoundedInt age = new BoundedInt(100, 0);
-```
-
-**26. Comfort**
-*Environmental bonus metric.*
-```csharp
-using Variable.Bounded;
-
-BoundedFloat comfort = new BoundedFloat(10f, 0f);
-```
-
-**27. Environment Moisture**
-*Wetness.*
-```csharp
-using Variable.Bounded;
-
-BoundedFloat wetness = new BoundedFloat(100f, 0f);
-if (isRaining) wetness += 10f * Time.deltaTime;
-```
-
-**28. Metabolism**
-*Rate at which hunger/thirst decays.*
-```csharp
-float metabolismMult = 1.5f; // Running increases burn
-hunger.Rate = -1f * metabolismMult;
-```
-
-**29. Immunity**
-*Resistance build-up.*
-```csharp
-using Variable.Bounded;
-
-BoundedFloat immunity = new BoundedFloat(100f, 0f);
-```
-
-**30. Blood Pool**
-*Vampire logic.*
-```csharp
-using Variable.Reservoir;
-
-ReservoirFloat blood = new ReservoirFloat(10f, 10f, 0f); // No reserve, must feed
-```
-
-### 31-50: Combat Mechanics & Action
-
-**31. Rage/Fury**
-*Generates on hit.*
-```csharp
-using Variable.Bounded;
-
-BoundedFloat rage = new BoundedFloat(100f, 0f);
-void OnHit() => rage += 15f;
-```
-
-**32. Focus/Concentration**
-*Slow-motion resource.*
-```csharp
-using Variable.Regen;
-
-RegenFloat focus = new RegenFloat(100f, 100f, 5f); // Regens slowly
-```
-
-**33. Adrenaline**
-*Temporary boost, decays rapidly.*
-```csharp
-using Variable.Regen;
-
-RegenFloat adrenaline = new RegenFloat(100f, 0f, -10f); // Decays fast
-void OnScare() => adrenaline.Value = 100f;
-```
-
-**34. Poise/Balance**
-*Invisible meter before staggering.*
-```csharp
-using Variable.Regen;
-
-RegenFloat poise = new RegenFloat(100f, 100f, 20f); // Regens fast
-```
-
-**35. Stun Meter**
-*Buildup to incapacitation.*
-```csharp
-using Variable.Regen;
-
-// Decays (recovers) when not hit
-RegenFloat stun = new RegenFloat(100f, 0f, -5f); 
-```
-
-**36. Combo Meter**
-*Count/Time remaining.*
-```csharp
-using Variable.Timer;
-
-Timer comboTimer = new Timer(2f);
-int comboCount = 0;
-void Hit() { comboCount++; comboTimer.Restart(); }
-```
-
-**37. Ultimate Charge**
-*0 to 100% build-up.*
-```csharp
-using Variable.Bounded;
-
-BoundedFloat ult = new BoundedFloat(100f, 0f);
-```
-
-**38. Recoil**
-*Stability loss.*
-```csharp
-using Variable.Regen;
-
-RegenFloat recoil = new RegenFloat(10f, 0f, -5f); // Recovers stability
-void Shoot() => recoil.Value += 2f;
-```
-
-**39. Heat/Overheat**
-*Weapon thermal limit.*
-```csharp
-using Variable.Regen;
-
-RegenFloat heat = new RegenFloat(100f, 0f, -10f); // Cools down
-if (heat.IsFull()) JamWeapon();
-```
-
-**40. Armor Integrity**
-*Physical armor points.*
-```csharp
-using Variable.Bounded;
-
-BoundedFloat armor = new BoundedFloat(200f);
-```
-
-**41. Posture**
-*Guard capability.*
-```csharp
-using Variable.Regen;
-
-RegenFloat posture = new RegenFloat(100f, 100f, 10f);
-```
-
-**42. Breath Hold**
-*Sniping stability.*
-```csharp
-using Variable.Bounded;
-
-BoundedFloat breath = new BoundedFloat(10f, 10f);
-```
-
-**43. Stealth/Visibility**
-*Eye meter.*
-```csharp
-using Variable.Bounded;
-
-BoundedFloat visibility = new BoundedFloat(100f, 0f);
-```
-
-**44. Noise**
-*Sound generated.*
-```csharp
-using Variable.Bounded;
-
-BoundedFloat noise = new BoundedFloat(100f, 0f);
-```
-
-**45. Revive Timer**
-*Time to bleed out.*
-```csharp
-using Variable.Timer;
-
-Timer bleedOut = new Timer(30f);
-```
-
-**46. Invulnerability**
-*I-Frames.*
-```csharp
-using Variable.Timer;
-
-Timer iFrames = new Timer(0.5f);
-```
-
-**47. Cast Time**
-*Channeling duration.*
-```csharp
-using Variable.Timer;
-
-Timer castTime = new Timer(2.5f);
-```
-
-**48. Dodge Charges**
-*Discrete movement tokens.*
-```csharp
-using Variable.Reservoir;
-
-// 3 charges, regens 1 every 2 seconds (custom logic needed for discrete regen)
-ReservoirInt dodges = new ReservoirInt(3, 3, 0); 
-```
-
-**49. Parry Window**
-*Active frames.*
-```csharp
-using Variable.Timer;
-
-Timer parryWindow = new Timer(0.2f);
-```
-
-**50. Threat/Aggro**
-*AI attention.*
-```csharp
-using Variable.Bounded;
-
-BoundedFloat threat = new BoundedFloat(1000f, 0f);
-```
-
-### 51-70: Vehicle & Physics
-
-**51. Speed/Velocity**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat speed = new BoundedFloat(200f, 0f); // Max 200 mph
-```
-
-**52. RPM**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat rpm = new BoundedFloat(8000f, 0f);
-```
-
-**53. Boost/Nitro**
-```csharp
-using Variable.Reservoir;
-
-ReservoirFloat nitro = new ReservoirFloat(100f, 100f, 0f);
-```
-
-**54. Tire Grip/Wear**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat tireWear = new BoundedFloat(100f, 100f); // 100% grip
-```
-
-**55. Hull Integrity**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat hull = new BoundedFloat(1000f);
-```
-
-**56. Altitude**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat altitude = new BoundedFloat(50000f, 0f);
-```
-
-**57. Depth**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat depth = new BoundedFloat(1000f, 0f);
-```
-
-**58. G-Force**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat gForce = new BoundedFloat(9f, 0f); // Blackout at 9G
-```
-
-**59. Cargo Space**
-```csharp
-using Variable.Bounded;
-
-BoundedInt cargo = new BoundedInt(50, 0);
-```
-
-**60. Signal Strength**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat signal = new BoundedFloat(100f);
-```
-
-**61. Torque**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat torque = new BoundedFloat(500f);
-```
-
-**62. Downforce**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat downforce = new BoundedFloat(1000f);
-```
-
-**63. Fuel Mix**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat fuelMix = new BoundedFloat(1f, 0.5f); // Ratio
-```
-
-**64. Brake Temperature**
-```csharp
-using Variable.Regen;
-
-RegenFloat brakeTemp = new RegenFloat(1000f, 20f, -50f); // Cools fast
-```
-
-**65. Warp Drive Charge**
-```csharp
-using Variable.Timer;
-
-Timer warpSpool = new Timer(5f);
-```
-
-**66. Shield Frequency**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat frequency = new BoundedFloat(100f);
-```
-
-**67. Scan Progress**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat scan = new BoundedFloat(100f, 0f);
-```
-
-**68. Drift Points**
-```csharp
-using Variable.Bounded;
-
-BoundedInt driftScore = new BoundedInt(int.MaxValue, 0);
-```
-
-**69. Drafting**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat draftMeter = new BoundedFloat(100f, 0f);
-```
-
-**70. Damage State**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat damage = new BoundedFloat(100f, 0f); // 0% damaged
-```
-
-### 71-85: Meta, Social & Economy
-
-**71. Reputation/Fame**
-```csharp
-using Variable.Bounded;
-
-BoundedInt fame = new BoundedInt(1000, 0);
-```
-
-**72. Karma/Alignment**
-```csharp
-using Variable.Bounded;
-
-BoundedInt karma = new BoundedInt(100, 0); // -100 to 100 logic handled by wrapper
-```
-
-**73. Loyalty/Approval**
-```csharp
-using Variable.Bounded;
-
-BoundedInt loyalty = new BoundedInt(100, 50);
-```
-
-**74. Morale**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat morale = new BoundedFloat(100f, 100f);
-```
-
-**75. Population**
-```csharp
-using Variable.Bounded;
-
-BoundedInt pop = new BoundedInt(200, 10); // Cap 200
-```
-
-**76. Research Progress**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat research = new BoundedFloat(1000f, 0f);
-```
-
-**77. Construction Progress**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat build = new BoundedFloat(100f, 0f);
-```
-
-**78. Influence/Culture**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat influence = new BoundedFloat(100f, 0f);
-```
-
-**79. Currency (Hard)**
-```csharp
-using Variable.Bounded;
-
-BoundedInt gems = new BoundedInt(int.MaxValue, 0);
-```
-
-**80. Action Points (AP)**
-```csharp
-using Variable.Reservoir;
-
-ReservoirInt ap = new ReservoirInt(10, 10, 0); // Turn based
-```
-
-**81. Movement Points**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat movePoints = new BoundedFloat(10f, 10f);
-```
-
-**82. Command Points**
-```csharp
-using Variable.Bounded;
-
-BoundedInt cp = new BoundedInt(100, 0);
-```
-
-**83. Wanted Level**
-```csharp
-using Variable.Bounded;
-
-BoundedInt stars = new BoundedInt(5, 0);
-```
-
-**84. Suspicion**
-```csharp
-using Variable.Regen;
-
-RegenFloat suspicion = new RegenFloat(100f, 0f, -5f); // Decays
-```
-
-**85. Fear/Terror**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat fear = new BoundedFloat(100f, 0f);
-```
-
-### 86-100: Technical & Abstract
-
-**86. Loading Progress**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat loading = new BoundedFloat(1f, 0f); // 0.0 to 1.0
-```
-
-**87. Ping/Latency**
-```csharp
-using Variable.Bounded;
-
-BoundedInt ping = new BoundedInt(999, 20);
-```
-
-**88. Frame Rate**
-```csharp
-using Variable.Bounded;
-
-BoundedInt fps = new BoundedInt(999, 60);
-```
-
-**89. Memory Usage**
-```csharp
-using Variable.Bounded;
-
-BoundedLong ram = new BoundedLong(16000, 4000); // MB
-```
-
-**90. Download Speed**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat dlSpeed = new BoundedFloat(1000f, 0f); // Mbps
-```
-
-**91. Matchmaking Rating (MMR)**
-```csharp
-using Variable.Bounded;
-
-BoundedInt mmr = new BoundedInt(5000, 1200);
-```
-
-**92. Party Size**
-```csharp
-using Variable.Bounded;
-
-BoundedInt party = new BoundedInt(4, 1);
-```
-
-**93. Inventory Slots**
-```csharp
-using Variable.Bounded;
-
-BoundedInt slots = new BoundedInt(30, 0);
-```
-
-**94. Stack Size**
-```csharp
-using Variable.Bounded;
-
-BoundedInt stack = new BoundedInt(64, 1);
-```
-
-**95. Loot Rarity**
-```csharp
-using Variable.Range;
-
-RangeFloat rarityRange = new RangeFloat(0f, 1f);
-// Use external RNG to pick value within range
-```
-
-**96. Luck**
-```csharp
-using Variable.Stat;
-float luck = 10f;
-// Use StatLogic to modify drop rates
-```
-
-**97. Chaos**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat chaos = new BoundedFloat(100f, 0f); // Low vs High chaos
-```
-
-**98. Hype**
-```csharp
-using Variable.Regen;
-
-RegenFloat hype = new RegenFloat(100f, 0f, -2f); // Decays if boring
-```
-
-**99. Map Completion**
-```csharp
-using Variable.Bounded;
-
-BoundedFloat map = new BoundedFloat(100f, 0f);
 ```
 
 ---
+
+## 📝 Contributing
+
+Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting PRs.
+
+### Development Setup
+
+```bash
+git clone https://github.com/iafahim/GameVariable.git
+cd GameVariable
+dotnet restore
+dotnet build
+dotnet test
+```
+
+### Code Standards
+
+- All public types must have XML documentation
+- All structs must be `[Serializable]` and `[StructLayout(Sequential)]`
+- All methods should use `[MethodImpl(AggressiveInlining)]`
+- Tests required for all new functionality
+
+---
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+<div align="center">
+
+**Made with ❤️ for game developers**
 
 **Author:** Md Ishtiaq Ahamed Fahim  
 **GitHub:** [iafahim/GameVariable](https://github.com/iafahim/GameVariable)  
 **Email:** iafahim.dev@gmail.com
+
+</div>

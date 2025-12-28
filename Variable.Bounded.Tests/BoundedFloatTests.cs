@@ -2,6 +2,32 @@ namespace Variable.Bounded.Tests;
 
 public class BoundedFloatTests
 {
+    #region Implicit Conversion Tests
+
+    [Fact]
+    public void ImplicitConversion_ToFloat_ReturnsCurrent()
+    {
+        var bounded = new BoundedFloat(100f, 0f, 42f);
+        float value = bounded;
+        Assert.Equal(42f, value);
+    }
+
+    #endregion
+
+    #region Deconstruct Tests
+
+    [Fact]
+    public void Deconstruct_ReturnsAllValues()
+    {
+        var bounded = new BoundedFloat(100f, -50f, 25f);
+        var (current, min, max) = bounded;
+        Assert.Equal(25f, current);
+        Assert.Equal(-50f, min);
+        Assert.Equal(100f, max);
+    }
+
+    #endregion
+
     #region Construction Tests
 
     [Fact]
@@ -222,18 +248,6 @@ public class BoundedFloatTests
 
     #endregion
 
-    #region Implicit Conversion Tests
-
-    [Fact]
-    public void ImplicitConversion_ToFloat_ReturnsCurrent()
-    {
-        var bounded = new BoundedFloat(100f, 0f, 42f);
-        float value = bounded;
-        Assert.Equal(42f, value);
-    }
-
-    #endregion
-
     #region ToString Tests
 
     [Fact]
@@ -249,20 +263,6 @@ public class BoundedFloatTests
         var bounded = new BoundedFloat(100f, 0f, 50f);
         var result = bounded.ToString("R", null);
         Assert.Contains("50", result);
-    }
-
-    #endregion
-
-    #region Deconstruct Tests
-
-    [Fact]
-    public void Deconstruct_ReturnsAllValues()
-    {
-        var bounded = new BoundedFloat(100f, -50f, 25f);
-        var (current, min, max) = bounded;
-        Assert.Equal(25f, current);
-        Assert.Equal(-50f, min);
-        Assert.Equal(100f, max);
     }
 
     #endregion

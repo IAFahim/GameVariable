@@ -2,6 +2,51 @@ namespace Variable.Range.Tests;
 
 public class RangeFloatTests
 {
+    #region Implicit Conversion Tests
+
+    [Fact]
+    public void ImplicitConversion_ToFloat_ReturnsCurrent()
+    {
+        var range = new RangeFloat(0f, 100f, 42f);
+        float value = range;
+        Assert.Equal(42f, value);
+    }
+
+    #endregion
+
+    #region Deconstruct Tests
+
+    [Fact]
+    public void Deconstruct_ReturnsAllValues()
+    {
+        var range = new RangeFloat(-50f, 100f, 25f);
+        var (current, min, max) = range;
+        Assert.Equal(25f, current);
+        Assert.Equal(-50f, min);
+        Assert.Equal(100f, max);
+    }
+
+    #endregion
+
+    #region Temperature Use Case
+
+    [Fact]
+    public void Temperature_NegativeToPositiveRange()
+    {
+        // Simulate temperature from -40°C to 50°C
+        var temp = new RangeFloat(-40f, 50f, 22f);
+
+        Assert.Equal(22f, temp.Current);
+        Assert.Equal(-40f, temp.Min);
+        Assert.Equal(50f, temp.Max);
+
+        // 22°C is about 68.9% of the way from -40 to 50
+        var expectedRatio = (22f - -40f) / (50f - -40f);
+        Assert.Equal(expectedRatio, (float)temp.GetRatio(), 4);
+    }
+
+    #endregion
+
     #region Construction Tests
 
     [Fact]
@@ -173,51 +218,6 @@ public class RangeFloatTests
         var b = new RangeFloat(0f, 100f, 60f);
         Assert.False(a.Equals(b));
         Assert.True(a != b);
-    }
-
-    #endregion
-
-    #region Implicit Conversion Tests
-
-    [Fact]
-    public void ImplicitConversion_ToFloat_ReturnsCurrent()
-    {
-        var range = new RangeFloat(0f, 100f, 42f);
-        float value = range;
-        Assert.Equal(42f, value);
-    }
-
-    #endregion
-
-    #region Deconstruct Tests
-
-    [Fact]
-    public void Deconstruct_ReturnsAllValues()
-    {
-        var range = new RangeFloat(-50f, 100f, 25f);
-        var (current, min, max) = range;
-        Assert.Equal(25f, current);
-        Assert.Equal(-50f, min);
-        Assert.Equal(100f, max);
-    }
-
-    #endregion
-
-    #region Temperature Use Case
-
-    [Fact]
-    public void Temperature_NegativeToPositiveRange()
-    {
-        // Simulate temperature from -40°C to 50°C
-        var temp = new RangeFloat(-40f, 50f, 22f);
-        
-        Assert.Equal(22f, temp.Current);
-        Assert.Equal(-40f, temp.Min);
-        Assert.Equal(50f, temp.Max);
-        
-        // 22°C is about 68.9% of the way from -40 to 50
-        var expectedRatio = (22f - (-40f)) / (50f - (-40f));
-        Assert.Equal(expectedRatio, (float)temp.GetRatio(), 4);
     }
 
     #endregion

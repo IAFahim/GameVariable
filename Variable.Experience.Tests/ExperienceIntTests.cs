@@ -2,6 +2,32 @@ namespace Variable.Experience.Tests;
 
 public class ExperienceIntTests
 {
+    #region Implicit Conversion Tests
+
+    [Fact]
+    public void ImplicitConversion_ToInt_ReturnsCurrent()
+    {
+        var exp = new ExperienceInt(100, 42);
+        int value = exp;
+        Assert.Equal(42, value);
+    }
+
+    #endregion
+
+    #region Deconstruct Tests
+
+    [Fact]
+    public void Deconstruct_ReturnsAllValues()
+    {
+        var exp = new ExperienceInt(100, 50, 5);
+        var (current, max, level) = exp;
+        Assert.Equal(50, current);
+        Assert.Equal(100, max);
+        Assert.Equal(5, level);
+    }
+
+    #endregion
+
     #region Construction Tests
 
     [Fact]
@@ -36,28 +62,28 @@ public class ExperienceIntTests
     [Fact]
     public void IsFull_ReturnsTrue_WhenMaxedXP()
     {
-        var exp = new ExperienceInt(100, 100, 1);
+        var exp = new ExperienceInt(100, 100);
         Assert.True(exp.IsFull());
     }
 
     [Fact]
     public void IsFull_ReturnsFalse_WhenNotMaxed()
     {
-        var exp = new ExperienceInt(100, 50, 1);
+        var exp = new ExperienceInt(100, 50);
         Assert.False(exp.IsFull());
     }
 
     [Fact]
     public void IsEmpty_ReturnsTrue_WhenZeroXP()
     {
-        var exp = new ExperienceInt(100, 0, 1);
+        var exp = new ExperienceInt(100);
         Assert.True(exp.IsEmpty());
     }
 
     [Fact]
     public void IsEmpty_ReturnsFalse_WhenHasXP()
     {
-        var exp = new ExperienceInt(100, 50, 1);
+        var exp = new ExperienceInt(100, 50);
         Assert.False(exp.IsEmpty());
     }
 
@@ -68,14 +94,14 @@ public class ExperienceIntTests
     [Fact]
     public void GetRatio_ReturnsCorrectValue()
     {
-        var exp = new ExperienceInt(100, 50, 1);
+        var exp = new ExperienceInt(100, 50);
         Assert.Equal(0.5, exp.GetRatio(), 5);
     }
 
     [Fact]
     public void GetRatio_ReturnsZero_WhenMaxIsZero()
     {
-        var exp = new ExperienceInt(0, 0, 1);
+        var exp = new ExperienceInt(0);
         Assert.Equal(0.0, exp.GetRatio());
     }
 
@@ -86,7 +112,7 @@ public class ExperienceIntTests
     [Fact]
     public void Addition_IncreasesXP()
     {
-        var exp = new ExperienceInt(100, 50, 1);
+        var exp = new ExperienceInt(100, 50);
         exp = exp + 25;
         Assert.Equal(75, exp.Current);
     }
@@ -95,7 +121,7 @@ public class ExperienceIntTests
     public void Addition_CanExceedMax()
     {
         // Note: ExperienceInt doesn't automatically level up - that's left to extension methods
-        var exp = new ExperienceInt(100, 50, 1);
+        var exp = new ExperienceInt(100, 50);
         exp = exp + 100;
         Assert.Equal(150, exp.Current);
     }
@@ -152,18 +178,6 @@ public class ExperienceIntTests
 
     #endregion
 
-    #region Implicit Conversion Tests
-
-    [Fact]
-    public void ImplicitConversion_ToInt_ReturnsCurrent()
-    {
-        var exp = new ExperienceInt(100, 42, 1);
-        int value = exp;
-        Assert.Equal(42, value);
-    }
-
-    #endregion
-
     #region ToString Tests
 
     [Fact]
@@ -185,20 +199,6 @@ public class ExperienceIntTests
     {
         var exp = new ExperienceInt(100, 50, 5);
         Assert.Equal("50/100", exp.ToString("C", null));
-    }
-
-    #endregion
-
-    #region Deconstruct Tests
-
-    [Fact]
-    public void Deconstruct_ReturnsAllValues()
-    {
-        var exp = new ExperienceInt(100, 50, 5);
-        var (current, max, level) = exp;
-        Assert.Equal(50, current);
-        Assert.Equal(100, max);
-        Assert.Equal(5, level);
     }
 
     #endregion

@@ -2,6 +2,18 @@ namespace Variable.Bounded.Tests;
 
 public class BoundedIntTests
 {
+    #region Implicit Conversion Tests
+
+    [Fact]
+    public void ImplicitConversion_ToInt_ReturnsCurrent()
+    {
+        var bounded = new BoundedInt(100, 0, 42);
+        int value = bounded;
+        Assert.Equal(42, value);
+    }
+
+    #endregion
+
     #region Construction Tests
 
     [Fact]
@@ -174,18 +186,6 @@ public class BoundedIntTests
         var b = new BoundedInt(100, 0, 60);
         Assert.False(a.Equals(b));
         Assert.True(a != b);
-    }
-
-    #endregion
-
-    #region Implicit Conversion Tests
-
-    [Fact]
-    public void ImplicitConversion_ToInt_ReturnsCurrent()
-    {
-        var bounded = new BoundedInt(100, 0, 42);
-        int value = bounded;
-        Assert.Equal(42, value);
     }
 
     #endregion

@@ -1,22 +1,22 @@
 <Project>
-  <PropertyGroup>
-    <!-- Enable SourceLink for debugging -->
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    
-    <!-- Deterministic builds -->
-    <Deterministic>true</Deterministic>
-    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
-    
-    <!-- Common settings -->
-    <LangVersion>latest</LangVersion>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-  </PropertyGroup>
-  
-  <ItemGroup>
-    <!-- SourceLink for GitHub -->
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
-  </ItemGroup>
+    <PropertyGroup>
+        <!-- Enable SourceLink for debugging -->
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+        <!-- Deterministic builds -->
+        <Deterministic>true</Deterministic>
+        <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+
+        <!-- Common settings -->
+        <LangVersion>latest</LangVersion>
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- SourceLink for GitHub -->
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+    </ItemGroup>
 </Project>
