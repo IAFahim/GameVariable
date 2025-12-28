@@ -13,14 +13,6 @@ public static partial class InventoryLogic
         return current >= max ? 0f : max - current;
     }
 
-    /// <summary>
-    ///     Calculates the remaining space in the inventory.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double GetRemainingSpace(double current, double max)
-    {
-        return current >= max ? 0d : max - current;
-    }
 
     /// <summary>
     ///     Calculates the remaining space in the inventory.

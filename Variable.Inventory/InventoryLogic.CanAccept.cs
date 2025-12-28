@@ -17,15 +17,6 @@ public static partial class InventoryLogic
     ///     Checks if the inventory can accept a specific amount of items without exceeding its capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool CanAccept(double current, double max, double amountToAdd, double tolerance = 0.001)
-    {
-        return current + amountToAdd <= max + tolerance;
-    }
-
-    /// <summary>
-    ///     Checks if the inventory can accept a specific amount of items without exceeding its capacity.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool CanAccept(int current, int max, int amountToAdd)
     {
         return current + amountToAdd <= max;

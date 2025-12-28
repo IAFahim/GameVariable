@@ -17,15 +17,6 @@ public static partial class InventoryLogic
     ///     Determines whether the inventory is full based on the current quantity and maximum capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(double current, double max, double tolerance = 0.001)
-    {
-        return current >= max - tolerance;
-    }
-
-    /// <summary>
-    ///     Determines whether the inventory is full based on the current quantity and maximum capacity.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsFull(int current, int max)
     {
         return current >= max;

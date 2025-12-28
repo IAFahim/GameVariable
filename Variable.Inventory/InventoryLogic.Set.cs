@@ -23,21 +23,6 @@ public static partial class InventoryLogic
     ///     Sets the inventory quantity to a specific value, clamping it between 0 and the maximum capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Set(ref double current, double value, double max, double tolerance = 0.001)
-    {
-        if (value < 0d) value = 0d;
-        if (value > max) value = max;
-
-        if (value < tolerance) value = 0d;
-        if (max - value < tolerance) value = max;
-
-        current = value;
-    }
-
-    /// <summary>
-    ///     Sets the inventory quantity to a specific value, clamping it between 0 and the maximum capacity.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Set(ref int current, int value, int max)
     {
         if (value < 0) value = 0;

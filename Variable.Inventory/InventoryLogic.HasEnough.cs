@@ -17,15 +17,6 @@ public static partial class InventoryLogic
     ///     Checks if the inventory has enough items to satisfy a requirement.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool HasEnough(double current, double required, double tolerance = 0.001)
-    {
-        return current >= required - tolerance;
-    }
-
-    /// <summary>
-    ///     Checks if the inventory has enough items to satisfy a requirement.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool HasEnough(int current, int required)
     {
         return current >= required;

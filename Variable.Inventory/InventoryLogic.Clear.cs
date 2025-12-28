@@ -17,15 +17,6 @@ public static partial class InventoryLogic
     ///     Clears the inventory, setting the current quantity to 0.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Clear(ref double current)
-    {
-        current = 0d;
-    }
-
-    /// <summary>
-    ///     Clears the inventory, setting the current quantity to 0.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Clear(ref int current)
     {
         current = 0;

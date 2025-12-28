@@ -17,15 +17,6 @@ public static partial class InventoryLogic
     ///     Determines whether the inventory is empty.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(double current, double tolerance = 0.001)
-    {
-        return current <= tolerance;
-    }
-
-    /// <summary>
-    ///     Determines whether the inventory is empty.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsEmpty(int current)
     {
         return current <= 0;

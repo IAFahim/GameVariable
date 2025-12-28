@@ -11,7 +11,7 @@ dotnet add package Variable.Core
 
 ## Features
 
-* **IVariable**: The base interface for all variable types.
+* **IBoundedInfo**: The base interface for all variable types.
 * **Common Extensions**: Shared utility methods.
 
 ## Usage
@@ -22,7 +22,7 @@ integrate with the ecosystem.
 ```csharp
 using Variable.Core;
 
-public struct MyCustomVariable : IVariable
+public struct MyCustomVariable : IBoundedInfo
 {
     // Implementation
 }
