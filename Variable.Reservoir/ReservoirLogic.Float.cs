@@ -1,37 +1,37 @@
 using System.Runtime.CompilerServices;
 using Variable.Bounded;
 
-namespace Variable.Magazine;
+namespace Variable.Reservoir;
 
-public static partial class MagazineLogic
+public static partial class ReservoirLogic
 {
     /// <summary>
-    /// Reloads the clip from the reserve (Float version).
+    /// Refills the current volume from the reserve (Float version).
     /// Transfers as much as possible from reserve to current, up to capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float Reload(ref float current, float capacity, ref float reserve)
+    public static float Refill(ref float current, float capacity, ref float reserve)
     {
         float missing = capacity - current;
         if (missing <= 0.001f || reserve <= 0.001f) return 0f;
 
-        float toReload = reserve < missing ? reserve : missing;
-        current += toReload;
-        reserve -= toReload;
+        float toRefill = reserve < missing ? reserve : missing;
+        current += toRefill;
+        reserve -= toRefill;
 
         // Clamp to handle precision errors
         if (capacity - current < 0.001f) current = capacity;
         if (reserve < 0.001f) reserve = 0f;
 
-        return toReload;
+        return toRefill;
     }
 
     /// <summary>
-    /// Reloads the BoundedFloat clip from the reserve.
+    /// Refills the BoundedFloat volume from the reserve.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float Reload(ref BoundedFloat clip, ref float reserve)
+    public static float Refill(ref BoundedFloat volume, ref float reserve)
     {
-        return Reload(ref clip.Current, clip.Max, ref reserve);
+        return Refill(ref volume.Current, volume.Max, ref reserve);
     }
 }
