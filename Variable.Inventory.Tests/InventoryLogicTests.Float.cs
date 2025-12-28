@@ -3,7 +3,7 @@ using Variable.Inventory;
 
 namespace Variable.Inventory.Tests
 {
-    public class InventoryLogicTests
+    public partial class InventoryLogicTests
     {
         [Theory]
         [InlineData(10f, 10f, true)]
