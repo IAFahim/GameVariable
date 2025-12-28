@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
-
 using Variable.Core;
 
 namespace Variable.Bounded
@@ -26,7 +25,7 @@ namespace Variable.Bounded
         public BoundedDouble(double max, double current)
         {
             Max = max;
-            Current = current > max ? max : (current < 0.0 ? 0.0 : current);
+            Current = current > max ? max : current < 0.0 ? 0.0 : current;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -35,7 +34,10 @@ namespace Variable.Bounded
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Normalize() => Current = Current > Max ? Max : (Current < 0.0 ? 0.0 : Current);
+        public void Normalize()
+        {
+            Current = Current > Max ? Max : Current < 0.0 ? 0.0 : Current;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Deconstruct(out double current, out double max)
@@ -47,12 +49,15 @@ namespace Variable.Bounded
         private BoundedDouble(SerializationInfo info, StreamingContext context)
         {
             Max = info.GetDouble(nameof(Max));
-            double raw = info.GetDouble(nameof(Current));
-            Current = raw > Max ? Max : (raw < 0.0 ? 0.0 : raw);
+            var raw = info.GetDouble(nameof(Current));
+            Current = raw > Max ? Max : raw < 0.0 ? 0.0 : raw;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public double GetRatio() => Math.Abs(Max) < double.Epsilon ? 0.0 : Current / Max;
+        public double GetRatio()
+        {
+            return Math.Abs(Max) < double.Epsilon ? 0.0 : Current / Max;
+        }
 
         public bool IsFull
         {
@@ -67,9 +72,15 @@ namespace Variable.Bounded
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator double(BoundedDouble value) => value.Current;
+        public static implicit operator double(BoundedDouble value)
+        {
+            return value.Current;
+        }
 
-        public override string ToString() => $"{Current}/{Max}";
+        public override string ToString()
+        {
+            return $"{Current}/{Max}";
+        }
 
         public string ToString(string format, IFormatProvider formatProvider)
         {
@@ -83,15 +94,21 @@ namespace Variable.Bounded
             }
         }
 
-        public override bool Equals(object obj) => obj is BoundedDouble other && Equals(other);
+        public override bool Equals(object obj)
+        {
+            return obj is BoundedDouble other && Equals(other);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals(BoundedDouble other) => Current.Equals(other.Current) && Max.Equals(other.Max);
+        public bool Equals(BoundedDouble other)
+        {
+            return Current.Equals(other.Current) && Max.Equals(other.Max);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int CompareTo(BoundedDouble other)
         {
-            int cmp = Current.CompareTo(other.Current);
+            var cmp = Current.CompareTo(other.Current);
             return cmp != 0 ? cmp : Max.CompareTo(other.Max);
         }
 
@@ -103,49 +120,154 @@ namespace Variable.Bounded
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override int GetHashCode() => HashCode.Combine(Current, Max);
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Current, Max);
+        }
 
-        public TypeCode GetTypeCode() => TypeCode.Double;
-        bool IConvertible.ToBoolean(IFormatProvider provider) => Current != 0;
-        byte IConvertible.ToByte(IFormatProvider provider) => (byte)Current;
-        char IConvertible.ToChar(IFormatProvider provider) => (char)Current;
-        DateTime IConvertible.ToDateTime(IFormatProvider provider) => throw new InvalidCastException();
-        decimal IConvertible.ToDecimal(IFormatProvider provider) => (decimal)Current;
-        double IConvertible.ToDouble(IFormatProvider provider) => Current;
-        short IConvertible.ToInt16(IFormatProvider provider) => (short)Current;
-        int IConvertible.ToInt32(IFormatProvider provider) => (int)Current;
-        long IConvertible.ToInt64(IFormatProvider provider) => (long)Current;
-        sbyte IConvertible.ToSByte(IFormatProvider provider) => (sbyte)Current;
-        float IConvertible.ToSingle(IFormatProvider provider) => (float)Current;
-        string IConvertible.ToString(IFormatProvider provider) => ToString("G", provider);
+        public TypeCode GetTypeCode()
+        {
+            return TypeCode.Double;
+        }
 
-        object IConvertible.ToType(Type conversionType, IFormatProvider provider) =>
-            Convert.ChangeType(Current, conversionType, provider);
+        bool IConvertible.ToBoolean(IFormatProvider provider)
+        {
+            return Current != 0;
+        }
 
-        ushort IConvertible.ToUInt16(IFormatProvider provider) => (ushort)Current;
-        uint IConvertible.ToUInt32(IFormatProvider provider) => (uint)Current;
-        ulong IConvertible.ToUInt64(IFormatProvider provider) => (ulong)Current;
+        byte IConvertible.ToByte(IFormatProvider provider)
+        {
+            return (byte)Current;
+        }
 
-        public static bool operator ==(BoundedDouble left, BoundedDouble right) => left.Equals(right);
-        public static bool operator !=(BoundedDouble left, BoundedDouble right) => !left.Equals(right);
-        public static bool operator <(BoundedDouble left, BoundedDouble right) => left.CompareTo(right) < 0;
-        public static bool operator <=(BoundedDouble left, BoundedDouble right) => left.CompareTo(right) <= 0;
-        public static bool operator >(BoundedDouble left, BoundedDouble right) => left.CompareTo(right) > 0;
-        public static bool operator >=(BoundedDouble left, BoundedDouble right) => left.CompareTo(right) >= 0;
+        char IConvertible.ToChar(IFormatProvider provider)
+        {
+            return (char)Current;
+        }
+
+        DateTime IConvertible.ToDateTime(IFormatProvider provider)
+        {
+            throw new InvalidCastException();
+        }
+
+        decimal IConvertible.ToDecimal(IFormatProvider provider)
+        {
+            return (decimal)Current;
+        }
+
+        double IConvertible.ToDouble(IFormatProvider provider)
+        {
+            return Current;
+        }
+
+        short IConvertible.ToInt16(IFormatProvider provider)
+        {
+            return (short)Current;
+        }
+
+        int IConvertible.ToInt32(IFormatProvider provider)
+        {
+            return (int)Current;
+        }
+
+        long IConvertible.ToInt64(IFormatProvider provider)
+        {
+            return (long)Current;
+        }
+
+        sbyte IConvertible.ToSByte(IFormatProvider provider)
+        {
+            return (sbyte)Current;
+        }
+
+        float IConvertible.ToSingle(IFormatProvider provider)
+        {
+            return (float)Current;
+        }
+
+        string IConvertible.ToString(IFormatProvider provider)
+        {
+            return ToString("G", provider);
+        }
+
+        object IConvertible.ToType(Type conversionType, IFormatProvider provider)
+        {
+            return Convert.ChangeType(Current, conversionType, provider);
+        }
+
+        ushort IConvertible.ToUInt16(IFormatProvider provider)
+        {
+            return (ushort)Current;
+        }
+
+        uint IConvertible.ToUInt32(IFormatProvider provider)
+        {
+            return (uint)Current;
+        }
+
+        ulong IConvertible.ToUInt64(IFormatProvider provider)
+        {
+            return (ulong)Current;
+        }
+
+        public static bool operator ==(BoundedDouble left, BoundedDouble right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(BoundedDouble left, BoundedDouble right)
+        {
+            return !left.Equals(right);
+        }
+
+        public static bool operator <(BoundedDouble left, BoundedDouble right)
+        {
+            return left.CompareTo(right) < 0;
+        }
+
+        public static bool operator <=(BoundedDouble left, BoundedDouble right)
+        {
+            return left.CompareTo(right) <= 0;
+        }
+
+        public static bool operator >(BoundedDouble left, BoundedDouble right)
+        {
+            return left.CompareTo(right) > 0;
+        }
+
+        public static bool operator >=(BoundedDouble left, BoundedDouble right)
+        {
+            return left.CompareTo(right) >= 0;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedDouble operator ++(BoundedDouble a) => a + 1.0;
+        public static BoundedDouble operator ++(BoundedDouble a)
+        {
+            return a + 1.0;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedDouble operator --(BoundedDouble a) => a - 1.0;
+        public static BoundedDouble operator --(BoundedDouble a)
+        {
+            return a - 1.0;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedDouble operator +(BoundedDouble a, double b) => new BoundedDouble(a.Max, a.Current + b);
+        public static BoundedDouble operator +(BoundedDouble a, double b)
+        {
+            return new BoundedDouble(a.Max, a.Current + b);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedDouble operator +(double b, BoundedDouble a) => a + b;
+        public static BoundedDouble operator +(double b, BoundedDouble a)
+        {
+            return a + b;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedDouble operator -(BoundedDouble a, double b) => new BoundedDouble(a.Max, a.Current - b);
+        public static BoundedDouble operator -(BoundedDouble a, double b)
+        {
+            return new BoundedDouble(a.Max, a.Current - b);
+        }
     }
 }

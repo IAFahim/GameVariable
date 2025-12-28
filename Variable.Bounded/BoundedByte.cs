@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
-
 using Variable.Core;
 
 namespace Variable.Bounded
@@ -35,7 +34,10 @@ namespace Variable.Bounded
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Normalize() => Current = Current > Max ? Max : Current;
+        public void Normalize()
+        {
+            Current = Current > Max ? Max : Current;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Deconstruct(out byte current, out byte max)
@@ -47,13 +49,16 @@ namespace Variable.Bounded
         private BoundedByte(SerializationInfo info, StreamingContext context)
         {
             Max = info.GetByte(nameof(Max));
-            byte raw = info.GetByte(nameof(Current));
+            var raw = info.GetByte(nameof(Current));
             Current = raw > Max ? Max : raw;
         }
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public double GetRatio() => Max == 0 ? 0.0 : (double)Current / Max;
+        public double GetRatio()
+        {
+            return Max == 0 ? 0.0 : (double)Current / Max;
+        }
 
         public bool IsFull
         {
@@ -68,9 +73,15 @@ namespace Variable.Bounded
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator byte(BoundedByte value) => value.Current;
+        public static implicit operator byte(BoundedByte value)
+        {
+            return value.Current;
+        }
 
-        public override string ToString() => $"{Current}/{Max}";
+        public override string ToString()
+        {
+            return $"{Current}/{Max}";
+        }
 
         public string ToString(string format, IFormatProvider formatProvider)
         {
@@ -84,15 +95,21 @@ namespace Variable.Bounded
             }
         }
 
-        public override bool Equals(object obj) => obj is BoundedByte other && Equals(other);
+        public override bool Equals(object obj)
+        {
+            return obj is BoundedByte other && Equals(other);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals(BoundedByte other) => Current == other.Current && Max == other.Max;
+        public bool Equals(BoundedByte other)
+        {
+            return Current == other.Current && Max == other.Max;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int CompareTo(BoundedByte other)
         {
-            int cmp = Current.CompareTo(other.Current);
+            var cmp = Current.CompareTo(other.Current);
             return cmp != 0 ? cmp : Max.CompareTo(other.Max);
         }
 
@@ -104,66 +121,163 @@ namespace Variable.Bounded
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override int GetHashCode() => HashCode.Combine(Current, Max);
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Current, Max);
+        }
 
-        public TypeCode GetTypeCode() => TypeCode.Byte;
-        bool IConvertible.ToBoolean(IFormatProvider provider) => Current != 0;
-        byte IConvertible.ToByte(IFormatProvider provider) => Current;
-        char IConvertible.ToChar(IFormatProvider provider) => (char)Current;
-        DateTime IConvertible.ToDateTime(IFormatProvider provider) => throw new InvalidCastException();
-        decimal IConvertible.ToDecimal(IFormatProvider provider) => Current;
-        double IConvertible.ToDouble(IFormatProvider provider) => Current;
-        short IConvertible.ToInt16(IFormatProvider provider) => Current;
-        int IConvertible.ToInt32(IFormatProvider provider) => Current;
-        long IConvertible.ToInt64(IFormatProvider provider) => Current;
-        sbyte IConvertible.ToSByte(IFormatProvider provider) => (sbyte)Current;
-        float IConvertible.ToSingle(IFormatProvider provider) => Current;
-        string IConvertible.ToString(IFormatProvider provider) => ToString("G", provider);
+        public TypeCode GetTypeCode()
+        {
+            return TypeCode.Byte;
+        }
 
-        object IConvertible.ToType(Type conversionType, IFormatProvider provider) =>
-            Convert.ChangeType(Current, conversionType, provider);
+        bool IConvertible.ToBoolean(IFormatProvider provider)
+        {
+            return Current != 0;
+        }
 
-        ushort IConvertible.ToUInt16(IFormatProvider provider) => Current;
-        uint IConvertible.ToUInt32(IFormatProvider provider) => Current;
-        ulong IConvertible.ToUInt64(IFormatProvider provider) => Current;
+        byte IConvertible.ToByte(IFormatProvider provider)
+        {
+            return Current;
+        }
+
+        char IConvertible.ToChar(IFormatProvider provider)
+        {
+            return (char)Current;
+        }
+
+        DateTime IConvertible.ToDateTime(IFormatProvider provider)
+        {
+            throw new InvalidCastException();
+        }
+
+        decimal IConvertible.ToDecimal(IFormatProvider provider)
+        {
+            return Current;
+        }
+
+        double IConvertible.ToDouble(IFormatProvider provider)
+        {
+            return Current;
+        }
+
+        short IConvertible.ToInt16(IFormatProvider provider)
+        {
+            return Current;
+        }
+
+        int IConvertible.ToInt32(IFormatProvider provider)
+        {
+            return Current;
+        }
+
+        long IConvertible.ToInt64(IFormatProvider provider)
+        {
+            return Current;
+        }
+
+        sbyte IConvertible.ToSByte(IFormatProvider provider)
+        {
+            return (sbyte)Current;
+        }
+
+        float IConvertible.ToSingle(IFormatProvider provider)
+        {
+            return Current;
+        }
+
+        string IConvertible.ToString(IFormatProvider provider)
+        {
+            return ToString("G", provider);
+        }
+
+        object IConvertible.ToType(Type conversionType, IFormatProvider provider)
+        {
+            return Convert.ChangeType(Current, conversionType, provider);
+        }
+
+        ushort IConvertible.ToUInt16(IFormatProvider provider)
+        {
+            return Current;
+        }
+
+        uint IConvertible.ToUInt32(IFormatProvider provider)
+        {
+            return Current;
+        }
+
+        ulong IConvertible.ToUInt64(IFormatProvider provider)
+        {
+            return Current;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(BoundedByte left, BoundedByte right) => left.Equals(right);
+        public static bool operator ==(BoundedByte left, BoundedByte right)
+        {
+            return left.Equals(right);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(BoundedByte left, BoundedByte right) => !left.Equals(right);
+        public static bool operator !=(BoundedByte left, BoundedByte right)
+        {
+            return !left.Equals(right);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <(BoundedByte left, BoundedByte right) => left.CompareTo(right) < 0;
+        public static bool operator <(BoundedByte left, BoundedByte right)
+        {
+            return left.CompareTo(right) < 0;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <=(BoundedByte left, BoundedByte right) => left.CompareTo(right) <= 0;
+        public static bool operator <=(BoundedByte left, BoundedByte right)
+        {
+            return left.CompareTo(right) <= 0;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >(BoundedByte left, BoundedByte right) => left.CompareTo(right) > 0;
+        public static bool operator >(BoundedByte left, BoundedByte right)
+        {
+            return left.CompareTo(right) > 0;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >=(BoundedByte left, BoundedByte right) => left.CompareTo(right) >= 0;
+        public static bool operator >=(BoundedByte left, BoundedByte right)
+        {
+            return left.CompareTo(right) >= 0;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedByte operator ++(BoundedByte a) => a + 1;
+        public static BoundedByte operator ++(BoundedByte a)
+        {
+            return a + 1;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedByte operator --(BoundedByte a) => a - 1;
+        public static BoundedByte operator --(BoundedByte a)
+        {
+            return a - 1;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static BoundedByte operator +(BoundedByte a, int b)
         {
-            int res = a.Current + b;
+            var res = a.Current + b;
             if (res > a.Max) res = a.Max;
             else if (res < 0) res = 0;
             return new BoundedByte(a.Max, (byte)res);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedByte operator +(int b, BoundedByte a) => a + b;
+        public static BoundedByte operator +(int b, BoundedByte a)
+        {
+            return a + b;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedByte operator -(BoundedByte a, int b) => a + (-b);
+        public static BoundedByte operator -(BoundedByte a, int b)
+        {
+            return a + (-b);
+        }
     }
 }

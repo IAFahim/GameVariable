@@ -1,35 +1,33 @@
-using System;
 using System.Runtime.CompilerServices;
 
-namespace Variable.Inventory
+namespace Variable.Inventory;
+
+public static partial class InventoryLogic
 {
-    public static partial class InventoryLogic
+    /// <summary>
+    ///     Calculates the maximum amount of an item that can be accepted, considering both quantity and weight limits.
+    /// </summary>
+    /// <param name="currentQty">The current quantity of items.</param>
+    /// <param name="maxQty">The maximum quantity capacity.</param>
+    /// <param name="currentWeight">The current total weight.</param>
+    /// <param name="maxWeight">The maximum weight capacity.</param>
+    /// <param name="unitWeight">The weight of a single unit of the item.</param>
+    /// <returns>The maximum amount that can be accepted.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float GetMaxAcceptable(
+        float currentQty,
+        float maxQty,
+        float currentWeight,
+        float maxWeight,
+        float unitWeight)
     {
-        /// <summary>
-        /// Calculates the maximum amount of an item that can be accepted, considering both quantity and weight limits.
-        /// </summary>
-        /// <param name="currentQty">The current quantity of items.</param>
-        /// <param name="maxQty">The maximum quantity capacity.</param>
-        /// <param name="currentWeight">The current total weight.</param>
-        /// <param name="maxWeight">The maximum weight capacity.</param>
-        /// <param name="unitWeight">The weight of a single unit of the item.</param>
-        /// <returns>The maximum amount that can be accepted.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float GetMaxAcceptable(
-            float currentQty, 
-            float maxQty, 
-            float currentWeight, 
-            float maxWeight, 
-            float unitWeight)
-        {
-            float spaceByQty = (currentQty >= maxQty) ? 0f : maxQty - currentQty;
+        var spaceByQty = currentQty >= maxQty ? 0f : maxQty - currentQty;
 
-            if (unitWeight <= TOLERANCE) return spaceByQty;
+        if (unitWeight <= TOLERANCE) return spaceByQty;
 
-            float remainingWeight = (currentWeight >= maxWeight) ? 0f : maxWeight - currentWeight;
-            float spaceByWeight = remainingWeight / unitWeight;
+        var remainingWeight = currentWeight >= maxWeight ? 0f : maxWeight - currentWeight;
+        var spaceByWeight = remainingWeight / unitWeight;
 
-            return (spaceByQty < spaceByWeight) ? spaceByQty : spaceByWeight;
-        }
+        return spaceByQty < spaceByWeight ? spaceByQty : spaceByWeight;
     }
 }

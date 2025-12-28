@@ -5,81 +5,74 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using Variable.Core;
 
-namespace Variable.Bounded
+namespace Variable.Experience
 {
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    [DebuggerDisplay("{Current}/{Max}")]
-    public struct BoundedFloat :
+    [DebuggerDisplay("Lvl {Level} ({Current}/{Max})")]
+    public struct ExperienceInt :
         IVariable,
-        IEquatable<BoundedFloat>,
-        IComparable<BoundedFloat>,
+        IEquatable<ExperienceInt>,
+        IComparable<ExperienceInt>,
         IComparable,
         IFormattable,
         IConvertible
     {
-        public float Current;
-        public float Max;
+        public int Current;
+        public int Max;
+        public int Level;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public BoundedFloat(float max, float current)
+        public ExperienceInt(int max, int current = 0, int level = 1)
         {
-            Max = max;
-            Current = current > max ? max : current < 0f ? 0f : current;
+            Max = max < 1 ? 1 : max;
+            Current = current;
+            Level = level;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public BoundedFloat(float max) : this(max, max)
-        {
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Normalize()
-        {
-            Current = Current > Max ? Max : Current < 0f ? 0f : Current;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Deconstruct(out float current, out float max)
+        public void Deconstruct(out int current, out int max, out int level)
         {
             current = Current;
             max = Max;
+            level = Level;
         }
 
-        private BoundedFloat(SerializationInfo info, StreamingContext context)
+        private ExperienceInt(SerializationInfo info, StreamingContext context)
         {
-            Max = info.GetSingle(nameof(Max));
-            var raw = info.GetSingle(nameof(Current));
-            Current = raw > Max ? Max : raw < 0f ? 0f : raw;
+            Max = info.GetInt32(nameof(Max));
+            Current = info.GetInt32(nameof(Current));
+            Level = info.GetInt32(nameof(Level));
+            if (Max < 1) Max = 1;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public double GetRatio()
         {
-            return Math.Abs(Max) < float.Epsilon ? 0.0 : Current / Max;
+            return Max == 0 ? 0.0 : (double)Current / Max;
         }
 
         public bool IsFull
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Math.Abs(Current - Max) < float.Epsilon;
+            get => Current >= Max;
         }
 
         public bool IsEmpty
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Math.Abs(Current) < float.Epsilon;
+            get => Current == 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator float(BoundedFloat value)
+        public static implicit operator int(ExperienceInt value)
         {
             return value.Current;
         }
 
         public override string ToString()
         {
-            return $"{Current}/{Max}";
+            return $"Lvl {Level} ({Current}/{Max})";
         }
 
         public string ToString(string format, IFormatProvider formatProvider)
@@ -89,45 +82,49 @@ namespace Variable.Bounded
             switch (format.ToUpperInvariant())
             {
                 case "R": return GetRatio().ToString("P", formatProvider);
+                case "L": return Level.ToString(formatProvider);
                 case "C": return $"{Current}/{Max}";
-                default: return $"{Current.ToString(format, formatProvider)}/{Max.ToString(format, formatProvider)}";
+                default: return ToString();
             }
         }
 
         public override bool Equals(object obj)
         {
-            return obj is BoundedFloat other && Equals(other);
+            return obj is ExperienceInt other && Equals(other);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals(BoundedFloat other)
+        public bool Equals(ExperienceInt other)
         {
-            return Current.Equals(other.Current) && Max.Equals(other.Max);
+            return Current == other.Current && Max == other.Max && Level == other.Level;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int CompareTo(BoundedFloat other)
+        public int CompareTo(ExperienceInt other)
         {
-            var cmp = Current.CompareTo(other.Current);
-            return cmp != 0 ? cmp : Max.CompareTo(other.Max);
+            var cmp = Level.CompareTo(other.Level);
+            if (cmp != 0) return cmp;
+            var cmpMax = Max.CompareTo(other.Max);
+            if (cmpMax != 0) return cmpMax;
+            return Current.CompareTo(other.Current);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int CompareTo(object obj)
         {
-            if (obj is BoundedFloat other) return CompareTo(other);
-            throw new ArgumentException($"Object must be of type {nameof(BoundedFloat)}");
+            if (obj is ExperienceInt other) return CompareTo(other);
+            throw new ArgumentException($"Object must be of type {nameof(ExperienceInt)}");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()
         {
-            return HashCode.Combine(Current, Max);
+            return HashCode.Combine(Current, Max, Level);
         }
 
         public TypeCode GetTypeCode()
         {
-            return TypeCode.Single;
+            return TypeCode.Object;
         }
 
         bool IConvertible.ToBoolean(IFormatProvider provider)
@@ -152,7 +149,7 @@ namespace Variable.Bounded
 
         decimal IConvertible.ToDecimal(IFormatProvider provider)
         {
-            return (decimal)Current;
+            return Current;
         }
 
         double IConvertible.ToDouble(IFormatProvider provider)
@@ -167,12 +164,12 @@ namespace Variable.Bounded
 
         int IConvertible.ToInt32(IFormatProvider provider)
         {
-            return (int)Current;
+            return Current;
         }
 
         long IConvertible.ToInt64(IFormatProvider provider)
         {
-            return (long)Current;
+            return Current;
         }
 
         sbyte IConvertible.ToSByte(IFormatProvider provider)
@@ -192,7 +189,7 @@ namespace Variable.Bounded
 
         object IConvertible.ToType(Type conversionType, IFormatProvider provider)
         {
-            return Convert.ChangeType(Current, conversionType, provider);
+            throw new InvalidCastException();
         }
 
         ushort IConvertible.ToUInt16(IFormatProvider provider)
@@ -211,69 +208,45 @@ namespace Variable.Bounded
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(BoundedFloat left, BoundedFloat right)
+        public static bool operator ==(ExperienceInt left, ExperienceInt right)
         {
             return left.Equals(right);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(BoundedFloat left, BoundedFloat right)
+        public static bool operator !=(ExperienceInt left, ExperienceInt right)
         {
             return !left.Equals(right);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <(BoundedFloat left, BoundedFloat right)
+        public static bool operator <(ExperienceInt left, ExperienceInt right)
         {
             return left.CompareTo(right) < 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <=(BoundedFloat left, BoundedFloat right)
+        public static bool operator <=(ExperienceInt left, ExperienceInt right)
         {
             return left.CompareTo(right) <= 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >(BoundedFloat left, BoundedFloat right)
+        public static bool operator >(ExperienceInt left, ExperienceInt right)
         {
             return left.CompareTo(right) > 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >=(BoundedFloat left, BoundedFloat right)
+        public static bool operator >=(ExperienceInt left, ExperienceInt right)
         {
             return left.CompareTo(right) >= 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedFloat operator ++(BoundedFloat a)
+        public static ExperienceInt operator +(ExperienceInt a, int amount)
         {
-            return a + 1f;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedFloat operator --(BoundedFloat a)
-        {
-            return a - 1f;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedFloat operator +(BoundedFloat a, float b)
-        {
-            return new BoundedFloat(a.Max, a.Current + b);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedFloat operator +(float b, BoundedFloat a)
-        {
-            return a + b;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedFloat operator -(BoundedFloat a, float b)
-        {
-            return new BoundedFloat(a.Max, a.Current - b);
+            return new ExperienceInt(a.Max, a.Current + amount, a.Level);
         }
     }
 }

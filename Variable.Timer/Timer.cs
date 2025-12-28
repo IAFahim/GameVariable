@@ -23,14 +23,20 @@ namespace Variable.Timer
         public Timer(float duration, float current = 0f)
         {
             Duration = duration;
-            Current = current > duration ? duration : (current < 0f ? 0f : current);
+            Current = current > duration ? duration : current < 0f ? 0f : current;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Reset() => Current = 0f;
+        public void Reset()
+        {
+            Current = 0f;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Finish() => Current = Duration;
+        public void Finish()
+        {
+            Current = Duration;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Tick(float deltaTime)
@@ -52,9 +58,15 @@ namespace Variable.Timer
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public double GetRatio() => Math.Abs(Duration) < float.Epsilon ? 0.0 : Current / Duration;
+        public double GetRatio()
+        {
+            return Math.Abs(Duration) < float.Epsilon ? 0.0 : Current / Duration;
+        }
 
-        public override string ToString() => $"{Current}/{Duration}";
+        public override string ToString()
+        {
+            return $"{Current}/{Duration}";
+        }
 
         public string ToString(string format, IFormatProvider formatProvider)
         {
@@ -62,15 +74,21 @@ namespace Variable.Timer
             return $"{Current.ToString(format, formatProvider)}/{Duration.ToString(format, formatProvider)}";
         }
 
-        public override bool Equals(object obj) => obj is Timer other && Equals(other);
+        public override bool Equals(object obj)
+        {
+            return obj is Timer other && Equals(other);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals(Timer other) => Current.Equals(other.Current) && Duration.Equals(other.Duration);
+        public bool Equals(Timer other)
+        {
+            return Current.Equals(other.Current) && Duration.Equals(other.Duration);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int CompareTo(Timer other)
         {
-            int cmp = Current.CompareTo(other.Current);
+            var cmp = Current.CompareTo(other.Current);
             return cmp != 0 ? cmp : Duration.CompareTo(other.Duration);
         }
 
@@ -82,12 +100,21 @@ namespace Variable.Timer
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override int GetHashCode() => HashCode.Combine(Current, Duration);
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Current, Duration);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(Timer left, Timer right) => left.Equals(right);
+        public static bool operator ==(Timer left, Timer right)
+        {
+            return left.Equals(right);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(Timer left, Timer right) => !left.Equals(right);
+        public static bool operator !=(Timer left, Timer right)
+        {
+            return !left.Equals(right);
+        }
     }
 }

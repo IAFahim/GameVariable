@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
-
 using Variable.Core;
 
 namespace Variable.Range
@@ -28,7 +27,7 @@ namespace Variable.Range
         {
             Min = min;
             Max = max;
-            Current = current > max ? max : (current < min ? min : current);
+            Current = current > max ? max : current < min ? min : current;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -37,7 +36,10 @@ namespace Variable.Range
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Normalize() => Current = Current > Max ? Max : (Current < Min ? Min : Current);
+        public void Normalize()
+        {
+            Current = Current > Max ? Max : Current < Min ? Min : Current;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Deconstruct(out double current, out double min, out double max)
@@ -51,12 +53,15 @@ namespace Variable.Range
         {
             Min = info.GetDouble(nameof(Min));
             Max = info.GetDouble(nameof(Max));
-            double raw = info.GetDouble(nameof(Current));
-            Current = raw > Max ? Max : (raw < Min ? Min : raw);
+            var raw = info.GetDouble(nameof(Current));
+            Current = raw > Max ? Max : raw < Min ? Min : raw;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public double GetRatio() => Math.Abs(Max - Min) < double.Epsilon ? 0.0 : (Current - Min) / (Max - Min);
+        public double GetRatio()
+        {
+            return Math.Abs(Max - Min) < double.Epsilon ? 0.0 : (Current - Min) / (Max - Min);
+        }
 
         public bool IsFull
         {
@@ -71,9 +76,15 @@ namespace Variable.Range
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator double(RangeDouble value) => value.Current;
+        public static implicit operator double(RangeDouble value)
+        {
+            return value.Current;
+        }
 
-        public override string ToString() => $"{Current} [{Min}, {Max}]";
+        public override string ToString()
+        {
+            return $"{Current} [{Min}, {Max}]";
+        }
 
         public string ToString(string format, IFormatProvider formatProvider)
         {
@@ -83,19 +94,27 @@ namespace Variable.Range
             {
                 case "R": return GetRatio().ToString("P", formatProvider);
                 case "C": return $"{Current} [{Min}, {Max}]";
-                default: return $"{Current.ToString(format, formatProvider)} [{Min.ToString(format, formatProvider)}, {Max.ToString(format, formatProvider)}]";
+                default:
+                    return
+                        $"{Current.ToString(format, formatProvider)} [{Min.ToString(format, formatProvider)}, {Max.ToString(format, formatProvider)}]";
             }
         }
 
-        public override bool Equals(object obj) => obj is RangeDouble other && Equals(other);
+        public override bool Equals(object obj)
+        {
+            return obj is RangeDouble other && Equals(other);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals(RangeDouble other) => Current.Equals(other.Current) && Min.Equals(other.Min) && Max.Equals(other.Max);
+        public bool Equals(RangeDouble other)
+        {
+            return Current.Equals(other.Current) && Min.Equals(other.Min) && Max.Equals(other.Max);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int CompareTo(RangeDouble other)
         {
-            int cmp = Current.CompareTo(other.Current);
+            var cmp = Current.CompareTo(other.Current);
             if (cmp != 0) return cmp;
             cmp = Min.CompareTo(other.Min);
             return cmp != 0 ? cmp : Max.CompareTo(other.Max);
@@ -109,60 +128,160 @@ namespace Variable.Range
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override int GetHashCode() => HashCode.Combine(Current, Min, Max);
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Current, Min, Max);
+        }
 
-        public TypeCode GetTypeCode() => TypeCode.Double;
-        bool IConvertible.ToBoolean(IFormatProvider provider) => Current != 0;
-        byte IConvertible.ToByte(IFormatProvider provider) => (byte)Current;
-        char IConvertible.ToChar(IFormatProvider provider) => (char)Current;
-        DateTime IConvertible.ToDateTime(IFormatProvider provider) => throw new InvalidCastException();
-        decimal IConvertible.ToDecimal(IFormatProvider provider) => (decimal)Current;
-        double IConvertible.ToDouble(IFormatProvider provider) => Current;
-        short IConvertible.ToInt16(IFormatProvider provider) => (short)Current;
-        int IConvertible.ToInt32(IFormatProvider provider) => (int)Current;
-        long IConvertible.ToInt64(IFormatProvider provider) => (long)Current;
-        sbyte IConvertible.ToSByte(IFormatProvider provider) => (sbyte)Current;
-        float IConvertible.ToSingle(IFormatProvider provider) => (float)Current;
-        string IConvertible.ToString(IFormatProvider provider) => ToString("G", provider);
+        public TypeCode GetTypeCode()
+        {
+            return TypeCode.Double;
+        }
 
-        object IConvertible.ToType(Type conversionType, IFormatProvider provider) =>
-            Convert.ChangeType(Current, conversionType, provider);
+        bool IConvertible.ToBoolean(IFormatProvider provider)
+        {
+            return Current != 0;
+        }
 
-        ushort IConvertible.ToUInt16(IFormatProvider provider) => (ushort)Current;
-        uint IConvertible.ToUInt32(IFormatProvider provider) => (uint)Current;
-        ulong IConvertible.ToUInt64(IFormatProvider provider) => (ulong)Current;
+        byte IConvertible.ToByte(IFormatProvider provider)
+        {
+            return (byte)Current;
+        }
+
+        char IConvertible.ToChar(IFormatProvider provider)
+        {
+            return (char)Current;
+        }
+
+        DateTime IConvertible.ToDateTime(IFormatProvider provider)
+        {
+            throw new InvalidCastException();
+        }
+
+        decimal IConvertible.ToDecimal(IFormatProvider provider)
+        {
+            return (decimal)Current;
+        }
+
+        double IConvertible.ToDouble(IFormatProvider provider)
+        {
+            return Current;
+        }
+
+        short IConvertible.ToInt16(IFormatProvider provider)
+        {
+            return (short)Current;
+        }
+
+        int IConvertible.ToInt32(IFormatProvider provider)
+        {
+            return (int)Current;
+        }
+
+        long IConvertible.ToInt64(IFormatProvider provider)
+        {
+            return (long)Current;
+        }
+
+        sbyte IConvertible.ToSByte(IFormatProvider provider)
+        {
+            return (sbyte)Current;
+        }
+
+        float IConvertible.ToSingle(IFormatProvider provider)
+        {
+            return (float)Current;
+        }
+
+        string IConvertible.ToString(IFormatProvider provider)
+        {
+            return ToString("G", provider);
+        }
+
+        object IConvertible.ToType(Type conversionType, IFormatProvider provider)
+        {
+            return Convert.ChangeType(Current, conversionType, provider);
+        }
+
+        ushort IConvertible.ToUInt16(IFormatProvider provider)
+        {
+            return (ushort)Current;
+        }
+
+        uint IConvertible.ToUInt32(IFormatProvider provider)
+        {
+            return (uint)Current;
+        }
+
+        ulong IConvertible.ToUInt64(IFormatProvider provider)
+        {
+            return (ulong)Current;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(RangeDouble left, RangeDouble right) => left.Equals(right);
+        public static bool operator ==(RangeDouble left, RangeDouble right)
+        {
+            return left.Equals(right);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(RangeDouble left, RangeDouble right) => !left.Equals(right);
+        public static bool operator !=(RangeDouble left, RangeDouble right)
+        {
+            return !left.Equals(right);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <(RangeDouble left, RangeDouble right) => left.CompareTo(right) < 0;
+        public static bool operator <(RangeDouble left, RangeDouble right)
+        {
+            return left.CompareTo(right) < 0;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <=(RangeDouble left, RangeDouble right) => left.CompareTo(right) <= 0;
+        public static bool operator <=(RangeDouble left, RangeDouble right)
+        {
+            return left.CompareTo(right) <= 0;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >(RangeDouble left, RangeDouble right) => left.CompareTo(right) > 0;
+        public static bool operator >(RangeDouble left, RangeDouble right)
+        {
+            return left.CompareTo(right) > 0;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >=(RangeDouble left, RangeDouble right) => left.CompareTo(right) >= 0;
+        public static bool operator >=(RangeDouble left, RangeDouble right)
+        {
+            return left.CompareTo(right) >= 0;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static RangeDouble operator ++(RangeDouble a) => a + 1.0;
+        public static RangeDouble operator ++(RangeDouble a)
+        {
+            return a + 1.0;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static RangeDouble operator --(RangeDouble a) => a - 1.0;
+        public static RangeDouble operator --(RangeDouble a)
+        {
+            return a - 1.0;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static RangeDouble operator +(RangeDouble a, double b) => new RangeDouble(a.Min, a.Max, a.Current + b);
+        public static RangeDouble operator +(RangeDouble a, double b)
+        {
+            return new RangeDouble(a.Min, a.Max, a.Current + b);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static RangeDouble operator +(double b, RangeDouble a) => a + b;
+        public static RangeDouble operator +(double b, RangeDouble a)
+        {
+            return a + b;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static RangeDouble operator -(RangeDouble a, double b) => new RangeDouble(a.Min, a.Max, a.Current - b);
+        public static RangeDouble operator -(RangeDouble a, double b)
+        {
+            return new RangeDouble(a.Min, a.Max, a.Current - b);
+        }
     }
 }
