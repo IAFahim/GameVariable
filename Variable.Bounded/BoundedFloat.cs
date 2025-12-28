@@ -124,21 +124,21 @@ public struct BoundedFloat :
     public readonly double GetRatio()
     {
         var range = Max - Min;
-        return Math.Abs(range) < float.Epsilon ? 0.0 : (Current - Min) / range;
+        return Math.Abs(range) < MathConstants.Tolerance ? 0.0 : (Current - Min) / range;
     }
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly bool IsFull()
     {
-        return Math.Abs(Current - Max) < float.Epsilon;
+        return Current >= Max - MathConstants.Tolerance;
     }
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly bool IsEmpty()
     {
-        return Math.Abs(Current - Min) < float.Epsilon;
+        return Current <= Min + MathConstants.Tolerance;
     }
 
     /// <summary>
@@ -167,7 +167,7 @@ public struct BoundedFloat :
     /// </param>
     /// <param name="formatProvider">The format provider.</param>
     /// <returns>The formatted string.</returns>
-    public readonly string ToString(string format, IFormatProvider formatProvider)
+    public readonly string ToString(string? format, IFormatProvider? formatProvider)
     {
         if (string.IsNullOrEmpty(format)) format = "G";
 

@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Variable.Stat;
 
 public static partial class StatLogic
@@ -14,8 +12,8 @@ public static partial class StatLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Set(ref float current, float value, float max, float min = 0f)
     {
-        if (value > max) current = max;
-        else if (value < min) current = min;
+        if (max - value < MathConstants.Tolerance) current = max;
+        else if (value - min < MathConstants.Tolerance) current = min;
         else current = value;
     }
 }

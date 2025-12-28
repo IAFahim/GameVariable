@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Variable.Stat;
 
 public static partial class StatLogic
@@ -10,6 +8,6 @@ public static partial class StatLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsMin(float current, float min = 0f)
     {
-        return current <= min + TOLERANCE;
+        return current <= min + MathConstants.Tolerance;
     }
 }

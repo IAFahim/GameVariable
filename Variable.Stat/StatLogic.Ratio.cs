@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Variable.Stat;
 
 public static partial class StatLogic
@@ -10,7 +8,7 @@ public static partial class StatLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float GetRatio(float current, float max)
     {
-        if (max <= TOLERANCE) return 0f;
+        if (max <= MathConstants.Tolerance) return 0f;
         var ratio = current / max;
         if (ratio < 0f) return 0f;
         if (ratio > 1f) return 1f;

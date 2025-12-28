@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Variable.Stat;
 
 public static partial class StatLogic
@@ -10,6 +8,6 @@ public static partial class StatLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool HasEnough(float current, float amount)
     {
-        return current >= amount - TOLERANCE;
+        return current >= amount - MathConstants.Tolerance;
     }
 }

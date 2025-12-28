@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Variable.Inventory;
 
 public static partial class InventoryLogic
@@ -8,7 +6,7 @@ public static partial class InventoryLogic
     ///     Determines whether the inventory is full based on the current quantity and maximum capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(float current, float max, float tolerance = 0.001f)
+    public static bool IsFull(float current, float max, float tolerance = MathConstants.Tolerance)
     {
         return current >= max - tolerance;
     }

@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Variable.Inventory;
 
 public static partial class InventoryLogic
@@ -8,13 +6,10 @@ public static partial class InventoryLogic
     ///     Sets the inventory quantity to a specific value, clamping it between 0 and the maximum capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Set(ref float current, float value, float max, float tolerance = 0.001f)
+    public static void Set(ref float current, float value, float max, float tolerance = MathConstants.Tolerance)
     {
-        if (value < 0f) value = 0f;
-        if (value > max) value = max;
-
-        if (value < tolerance) value = 0f;
         if (max - value < tolerance) value = max;
+        else if (value < tolerance) value = 0f;
 
         current = value;
     }

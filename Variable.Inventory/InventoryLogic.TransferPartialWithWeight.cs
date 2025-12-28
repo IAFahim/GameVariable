@@ -12,6 +12,7 @@ public static partial class InventoryLogic
     /// <param name="dstMaxQty">The maximum quantity capacity of the destination.</param>
     /// <param name="unitWeight">The weight of a single unit of the item.</param>
     /// <param name="requestedAmount">The amount requested to transfer.</param>
+    /// <param name="tolerance">The tolerance for floating point comparisons.</param>
     /// <returns>The actual amount transferred.</returns>
     public static float TransferPartialWithWeight(
         ref float srcQty,
@@ -19,7 +20,7 @@ public static partial class InventoryLogic
         ref float dstCurWeight,
         float dstMaxWeight,
         float dstMaxQty, float unitWeight,
-        float requestedAmount, float tolerance = 0.001f)
+        float requestedAmount, float tolerance = MathConstants.Tolerance)
     {
         if (srcQty <= tolerance || requestedAmount <= 0) return 0f;
 

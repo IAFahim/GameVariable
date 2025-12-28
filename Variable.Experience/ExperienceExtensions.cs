@@ -1,5 +1,8 @@
 namespace Variable.Experience;
 
+/// <summary>
+///     Extension methods for ExperienceInt and ExperienceLong.
+/// </summary>
 public static class ExperienceExtensions
 {
     /// <summary>

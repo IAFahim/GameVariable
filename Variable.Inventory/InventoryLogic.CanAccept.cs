@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Variable.Inventory;
 
 public static partial class InventoryLogic
@@ -8,7 +6,7 @@ public static partial class InventoryLogic
     ///     Checks if the inventory can accept a specific amount of items without exceeding its capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool CanAccept(float current, float max, float amountToAdd, float tolerance = 0.001f)
+    public static bool CanAccept(float current, float max, float amountToAdd, float tolerance = MathConstants.Tolerance)
     {
         return current + amountToAdd <= max + tolerance;
     }

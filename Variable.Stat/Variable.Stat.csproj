@@ -16,4 +16,9 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
+
+    <ItemGroup>
+        <ProjectReference Include="..\Variable.Core\Variable.Core.csproj"/>
+    </ItemGroup>
+
 </Project>

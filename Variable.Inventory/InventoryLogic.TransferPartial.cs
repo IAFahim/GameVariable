@@ -9,9 +9,10 @@ public static partial class InventoryLogic
     /// <param name="dstQty">The reference to the destination quantity variable.</param>
     /// <param name="dstMax">The maximum capacity of the destination.</param>
     /// <param name="requestedAmount">The amount requested to transfer.</param>
+    /// <param name="tolerance">The tolerance for floating point comparisons.</param>
     /// <returns>The actual amount transferred.</returns>
     public static float TransferPartial(ref float srcQty, ref float dstQty, float dstMax, float requestedAmount,
-        float tolerance = 0.001f)
+        float tolerance = MathConstants.Tolerance)
     {
         if (srcQty <= tolerance || requestedAmount <= 0) return 0f;
 

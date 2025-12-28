@@ -9,12 +9,13 @@ public static partial class InventoryLogic
     /// <param name="dstQty">The reference to the destination quantity variable.</param>
     /// <param name="dstMax">The maximum capacity of the destination.</param>
     /// <param name="amount">The amount to transfer.</param>
+    /// <param name="tolerance">The tolerance for floating point comparisons.</param>
     /// <returns>
     ///     <c>true</c> if the transfer was successful; otherwise, <c>false</c> if source has insufficient items or
     ///     destination is full.
     /// </returns>
     public static bool TryTransferExact(ref float srcQty, ref float dstQty, float dstMax, float amount,
-        float tolerance = 0.001f)
+        float tolerance = MathConstants.Tolerance)
     {
         if (amount <= tolerance) return true;
 

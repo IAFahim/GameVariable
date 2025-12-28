@@ -48,6 +48,18 @@ public struct BoundedByte :
     }
 
     /// <summary>
+    ///     Creates a new bounded byte with int values, clamping automatically.
+    /// </summary>
+    /// <param name="max">The maximum allowed value.</param>
+    /// <param name="current">The initial current value. Will be clamped to [0, max].</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public BoundedByte(byte max, int current)
+    {
+        Max = max;
+        Current = (byte)(current > max ? max : current < 0 ? 0 : current);
+    }
+
+    /// <summary>
     ///     Clamps the current value to the valid range [0, Max].
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -64,6 +76,24 @@ public struct BoundedByte :
     {
         current = Current;
         max = Max;
+    }
+
+    /// <summary>
+    ///     Gets the range between min (0) and max.
+    /// </summary>
+    public readonly byte Range
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Max;
+    }
+
+    /// <summary>
+    ///     Gets the amount remaining until max.
+    /// </summary>
+    public readonly byte Remaining
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => (byte)(Max - Current);
     }
 
     /// <inheritdoc />
@@ -101,7 +131,7 @@ public struct BoundedByte :
     }
 
     /// <inheritdoc />
-    public string ToString(string format, IFormatProvider formatProvider)
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
         if (string.IsNullOrEmpty(format)) format = "G";
 
@@ -109,6 +139,7 @@ public struct BoundedByte :
         {
             case "R": return GetRatio().ToString("P", formatProvider);
             case "C": return $"{Current}/{Max}";
+            case "F": return $"{Current} [0, {Max}]";
             default: return ToString();
         }
     }
@@ -311,10 +342,7 @@ public struct BoundedByte :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BoundedByte operator +(BoundedByte a, int b)
     {
-        var res = a.Current + b;
-        if (res > a.Max) res = a.Max;
-        else if (res < 0) res = 0;
-        return new BoundedByte(a.Max, (byte)res);
+        return new BoundedByte(a.Max, a.Current + b);
     }
 
     /// <summary>Adds a value to the bounded byte, clamping the result.</summary>

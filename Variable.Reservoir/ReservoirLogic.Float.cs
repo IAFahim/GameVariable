@@ -21,15 +21,15 @@ public static partial class ReservoirLogic
     public static float Refill(ref float current, float capacity, ref float reserve)
     {
         var missing = capacity - current;
-        if (missing <= 0.001f || reserve <= 0.001f) return 0f;
+        if (missing <= MathConstants.Tolerance || reserve <= MathConstants.Tolerance) return 0f;
 
         var toRefill = reserve < missing ? reserve : missing;
         current += toRefill;
         reserve -= toRefill;
 
         // Clamp to handle precision errors
-        if (capacity - current < 0.001f) current = capacity;
-        if (reserve < 0.001f) reserve = 0f;
+        if (capacity - current < MathConstants.Tolerance) current = capacity;
+        if (reserve < MathConstants.Tolerance) reserve = 0f;
 
         return toRefill;
     }

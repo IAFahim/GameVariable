@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Variable.Stat;
 
 public static partial class StatLogic
@@ -10,6 +8,6 @@ public static partial class StatLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsMax(float current, float max)
     {
-        return current >= max - TOLERANCE;
+        return current >= max - MathConstants.Tolerance;
     }
 }

@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Variable.Stat;
 
 public static partial class StatLogic
@@ -14,7 +12,7 @@ public static partial class StatLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float Subtract(ref float current, float amount, float min = 0f)
     {
-        if (amount <= TOLERANCE) return 0f;
+        if (amount <= MathConstants.Tolerance) return 0f;
 
         var available = current - min;
         if (available < 0f) available = 0f;
@@ -23,7 +21,7 @@ public static partial class StatLogic
         current -= toSubtract;
 
         // Ensure we hit min exactly if close enough
-        if (current - min < TOLERANCE) current = min;
+        if (current - min < MathConstants.Tolerance) current = min;
 
         return toSubtract;
     }

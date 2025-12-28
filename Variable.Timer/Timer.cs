@@ -129,21 +129,21 @@ public struct Timer :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly bool IsFull()
     {
-        return Current >= Duration;
+        return Current >= Duration - MathConstants.Tolerance;
     }
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly bool IsEmpty()
     {
-        return Current <= 0f;
+        return Current <= MathConstants.Tolerance;
     }
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly double GetRatio()
     {
-        return Math.Abs(Duration) < float.Epsilon ? 0.0 : Current / Duration;
+        return Math.Abs(Duration) < MathConstants.Tolerance ? 0.0 : Current / Duration;
     }
 
     /// <inheritdoc />
@@ -153,7 +153,7 @@ public struct Timer :
     }
 
     /// <inheritdoc />
-    public readonly string ToString(string format, IFormatProvider formatProvider)
+    public readonly string ToString(string? format, IFormatProvider? formatProvider)
     {
         if (string.IsNullOrEmpty(format)) format = "G";
         return $"{Current.ToString(format, formatProvider)}/{Duration.ToString(format, formatProvider)}";

@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Variable.Stat;
 
 public static partial class StatLogic
@@ -14,7 +12,7 @@ public static partial class StatLogic
         if (HasEnough(current, amount))
         {
             current -= amount;
-            if (current < TOLERANCE) current = 0f;
+            if (current < MathConstants.Tolerance) current = 0f;
             return true;
         }
 

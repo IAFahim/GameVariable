@@ -153,7 +153,7 @@ public struct BoundedInt :
     }
 
     /// <inheritdoc />
-    public readonly string ToString(string format, IFormatProvider formatProvider)
+    public readonly string ToString(string? format, IFormatProvider? formatProvider)
     {
         if (string.IsNullOrEmpty(format)) format = "G";
 

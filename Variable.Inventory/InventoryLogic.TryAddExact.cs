@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Variable.Inventory;
 
 public static partial class InventoryLogic
@@ -10,9 +8,11 @@ public static partial class InventoryLogic
     /// <param name="current">The reference to the current quantity variable.</param>
     /// <param name="amount">The amount to add.</param>
     /// <param name="max">The maximum capacity.</param>
+    /// <param name="tolerance">The tolerance for floating point comparisons.</param>
     /// <returns><c>true</c> if the amount was added successfully; otherwise, <c>false</c> if it would exceed capacity.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryAddExact(ref float current, float amount, float max, float tolerance = 0.001f)
+    public static bool TryAddExact(ref float current, float amount, float max,
+        float tolerance = MathConstants.Tolerance)
     {
         if (amount <= tolerance) return true;
         if (current + amount > max + tolerance) return false;

@@ -1,7 +1,8 @@
-using System.Runtime.CompilerServices;
-
 namespace Variable.Stat;
 
+/// <summary>
+///     Provides static logic for stat modification and management.
+/// </summary>
 public static partial class StatLogic
 {
     /// <summary>
@@ -14,17 +15,14 @@ public static partial class StatLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float Add(ref float current, float amount, float max)
     {
-        if (amount <= TOLERANCE) return 0f;
+        if (amount <= MathConstants.Tolerance) return 0f;
 
-        var space = max - current;
-        if (space < 0f) space = 0f;
+        var missing = max - current;
+        var actual = amount > missing ? missing : amount;
 
-        var toAdd = amount < space ? amount : space;
-        current += toAdd;
+        current += actual;
+        if (max - current < MathConstants.Tolerance) current = max;
 
-        // Ensure we hit max exactly if close enough
-        if (max - current < TOLERANCE) current = max;
-
-        return toAdd;
+        return actual;
     }
 }

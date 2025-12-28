@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Variable.Inventory;
 
 public static partial class InventoryLogic
@@ -8,7 +6,7 @@ public static partial class InventoryLogic
     ///     Determines whether the inventory is empty.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(float current, float tolerance = 0.001f)
+    public static bool IsEmpty(float current, float tolerance = MathConstants.Tolerance)
     {
         return current <= tolerance;
     }

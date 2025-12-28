@@ -1,5 +1,8 @@
 namespace Variable.Inventory;
 
+/// <summary>
+///     Provides static logic for inventory management operations.
+/// </summary>
 public static partial class InventoryLogic
 {
     /// <summary>
@@ -9,9 +12,10 @@ public static partial class InventoryLogic
     /// <param name="amount">The amount to attempt to add.</param>
     /// <param name="max">The maximum capacity.</param>
     /// <param name="overflow">The amount that could not be added.</param>
+    /// <param name="tolerance">The tolerance for floating point comparisons.</param>
     /// <returns>The actual amount added to the inventory.</returns>
     public static float AddPartial(ref float current, float amount, float max, out float overflow,
-        float tolerance = 0.001f)
+        float tolerance = MathConstants.Tolerance)
     {
         if (amount <= tolerance)
         {

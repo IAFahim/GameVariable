@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Variable.Stat;
 
 public static partial class StatLogic
@@ -15,26 +13,23 @@ public static partial class StatLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float Transfer(ref float source, ref float target, float maxTarget, float amount)
     {
-        if (source <= TOLERANCE || amount <= TOLERANCE) return 0f;
+        if (source <= MathConstants.Tolerance || amount <= MathConstants.Tolerance) return 0f;
 
-        var available = source < amount ? source : amount;
+        var availableSpace = maxTarget - target;
+        var actualMove = amount < source ? amount : source;
+        if (actualMove > availableSpace) actualMove = availableSpace;
 
-        var space = maxTarget - target;
-        if (space < 0f) space = 0f;
+        if (actualMove < 0f) actualMove = 0f;
 
-        var actualMove = available < space ? available : space;
-
-        if (actualMove > TOLERANCE)
+        if (actualMove > MathConstants.Tolerance)
         {
             source -= actualMove;
             target += actualMove;
 
-            if (source < TOLERANCE) source = 0f;
-            if (maxTarget - target < TOLERANCE) target = maxTarget;
-
-            return actualMove;
+            if (source < MathConstants.Tolerance) source = 0f;
+            if (maxTarget - target < MathConstants.Tolerance) target = maxTarget;
         }
 
-        return 0f;
+        return actualMove;
     }
 }

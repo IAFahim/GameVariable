@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Variable.Inventory;
 
 public static partial class InventoryLogic
@@ -12,6 +10,7 @@ public static partial class InventoryLogic
     /// <param name="currentWeight">The current total weight.</param>
     /// <param name="maxWeight">The maximum weight capacity.</param>
     /// <param name="unitWeight">The weight of a single unit of the item.</param>
+    /// <param name="tolerance">The tolerance for floating point comparisons.</param>
     /// <returns>The maximum amount that can be accepted.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float GetMaxAcceptable(
@@ -20,7 +19,7 @@ public static partial class InventoryLogic
         float currentWeight,
         float maxWeight,
         float unitWeight,
-        float tolerance = 0.001f)
+        float tolerance = MathConstants.Tolerance)
     {
         var spaceByQty = currentQty >= maxQty ? 0f : maxQty - currentQty;
 

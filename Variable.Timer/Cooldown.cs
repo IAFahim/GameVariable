@@ -135,7 +135,7 @@ public struct Cooldown :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly bool IsReady()
     {
-        return Current <= 0f;
+        return Current <= MathConstants.Tolerance;
     }
 
     /// <summary>
@@ -144,7 +144,7 @@ public struct Cooldown :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly bool IsFull()
     {
-        return Current <= 0f;
+        return Current <= MathConstants.Tolerance;
     }
 
     /// <summary>
@@ -153,7 +153,7 @@ public struct Cooldown :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly bool IsEmpty()
     {
-        return Current >= Duration;
+        return Current >= Duration - MathConstants.Tolerance;
     }
 
     /// <summary>
@@ -162,7 +162,7 @@ public struct Cooldown :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly bool IsOnCooldown()
     {
-        return Current > 0f;
+        return Current > MathConstants.Tolerance;
     }
 
     /// <summary>
@@ -172,14 +172,14 @@ public struct Cooldown :
     public readonly float Progress
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => Math.Abs(Duration) < float.Epsilon ? 1f : 1f - Current / Duration;
+        get => Math.Abs(Duration) < MathConstants.Tolerance ? 1f : 1f - Current / Duration;
     }
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly double GetRatio()
     {
-        return Math.Abs(Duration) < float.Epsilon ? 0.0 : Current / Duration;
+        return Math.Abs(Duration) < MathConstants.Tolerance ? 0.0 : Current / Duration;
     }
 
     /// <inheritdoc />
@@ -189,7 +189,7 @@ public struct Cooldown :
     }
 
     /// <inheritdoc />
-    public readonly string ToString(string format, IFormatProvider formatProvider)
+    public readonly string ToString(string? format, IFormatProvider? formatProvider)
     {
         if (string.IsNullOrEmpty(format)) format = "G";
         return $"{Current.ToString(format, formatProvider)}/{Duration.ToString(format, formatProvider)}";

@@ -12,6 +12,7 @@ public static partial class InventoryLogic
     /// <param name="dstMaxQty">The maximum quantity capacity of the destination.</param>
     /// <param name="itemUnitWeight">The weight of a single unit of the item.</param>
     /// <param name="amount">The amount to transfer.</param>
+    /// <param name="tolerance">The tolerance for floating point comparisons.</param>
     /// <returns><c>true</c> if the transfer was successful; otherwise, <c>false</c> if constraints are not met.</returns>
     public static bool TryTransferExactWithWeight(
         ref float srcQty,
@@ -19,7 +20,7 @@ public static partial class InventoryLogic
         ref float dstCurWeight,
         float dstMaxWeight,
         float dstMaxQty, float itemUnitWeight,
-        float amount, float tolerance = 0.001f)
+        float amount, float tolerance = MathConstants.Tolerance)
     {
         if (amount <= tolerance) return true;
 

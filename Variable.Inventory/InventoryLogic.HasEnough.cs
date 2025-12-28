@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Variable.Inventory;
 
 public static partial class InventoryLogic
@@ -8,7 +6,7 @@ public static partial class InventoryLogic
     ///     Checks if the inventory has enough items to satisfy a requirement.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool HasEnough(float current, float required, float tolerance = 0.001f)
+    public static bool HasEnough(float current, float required, float tolerance = MathConstants.Tolerance)
     {
         return current >= required - tolerance;
     }

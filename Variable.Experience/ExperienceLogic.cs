@@ -19,10 +19,7 @@ public static class ExperienceLogic
         {
             xp.Current -= xp.Max;
             xp.Level++;
-            xp.Max = nextMaxFormula(xp.Level);
-
-            // Safety check to prevent infinite loops if formula returns 0 or extremely low values vs high current
-            if (xp.Max <= 0) xp.Max = 1;
+            xp.Max = Math.Max(1, nextMaxFormula(xp.Level));
         }
 
         return true;
@@ -42,9 +39,7 @@ public static class ExperienceLogic
         {
             xp.Current -= xp.Max;
             xp.Level++;
-            xp.Max = nextMaxFormula(xp.Level);
-
-            if (xp.Max <= 0) xp.Max = 1;
+            xp.Max = Math.Max(1, nextMaxFormula(xp.Level));
         }
 
         return true;

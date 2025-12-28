@@ -109,7 +109,7 @@ public struct ExperienceInt :
     /// </param>
     /// <param name="formatProvider">The format provider.</param>
     /// <returns>The formatted string.</returns>
-    public string ToString(string format, IFormatProvider formatProvider)
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
         if (string.IsNullOrEmpty(format)) format = "G";
 
