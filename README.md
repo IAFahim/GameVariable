@@ -81,7 +81,7 @@ using Variable.Bounded;
 // Max 100, Current 100
 BoundedFloat hp = new BoundedFloat(100f); 
 hp -= 10f; // Take damage
-if (hp.IsEmpty) Die();
+if (hp.IsEmpty()) Die();
 ```
 
 **2. Mana (MP)**
@@ -250,7 +250,7 @@ rads += 5f * Time.deltaTime; // Standing in waste
 using Variable.Bounded;
 
 BoundedFloat weight = new BoundedFloat(100f, 0f); // Max 100kg
-bool isOverencumbered => weight.IsFull;
+bool isOverencumbered => weight.IsFull();
 ```
 
 **18. Durability**
@@ -260,7 +260,7 @@ using Variable.Bounded;
 
 BoundedInt durability = new BoundedInt(100, 100);
 durability--; // Use item
-if (durability.IsEmpty) BreakItem();
+if (durability.IsEmpty()) BreakItem();
 ```
 
 **19. Sanity/Stress**
@@ -309,6 +309,7 @@ ReservoirFloat battery = new ReservoirFloat(100f, 100f, 500f); // 100% charge, 5
 *Freshness of food items.*
 ```csharp
 using Variable.Timer;
+
 Timer freshness = new Timer(300f); // 5 minutes until rot
 ```
 
@@ -316,6 +317,7 @@ Timer freshness = new Timer(300f); // 5 minutes until rot
 *Biological lifespan.*
 ```csharp
 using Variable.Bounded;
+
 BoundedInt age = new BoundedInt(100, 0);
 ```
 
@@ -323,6 +325,7 @@ BoundedInt age = new BoundedInt(100, 0);
 *Environmental bonus metric.*
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat comfort = new BoundedFloat(10f, 0f);
 ```
 
@@ -330,6 +333,7 @@ BoundedFloat comfort = new BoundedFloat(10f, 0f);
 *Wetness.*
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat wetness = new BoundedFloat(100f, 0f);
 if (isRaining) wetness += 10f * Time.deltaTime;
 ```
@@ -345,6 +349,7 @@ hunger.Rate = -1f * metabolismMult;
 *Resistance build-up.*
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat immunity = new BoundedFloat(100f, 0f);
 ```
 
@@ -352,6 +357,7 @@ BoundedFloat immunity = new BoundedFloat(100f, 0f);
 *Vampire logic.*
 ```csharp
 using Variable.Reservoir;
+
 ReservoirFloat blood = new ReservoirFloat(10f, 10f, 0f); // No reserve, must feed
 ```
 
@@ -361,6 +367,7 @@ ReservoirFloat blood = new ReservoirFloat(10f, 10f, 0f); // No reserve, must fee
 *Generates on hit.*
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat rage = new BoundedFloat(100f, 0f);
 void OnHit() => rage += 15f;
 ```
@@ -369,6 +376,7 @@ void OnHit() => rage += 15f;
 *Slow-motion resource.*
 ```csharp
 using Variable.Regen;
+
 RegenFloat focus = new RegenFloat(100f, 100f, 5f); // Regens slowly
 ```
 
@@ -376,6 +384,7 @@ RegenFloat focus = new RegenFloat(100f, 100f, 5f); // Regens slowly
 *Temporary boost, decays rapidly.*
 ```csharp
 using Variable.Regen;
+
 RegenFloat adrenaline = new RegenFloat(100f, 0f, -10f); // Decays fast
 void OnScare() => adrenaline.Value = 100f;
 ```
@@ -384,6 +393,7 @@ void OnScare() => adrenaline.Value = 100f;
 *Invisible meter before staggering.*
 ```csharp
 using Variable.Regen;
+
 RegenFloat poise = new RegenFloat(100f, 100f, 20f); // Regens fast
 ```
 
@@ -391,6 +401,7 @@ RegenFloat poise = new RegenFloat(100f, 100f, 20f); // Regens fast
 *Buildup to incapacitation.*
 ```csharp
 using Variable.Regen;
+
 // Decays (recovers) when not hit
 RegenFloat stun = new RegenFloat(100f, 0f, -5f); 
 ```
@@ -399,6 +410,7 @@ RegenFloat stun = new RegenFloat(100f, 0f, -5f);
 *Count/Time remaining.*
 ```csharp
 using Variable.Timer;
+
 Timer comboTimer = new Timer(2f);
 int comboCount = 0;
 void Hit() { comboCount++; comboTimer.Restart(); }
@@ -408,6 +420,7 @@ void Hit() { comboCount++; comboTimer.Restart(); }
 *0 to 100% build-up.*
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat ult = new BoundedFloat(100f, 0f);
 ```
 
@@ -415,6 +428,7 @@ BoundedFloat ult = new BoundedFloat(100f, 0f);
 *Stability loss.*
 ```csharp
 using Variable.Regen;
+
 RegenFloat recoil = new RegenFloat(10f, 0f, -5f); // Recovers stability
 void Shoot() => recoil.Value += 2f;
 ```
@@ -423,14 +437,16 @@ void Shoot() => recoil.Value += 2f;
 *Weapon thermal limit.*
 ```csharp
 using Variable.Regen;
+
 RegenFloat heat = new RegenFloat(100f, 0f, -10f); // Cools down
-if (heat.IsFull) JamWeapon();
+if (heat.IsFull()) JamWeapon();
 ```
 
 **40. Armor Integrity**
 *Physical armor points.*
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat armor = new BoundedFloat(200f);
 ```
 
@@ -438,6 +454,7 @@ BoundedFloat armor = new BoundedFloat(200f);
 *Guard capability.*
 ```csharp
 using Variable.Regen;
+
 RegenFloat posture = new RegenFloat(100f, 100f, 10f);
 ```
 
@@ -445,6 +462,7 @@ RegenFloat posture = new RegenFloat(100f, 100f, 10f);
 *Sniping stability.*
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat breath = new BoundedFloat(10f, 10f);
 ```
 
@@ -452,6 +470,7 @@ BoundedFloat breath = new BoundedFloat(10f, 10f);
 *Eye meter.*
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat visibility = new BoundedFloat(100f, 0f);
 ```
 
@@ -459,6 +478,7 @@ BoundedFloat visibility = new BoundedFloat(100f, 0f);
 *Sound generated.*
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat noise = new BoundedFloat(100f, 0f);
 ```
 
@@ -466,6 +486,7 @@ BoundedFloat noise = new BoundedFloat(100f, 0f);
 *Time to bleed out.*
 ```csharp
 using Variable.Timer;
+
 Timer bleedOut = new Timer(30f);
 ```
 
@@ -473,6 +494,7 @@ Timer bleedOut = new Timer(30f);
 *I-Frames.*
 ```csharp
 using Variable.Timer;
+
 Timer iFrames = new Timer(0.5f);
 ```
 
@@ -480,6 +502,7 @@ Timer iFrames = new Timer(0.5f);
 *Channeling duration.*
 ```csharp
 using Variable.Timer;
+
 Timer castTime = new Timer(2.5f);
 ```
 
@@ -487,6 +510,7 @@ Timer castTime = new Timer(2.5f);
 *Discrete movement tokens.*
 ```csharp
 using Variable.Reservoir;
+
 // 3 charges, regens 1 every 2 seconds (custom logic needed for discrete regen)
 ReservoirInt dodges = new ReservoirInt(3, 3, 0); 
 ```
@@ -495,6 +519,7 @@ ReservoirInt dodges = new ReservoirInt(3, 3, 0);
 *Active frames.*
 ```csharp
 using Variable.Timer;
+
 Timer parryWindow = new Timer(0.2f);
 ```
 
@@ -502,6 +527,7 @@ Timer parryWindow = new Timer(0.2f);
 *AI attention.*
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat threat = new BoundedFloat(1000f, 0f);
 ```
 
@@ -510,120 +536,140 @@ BoundedFloat threat = new BoundedFloat(1000f, 0f);
 **51. Speed/Velocity**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat speed = new BoundedFloat(200f, 0f); // Max 200 mph
 ```
 
 **52. RPM**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat rpm = new BoundedFloat(8000f, 0f);
 ```
 
 **53. Boost/Nitro**
 ```csharp
 using Variable.Reservoir;
+
 ReservoirFloat nitro = new ReservoirFloat(100f, 100f, 0f);
 ```
 
 **54. Tire Grip/Wear**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat tireWear = new BoundedFloat(100f, 100f); // 100% grip
 ```
 
 **55. Hull Integrity**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat hull = new BoundedFloat(1000f);
 ```
 
 **56. Altitude**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat altitude = new BoundedFloat(50000f, 0f);
 ```
 
 **57. Depth**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat depth = new BoundedFloat(1000f, 0f);
 ```
 
 **58. G-Force**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat gForce = new BoundedFloat(9f, 0f); // Blackout at 9G
 ```
 
 **59. Cargo Space**
 ```csharp
 using Variable.Bounded;
+
 BoundedInt cargo = new BoundedInt(50, 0);
 ```
 
 **60. Signal Strength**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat signal = new BoundedFloat(100f);
 ```
 
 **61. Torque**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat torque = new BoundedFloat(500f);
 ```
 
 **62. Downforce**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat downforce = new BoundedFloat(1000f);
 ```
 
 **63. Fuel Mix**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat fuelMix = new BoundedFloat(1f, 0.5f); // Ratio
 ```
 
 **64. Brake Temperature**
 ```csharp
 using Variable.Regen;
+
 RegenFloat brakeTemp = new RegenFloat(1000f, 20f, -50f); // Cools fast
 ```
 
 **65. Warp Drive Charge**
 ```csharp
 using Variable.Timer;
+
 Timer warpSpool = new Timer(5f);
 ```
 
 **66. Shield Frequency**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat frequency = new BoundedFloat(100f);
 ```
 
 **67. Scan Progress**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat scan = new BoundedFloat(100f, 0f);
 ```
 
 **68. Drift Points**
 ```csharp
 using Variable.Bounded;
+
 BoundedInt driftScore = new BoundedInt(int.MaxValue, 0);
 ```
 
 **69. Drafting**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat draftMeter = new BoundedFloat(100f, 0f);
 ```
 
 **70. Damage State**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat damage = new BoundedFloat(100f, 0f); // 0% damaged
 ```
 
@@ -632,90 +678,105 @@ BoundedFloat damage = new BoundedFloat(100f, 0f); // 0% damaged
 **71. Reputation/Fame**
 ```csharp
 using Variable.Bounded;
+
 BoundedInt fame = new BoundedInt(1000, 0);
 ```
 
 **72. Karma/Alignment**
 ```csharp
 using Variable.Bounded;
+
 BoundedInt karma = new BoundedInt(100, 0); // -100 to 100 logic handled by wrapper
 ```
 
 **73. Loyalty/Approval**
 ```csharp
 using Variable.Bounded;
+
 BoundedInt loyalty = new BoundedInt(100, 50);
 ```
 
 **74. Morale**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat morale = new BoundedFloat(100f, 100f);
 ```
 
 **75. Population**
 ```csharp
 using Variable.Bounded;
+
 BoundedInt pop = new BoundedInt(200, 10); // Cap 200
 ```
 
 **76. Research Progress**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat research = new BoundedFloat(1000f, 0f);
 ```
 
 **77. Construction Progress**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat build = new BoundedFloat(100f, 0f);
 ```
 
 **78. Influence/Culture**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat influence = new BoundedFloat(100f, 0f);
 ```
 
 **79. Currency (Hard)**
 ```csharp
 using Variable.Bounded;
+
 BoundedInt gems = new BoundedInt(int.MaxValue, 0);
 ```
 
 **80. Action Points (AP)**
 ```csharp
 using Variable.Reservoir;
+
 ReservoirInt ap = new ReservoirInt(10, 10, 0); // Turn based
 ```
 
 **81. Movement Points**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat movePoints = new BoundedFloat(10f, 10f);
 ```
 
 **82. Command Points**
 ```csharp
 using Variable.Bounded;
+
 BoundedInt cp = new BoundedInt(100, 0);
 ```
 
 **83. Wanted Level**
 ```csharp
 using Variable.Bounded;
+
 BoundedInt stars = new BoundedInt(5, 0);
 ```
 
 **84. Suspicion**
 ```csharp
 using Variable.Regen;
+
 RegenFloat suspicion = new RegenFloat(100f, 0f, -5f); // Decays
 ```
 
 **85. Fear/Terror**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat fear = new BoundedFloat(100f, 0f);
 ```
 
@@ -724,60 +785,70 @@ BoundedFloat fear = new BoundedFloat(100f, 0f);
 **86. Loading Progress**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat loading = new BoundedFloat(1f, 0f); // 0.0 to 1.0
 ```
 
 **87. Ping/Latency**
 ```csharp
 using Variable.Bounded;
+
 BoundedInt ping = new BoundedInt(999, 20);
 ```
 
 **88. Frame Rate**
 ```csharp
 using Variable.Bounded;
+
 BoundedInt fps = new BoundedInt(999, 60);
 ```
 
 **89. Memory Usage**
 ```csharp
 using Variable.Bounded;
+
 BoundedLong ram = new BoundedLong(16000, 4000); // MB
 ```
 
 **90. Download Speed**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat dlSpeed = new BoundedFloat(1000f, 0f); // Mbps
 ```
 
 **91. Matchmaking Rating (MMR)**
 ```csharp
 using Variable.Bounded;
+
 BoundedInt mmr = new BoundedInt(5000, 1200);
 ```
 
 **92. Party Size**
 ```csharp
 using Variable.Bounded;
+
 BoundedInt party = new BoundedInt(4, 1);
 ```
 
 **93. Inventory Slots**
 ```csharp
 using Variable.Bounded;
+
 BoundedInt slots = new BoundedInt(30, 0);
 ```
 
 **94. Stack Size**
 ```csharp
 using Variable.Bounded;
+
 BoundedInt stack = new BoundedInt(64, 1);
 ```
 
 **95. Loot Rarity**
 ```csharp
 using Variable.Range;
+
 RangeFloat rarityRange = new RangeFloat(0f, 1f);
 // Use external RNG to pick value within range
 ```
@@ -792,23 +863,26 @@ float luck = 10f;
 **97. Chaos**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat chaos = new BoundedFloat(100f, 0f); // Low vs High chaos
 ```
 
 **98. Hype**
 ```csharp
 using Variable.Regen;
+
 RegenFloat hype = new RegenFloat(100f, 0f, -2f); // Decays if boring
 ```
 
 **99. Map Completion**
 ```csharp
 using Variable.Bounded;
+
 BoundedFloat map = new BoundedFloat(100f, 0f);
 ```
+
+---
 
 **Author:** Md Ishtiaq Ahamed Fahim  
 **GitHub:** [iafahim/GameVariable](https://github.com/iafahim/GameVariable)  
 **Email:** iafahim.dev@gmail.com
-
----
