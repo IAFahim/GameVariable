@@ -4,50 +4,52 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
+using Variable.Core;
+
 namespace Variable.Bounded
 {
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
     [DebuggerDisplay("{Current}/{Max}")]
-    public struct BoundedShort :
-        IEquatable<BoundedShort>,
-        IComparable<BoundedShort>,
+    public struct BoundedLong :
+        IVariable,
+        IEquatable<BoundedLong>,
+        IComparable<BoundedLong>,
         IComparable,
         IFormattable,
         IConvertible
     {
-        public short Current;
-        public short Max;
+        public long Current;
+        public long Max;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public BoundedShort(short max, short current)
+        public BoundedLong(long max, long current)
         {
             Max = max;
-            Current = current > max ? max : (current < 0 ? (short)0 : current);
+            Current = current > max ? max : (current < 0 ? 0L : current);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public BoundedShort(short max) : this(max, max)
+        public BoundedLong(long max) : this(max, max)
         {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Normalize() => Current = Current > Max ? Max : (Current < 0 ? (short)0 : Current);
+        public void Normalize() => Current = Current > Max ? Max : (Current < 0 ? 0L : Current);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Deconstruct(out short current, out short max)
+        public void Deconstruct(out long current, out long max)
         {
             current = Current;
             max = Max;
         }
 
-        private BoundedShort(SerializationInfo info, StreamingContext context)
+        private BoundedLong(SerializationInfo info, StreamingContext context)
         {
-            Max = info.GetInt16(nameof(Max));
-            short raw = info.GetInt16(nameof(Current));
-            Current = raw > Max ? Max : (raw < 0 ? (short)0 : raw);
+            Max = info.GetInt64(nameof(Max));
+            long raw = info.GetInt64(nameof(Current));
+            Current = raw > Max ? Max : (raw < 0 ? 0L : raw);
         }
-
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public double GetRatio() => Max == 0 ? 0.0 : (double)Current / Max;
@@ -65,7 +67,7 @@ namespace Variable.Bounded
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator short(BoundedShort value) => value.Current;
+        public static implicit operator long(BoundedLong value) => value.Current;
 
         public override string ToString() => $"{Current}/{Max}";
 
@@ -81,13 +83,13 @@ namespace Variable.Bounded
             }
         }
 
-        public override bool Equals(object obj) => obj is BoundedShort other && Equals(other);
+        public override bool Equals(object obj) => obj is BoundedLong other && Equals(other);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals(BoundedShort other) => Current == other.Current && Max == other.Max;
+        public bool Equals(BoundedLong other) => Current == other.Current && Max == other.Max;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int CompareTo(BoundedShort other)
+        public int CompareTo(BoundedLong other)
         {
             int cmp = Current.CompareTo(other.Current);
             return cmp != 0 ? cmp : Max.CompareTo(other.Max);
@@ -96,22 +98,22 @@ namespace Variable.Bounded
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int CompareTo(object obj)
         {
-            if (obj is BoundedShort other) return CompareTo(other);
-            throw new ArgumentException($"Object must be of type {nameof(BoundedShort)}");
+            if (obj is BoundedLong other) return CompareTo(other);
+            throw new ArgumentException($"Object must be of type {nameof(BoundedLong)}");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode() => HashCode.Combine(Current, Max);
 
-        public TypeCode GetTypeCode() => TypeCode.Int16;
+        public TypeCode GetTypeCode() => TypeCode.Int64;
         bool IConvertible.ToBoolean(IFormatProvider provider) => Current != 0;
         byte IConvertible.ToByte(IFormatProvider provider) => (byte)Current;
         char IConvertible.ToChar(IFormatProvider provider) => (char)Current;
         DateTime IConvertible.ToDateTime(IFormatProvider provider) => throw new InvalidCastException();
         decimal IConvertible.ToDecimal(IFormatProvider provider) => Current;
         double IConvertible.ToDouble(IFormatProvider provider) => Current;
-        short IConvertible.ToInt16(IFormatProvider provider) => Current;
-        int IConvertible.ToInt32(IFormatProvider provider) => Current;
+        short IConvertible.ToInt16(IFormatProvider provider) => (short)Current;
+        int IConvertible.ToInt32(IFormatProvider provider) => (int)Current;
         long IConvertible.ToInt64(IFormatProvider provider) => Current;
         sbyte IConvertible.ToSByte(IFormatProvider provider) => (sbyte)Current;
         float IConvertible.ToSingle(IFormatProvider provider) => Current;
@@ -125,42 +127,36 @@ namespace Variable.Bounded
         ulong IConvertible.ToUInt64(IFormatProvider provider) => (ulong)Current;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(BoundedShort left, BoundedShort right) => left.Equals(right);
+        public static bool operator ==(BoundedLong left, BoundedLong right) => left.Equals(right);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(BoundedShort left, BoundedShort right) => !left.Equals(right);
+        public static bool operator !=(BoundedLong left, BoundedLong right) => !left.Equals(right);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <(BoundedShort left, BoundedShort right) => left.CompareTo(right) < 0;
+        public static bool operator <(BoundedLong left, BoundedLong right) => left.CompareTo(right) < 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <=(BoundedShort left, BoundedShort right) => left.CompareTo(right) <= 0;
+        public static bool operator <=(BoundedLong left, BoundedLong right) => left.CompareTo(right) <= 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >(BoundedShort left, BoundedShort right) => left.CompareTo(right) > 0;
+        public static bool operator >(BoundedLong left, BoundedLong right) => left.CompareTo(right) > 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >=(BoundedShort left, BoundedShort right) => left.CompareTo(right) >= 0;
+        public static bool operator >=(BoundedLong left, BoundedLong right) => left.CompareTo(right) >= 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedShort operator ++(BoundedShort a) => a + 1;
+        public static BoundedLong operator ++(BoundedLong a) => a + 1;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedShort operator --(BoundedShort a) => a - 1;
+        public static BoundedLong operator --(BoundedLong a) => a - 1;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedShort operator +(BoundedShort a, int b)
-        {
-            int res = a.Current + b;
-            if (res > a.Max) res = a.Max;
-            else if (res < 0) res = 0;
-            return new BoundedShort(a.Max, (short)res);
-        }
+        public static BoundedLong operator +(BoundedLong a, long b) => new BoundedLong(a.Max, a.Current + b);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedShort operator +(int b, BoundedShort a) => a + b;
+        public static BoundedLong operator +(long b, BoundedLong a) => a + b;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedShort operator -(BoundedShort a, int b) => a + (-b);
+        public static BoundedLong operator -(BoundedLong a, long b) => new BoundedLong(a.Max, a.Current - b);
     }
 }

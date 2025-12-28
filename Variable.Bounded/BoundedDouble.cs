@@ -1,70 +1,73 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+
+using Variable.Core;
 
 namespace Variable.Bounded
 {
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
     [DebuggerDisplay("{Current}/{Max}")]
-    public struct BoundedFloat :
-        IEquatable<BoundedFloat>,
-        IComparable<BoundedFloat>,
+    public struct BoundedDouble :
+        IVariable,
+        IEquatable<BoundedDouble>,
+        IComparable<BoundedDouble>,
         IComparable,
         IFormattable,
         IConvertible
     {
-        public float Current;
-        public float Max;
+        public double Current;
+        public double Max;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public BoundedFloat(float max, float current)
+        public BoundedDouble(double max, double current)
         {
             Max = max;
-            Current = current > max ? max : (current < 0f ? 0f : current);
+            Current = current > max ? max : (current < 0.0 ? 0.0 : current);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public BoundedFloat(float max) : this(max, max)
+        public BoundedDouble(double max) : this(max, max)
         {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Normalize() => Current = Current > Max ? Max : (Current < 0f ? 0f : Current);
+        public void Normalize() => Current = Current > Max ? Max : (Current < 0.0 ? 0.0 : Current);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Deconstruct(out float current, out float max)
+        public void Deconstruct(out double current, out double max)
         {
             current = Current;
             max = Max;
         }
 
-        private BoundedFloat(SerializationInfo info, StreamingContext context)
+        private BoundedDouble(SerializationInfo info, StreamingContext context)
         {
-            Max = info.GetSingle(nameof(Max));
-            float raw = info.GetSingle(nameof(Current));
-            Current = raw > Max ? Max : (raw < 0f ? 0f : raw);
+            Max = info.GetDouble(nameof(Max));
+            double raw = info.GetDouble(nameof(Current));
+            Current = raw > Max ? Max : (raw < 0.0 ? 0.0 : raw);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public double GetRatio() => Math.Abs(Max) < float.Epsilon ? 0.0 : Current / Max;
+        public double GetRatio() => Math.Abs(Max) < double.Epsilon ? 0.0 : Current / Max;
 
         public bool IsFull
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Math.Abs(Current - Max) < float.Epsilon;
+            get => Math.Abs(Current - Max) < double.Epsilon;
         }
 
         public bool IsEmpty
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Math.Abs(Current) < float.Epsilon;
+            get => Math.Abs(Current) < double.Epsilon;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator float(BoundedFloat value) => value.Current;
+        public static implicit operator double(BoundedDouble value) => value.Current;
 
         public override string ToString() => $"{Current}/{Max}";
 
@@ -80,13 +83,13 @@ namespace Variable.Bounded
             }
         }
 
-        public override bool Equals(object obj) => obj is BoundedFloat other && Equals(other);
+        public override bool Equals(object obj) => obj is BoundedDouble other && Equals(other);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals(BoundedFloat other) => Current.Equals(other.Current) && Max.Equals(other.Max);
+        public bool Equals(BoundedDouble other) => Current.Equals(other.Current) && Max.Equals(other.Max);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int CompareTo(BoundedFloat other)
+        public int CompareTo(BoundedDouble other)
         {
             int cmp = Current.CompareTo(other.Current);
             return cmp != 0 ? cmp : Max.CompareTo(other.Max);
@@ -95,14 +98,14 @@ namespace Variable.Bounded
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int CompareTo(object obj)
         {
-            if (obj is BoundedFloat other) return CompareTo(other);
-            throw new ArgumentException($"Object must be of type {nameof(BoundedFloat)}");
+            if (obj is BoundedDouble other) return CompareTo(other);
+            throw new ArgumentException($"Object must be of type {nameof(BoundedDouble)}");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode() => HashCode.Combine(Current, Max);
 
-        public TypeCode GetTypeCode() => TypeCode.Single;
+        public TypeCode GetTypeCode() => TypeCode.Double;
         bool IConvertible.ToBoolean(IFormatProvider provider) => Current != 0;
         byte IConvertible.ToByte(IFormatProvider provider) => (byte)Current;
         char IConvertible.ToChar(IFormatProvider provider) => (char)Current;
@@ -113,7 +116,7 @@ namespace Variable.Bounded
         int IConvertible.ToInt32(IFormatProvider provider) => (int)Current;
         long IConvertible.ToInt64(IFormatProvider provider) => (long)Current;
         sbyte IConvertible.ToSByte(IFormatProvider provider) => (sbyte)Current;
-        float IConvertible.ToSingle(IFormatProvider provider) => Current;
+        float IConvertible.ToSingle(IFormatProvider provider) => (float)Current;
         string IConvertible.ToString(IFormatProvider provider) => ToString("G", provider);
 
         object IConvertible.ToType(Type conversionType, IFormatProvider provider) =>
@@ -123,37 +126,26 @@ namespace Variable.Bounded
         uint IConvertible.ToUInt32(IFormatProvider provider) => (uint)Current;
         ulong IConvertible.ToUInt64(IFormatProvider provider) => (ulong)Current;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(BoundedFloat left, BoundedFloat right) => left.Equals(right);
+        public static bool operator ==(BoundedDouble left, BoundedDouble right) => left.Equals(right);
+        public static bool operator !=(BoundedDouble left, BoundedDouble right) => !left.Equals(right);
+        public static bool operator <(BoundedDouble left, BoundedDouble right) => left.CompareTo(right) < 0;
+        public static bool operator <=(BoundedDouble left, BoundedDouble right) => left.CompareTo(right) <= 0;
+        public static bool operator >(BoundedDouble left, BoundedDouble right) => left.CompareTo(right) > 0;
+        public static bool operator >=(BoundedDouble left, BoundedDouble right) => left.CompareTo(right) >= 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(BoundedFloat left, BoundedFloat right) => !left.Equals(right);
+        public static BoundedDouble operator ++(BoundedDouble a) => a + 1.0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <(BoundedFloat left, BoundedFloat right) => left.CompareTo(right) < 0;
+        public static BoundedDouble operator --(BoundedDouble a) => a - 1.0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <=(BoundedFloat left, BoundedFloat right) => left.CompareTo(right) <= 0;
+        public static BoundedDouble operator +(BoundedDouble a, double b) => new BoundedDouble(a.Max, a.Current + b);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >(BoundedFloat left, BoundedFloat right) => left.CompareTo(right) > 0;
+        public static BoundedDouble operator +(double b, BoundedDouble a) => a + b;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >=(BoundedFloat left, BoundedFloat right) => left.CompareTo(right) >= 0;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedFloat operator ++(BoundedFloat a) => a + 1f;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedFloat operator --(BoundedFloat a) => a - 1f;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedFloat operator +(BoundedFloat a, float b) => new BoundedFloat(a.Max, a.Current + b);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedFloat operator +(float b, BoundedFloat a) => a + b;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BoundedFloat operator -(BoundedFloat a, float b) => new BoundedFloat(a.Max, a.Current - b);
+        public static BoundedDouble operator -(BoundedDouble a, double b) => new BoundedDouble(a.Max, a.Current - b);
     }
 }

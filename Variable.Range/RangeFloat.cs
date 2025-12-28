@@ -4,24 +4,27 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
+using Variable.Core;
+
 namespace Variable.Range
 {
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
     [DebuggerDisplay("{Current} [{Min}, {Max}]")]
-    public struct RangeInt :
-        IEquatable<RangeInt>,
-        IComparable<RangeInt>,
+    public struct RangeFloat :
+        IVariable,
+        IEquatable<RangeFloat>,
+        IComparable<RangeFloat>,
         IComparable,
         IFormattable,
         IConvertible
     {
-        public int Current;
-        public int Min;
-        public int Max;
+        public float Current;
+        public float Min;
+        public float Max;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public RangeInt(int min, int max, int current)
+        public RangeFloat(float min, float max, float current)
         {
             Min = min;
             Max = max;
@@ -29,7 +32,7 @@ namespace Variable.Range
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public RangeInt(int min, int max) : this(min, max, min)
+        public RangeFloat(float min, float max) : this(min, max, min)
         {
         }
 
@@ -37,38 +40,38 @@ namespace Variable.Range
         public void Normalize() => Current = Current > Max ? Max : (Current < Min ? Min : Current);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Deconstruct(out int current, out int min, out int max)
+        public void Deconstruct(out float current, out float min, out float max)
         {
             current = Current;
             min = Min;
             max = Max;
         }
 
-        private RangeInt(SerializationInfo info, StreamingContext context)
+        private RangeFloat(SerializationInfo info, StreamingContext context)
         {
-            Min = info.GetInt32(nameof(Min));
-            Max = info.GetInt32(nameof(Max));
-            int raw = info.GetInt32(nameof(Current));
+            Min = info.GetSingle(nameof(Min));
+            Max = info.GetSingle(nameof(Max));
+            float raw = info.GetSingle(nameof(Current));
             Current = raw > Max ? Max : (raw < Min ? Min : raw);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public double GetRatio() => Max == Min ? 0.0 : (double)(Current - Min) / (Max - Min);
+        public double GetRatio() => Math.Abs(Max - Min) < float.Epsilon ? 0.0 : (Current - Min) / (Max - Min);
 
         public bool IsFull
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Current == Max;
+            get => Math.Abs(Current - Max) < float.Epsilon;
         }
 
         public bool IsEmpty
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Current == Min;
+            get => Math.Abs(Current - Min) < float.Epsilon;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator int(RangeInt value) => value.Current;
+        public static implicit operator float(RangeFloat value) => value.Current;
 
         public override string ToString() => $"{Current} [{Min}, {Max}]";
 
@@ -80,17 +83,17 @@ namespace Variable.Range
             {
                 case "R": return GetRatio().ToString("P", formatProvider);
                 case "C": return $"{Current} [{Min}, {Max}]";
-                default: return ToString();
+                default: return $"{Current.ToString(format, formatProvider)} [{Min.ToString(format, formatProvider)}, {Max.ToString(format, formatProvider)}]";
             }
         }
 
-        public override bool Equals(object obj) => obj is RangeInt other && Equals(other);
+        public override bool Equals(object obj) => obj is RangeFloat other && Equals(other);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals(RangeInt other) => Current == other.Current && Min == other.Min && Max == other.Max;
+        public bool Equals(RangeFloat other) => Current.Equals(other.Current) && Min.Equals(other.Min) && Max.Equals(other.Max);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int CompareTo(RangeInt other)
+        public int CompareTo(RangeFloat other)
         {
             int cmp = Current.CompareTo(other.Current);
             if (cmp != 0) return cmp;
@@ -101,23 +104,23 @@ namespace Variable.Range
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int CompareTo(object obj)
         {
-            if (obj is RangeInt other) return CompareTo(other);
-            throw new ArgumentException($"Object must be of type {nameof(RangeInt)}");
+            if (obj is RangeFloat other) return CompareTo(other);
+            throw new ArgumentException($"Object must be of type {nameof(RangeFloat)}");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode() => HashCode.Combine(Current, Min, Max);
 
-        public TypeCode GetTypeCode() => TypeCode.Int32;
+        public TypeCode GetTypeCode() => TypeCode.Single;
         bool IConvertible.ToBoolean(IFormatProvider provider) => Current != 0;
         byte IConvertible.ToByte(IFormatProvider provider) => (byte)Current;
         char IConvertible.ToChar(IFormatProvider provider) => (char)Current;
         DateTime IConvertible.ToDateTime(IFormatProvider provider) => throw new InvalidCastException();
-        decimal IConvertible.ToDecimal(IFormatProvider provider) => Current;
+        decimal IConvertible.ToDecimal(IFormatProvider provider) => (decimal)Current;
         double IConvertible.ToDouble(IFormatProvider provider) => Current;
         short IConvertible.ToInt16(IFormatProvider provider) => (short)Current;
-        int IConvertible.ToInt32(IFormatProvider provider) => Current;
-        long IConvertible.ToInt64(IFormatProvider provider) => Current;
+        int IConvertible.ToInt32(IFormatProvider provider) => (int)Current;
+        long IConvertible.ToInt64(IFormatProvider provider) => (long)Current;
         sbyte IConvertible.ToSByte(IFormatProvider provider) => (sbyte)Current;
         float IConvertible.ToSingle(IFormatProvider provider) => Current;
         string IConvertible.ToString(IFormatProvider provider) => ToString("G", provider);
@@ -130,42 +133,36 @@ namespace Variable.Range
         ulong IConvertible.ToUInt64(IFormatProvider provider) => (ulong)Current;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(RangeInt left, RangeInt right) => left.Equals(right);
+        public static bool operator ==(RangeFloat left, RangeFloat right) => left.Equals(right);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(RangeInt left, RangeInt right) => !left.Equals(right);
+        public static bool operator !=(RangeFloat left, RangeFloat right) => !left.Equals(right);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <(RangeInt left, RangeInt right) => left.CompareTo(right) < 0;
+        public static bool operator <(RangeFloat left, RangeFloat right) => left.CompareTo(right) < 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <=(RangeInt left, RangeInt right) => left.CompareTo(right) <= 0;
+        public static bool operator <=(RangeFloat left, RangeFloat right) => left.CompareTo(right) <= 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >(RangeInt left, RangeInt right) => left.CompareTo(right) > 0;
+        public static bool operator >(RangeFloat left, RangeFloat right) => left.CompareTo(right) > 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >=(RangeInt left, RangeInt right) => left.CompareTo(right) >= 0;
+        public static bool operator >=(RangeFloat left, RangeFloat right) => left.CompareTo(right) >= 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static RangeInt operator ++(RangeInt a) => a + 1;
+        public static RangeFloat operator ++(RangeFloat a) => a + 1f;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static RangeInt operator --(RangeInt a) => a - 1;
+        public static RangeFloat operator --(RangeFloat a) => a - 1f;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static RangeInt operator +(RangeInt a, int b)
-        {
-            long res = (long)a.Current + b;
-            if (res > a.Max) res = a.Max;
-            else if (res < a.Min) res = a.Min;
-            return new RangeInt(a.Min, a.Max, (int)res);
-        }
+        public static RangeFloat operator +(RangeFloat a, float b) => new RangeFloat(a.Min, a.Max, a.Current + b);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static RangeInt operator +(int b, RangeInt a) => a + b;
+        public static RangeFloat operator +(float b, RangeFloat a) => a + b;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static RangeInt operator -(RangeInt a, int b) => a + (-b);
+        public static RangeFloat operator -(RangeFloat a, float b) => new RangeFloat(a.Min, a.Max, a.Current - b);
     }
 }

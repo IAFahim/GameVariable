@@ -4,12 +4,15 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
+using Variable.Core;
+
 namespace Variable.Range
 {
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
     [DebuggerDisplay("{Current} [{Min}, {Max}]")]
     public struct RangeByte :
+        IVariable,
         IEquatable<RangeByte>,
         IComparable<RangeByte>,
         IComparable,

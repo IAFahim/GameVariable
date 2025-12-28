@@ -2,16 +2,17 @@ using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
+using Variable.Core;
 
 namespace Variable.Timer
 {
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
     [DebuggerDisplay("{Current}/{Duration}")]
-    public struct Timer :
-        IEquatable<Timer>,
-        IComparable<Timer>,
+    public struct Cooldown :
+        IVariable,
+        IEquatable<Cooldown>,
+        IComparable<Cooldown>,
         IComparable,
         IFormattable
     {
@@ -19,31 +20,32 @@ namespace Variable.Timer
         public float Duration;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Timer(float duration, float current)
+        public Cooldown(float duration, float current = 0f)
         {
             Duration = duration;
             Current = current > duration ? duration : (current < 0f ? 0f : current);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Timer(float duration) : this(duration, 0f)
-        {
-        }
+        public void Reset() => Current = Duration;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Reset() => Current = 0f;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Finish() => Current = Duration;
+        public void Finish() => Current = 0f;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Tick(float deltaTime)
         {
-            Current += deltaTime;
-            if (Current > Duration) Current = Duration;
+            Current -= deltaTime;
+            if (Current < 0f) Current = 0f;
         }
 
-        public bool IsFinished
+        public bool IsFull
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Current <= 0f;
+        }
+
+        public bool IsEmpty
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => Current >= Duration;
@@ -60,13 +62,13 @@ namespace Variable.Timer
             return $"{Current.ToString(format, formatProvider)}/{Duration.ToString(format, formatProvider)}";
         }
 
-        public override bool Equals(object obj) => obj is Timer other && Equals(other);
+        public override bool Equals(object obj) => obj is Cooldown other && Equals(other);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals(Timer other) => Current.Equals(other.Current) && Duration.Equals(other.Duration);
+        public bool Equals(Cooldown other) => Current.Equals(other.Current) && Duration.Equals(other.Duration);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int CompareTo(Timer other)
+        public int CompareTo(Cooldown other)
         {
             int cmp = Current.CompareTo(other.Current);
             return cmp != 0 ? cmp : Duration.CompareTo(other.Duration);
@@ -75,17 +77,17 @@ namespace Variable.Timer
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int CompareTo(object obj)
         {
-            if (obj is Timer other) return CompareTo(other);
-            throw new ArgumentException($"Object must be of type {nameof(Timer)}");
+            if (obj is Cooldown other) return CompareTo(other);
+            throw new ArgumentException($"Object must be of type {nameof(Cooldown)}");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode() => HashCode.Combine(Current, Duration);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(Timer left, Timer right) => left.Equals(right);
+        public static bool operator ==(Cooldown left, Cooldown right) => left.Equals(right);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(Timer left, Timer right) => !left.Equals(right);
+        public static bool operator !=(Cooldown left, Cooldown right) => !left.Equals(right);
     }
 }

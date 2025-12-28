@@ -4,56 +4,56 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
-namespace Variable.Range
+using Variable.Core;
+
+namespace Variable.Bounded
 {
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    [DebuggerDisplay("{Current} [{Min}, {Max}]")]
-    public struct RangeShort :
-        IEquatable<RangeShort>,
-        IComparable<RangeShort>,
+    [DebuggerDisplay("{Current}/{Max}")]
+    public struct BoundedByte :
+        IVariable,
+        IEquatable<BoundedByte>,
+        IComparable<BoundedByte>,
         IComparable,
         IFormattable,
         IConvertible
     {
-        public short Current;
-        public short Min;
-        public short Max;
+        public byte Current;
+        public byte Max;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public RangeShort(short min, short max, short current)
+        public BoundedByte(byte max, byte current)
         {
-            Min = min;
             Max = max;
-            Current = current > max ? max : (current < min ? min : current);
+            Current = current > max ? max : current;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public RangeShort(short min, short max) : this(min, max, min)
+        public BoundedByte(byte max) : this(max, max)
         {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Normalize() => Current = Current > Max ? Max : (Current < Min ? Min : Current);
+        public void Normalize() => Current = Current > Max ? Max : Current;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Deconstruct(out short current, out short min, out short max)
+        public void Deconstruct(out byte current, out byte max)
         {
             current = Current;
-            min = Min;
             max = Max;
         }
 
-        private RangeShort(SerializationInfo info, StreamingContext context)
+        private BoundedByte(SerializationInfo info, StreamingContext context)
         {
-            Min = info.GetInt16(nameof(Min));
-            Max = info.GetInt16(nameof(Max));
-            short raw = info.GetInt16(nameof(Current));
-            Current = raw > Max ? Max : (raw < Min ? Min : raw);
+            Max = info.GetByte(nameof(Max));
+            byte raw = info.GetByte(nameof(Current));
+            Current = raw > Max ? Max : raw;
         }
 
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public double GetRatio() => Max == Min ? 0.0 : (double)(Current - Min) / (Max - Min);
+        public double GetRatio() => Max == 0 ? 0.0 : (double)Current / Max;
 
         public bool IsFull
         {
@@ -64,13 +64,13 @@ namespace Variable.Range
         public bool IsEmpty
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Current == Min;
+            get => Current == 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator short(RangeShort value) => value.Current;
+        public static implicit operator byte(BoundedByte value) => value.Current;
 
-        public override string ToString() => $"{Current} [{Min}, {Max}]";
+        public override string ToString() => $"{Current}/{Max}";
 
         public string ToString(string format, IFormatProvider formatProvider)
         {
@@ -79,38 +79,36 @@ namespace Variable.Range
             switch (format.ToUpperInvariant())
             {
                 case "R": return GetRatio().ToString("P", formatProvider);
-                case "C": return $"{Current} [{Min}, {Max}]";
+                case "C": return $"{Current}/{Max}";
                 default: return ToString();
             }
         }
 
-        public override bool Equals(object obj) => obj is RangeShort other && Equals(other);
+        public override bool Equals(object obj) => obj is BoundedByte other && Equals(other);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals(RangeShort other) => Current == other.Current && Min == other.Min && Max == other.Max;
+        public bool Equals(BoundedByte other) => Current == other.Current && Max == other.Max;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int CompareTo(RangeShort other)
+        public int CompareTo(BoundedByte other)
         {
             int cmp = Current.CompareTo(other.Current);
-            if (cmp != 0) return cmp;
-            cmp = Min.CompareTo(other.Min);
             return cmp != 0 ? cmp : Max.CompareTo(other.Max);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int CompareTo(object obj)
         {
-            if (obj is RangeShort other) return CompareTo(other);
-            throw new ArgumentException($"Object must be of type {nameof(RangeShort)}");
+            if (obj is BoundedByte other) return CompareTo(other);
+            throw new ArgumentException($"Object must be of type {nameof(BoundedByte)}");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override int GetHashCode() => HashCode.Combine(Current, Min, Max);
+        public override int GetHashCode() => HashCode.Combine(Current, Max);
 
-        public TypeCode GetTypeCode() => TypeCode.Int16;
+        public TypeCode GetTypeCode() => TypeCode.Byte;
         bool IConvertible.ToBoolean(IFormatProvider provider) => Current != 0;
-        byte IConvertible.ToByte(IFormatProvider provider) => (byte)Current;
+        byte IConvertible.ToByte(IFormatProvider provider) => Current;
         char IConvertible.ToChar(IFormatProvider provider) => (char)Current;
         DateTime IConvertible.ToDateTime(IFormatProvider provider) => throw new InvalidCastException();
         decimal IConvertible.ToDecimal(IFormatProvider provider) => Current;
@@ -125,47 +123,47 @@ namespace Variable.Range
         object IConvertible.ToType(Type conversionType, IFormatProvider provider) =>
             Convert.ChangeType(Current, conversionType, provider);
 
-        ushort IConvertible.ToUInt16(IFormatProvider provider) => (ushort)Current;
-        uint IConvertible.ToUInt32(IFormatProvider provider) => (uint)Current;
-        ulong IConvertible.ToUInt64(IFormatProvider provider) => (ulong)Current;
+        ushort IConvertible.ToUInt16(IFormatProvider provider) => Current;
+        uint IConvertible.ToUInt32(IFormatProvider provider) => Current;
+        ulong IConvertible.ToUInt64(IFormatProvider provider) => Current;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(RangeShort left, RangeShort right) => left.Equals(right);
+        public static bool operator ==(BoundedByte left, BoundedByte right) => left.Equals(right);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(RangeShort left, RangeShort right) => !left.Equals(right);
+        public static bool operator !=(BoundedByte left, BoundedByte right) => !left.Equals(right);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <(RangeShort left, RangeShort right) => left.CompareTo(right) < 0;
+        public static bool operator <(BoundedByte left, BoundedByte right) => left.CompareTo(right) < 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <=(RangeShort left, RangeShort right) => left.CompareTo(right) <= 0;
+        public static bool operator <=(BoundedByte left, BoundedByte right) => left.CompareTo(right) <= 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >(RangeShort left, RangeShort right) => left.CompareTo(right) > 0;
+        public static bool operator >(BoundedByte left, BoundedByte right) => left.CompareTo(right) > 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >=(RangeShort left, RangeShort right) => left.CompareTo(right) >= 0;
+        public static bool operator >=(BoundedByte left, BoundedByte right) => left.CompareTo(right) >= 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static RangeShort operator ++(RangeShort a) => a + 1;
+        public static BoundedByte operator ++(BoundedByte a) => a + 1;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static RangeShort operator --(RangeShort a) => a - 1;
+        public static BoundedByte operator --(BoundedByte a) => a - 1;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static RangeShort operator +(RangeShort a, int b)
+        public static BoundedByte operator +(BoundedByte a, int b)
         {
             int res = a.Current + b;
             if (res > a.Max) res = a.Max;
-            else if (res < a.Min) res = a.Min;
-            return new RangeShort(a.Min, a.Max, (short)res);
+            else if (res < 0) res = 0;
+            return new BoundedByte(a.Max, (byte)res);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static RangeShort operator +(int b, RangeShort a) => a + b;
+        public static BoundedByte operator +(int b, BoundedByte a) => a + b;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static RangeShort operator -(RangeShort a, int b) => a + (-b);
+        public static BoundedByte operator -(BoundedByte a, int b) => a + (-b);
     }
 }
