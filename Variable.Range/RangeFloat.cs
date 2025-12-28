@@ -54,17 +54,11 @@ namespace Variable.Range
             return Math.Abs(Max - Min) < float.Epsilon ? 0.0 : (Current - Min) / (Max - Min);
         }
 
-        public bool IsFull
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Math.Abs(Current - Max) < float.Epsilon;
-        }
-
-        public bool IsEmpty
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Math.Abs(Current - Min) < float.Epsilon;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsFull() => Math.Abs(Current - Max) < float.Epsilon;
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsEmpty() => Math.Abs(Current - Min) < float.Epsilon;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator float(RangeFloat value)

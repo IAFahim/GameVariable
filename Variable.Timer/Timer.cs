@@ -44,18 +44,12 @@ namespace Variable.Timer
             Current += deltaTime;
             if (Current > Duration) Current = Duration;
         }
-
-        public bool IsFull
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Current >= Duration;
-        }
-
-        public bool IsEmpty
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Current <= 0f;
-        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsFull() => Current >= Duration;
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsEmpty() => Current <= 0f;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public double GetRatio()

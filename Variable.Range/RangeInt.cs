@@ -54,17 +54,11 @@ namespace Variable.Range
             return Max == Min ? 0.0 : (double)(Current - Min) / (Max - Min);
         }
 
-        public bool IsFull
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Current == Max;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsFull() => Current == Max;
 
-        public bool IsEmpty
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Current == Min;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsEmpty() => Current == Min;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator int(RangeInt value)

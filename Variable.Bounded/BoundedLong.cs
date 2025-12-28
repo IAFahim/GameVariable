@@ -51,17 +51,11 @@ namespace Variable.Bounded
             return Max == 0 ? 0.0 : (double)Current / Max;
         }
 
-        public bool IsFull
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Current == Max;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsFull() => Current == Max;
 
-        public bool IsEmpty
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Current == 0;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsEmpty() => Current == 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator long(BoundedLong value)

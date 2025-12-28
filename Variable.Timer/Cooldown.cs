@@ -45,17 +45,11 @@ namespace Variable.Timer
             if (Current < 0f) Current = 0f;
         }
 
-        public bool IsFull
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Current <= 0f;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsFull() => Current <= 0f;
 
-        public bool IsEmpty
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Current >= Duration;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsEmpty() => Current >= Duration;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public double GetRatio()

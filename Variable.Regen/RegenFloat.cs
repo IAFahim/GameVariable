@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Variable.Bounded;
+using Variable.Core;
 
 namespace Variable.Regen;
 
@@ -7,30 +8,31 @@ namespace Variable.Regen;
 ///     A bounded float value that automatically regenerates or decays over time.
 /// </summary>
 [Serializable]
-public struct RegenFloat
+public struct RegenFloat : IBoundedInfo
 {
     public BoundedFloat Value;
     public float Rate; // Units per second
 
-    public float Current
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void SetCurrent(float current)
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => Value.Current;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        set => Value.Current = value;
+        Value.Current = current;
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float GetCurrent()
+    {
+        return Value.Current;
     }
 
-    public bool IsEmpty
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => Value.IsEmpty;
-    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool IsEmpty() => Value.IsEmpty();
 
-    public bool IsFull
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => Value.IsFull;
-    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public double GetRatio() => Value.GetRatio();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool IsFull() => Value.IsFull();
 
     public RegenFloat(float max, float current, float rate)
     {

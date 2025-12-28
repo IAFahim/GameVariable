@@ -51,17 +51,11 @@ namespace Variable.Bounded
             return Math.Abs(Max) < double.Epsilon ? 0.0 : Current / Max;
         }
 
-        public bool IsFull
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Math.Abs(Current - Max) < double.Epsilon;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsFull() => Math.Abs(Current - Max) < double.Epsilon;
 
-        public bool IsEmpty
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Math.Abs(Current) < double.Epsilon;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsEmpty() => Math.Abs(Current) < double.Epsilon;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator double(BoundedDouble value)
