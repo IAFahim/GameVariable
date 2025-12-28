@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Variable.Range", "Variable.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Variable.Timer", "Variable.Timer\Variable.Timer.csproj", "{979796FC-A490-45DB-B7B4-A9A781D64089}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Variable.Inventory", "Variable.Inventory\Variable.Inventory.csproj", "{CED06A8A-D446-41E7-A414-C45BEB1321A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,5 +36,9 @@ Global
 		{979796FC-A490-45DB-B7B4-A9A781D64089}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{979796FC-A490-45DB-B7B4-A9A781D64089}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{979796FC-A490-45DB-B7B4-A9A781D64089}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CED06A8A-D446-41E7-A414-C45BEB1321A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CED06A8A-D446-41E7-A414-C45BEB1321A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CED06A8A-D446-41E7-A414-C45BEB1321A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CED06A8A-D446-41E7-A414-C45BEB1321A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
