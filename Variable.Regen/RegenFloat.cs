@@ -12,6 +12,26 @@ public struct RegenFloat
     public BoundedFloat Value;
     public float Rate; // Units per second
 
+    public float Current
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Value.Current;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        set => Value.Current = value;
+    }
+
+    public bool IsEmpty
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Value.IsEmpty;
+    }
+
+    public bool IsFull
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Value.IsFull;
+    }
+
     public RegenFloat(float max, float current, float rate)
     {
         Value = new BoundedFloat(max, current);

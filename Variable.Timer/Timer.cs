@@ -10,7 +10,7 @@ namespace Variable.Timer
     [StructLayout(LayoutKind.Sequential)]
     [DebuggerDisplay("{Current}/{Duration}")]
     public struct Timer :
-        IVariable,
+        IBoundedInfo,
         IEquatable<Timer>,
         IComparable<Timer>,
         IComparable,

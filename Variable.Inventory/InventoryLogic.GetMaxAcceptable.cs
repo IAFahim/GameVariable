@@ -19,11 +19,12 @@ public static partial class InventoryLogic
         float maxQty,
         float currentWeight,
         float maxWeight,
-        float unitWeight)
+        float unitWeight,
+        float tolerance = 0.001f)
     {
         var spaceByQty = currentQty >= maxQty ? 0f : maxQty - currentQty;
 
-        if (unitWeight <= TOLERANCE) return spaceByQty;
+        if (unitWeight <= tolerance) return spaceByQty;
 
         var remainingWeight = currentWeight >= maxWeight ? 0f : maxWeight - currentWeight;
         var spaceByWeight = remainingWeight / unitWeight;

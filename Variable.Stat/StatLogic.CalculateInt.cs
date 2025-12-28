@@ -18,6 +18,6 @@ public static partial class StatLogic
     public static int CalculateInt(float baseValue, float flat, float percentAdd, float percentMult)
     {
         var result = (baseValue + flat) * (1f + percentAdd) * percentMult;
-        return (int)Math.Round(result, MidpointRounding.AwayFromZero);
+        return (int)(result + 0.5f);
     }
 }

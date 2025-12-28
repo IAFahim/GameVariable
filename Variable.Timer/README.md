@@ -1,6 +1,7 @@
 # Variable.Timer
 
-**Variable.Timer** provides robust structs for handling time-based mechanics like cooldowns, countdowns, and stopwatches. It simplifies `Time.deltaTime` management.
+**Variable.Timer** provides robust structs for handling time-based mechanics like cooldowns, countdowns, and
+stopwatches. It simplifies `Time.deltaTime` management.
 
 ## Installation
 
@@ -10,13 +11,14 @@ dotnet add package Variable.Timer
 
 ## Features
 
-*   **Timer**: A simple countdown timer.
-*   **Cooldown**: A specialized timer for ability availability.
-*   **State Queries**: `IsReady`, `IsFinished`, `TimeRemaining`, `Progress` (0-1).
+* **Timer**: A simple countdown timer.
+* **Cooldown**: A specialized timer for ability availability.
+* **State Queries**: `IsReady`, `IsFinished`, `TimeRemaining`, `Progress` (0-1).
 
 ## Usage
 
 ### Ability Cooldown
+
 ```csharp
 using Variable.Timer;
 
@@ -40,6 +42,7 @@ public class Ability
 ```
 
 ### Match Timer
+
 ```csharp
 Timer matchTimer = new Timer(300f); // 5 minutes
 

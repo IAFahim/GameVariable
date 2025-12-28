@@ -19,24 +19,24 @@ public static partial class InventoryLogic
         ref float dstCurWeight,
         float dstMaxWeight,
         float dstMaxQty, float itemUnitWeight,
-        float amount)
+        float amount, float tolerance = 0.001f)
     {
-        if (amount <= TOLERANCE) return true;
+        if (amount <= tolerance) return true;
 
-        if (srcQty < amount - TOLERANCE) return false;
+        if (srcQty < amount - tolerance) return false;
 
-        if (dstQty + amount > dstMaxQty + TOLERANCE) return false;
+        if (dstQty + amount > dstMaxQty + tolerance) return false;
 
         var weightToAdd = amount * itemUnitWeight;
-        if (dstCurWeight + weightToAdd > dstMaxWeight + TOLERANCE) return false;
+        if (dstCurWeight + weightToAdd > dstMaxWeight + tolerance) return false;
 
         srcQty -= amount;
         dstQty += amount;
         dstCurWeight += weightToAdd;
 
-        if (srcQty < TOLERANCE) srcQty = 0f;
-        if (dstMaxQty - dstQty < TOLERANCE) dstQty = dstMaxQty;
-        if (dstMaxWeight - dstCurWeight < TOLERANCE) dstCurWeight = dstMaxWeight;
+        if (srcQty < tolerance) srcQty = 0f;
+        if (dstMaxQty - dstQty < tolerance) dstQty = dstMaxQty;
+        if (dstMaxWeight - dstCurWeight < tolerance) dstCurWeight = dstMaxWeight;
 
         return true;
     }

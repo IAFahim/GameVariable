@@ -8,18 +8,18 @@ public static partial class InventoryLogic
     ///     Checks if the inventory can accept a specific amount of items without exceeding its capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool CanAccept(float current, float max, float amountToAdd)
+    public static bool CanAccept(float current, float max, float amountToAdd, float tolerance = 0.001f)
     {
-        return current + amountToAdd <= max + TOLERANCE;
+        return current + amountToAdd <= max + tolerance;
     }
 
     /// <summary>
     ///     Checks if the inventory can accept a specific amount of items without exceeding its capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool CanAccept(double current, double max, double amountToAdd)
+    public static bool CanAccept(double current, double max, double amountToAdd, double tolerance = 0.001)
     {
-        return current + amountToAdd <= max + TOLERANCE_DOUBLE;
+        return current + amountToAdd <= max + tolerance;
     }
 
     /// <summary>

@@ -67,7 +67,8 @@ if (stamina >= 10f) {
 using Variable.Experience;
 // Current Level 1, 0 XP, Target 1000
 ExperienceInt xp = new ExperienceInt(1, 0, 1000);
-if (xp.Add(500)) LevelUp(); // Returns true if leveled up
+// Add 500 XP, with a formula for next level requirement (e.g., level * 1000)
+if (xp.Add(500, level => level * 1000)) LevelUp(); 
 ```
 
 **5. Time/Timer**
@@ -172,9 +173,8 @@ void Sleep() => energy.Current = energy.Max;
 **15. Temperature**
 *Body heat vs. Environment.*
 ```csharp
-using Variable.Bounded;
-BoundedFloat bodyTemp = new BoundedFloat(42f, 37f); // Min 0 (hypo), Max 42 (hyper)
-// Complex logic usually needed here, but Bounded keeps it safe
+using Variable.Range;
+RangeFloat bodyTemp = new RangeFloat(35f, 42f, 37f); // Min 35 (hypo), Max 42 (hyper), Current 37
 ```
 
 **16. Toxicity/Radiation**
@@ -712,8 +712,8 @@ BoundedInt stack = new BoundedInt(64, 1);
 **95. Loot Rarity**
 ```csharp
 using Variable.Range;
-RangeFloat rarityRoll = new RangeFloat(0f, 1f);
-if (rarityRoll.GetRandom() > 0.95f) DropLegendary();
+RangeFloat rarityRange = new RangeFloat(0f, 1f);
+// Use external RNG to pick value within range
 ```
 
 **96. Luck**
@@ -729,20 +729,13 @@ using Variable.Bounded;
 BoundedFloat chaos = new BoundedFloat(100f, 0f); // Low vs High chaos
 ```
 
-**98. Style**
-```csharp
-using Variable.Bounded;
-BoundedString rank = "SSS"; // Custom struct needed for SSS, but logic holds
-BoundedInt stylePoints = new BoundedInt(10000, 0);
-```
-
-**99. Hype**
+**98. Hype**
 ```csharp
 using Variable.Regen;
 RegenFloat hype = new RegenFloat(100f, 0f, -2f); // Decays if boring
 ```
 
-**100. Map Completion**
+**99. Map Completion**
 ```csharp
 using Variable.Bounded;
 BoundedFloat map = new BoundedFloat(100f, 0f);

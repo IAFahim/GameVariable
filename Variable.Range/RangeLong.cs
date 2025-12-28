@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 using Variable.Core;
 
 namespace Variable.Range
@@ -11,7 +10,7 @@ namespace Variable.Range
     [StructLayout(LayoutKind.Sequential)]
     [DebuggerDisplay("{Current} [{Min}, {Max}]")]
     public struct RangeLong :
-        IVariable,
+        IBoundedInfo,
         IEquatable<RangeLong>,
         IComparable<RangeLong>,
         IComparable,
@@ -47,14 +46,6 @@ namespace Variable.Range
             current = Current;
             min = Min;
             max = Max;
-        }
-
-        private RangeLong(SerializationInfo info, StreamingContext context)
-        {
-            Min = info.GetInt64(nameof(Min));
-            Max = info.GetInt64(nameof(Max));
-            var raw = info.GetInt64(nameof(Current));
-            Current = raw > Max ? Max : raw < Min ? Min : raw;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -10,7 +10,7 @@ namespace Variable.Timer
     [StructLayout(LayoutKind.Sequential)]
     [DebuggerDisplay("{Current}/{Duration}")]
     public struct Cooldown :
-        IVariable,
+        IBoundedInfo,
         IEquatable<Cooldown>,
         IComparable<Cooldown>,
         IComparable,

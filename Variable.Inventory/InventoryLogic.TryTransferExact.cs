@@ -13,18 +13,19 @@ public static partial class InventoryLogic
     ///     <c>true</c> if the transfer was successful; otherwise, <c>false</c> if source has insufficient items or
     ///     destination is full.
     /// </returns>
-    public static bool TryTransferExact(ref float srcQty, ref float dstQty, float dstMax, float amount)
+    public static bool TryTransferExact(ref float srcQty, ref float dstQty, float dstMax, float amount,
+        float tolerance = 0.001f)
     {
-        if (amount <= TOLERANCE) return true;
+        if (amount <= tolerance) return true;
 
-        if (srcQty < amount - TOLERANCE) return false;
-        if (dstQty + amount > dstMax + TOLERANCE) return false;
+        if (srcQty < amount - tolerance) return false;
+        if (dstQty + amount > dstMax + tolerance) return false;
 
         srcQty -= amount;
         dstQty += amount;
 
-        if (srcQty < TOLERANCE) srcQty = 0f;
-        if (dstMax - dstQty < TOLERANCE) dstQty = dstMax;
+        if (srcQty < tolerance) srcQty = 0f;
+        if (dstMax - dstQty < tolerance) dstQty = dstMax;
 
         return true;
     }

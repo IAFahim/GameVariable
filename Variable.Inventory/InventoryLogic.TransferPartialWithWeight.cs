@@ -19,9 +19,9 @@ public static partial class InventoryLogic
         ref float dstCurWeight,
         float dstMaxWeight,
         float dstMaxQty, float unitWeight,
-        float requestedAmount)
+        float requestedAmount, float tolerance = 0.001f)
     {
-        if (srcQty <= TOLERANCE || requestedAmount <= 0) return 0f;
+        if (srcQty <= tolerance || requestedAmount <= 0) return 0f;
 
         var limitSrc = srcQty < requestedAmount ? srcQty : requestedAmount;
 
@@ -29,7 +29,7 @@ public static partial class InventoryLogic
         if (slotSpace < 0f) slotSpace = 0f;
 
         var weightLimit = float.MaxValue;
-        if (unitWeight > TOLERANCE)
+        if (unitWeight > tolerance)
         {
             var weightSpace = dstMaxWeight - dstCurWeight;
             if (weightSpace < 0f) weightSpace = 0f;
@@ -40,15 +40,15 @@ public static partial class InventoryLogic
         if (slotSpace < actualMove) actualMove = slotSpace;
         if (weightLimit < actualMove) actualMove = weightLimit;
 
-        if (actualMove > TOLERANCE)
+        if (actualMove > tolerance)
         {
             srcQty -= actualMove;
             dstQty += actualMove;
             dstCurWeight += actualMove * unitWeight;
 
-            if (srcQty < TOLERANCE) srcQty = 0f;
-            if (dstMaxQty - dstQty < TOLERANCE) dstQty = dstMaxQty;
-            if (dstMaxWeight - dstCurWeight < TOLERANCE) dstCurWeight = dstMaxWeight;
+            if (srcQty < tolerance) srcQty = 0f;
+            if (dstMaxQty - dstQty < tolerance) dstQty = dstMaxQty;
+            if (dstMaxWeight - dstCurWeight < tolerance) dstCurWeight = dstMaxWeight;
 
             return actualMove;
         }

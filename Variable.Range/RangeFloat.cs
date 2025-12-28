@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 using Variable.Core;
 
 namespace Variable.Range
@@ -11,7 +10,7 @@ namespace Variable.Range
     [StructLayout(LayoutKind.Sequential)]
     [DebuggerDisplay("{Current} [{Min}, {Max}]")]
     public struct RangeFloat :
-        IVariable,
+        IBoundedInfo,
         IEquatable<RangeFloat>,
         IComparable<RangeFloat>,
         IComparable,
@@ -47,14 +46,6 @@ namespace Variable.Range
             current = Current;
             min = Min;
             max = Max;
-        }
-
-        private RangeFloat(SerializationInfo info, StreamingContext context)
-        {
-            Min = info.GetSingle(nameof(Min));
-            Max = info.GetSingle(nameof(Max));
-            var raw = info.GetSingle(nameof(Current));
-            Current = raw > Max ? Max : raw < Min ? Min : raw;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

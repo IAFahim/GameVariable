@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 using Variable.Core;
 
 namespace Variable.Bounded
@@ -11,7 +10,7 @@ namespace Variable.Bounded
     [StructLayout(LayoutKind.Sequential)]
     [DebuggerDisplay("{Current}/{Max}")]
     public struct BoundedByte :
-        IVariable,
+        IBoundedInfo,
         IEquatable<BoundedByte>,
         IComparable<BoundedByte>,
         IComparable,
@@ -45,14 +44,6 @@ namespace Variable.Bounded
             current = Current;
             max = Max;
         }
-
-        private BoundedByte(SerializationInfo info, StreamingContext context)
-        {
-            Max = info.GetByte(nameof(Max));
-            var raw = info.GetByte(nameof(Current));
-            Current = raw > Max ? Max : raw;
-        }
-
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public double GetRatio()

@@ -8,18 +8,18 @@ public static partial class InventoryLogic
     ///     Determines whether the inventory is empty.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(float current)
+    public static bool IsEmpty(float current, float tolerance = 0.001f)
     {
-        return current <= TOLERANCE;
+        return current <= tolerance;
     }
 
     /// <summary>
     ///     Determines whether the inventory is empty.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(double current)
+    public static bool IsEmpty(double current, double tolerance = 0.001)
     {
-        return current <= TOLERANCE_DOUBLE;
+        return current <= tolerance;
     }
 
     /// <summary>

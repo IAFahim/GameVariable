@@ -8,13 +8,13 @@ public static partial class InventoryLogic
     ///     Sets the inventory quantity to a specific value, clamping it between 0 and the maximum capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Set(ref float current, float value, float max)
+    public static void Set(ref float current, float value, float max, float tolerance = 0.001f)
     {
         if (value < 0f) value = 0f;
         if (value > max) value = max;
 
-        if (value < TOLERANCE) value = 0f;
-        if (max - value < TOLERANCE) value = max;
+        if (value < tolerance) value = 0f;
+        if (max - value < tolerance) value = max;
 
         current = value;
     }
@@ -23,13 +23,13 @@ public static partial class InventoryLogic
     ///     Sets the inventory quantity to a specific value, clamping it between 0 and the maximum capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Set(ref double current, double value, double max)
+    public static void Set(ref double current, double value, double max, double tolerance = 0.001)
     {
         if (value < 0d) value = 0d;
         if (value > max) value = max;
 
-        if (value < TOLERANCE_DOUBLE) value = 0d;
-        if (max - value < TOLERANCE_DOUBLE) value = max;
+        if (value < tolerance) value = 0d;
+        if (max - value < tolerance) value = max;
 
         current = value;
     }

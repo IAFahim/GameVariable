@@ -1,6 +1,7 @@
 # Variable.Experience
 
-**Variable.Experience** handles the logic for leveling systems, including experience accumulation, level caps, and overflow handling.
+**Variable.Experience** handles the logic for leveling systems, including experience accumulation, level caps, and
+overflow handling.
 
 ## Installation
 
@@ -10,13 +11,14 @@ dotnet add package Variable.Experience
 
 ## Features
 
-*   **ExperienceInt**: Manages Level, Current XP, and Target XP.
-*   **Level Up Logic**: Automatically handles multiple level-ups if huge XP is gained.
-*   **Custom Curves**: You define the "Target XP" for next level.
+* **ExperienceInt**: Manages Level, Current XP, and Target XP.
+* **Level Up Logic**: Automatically handles multiple level-ups if huge XP is gained.
+* **Custom Curves**: You define the "Target XP" for next level.
 
 ## Usage
 
 ### RPG Leveling
+
 ```csharp
 using Variable.Experience;
 

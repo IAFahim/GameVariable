@@ -1,6 +1,6 @@
 namespace Variable.Core
 {
-    public interface IVariable
+    public interface IBoundedInfo
     {
         bool IsFull { get; }
         bool IsEmpty { get; }

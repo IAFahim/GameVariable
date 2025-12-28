@@ -1,6 +1,7 @@
 # Variable.Inventory
 
-**Variable.Inventory** encapsulates the logic for managing quantities, capacities, and transfers between containers. It abstracts the math of "Do I have enough?" and "Can I fit this?" into simple, reliable methods.
+**Variable.Inventory** encapsulates the logic for managing quantities, capacities, and transfers between containers. It
+abstracts the math of "Do I have enough?" and "Can I fit this?" into simple, reliable methods.
 
 ## Installation
 
@@ -10,13 +11,14 @@ dotnet add package Variable.Inventory
 
 ## Features
 
-*   **InventoryLogic**: Static methods for inventory operations.
-*   **Partial & Exact Transfers**: Support for "Move all you can" vs "Move only if all fits".
-*   **Capacity Checks**: `CanAccept`, `GetRemainingSpace`.
+* **InventoryLogic**: Static methods for inventory operations.
+* **Partial & Exact Transfers**: Support for "Move all you can" vs "Move only if all fits".
+* **Capacity Checks**: `CanAccept`, `GetRemainingSpace`.
 
 ## Usage
 
 ### Looting Items
+
 ```csharp
 using Variable.Inventory;
 
@@ -34,6 +36,7 @@ if (overflow > 0) {
 ```
 
 ### Crafting (Consume Materials)
+
 ```csharp
 float wood = 20f;
 float cost = 5f;

@@ -12,13 +12,13 @@ public static partial class InventoryLogic
     /// <param name="max">The maximum capacity.</param>
     /// <returns><c>true</c> if the amount was added successfully; otherwise, <c>false</c> if it would exceed capacity.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryAddExact(ref float current, float amount, float max)
+    public static bool TryAddExact(ref float current, float amount, float max, float tolerance = 0.001f)
     {
-        if (amount <= TOLERANCE) return true;
-        if (current + amount > max + TOLERANCE) return false;
+        if (amount <= tolerance) return true;
+        if (current + amount > max + tolerance) return false;
 
         current += amount;
-        if (max - current < TOLERANCE) current = max;
+        if (max - current < tolerance) current = max;
         return true;
     }
 }

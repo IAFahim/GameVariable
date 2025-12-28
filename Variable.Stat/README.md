@@ -1,6 +1,7 @@
 # Variable.Stat
 
-**Variable.Stat** provides a clean, data-oriented approach to calculating RPG statistics. It separates the raw data from the calculation logic, making it ideal for ECS or high-performance architectures.
+**Variable.Stat** provides a clean, data-oriented approach to calculating RPG statistics. It separates the raw data from
+the calculation logic, making it ideal for ECS or high-performance architectures.
 
 ## Installation
 
@@ -10,13 +11,14 @@ dotnet add package Variable.Stat
 
 ## Features
 
-*   **StatLogic**: Static methods for calculating final values.
-*   **Standard Formula**: `(Base + Flat) * (1 + Add%) * Mult%`.
-*   **Smart Operations**: `Add`, `Subtract`, `Transfer`, `Set` with bounds checking.
+* **StatLogic**: Static methods for calculating final values.
+* **Standard Formula**: `(Base + Flat) * (1 + Add%) * Mult%`.
+* **Smart Operations**: `Add`, `Subtract`, `Transfer`, `Set` with bounds checking.
 
 ## Usage
 
 ### Calculating Damage
+
 ```csharp
 using Variable.Stat;
 
@@ -30,6 +32,7 @@ float finalDamage = StatLogic.Calculate(baseDmg, flatBonus, addPercent, multPerc
 ```
 
 ### Stat Transfer (Life Steal)
+
 ```csharp
 float playerHp = 50f;
 float enemyHp = 100f;

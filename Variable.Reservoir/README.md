@@ -1,6 +1,7 @@
 # Variable.Reservoir
 
-**Variable.Reservoir** models composite resources that have an active "clip" or "tank" and a larger "reserve". This is the standard model for Ammo, Batteries, and Fuel.
+**Variable.Reservoir** models composite resources that have an active "clip" or "tank" and a larger "reserve". This is
+the standard model for Ammo, Batteries, and Fuel.
 
 ## Installation
 
@@ -10,13 +11,14 @@ dotnet add package Variable.Reservoir
 
 ## Features
 
-*   **ReservoirInt / ReservoirFloat**: Structs for Clip + Reserve.
-*   **Refill()**: Logic to move resources from Reserve to Clip/Volume.
-*   **Implicit Conversion**: Treats the struct as the current clip value for easy comparisons.
+* **ReservoirInt / ReservoirFloat**: Structs for Clip + Reserve.
+* **Refill()**: Logic to move resources from Reserve to Clip/Volume.
+* **Implicit Conversion**: Treats the struct as the current clip value for easy comparisons.
 
 ## Usage
 
 ### Gun Ammo
+
 ```csharp
 using Variable.Reservoir;
 
@@ -40,6 +42,7 @@ public void Reload() {
 ```
 
 ### Flashlight Battery
+
 ```csharp
 // Capacity 100%, Current 50%, Reserve 200% (2 batteries)
 ReservoirFloat battery = new ReservoirFloat(100f, 50f, 200f);

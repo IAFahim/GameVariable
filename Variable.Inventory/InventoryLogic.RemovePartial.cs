@@ -8,14 +8,14 @@ public static partial class InventoryLogic
     /// <param name="current">The reference to the current quantity variable.</param>
     /// <param name="amount">The amount to attempt to remove.</param>
     /// <returns>The actual amount removed from the inventory.</returns>
-    public static float RemovePartial(ref float current, float amount)
+    public static float RemovePartial(ref float current, float amount, float tolerance = 0.001f)
     {
-        if (amount <= TOLERANCE || current <= TOLERANCE) return 0f;
+        if (amount <= tolerance || current <= tolerance) return 0f;
 
         var toRemove = current < amount ? current : amount;
 
         current -= toRemove;
-        if (current < TOLERANCE) current = 0f;
+        if (current < tolerance) current = 0f;
 
         return toRemove;
     }

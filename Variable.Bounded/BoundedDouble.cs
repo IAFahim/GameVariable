@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 using Variable.Core;
 
 namespace Variable.Bounded
@@ -11,7 +10,7 @@ namespace Variable.Bounded
     [StructLayout(LayoutKind.Sequential)]
     [DebuggerDisplay("{Current}/{Max}")]
     public struct BoundedDouble :
-        IVariable,
+        IBoundedInfo,
         IEquatable<BoundedDouble>,
         IComparable<BoundedDouble>,
         IComparable,
@@ -44,13 +43,6 @@ namespace Variable.Bounded
         {
             current = Current;
             max = Max;
-        }
-
-        private BoundedDouble(SerializationInfo info, StreamingContext context)
-        {
-            Max = info.GetDouble(nameof(Max));
-            var raw = info.GetDouble(nameof(Current));
-            Current = raw > Max ? Max : raw < 0.0 ? 0.0 : raw;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -10,9 +10,10 @@ public static partial class InventoryLogic
     /// <param name="dstMax">The maximum capacity of the destination.</param>
     /// <param name="requestedAmount">The amount requested to transfer.</param>
     /// <returns>The actual amount transferred.</returns>
-    public static float TransferPartial(ref float srcQty, ref float dstQty, float dstMax, float requestedAmount)
+    public static float TransferPartial(ref float srcQty, ref float dstQty, float dstMax, float requestedAmount,
+        float tolerance = 0.001f)
     {
-        if (srcQty <= TOLERANCE || requestedAmount <= 0) return 0f;
+        if (srcQty <= tolerance || requestedAmount <= 0) return 0f;
 
         var available = srcQty < requestedAmount ? srcQty : requestedAmount;
 
@@ -21,13 +22,13 @@ public static partial class InventoryLogic
 
         var actualMove = available < space ? available : space;
 
-        if (actualMove > TOLERANCE)
+        if (actualMove > tolerance)
         {
             srcQty -= actualMove;
             dstQty += actualMove;
 
-            if (srcQty < TOLERANCE) srcQty = 0f;
-            if (dstMax - dstQty < TOLERANCE) dstQty = dstMax;
+            if (srcQty < tolerance) srcQty = 0f;
+            if (dstMax - dstQty < tolerance) dstQty = dstMax;
 
             return actualMove;
         }

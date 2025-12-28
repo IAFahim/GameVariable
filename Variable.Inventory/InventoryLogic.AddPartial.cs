@@ -10,9 +10,10 @@ public static partial class InventoryLogic
     /// <param name="max">The maximum capacity.</param>
     /// <param name="overflow">The amount that could not be added.</param>
     /// <returns>The actual amount added to the inventory.</returns>
-    public static float AddPartial(ref float current, float amount, float max, out float overflow)
+    public static float AddPartial(ref float current, float amount, float max, out float overflow,
+        float tolerance = 0.001f)
     {
-        if (amount <= TOLERANCE)
+        if (amount <= tolerance)
         {
             overflow = 0f;
             return 0f;
@@ -25,7 +26,7 @@ public static partial class InventoryLogic
         overflow = amount - toAdd;
 
         current += toAdd;
-        if (max - current < TOLERANCE) current = max;
+        if (max - current < tolerance) current = max;
 
         return toAdd;
     }

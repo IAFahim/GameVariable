@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 using Variable.Core;
 
 namespace Variable.Experience
@@ -11,7 +10,7 @@ namespace Variable.Experience
     [StructLayout(LayoutKind.Sequential)]
     [DebuggerDisplay("Lvl {Level} ({Current}/{Max})")]
     public struct ExperienceInt :
-        IVariable,
+        IBoundedInfo,
         IEquatable<ExperienceInt>,
         IComparable<ExperienceInt>,
         IComparable,
@@ -36,14 +35,6 @@ namespace Variable.Experience
             current = Current;
             max = Max;
             level = Level;
-        }
-
-        private ExperienceInt(SerializationInfo info, StreamingContext context)
-        {
-            Max = info.GetInt32(nameof(Max));
-            Current = info.GetInt32(nameof(Current));
-            Level = info.GetInt32(nameof(Level));
-            if (Max < 1) Max = 1;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

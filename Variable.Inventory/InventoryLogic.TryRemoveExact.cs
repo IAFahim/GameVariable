@@ -11,13 +11,13 @@ public static partial class InventoryLogic
     /// <param name="amount">The amount to remove.</param>
     /// <returns><c>true</c> if the amount was removed successfully; otherwise, <c>false</c> if there were insufficient items.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryRemoveExact(ref float current, float amount)
+    public static bool TryRemoveExact(ref float current, float amount, float tolerance = 0.001f)
     {
-        if (amount <= TOLERANCE) return true;
-        if (current < amount - TOLERANCE) return false;
+        if (amount <= tolerance) return true;
+        if (current < amount - tolerance) return false;
 
         current -= amount;
-        if (current < TOLERANCE) current = 0f;
+        if (current < tolerance) current = 0f;
         return true;
     }
 }
