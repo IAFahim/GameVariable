@@ -1,6 +1,3 @@
-using Xunit;
-using Variable.Stat;
-
 namespace Variable.Stat.Tests;
 
 public class StatLogicTests_CalculateInt

@@ -3,9 +3,18 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
         <Nullable>enable</Nullable>
-      <Version>1.0.1</Version>
-  </PropertyGroup>
-    
+        <Version>1.0.1</Version>
+        <Authors>Md Ishtiaq Ahamed Fahim</Authors>
+        <Company>IAFahim</Company>
+        <Description>Systems for leveling, experience curves, and progression.</Description>
+        <PackageTags>game;variable;experience;leveling;rpg;gamedev</PackageTags>
+        <PackageProjectUrl>https://github.com/iafahim/GameVariable</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/iafahim/GameVariable</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
     <ItemGroup>
         <ProjectReference Include="..\Variable.Core\Variable.Core.csproj"/>
     </ItemGroup>

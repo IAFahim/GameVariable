@@ -1,4 +1,3 @@
-using System;
 using System.Runtime.CompilerServices;
 
 namespace Variable.Stat;
@@ -6,8 +5,9 @@ namespace Variable.Stat;
 public static partial class StatLogic
 {
     /// <summary>
-    /// Calculates the final value of a stat based on base value, flat modifiers, and percentage modifiers, rounded to the nearest integer.
-    /// Formula: Round((baseValue + flat) * (1 + percentAdd) * percentMult)
+    ///     Calculates the final value of a stat based on base value, flat modifiers, and percentage modifiers, rounded to the
+    ///     nearest integer.
+    ///     Formula: Round((baseValue + flat) * (1 + percentAdd) * percentMult)
     /// </summary>
     /// <param name="baseValue">The starting base value of the stat.</param>
     /// <param name="flat">The sum of all flat modifiers.</param>
@@ -17,7 +17,7 @@ public static partial class StatLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int CalculateInt(float baseValue, float flat, float percentAdd, float percentMult)
     {
-        float result = (baseValue + flat) * (1f + percentAdd) * percentMult;
+        var result = (baseValue + flat) * (1f + percentAdd) * percentMult;
         return (int)Math.Round(result, MidpointRounding.AwayFromZero);
     }
 }

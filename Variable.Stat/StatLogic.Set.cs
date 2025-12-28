@@ -5,7 +5,7 @@ namespace Variable.Stat;
 public static partial class StatLogic
 {
     /// <summary>
-    /// Sets the current value, clamping it between min and max.
+    ///     Sets the current value, clamping it between min and max.
     /// </summary>
     /// <param name="current">The reference to the current value.</param>
     /// <param name="value">The new value to set.</param>

@@ -1,6 +1,3 @@
-using Xunit;
-using Variable.Regen;
-
 namespace Variable.Regen.Tests;
 
 public class RegenFloatTests

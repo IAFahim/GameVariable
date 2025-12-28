@@ -1,11 +1,10 @@
-using System;
 using System.Runtime.CompilerServices;
 using Variable.Bounded;
 
 namespace Variable.Regen;
 
 /// <summary>
-/// A bounded float value that automatically regenerates or decays over time.
+///     A bounded float value that automatically regenerates or decays over time.
 /// </summary>
 [Serializable]
 public struct RegenFloat
@@ -31,6 +30,13 @@ public struct RegenFloat
         RegenLogic.Tick(ref Value, Rate, deltaTime);
     }
 
-    public static implicit operator float(RegenFloat regen) => regen.Value.Current;
-    public static implicit operator BoundedFloat(RegenFloat regen) => regen.Value;
+    public static implicit operator float(RegenFloat regen)
+    {
+        return regen.Value.Current;
+    }
+
+    public static implicit operator BoundedFloat(RegenFloat regen)
+    {
+        return regen.Value;
+    }
 }

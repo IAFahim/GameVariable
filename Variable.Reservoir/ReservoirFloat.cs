@@ -1,12 +1,11 @@
-using System;
 using System.Runtime.CompilerServices;
 using Variable.Bounded;
 
 namespace Variable.Reservoir;
 
 /// <summary>
-/// Represents a reservoir system with a limited volume (BoundedFloat) and a reserve (float).
-/// Generic concept for Energy, Fuel, etc.
+///     Represents a reservoir system with a limited volume (BoundedFloat) and a reserve (float).
+///     Generic concept for Energy, Fuel, etc.
 /// </summary>
 [Serializable]
 public struct ReservoirFloat
@@ -27,7 +26,7 @@ public struct ReservoirFloat
     }
 
     /// <summary>
-    /// Refills the volume from the reserve.
+    ///     Refills the volume from the reserve.
     /// </summary>
     /// <returns>The amount refilled.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -36,5 +35,8 @@ public struct ReservoirFloat
         return ReservoirLogic.Refill(ref Volume, ref Reserve);
     }
 
-    public static implicit operator float(ReservoirFloat res) => res.Volume.Current;
+    public static implicit operator float(ReservoirFloat res)
+    {
+        return res.Volume.Current;
+    }
 }

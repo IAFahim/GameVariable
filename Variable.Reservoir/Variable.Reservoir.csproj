@@ -1,14 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="..\Variable.Bounded\Variable.Bounded.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Variable.Bounded\Variable.Bounded.csproj"/>
+    </ItemGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <Version>1.0.1</Version>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Version>1.0.1</Version>
+        <Authors>Md Ishtiaq Ahamed Fahim</Authors>
+        <Company>IAFahim</Company>
+        <Description>Composite resource systems for ammo clips, batteries, and reservoirs.</Description>
+        <PackageTags>game;variable;reservoir;ammo;battery;gamedev</PackageTags>
+        <PackageProjectUrl>https://github.com/iafahim/GameVariable</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/iafahim/GameVariable</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
 
 </Project>

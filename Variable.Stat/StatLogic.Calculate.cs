@@ -5,8 +5,8 @@ namespace Variable.Stat;
 public static partial class StatLogic
 {
     /// <summary>
-    /// Calculates the final value of a stat based on base value, flat modifiers, and percentage modifiers.
-    /// Formula: (baseValue + flat) * (1 + percentAdd) * percentMult
+    ///     Calculates the final value of a stat based on base value, flat modifiers, and percentage modifiers.
+    ///     Formula: (baseValue + flat) * (1 + percentAdd) * percentMult
     /// </summary>
     /// <param name="baseValue">The starting base value of the stat.</param>
     /// <param name="flat">The sum of all flat modifiers (e.g., +10 Strength).</param>

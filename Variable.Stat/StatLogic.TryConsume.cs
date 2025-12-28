@@ -5,8 +5,8 @@ namespace Variable.Stat;
 public static partial class StatLogic
 {
     /// <summary>
-    /// Attempts to consume the specified amount from the current value.
-    /// Returns true if successful (enough value existed), false otherwise.
+    ///     Attempts to consume the specified amount from the current value.
+    ///     Returns true if successful (enough value existed), false otherwise.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryConsume(ref float current, float amount)
@@ -17,6 +17,7 @@ public static partial class StatLogic
             if (current < TOLERANCE) current = 0f;
             return true;
         }
+
         return false;
     }
 }

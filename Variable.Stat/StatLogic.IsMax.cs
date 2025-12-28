@@ -5,7 +5,7 @@ namespace Variable.Stat;
 public static partial class StatLogic
 {
     /// <summary>
-    /// Checks if the current value is at the maximum.
+    ///     Checks if the current value is at the maximum.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsMax(float current, float max)

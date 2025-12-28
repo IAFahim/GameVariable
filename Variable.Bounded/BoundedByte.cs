@@ -277,7 +277,7 @@ namespace Variable.Bounded
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static BoundedByte operator -(BoundedByte a, int b)
         {
-            return a + (-b);
+            return a + -b;
         }
     }
 }

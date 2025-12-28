@@ -6,9 +6,9 @@ namespace Variable.Regen;
 public static partial class RegenLogic
 {
     /// <summary>
-    /// Updates a value based on a rate and time delta.
-    /// Handles both regeneration (positive rate) and decay (negative rate).
-    /// Clamps the result between 0 and max.
+    ///     Updates a value based on a rate and time delta.
+    ///     Handles both regeneration (positive rate) and decay (negative rate).
+    ///     Clamps the result between 0 and max.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Tick(ref float current, float max, float rate, float deltaTime)
@@ -22,8 +22,8 @@ public static partial class RegenLogic
     }
 
     /// <summary>
-    /// Updates a BoundedFloat based on a rate and time delta.
-    /// Handles both regeneration (positive rate) and decay (negative rate).
+    ///     Updates a BoundedFloat based on a rate and time delta.
+    ///     Handles both regeneration (positive rate) and decay (negative rate).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Tick(ref BoundedFloat bounded, float rate, float deltaTime)
