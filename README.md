@@ -91,6 +91,7 @@ dotnet add package Variable.Bounded
 dotnet add package Variable.Timer
 dotnet add package Variable.Regen
 dotnet add package Variable.Experience
+dotnet add Variable.Stat
 dotnet add package Variable.Reservoir
 
 # Or install just what you need
@@ -156,7 +157,7 @@ graph LR
 | Package | Types | Use Cases |
 |---------|-------|-----------|
 | **Variable.Core** | `IBoundedInfo` | Base interface for all bounded types |
-| **Variable.Bounded** | `BoundedFloat`, `BoundedInt`, `BoundedDouble`, `BoundedLong`, `BoundedShort`, `BoundedByte` | Health, mana, stamina, armor, shields |
+| **Variable.Bounded** | `BoundedFloat`, `BoundedInt`, `BoundedShort`, `BoundedByte` | Health, mana, stamina, armor, shields |
 | **Variable.Timer** | `Timer`, `Cooldown` | Ability cooldowns, buffs, casting times |
 | **Variable.Range** | `RangeFloat`, `RangeInt` | Temperature (-50 to 50), volume (0 to 1) |
 | **Variable.Regen** | `RegenFloat`, `RegenLogic` | Auto-regenerating resources, decay |
