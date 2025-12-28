@@ -3,7 +3,8 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
         <Nullable>enable</Nullable>
-    </PropertyGroup>
+      <Version>1.0.1</Version>
+  </PropertyGroup>
     
     <ItemGroup>
         <ProjectReference Include="..\Variable.Core\Variable.Core.csproj"/>
