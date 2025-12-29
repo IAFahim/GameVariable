@@ -91,7 +91,7 @@ dotnet add package Variable.Bounded
 dotnet add package Variable.Timer
 dotnet add package Variable.Regen
 dotnet add package Variable.Experience
-dotnet add Variable.Stat
+dotnet add package Variable.Stat
 dotnet add package Variable.Reservoir
 
 # Or install just what you need
