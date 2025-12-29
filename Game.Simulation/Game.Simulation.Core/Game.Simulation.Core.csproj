@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <!-- Allow unsafe blocks for pointers if needed (common in ECS) -->
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Variable.Core\Variable.Core.csproj" />
+        <ProjectReference Include="..\..\Variable.Stat\Variable.Stat.csproj" />
+    </ItemGroup>
+
+    <!-- 
+      Note: In a real Unity environment, we would reference Unity.Entities and Unity.Collections.
+      Here we might need to rely on the user adding them or just writing the code.
+      For the purpose of this simulation, we define the code assuming these exist.
+    -->
+
+</Project>
