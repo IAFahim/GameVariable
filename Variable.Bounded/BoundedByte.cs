@@ -153,7 +153,7 @@ public struct BoundedByte :
             case "R": return GetRatio().ToString("P", formatProvider);
             case "C": return $"{Current}/{Max}";
             case "F": return $"{Current} [0, {Max}]";
-            default: return ToString();
+            default: return $"{Current.ToString(format, formatProvider)}/{Max.ToString(format, formatProvider)}";
         }
     }
 

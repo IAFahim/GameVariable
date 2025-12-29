@@ -40,15 +40,15 @@ public struct BoundedFloat :
     
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public int GetMin() => 0;
+    public float GetMin() => Min;
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public int GetCurrent() => Current;
+    public float GetCurrent() => Current;
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public int GetMax() => Max;
+    public float GetMax() => Max;
 
     /// <summary>
     ///     Creates a new bounded float with min = 0 and current = max.

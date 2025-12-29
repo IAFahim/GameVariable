@@ -40,6 +40,18 @@ public struct BoundedInt :
     /// <summary>The maximum allowed value (ceiling).</summary>
     public int Max;
 
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float GetMin() => Min;
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float GetCurrent() => Current;
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float GetMax() => Max;
+
     /// <summary>
     ///     Creates a new bounded int with min = 0 and current = max.
     /// </summary>
@@ -162,7 +174,7 @@ public struct BoundedInt :
             case "R": return GetRatio().ToString("P", formatProvider);
             case "C": return $"{Current}/{Max}";
             case "F": return $"{Current} [{Min}, {Max}]";
-            default: return ToString();
+            default: return $"{Current.ToString(format, formatProvider)}/{Max.ToString(format, formatProvider)}";
         }
     }
 
