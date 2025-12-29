@@ -62,7 +62,7 @@ public struct BoundedInt :
     {
         Max = max;
         Min = 0;
-        Current = current > max ? max : current < 0 ? 0 : current;
+        Current = Math.Clamp(current, 0, max);
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ public struct BoundedInt :
     {
         Min = min;
         Max = max;
-        Current = current > max ? max : current < min ? min : current;
+        Current = Math.Clamp(current, min, max);
     }
 
     /// <summary>
@@ -85,7 +85,7 @@ public struct BoundedInt :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Normalize()
     {
-        Current = Current > Max ? Max : Current < Min ? Min : Current;
+        Current = Math.Clamp(Current, Min, Max);
     }
 
     /// <summary>
@@ -381,9 +381,7 @@ public struct BoundedInt :
     public static BoundedInt operator +(in BoundedInt a, int b)
     {
         var result = (long)a.Current + b;
-        if (result > a.Max) result = a.Max;
-        else if (result < a.Min) result = a.Min;
-        return new BoundedInt(a.Max, a.Min, (int)result);
+        return new BoundedInt(a.Max, a.Min, (int)Math.Clamp(result, a.Min, a.Max));
     }
 
     /// <summary>Adds a value to the bounded int, clamping the result.</summary>

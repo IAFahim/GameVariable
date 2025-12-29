@@ -72,7 +72,7 @@ public struct BoundedFloat :
     {
         Max = max;
         Min = 0f;
-        Current = current > max ? max : current < 0f ? 0f : current;
+        Current = Math.Clamp(current, 0f, max);
     }
 
     /// <summary>
@@ -86,7 +86,7 @@ public struct BoundedFloat :
     {
         Min = min;
         Max = max;
-        Current = current > max ? max : current < min ? min : current;
+        Current = Math.Clamp(current, min, max);
     }
 
     /// <summary>
@@ -96,7 +96,7 @@ public struct BoundedFloat :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Normalize()
     {
-        Current = Current > Max ? Max : Current < Min ? Min : Current;
+        Current = Math.Clamp(Current, Min, Max);
     }
 
     /// <summary>
