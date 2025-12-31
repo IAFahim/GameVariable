@@ -37,6 +37,9 @@ public struct BoundedFloat :
 
     /// <summary>The maximum allowed value (ceiling).</summary>
     public float Max;
+
+    /// <summary>Cached inverse of the range (1 / (Max - Min)) for faster ratio calculations.</summary>
+    private readonly float _inverseRange;
     
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -60,6 +63,8 @@ public struct BoundedFloat :
         Max = max;
         Min = 0f;
         Current = max;
+        var range = Max - Min;
+        _inverseRange = Math.Abs(range) < MathConstants.Tolerance ? 0f : 1f / range;
     }
 
     /// <summary>
@@ -73,6 +78,8 @@ public struct BoundedFloat :
         Max = max;
         Min = 0f;
         Current = current > max ? max : current < 0f ? 0f : current;
+        var range = Max - Min;
+        _inverseRange = Math.Abs(range) < MathConstants.Tolerance ? 0f : 1f / range;
     }
 
     /// <summary>
@@ -87,6 +94,8 @@ public struct BoundedFloat :
         Min = min;
         Max = max;
         Current = current > max ? max : current < min ? min : current;
+        var range = Max - Min;
+        _inverseRange = Math.Abs(range) < MathConstants.Tolerance ? 0f : 1f / range;
     }
 
     /// <summary>
@@ -135,8 +144,7 @@ public struct BoundedFloat :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly double GetRatio()
     {
-        var range = Max - Min;
-        return Math.Abs(range) < MathConstants.Tolerance ? 0.0 : (Current - Min) / range;
+        return (Current - Min) * _inverseRange;
     }
 
     /// <inheritdoc />
