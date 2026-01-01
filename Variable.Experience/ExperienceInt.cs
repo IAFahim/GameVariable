@@ -34,7 +34,7 @@ public struct ExperienceInt :
 
     /// <summary>The current level.</summary>
     public int Level;
-    
+
     /// <inheritdoc />
     float IBoundedInfo.Min
     {
@@ -106,7 +106,7 @@ public struct ExperienceInt :
     public string ToString(string format, IFormatProvider formatProvider)
     {
         if (string.IsNullOrEmpty(format)) return ToString();
-        
+
         return format.ToUpperInvariant() switch
         {
             "L" => Level.ToString(),

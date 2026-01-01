@@ -1,7 +1,7 @@
 namespace Variable.Regen;
 
 /// <summary>
-///     Extension methods for <see cref="RegenFloat"/> providing logic operations.
+///     Extension methods for <see cref="RegenFloat" /> providing logic operations.
 ///     These methods bridge from structs to primitive-only logic.
 /// </summary>
 public static class RegenExtensions

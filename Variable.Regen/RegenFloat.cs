@@ -28,7 +28,7 @@ public struct RegenFloat : IBoundedInfo
 
     /// <summary>The rate of regeneration/decay in units per second.</summary>
     public float Rate;
-    
+
     /// <inheritdoc />
     float IBoundedInfo.Min
     {

@@ -15,6 +15,7 @@
 ## ⚡ Quick Start (Copy-Paste Ready)
 
 ### 1. Define Inputs
+
 ```csharp
 public static class MyGameInputs {
     public const int LMB = 100;
@@ -23,6 +24,7 @@ public static class MyGameInputs {
 ```
 
 ### 2. Build Graph
+
 ```csharp
 var graph = new ComboGraph {
     Nodes = new[] {
@@ -35,6 +37,7 @@ var graph = new ComboGraph {
 ```
 
 ### 3. Controller
+
 ```csharp
 public class PlayerCombo : MonoBehaviour {
     private ComboState _state;
@@ -60,7 +63,7 @@ public class PlayerCombo : MonoBehaviour {
 ✅ **Unity-Native** — MonoBehaviour, ScriptableObject, Animation Events  
 ✅ **ECS-Ready** — Full DOTS support with BlobAssets  
 ✅ **Jobs-Compatible** — NativeArray support out of box  
-✅ **Universal Inputs** — Integer IDs, no enum lock-in  
+✅ **Universal Inputs** — Integer IDs, no enum lock-in
 
 ---
 

@@ -1,7 +1,7 @@
 namespace Variable.Timer;
 
 /// <summary>
-///     Extension methods for <see cref="Timer"/> and <see cref="Cooldown"/>.
+///     Extension methods for <see cref="Timer" /> and <see cref="Cooldown" />.
 ///     These methods bridge from structs to primitive-only logic.
 /// </summary>
 public static class TimerExtensions
@@ -9,7 +9,7 @@ public static class TimerExtensions
     private const float Tolerance = 0.0001f;
 
     // Timer Extensions
-    
+
     /// <summary>
     ///     Advances the timer by the specified delta time.
     /// </summary>
@@ -80,13 +80,19 @@ public static class TimerExtensions
     ///     Returns true when the timer has reached or exceeded its duration.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(this Timer timer) => timer.Current >= timer.Duration - Tolerance;
+    public static bool IsFull(this Timer timer)
+    {
+        return timer.Current >= timer.Duration - Tolerance;
+    }
 
     /// <summary>
     ///     Returns true when the timer is at zero (not yet started).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(this Timer timer) => timer.Current <= Tolerance;
+    public static bool IsEmpty(this Timer timer)
+    {
+        return timer.Current <= Tolerance;
+    }
 
     /// <summary>
     ///     Gets the progress of the timer as a ratio from 0 (not started) to 1 (complete).
@@ -98,7 +104,7 @@ public static class TimerExtensions
     }
 
     // Cooldown Extensions
-    
+
     /// <summary>
     ///     Advances the cooldown by the specified delta time.
     /// </summary>
@@ -169,25 +175,37 @@ public static class TimerExtensions
     ///     Returns true when the cooldown is ready (Current &lt;= 0).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsReady(this Cooldown cooldown) => cooldown.Current <= Tolerance;
+    public static bool IsReady(this Cooldown cooldown)
+    {
+        return cooldown.Current <= Tolerance;
+    }
 
     /// <summary>
     ///     Returns true when the cooldown is ready. Alias for IsReady.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(this Cooldown cooldown) => cooldown.Current <= Tolerance;
+    public static bool IsFull(this Cooldown cooldown)
+    {
+        return cooldown.Current <= Tolerance;
+    }
 
     /// <summary>
     ///     Returns true when the cooldown is at its maximum duration (just started).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(this Cooldown cooldown) => cooldown.Current >= cooldown.Duration - Tolerance;
+    public static bool IsEmpty(this Cooldown cooldown)
+    {
+        return cooldown.Current >= cooldown.Duration - Tolerance;
+    }
 
     /// <summary>
     ///     Returns true when the cooldown is active (not yet ready).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsOnCooldown(this Cooldown cooldown) => cooldown.Current > Tolerance;
+    public static bool IsOnCooldown(this Cooldown cooldown)
+    {
+        return cooldown.Current > Tolerance;
+    }
 
     /// <summary>
     ///     Gets the ratio of remaining time.
@@ -207,4 +225,3 @@ public static class TimerExtensions
         return MathF.Abs(cooldown.Duration) < Tolerance ? 1f : 1f - MathF.Max(0, cooldown.Current / cooldown.Duration);
     }
 }
-

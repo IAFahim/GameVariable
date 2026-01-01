@@ -20,7 +20,7 @@ public struct ExperienceLong :
 
     /// <summary>The current level.</summary>
     public int Level;
-    
+
     /// <inheritdoc />
     float IBoundedInfo.Min
     {

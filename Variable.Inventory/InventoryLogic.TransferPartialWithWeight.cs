@@ -3,7 +3,8 @@ namespace Variable.Inventory;
 public static partial class InventoryLogic
 {
     /// <summary>
-    ///     Attempts to transfer as much of the requested amount as possible from a source to a destination, considering weight limits.
+    ///     Attempts to transfer as much of the requested amount as possible from a source to a destination, considering weight
+    ///     limits.
     /// </summary>
     /// <param name="srcQty">The reference to the source quantity variable.</param>
     /// <param name="dstQty">The reference to the destination quantity variable.</param>

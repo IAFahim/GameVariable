@@ -1,5 +1,3 @@
-using Variable.Input;
-
 namespace Variable.Input.Tests;
 
 /// <summary>
@@ -131,10 +129,10 @@ public class ComboSafetyTests
         buffer.RegisterInput(1);
 
         var result = ComboLogic.TryAdvanceState(
-            ref state, 
-            ref buffer, 
-            nodes.AsSpan(), 
-            edges.AsSpan(), 
+            ref state,
+            ref buffer,
+            nodes.AsSpan(),
+            edges.AsSpan(),
             out var actionID);
 
         Assert.False(result);

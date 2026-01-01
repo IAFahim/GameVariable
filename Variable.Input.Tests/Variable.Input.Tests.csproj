@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Variable.Input\Variable.Input.csproj" />
+        <ProjectReference Include="..\Variable.Input\Variable.Input.csproj"/>
     </ItemGroup>
 
 </Project>

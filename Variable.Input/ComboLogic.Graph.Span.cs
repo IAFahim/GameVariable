@@ -31,10 +31,7 @@ public static partial class ComboLogic
         if (!PeekInput(ref buffer, out var nextInput)) return false;
 
         // 3. Safety: Ensure current index is valid (recovery from bad state)
-        if (state.CurrentNodeIndex < 0 || state.CurrentNodeIndex >= nodes.Length)
-        {
-            state.CurrentNodeIndex = 0;
-        }
+        if (state.CurrentNodeIndex < 0 || state.CurrentNodeIndex >= nodes.Length) state.CurrentNodeIndex = 0;
 
         // 4. Graph Traversal (CSR Look-up)
         var currentNode = nodes[state.CurrentNodeIndex];
@@ -46,17 +43,14 @@ public static partial class ComboLogic
         if (end > edges.Length) end = edges.Length;
 
         for (var i = start; i < end; i++)
-        {
             if (edges[i].InputTrigger == nextInput)
             {
                 targetNodeIndex = edges[i].TargetNodeIndex;
                 break;
             }
-        }
 
         // 5. Transition Execution
         if (targetNodeIndex != -1)
-        {
             // Safety: Validate target node exists before jumping
             if (targetNodeIndex >= 0 && targetNodeIndex < nodes.Length)
             {
@@ -67,9 +61,8 @@ public static partial class ComboLogic
                 newActionID = nodes[targetNodeIndex].ActionID;
                 return true;
             }
-            // If target index was invalid, treat as dead end (fall through to reset)
-        }
 
+        // If target index was invalid, treat as dead end (fall through to reset)
         // 6. Failure / Reset Logic (consumes invalid input)
         TryDequeueInput(ref buffer, out _);
         state.CurrentNodeIndex = 0;

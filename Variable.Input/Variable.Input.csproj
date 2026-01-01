@@ -16,7 +16,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Variable.Core\Variable.Core.csproj" />
+        <ProjectReference Include="..\Variable.Core\Variable.Core.csproj"/>
     </ItemGroup>
 
 </Project>

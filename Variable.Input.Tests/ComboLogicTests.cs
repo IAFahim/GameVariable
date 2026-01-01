@@ -1,5 +1,3 @@
-using Variable.Input;
-
 namespace Variable.Input.Tests;
 
 public class ComboLogicTests

@@ -1,7 +1,7 @@
 namespace Variable.Reservoir;
 
 /// <summary>
-///     Extension methods for <see cref="ReservoirFloat"/> and <see cref="ReservoirInt"/> providing logic operations.
+///     Extension methods for <see cref="ReservoirFloat" /> and <see cref="ReservoirInt" /> providing logic operations.
 ///     These methods bridge from structs to primitive-only logic.
 /// </summary>
 public static class ReservoirExtensions

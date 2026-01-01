@@ -35,7 +35,7 @@ public struct BoundedFloat :
 
     /// <summary>The maximum allowed value (ceiling).</summary>
     public float Max;
-    
+
     /// <inheritdoc />
     float IBoundedInfo.Min
     {
@@ -135,13 +135,13 @@ public struct BoundedFloat :
     public readonly string ToString(string format, IFormatProvider formatProvider)
     {
         if (string.IsNullOrEmpty(format)) return ToString();
-        
+
         if (format.ToUpperInvariant() == "R")
         {
             var ratio = this.GetRatio();
             return $"{ratio * 100:F1}%";
         }
-        
+
         return ToString();
     }
 

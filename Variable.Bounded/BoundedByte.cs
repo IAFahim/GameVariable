@@ -23,7 +23,7 @@ public struct BoundedByte :
 
     /// <summary>The maximum allowed value (ceiling).</summary>
     public byte Max;
-    
+
     /// <inheritdoc />
     float IBoundedInfo.Min
     {

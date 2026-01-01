@@ -1,5 +1,3 @@
-using Variable.Input;
-
 namespace Variable.Input.Tests;
 
 /// <summary>
@@ -31,10 +29,10 @@ public class ComboLogicSpanTests
 
         // Use Span overload
         var result = ComboLogic.TryAdvanceState(
-            ref state, 
-            ref buffer, 
-            nodes.AsSpan(), 
-            edges.AsSpan(), 
+            ref state,
+            ref buffer,
+            nodes.AsSpan(),
+            edges.AsSpan(),
             out var actionID);
 
         Assert.True(result);
@@ -60,10 +58,10 @@ public class ComboLogicSpanTests
         edges[1] = new ComboEdge { InputTrigger = 2, TargetNodeIndex = 2 };
 
         var result = ComboLogic.TryAdvanceState(
-            ref state, 
-            ref buffer, 
-            nodes, 
-            edges, 
+            ref state,
+            ref buffer,
+            nodes,
+            edges,
             out var actionID);
 
         Assert.True(result);
@@ -83,10 +81,10 @@ public class ComboLogicSpanTests
         var edgeSlice = allEdges.AsSpan().Slice(0, 2);
 
         var result = ComboLogic.TryAdvanceState(
-            ref state, 
-            ref buffer, 
-            nodeSlice, 
-            edgeSlice, 
+            ref state,
+            ref buffer,
+            nodeSlice,
+            edgeSlice,
             out var actionID);
 
         Assert.True(result);

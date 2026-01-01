@@ -34,7 +34,7 @@ public class BoundedInfoTests
         public readonly float Current = Math.Clamp(current, min, max);
         public readonly float Min = min;
         public readonly float Max = max;
-        
+
         /// <inheritdoc />
         float IBoundedInfo.Min
         {

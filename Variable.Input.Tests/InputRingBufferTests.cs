@@ -1,5 +1,3 @@
-using Variable.Input;
-
 namespace Variable.Input.Tests;
 
 public class InputRingBufferTests
@@ -18,10 +16,7 @@ public class InputRingBufferTests
     public void Enqueue_MaxCapacity_Works()
     {
         var buffer = new InputRingBuffer();
-        for (var i = 0; i < InputRingBuffer.CAPACITY; i++)
-        {
-            Assert.True(ComboLogic.TryEnqueueInput(ref buffer, 1));
-        }
+        for (var i = 0; i < InputRingBuffer.CAPACITY; i++) Assert.True(ComboLogic.TryEnqueueInput(ref buffer, 1));
 
         Assert.Equal(InputRingBuffer.CAPACITY, buffer.Count);
     }
@@ -30,10 +25,7 @@ public class InputRingBufferTests
     public void Enqueue_OverCapacity_Fails()
     {
         var buffer = new InputRingBuffer();
-        for (var i = 0; i < InputRingBuffer.CAPACITY; i++)
-        {
-            ComboLogic.TryEnqueueInput(ref buffer, 1);
-        }
+        for (var i = 0; i < InputRingBuffer.CAPACITY; i++) ComboLogic.TryEnqueueInput(ref buffer, 1);
 
         var result = ComboLogic.TryEnqueueInput(ref buffer, 2);
 
@@ -91,22 +83,13 @@ public class InputRingBufferTests
     {
         var buffer = new InputRingBuffer();
 
-        for (var i = 0; i < InputRingBuffer.CAPACITY; i++)
-        {
-            ComboLogic.TryEnqueueInput(ref buffer, 1);
-        }
+        for (var i = 0; i < InputRingBuffer.CAPACITY; i++) ComboLogic.TryEnqueueInput(ref buffer, 1);
 
-        for (var i = 0; i < 4; i++)
-        {
-            ComboLogic.TryDequeueInput(ref buffer, out _);
-        }
+        for (var i = 0; i < 4; i++) ComboLogic.TryDequeueInput(ref buffer, out _);
 
         Assert.Equal(4, buffer.Count);
 
-        for (var i = 0; i < 4; i++)
-        {
-            Assert.True(ComboLogic.TryEnqueueInput(ref buffer, 2));
-        }
+        for (var i = 0; i < 4; i++) Assert.True(ComboLogic.TryEnqueueInput(ref buffer, 2));
 
         Assert.Equal(8, buffer.Count);
 

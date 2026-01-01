@@ -12,9 +12,9 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Set(ref float current, float min, float max, float value)
     {
-        current = value > max ? max : (value < min ? min : value);
+        current = value > max ? max : value < min ? min : value;
     }
-    
+
     /// <summary>
     ///     Normalizes (clamps) a float value to the specified bounds.
     /// </summary>
@@ -49,9 +49,9 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Set(ref int current, int min, int max, int value)
     {
-        current = value > max ? max : (value < min ? min : value);
+        current = value > max ? max : value < min ? min : value;
     }
-    
+
     /// <summary>
     ///     Normalizes (clamps) an int value to the specified bounds.
     /// </summary>
@@ -88,7 +88,7 @@ public static class BoundedLogic
     {
         current = value > max ? max : value;
     }
-    
+
     /// <summary>
     ///     Normalizes (clamps) a byte value to the specified max (min is always 0).
     /// </summary>

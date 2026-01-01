@@ -38,7 +38,7 @@ public struct Cooldown :
     public float Duration;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="Cooldown"/> struct.
+    ///     Initializes a new instance of the <see cref="Cooldown" /> struct.
     /// </summary>
     /// <param name="duration">The total cooldown duration in seconds.</param>
     /// <param name="current">The initial remaining time. Defaults to 0 (ready). Clamped between 0 and duration.</param>
@@ -71,14 +71,23 @@ public struct Cooldown :
     }
 
     /// <inheritdoc />
-    public readonly override string ToString() => Current <= 0.0001f ? "Ready" : $"{Current:F2}s";
+    public readonly override string ToString()
+    {
+        return Current <= 0.0001f ? "Ready" : $"{Current:F2}s";
+    }
 
     /// <inheritdoc />
-    public readonly override bool Equals(object? obj) => obj is Cooldown other && Equals(other);
+    public readonly override bool Equals(object? obj)
+    {
+        return obj is Cooldown other && Equals(other);
+    }
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool Equals(Cooldown other) => Current.Equals(other.Current) && Duration.Equals(other.Duration);
+    public readonly bool Equals(Cooldown other)
+    {
+        return Current.Equals(other.Current) && Duration.Equals(other.Duration);
+    }
 
     /// <summary>
     ///     Compares equality with another cooldown using the in modifier for performance.
@@ -86,7 +95,10 @@ public struct Cooldown :
     /// <param name="other">The other cooldown to compare.</param>
     /// <returns>True if Current and Duration are equal.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool Equals(in Cooldown other) => Current.Equals(other.Current) && Duration.Equals(other.Duration);
+    public readonly bool Equals(in Cooldown other)
+    {
+        return Current.Equals(other.Current) && Duration.Equals(other.Duration);
+    }
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -106,19 +118,28 @@ public struct Cooldown :
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly override int GetHashCode() => HashCode.Combine(Current, Duration);
+    public readonly override int GetHashCode()
+    {
+        return HashCode.Combine(Current, Duration);
+    }
 
     /// <summary>Determines whether two cooldowns are equal.</summary>
     /// <param name="left">The first cooldown.</param>
     /// <param name="right">The second cooldown.</param>
     /// <returns>True if equal.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator ==(in Cooldown left, in Cooldown right) => left.Equals(in right);
+    public static bool operator ==(in Cooldown left, in Cooldown right)
+    {
+        return left.Equals(in right);
+    }
 
     /// <summary>Determines whether two cooldowns are not equal.</summary>
     /// <param name="left">The first cooldown.</param>
     /// <param name="right">The second cooldown.</param>
     /// <returns>True if not equal.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator !=(in Cooldown left, in Cooldown right) => !left.Equals(in right);
+    public static bool operator !=(in Cooldown left, in Cooldown right)
+    {
+        return !left.Equals(in right);
+    }
 }

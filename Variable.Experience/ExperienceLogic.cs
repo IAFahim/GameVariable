@@ -47,7 +47,8 @@ public static class ExperienceLogic
     ///     Adds experience and processes level ups.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int AddExperience(ref int current, ref int max, ref int level, int amount, Func<int, int> nextMaxFormula)
+    public static int AddExperience(ref int current, ref int max, ref int level, int amount,
+        Func<int, int> nextMaxFormula)
     {
         var levelsGained = 0;
         current += amount;
@@ -59,7 +60,8 @@ public static class ExperienceLogic
     ///     Adds experience and processes level ups (Long version).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int AddExperience(ref long current, ref long max, ref int level, long amount, Func<int, long> nextMaxFormula)
+    public static int AddExperience(ref long current, ref long max, ref int level, long amount,
+        Func<int, long> nextMaxFormula)
     {
         var levelsGained = 0;
         current += amount;

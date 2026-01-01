@@ -1,8 +1,3 @@
-using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-
 namespace Variable.Timer;
 
 /// <summary>
@@ -43,7 +38,7 @@ public struct Timer :
     public float Duration;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="Timer"/> struct.
+    ///     Initializes a new instance of the <see cref="Timer" /> struct.
     /// </summary>
     /// <param name="duration">The target duration in seconds.</param>
     /// <param name="current">The initial elapsed time. Defaults to 0. Clamped between 0 and duration.</param>
@@ -76,14 +71,23 @@ public struct Timer :
     }
 
     /// <inheritdoc />
-    public readonly override string ToString() => $"{Current:F2}/{Duration:F2}";
+    public readonly override string ToString()
+    {
+        return $"{Current:F2}/{Duration:F2}";
+    }
 
     /// <inheritdoc />
-    public readonly override bool Equals(object? obj) => obj is Timer other && Equals(other);
+    public readonly override bool Equals(object? obj)
+    {
+        return obj is Timer other && Equals(other);
+    }
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool Equals(Timer other) => Current.Equals(other.Current) && Duration.Equals(other.Duration);
+    public readonly bool Equals(Timer other)
+    {
+        return Current.Equals(other.Current) && Duration.Equals(other.Duration);
+    }
 
     /// <summary>
     ///     Compares equality with another timer using the in modifier.
@@ -91,7 +95,10 @@ public struct Timer :
     /// <param name="other">The other timer.</param>
     /// <returns>True if equal.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool Equals(in Timer other) => Current.Equals(other.Current) && Duration.Equals(other.Duration);
+    public readonly bool Equals(in Timer other)
+    {
+        return Current.Equals(other.Current) && Duration.Equals(other.Duration);
+    }
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -111,19 +118,28 @@ public struct Timer :
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly override int GetHashCode() => HashCode.Combine(Current, Duration);
+    public readonly override int GetHashCode()
+    {
+        return HashCode.Combine(Current, Duration);
+    }
 
     /// <summary>Determines whether two timers are equal.</summary>
     /// <param name="left">The first timer.</param>
     /// <param name="right">The second timer.</param>
     /// <returns>True if equal.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator ==(in Timer left, in Timer right) => left.Equals(in right);
+    public static bool operator ==(in Timer left, in Timer right)
+    {
+        return left.Equals(in right);
+    }
 
     /// <summary>Determines whether two timers are not equal.</summary>
     /// <param name="left">The first timer.</param>
     /// <param name="right">The second timer.</param>
     /// <returns>True if not equal.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator !=(in Timer left, in Timer right) => !left.Equals(in right);
+    public static bool operator !=(in Timer left, in Timer right)
+    {
+        return !left.Equals(in right);
+    }
 }

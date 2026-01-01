@@ -19,13 +19,14 @@ public static class TimerLogic
     public static bool Tick(ref float current, float duration, float deltaTime)
     {
         if (current >= duration - Tolerance) return true;
-        
+
         current += deltaTime;
         if (current >= duration - Tolerance)
         {
             current = duration;
             return true;
         }
+
         return false;
     }
 
@@ -68,13 +69,14 @@ public static class TimerLogic
     public static bool TickCooldown(ref float current, float deltaTime)
     {
         if (current <= Tolerance) return true;
-        
+
         current -= deltaTime;
         if (current <= Tolerance)
         {
             current = 0f;
             return true;
         }
+
         return false;
     }
 
@@ -126,7 +128,8 @@ public static class TimerLogic
     /// <param name="clampMin">Minimum clamp value.</param>
     /// <param name="clampMax">Maximum clamp value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void ResetWithOverflow(ref float current, float targetValue, float overflow, float clampMin, float clampMax)
+    public static void ResetWithOverflow(ref float current, float targetValue, float overflow, float clampMin,
+        float clampMax)
     {
         current = targetValue + overflow;
         if (current < clampMin) current = clampMin;

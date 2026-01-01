@@ -1,5 +1,3 @@
-using Variable.Input;
-
 namespace Variable.Input.Tests;
 
 /// <summary>
@@ -9,30 +7,29 @@ public class ComboIntegrationTests
 {
     /// <summary>
     ///     Creates a fighting game style combo tree:
-    ///     
     ///     Neutral (0)
-    ///       ├─ L → Light Attack (100)
-    ///       │     ├─ L → Light-Light Combo (101)
-    ///       │     └─ R → Light-Heavy Combo (102)
-    ///       └─ R → Heavy Attack (200)
-    ///             └─ R → Heavy-Heavy Finisher (201)
+    ///     ├─ L → Light Attack (100)
+    ///     │     ├─ L → Light-Light Combo (101)
+    ///     │     └─ R → Light-Heavy Combo (102)
+    ///     └─ R → Heavy Attack (200)
+    ///     └─ R → Heavy-Heavy Finisher (201)
     /// </summary>
     private static ComboGraph CreateFightingGameGraph()
     {
         var nodes = new ComboNode[6];
-        nodes[0] = new ComboNode { ActionID = 0, EdgeStartIndex = 0, EdgeCount = 2 };     // Neutral
-        nodes[1] = new ComboNode { ActionID = 100, EdgeStartIndex = 2, EdgeCount = 2 };   // Light
-        nodes[2] = new ComboNode { ActionID = 200, EdgeStartIndex = 4, EdgeCount = 1 };   // Heavy
-        nodes[3] = new ComboNode { ActionID = 101, EdgeStartIndex = 5, EdgeCount = 0 };   // LL
-        nodes[4] = new ComboNode { ActionID = 102, EdgeStartIndex = 5, EdgeCount = 0 };   // LR
-        nodes[5] = new ComboNode { ActionID = 201, EdgeStartIndex = 5, EdgeCount = 0 };   // RR
+        nodes[0] = new ComboNode { ActionID = 0, EdgeStartIndex = 0, EdgeCount = 2 }; // Neutral
+        nodes[1] = new ComboNode { ActionID = 100, EdgeStartIndex = 2, EdgeCount = 2 }; // Light
+        nodes[2] = new ComboNode { ActionID = 200, EdgeStartIndex = 4, EdgeCount = 1 }; // Heavy
+        nodes[3] = new ComboNode { ActionID = 101, EdgeStartIndex = 5, EdgeCount = 0 }; // LL
+        nodes[4] = new ComboNode { ActionID = 102, EdgeStartIndex = 5, EdgeCount = 0 }; // LR
+        nodes[5] = new ComboNode { ActionID = 201, EdgeStartIndex = 5, EdgeCount = 0 }; // RR
 
         var edges = new ComboEdge[5];
-        edges[0] = new ComboEdge { InputTrigger = 1, TargetNodeIndex = 1 };    // Neutral → L
-        edges[1] = new ComboEdge { InputTrigger = 2, TargetNodeIndex = 2 };    // Neutral → R
-        edges[2] = new ComboEdge { InputTrigger = 1, TargetNodeIndex = 3 };    // Light → LL
-        edges[3] = new ComboEdge { InputTrigger = 2, TargetNodeIndex = 4 };    // Light → LR
-        edges[4] = new ComboEdge { InputTrigger = 2, TargetNodeIndex = 5 };    // Heavy → RR
+        edges[0] = new ComboEdge { InputTrigger = 1, TargetNodeIndex = 1 }; // Neutral → L
+        edges[1] = new ComboEdge { InputTrigger = 2, TargetNodeIndex = 2 }; // Neutral → R
+        edges[2] = new ComboEdge { InputTrigger = 1, TargetNodeIndex = 3 }; // Light → LL
+        edges[3] = new ComboEdge { InputTrigger = 2, TargetNodeIndex = 4 }; // Light → LR
+        edges[4] = new ComboEdge { InputTrigger = 2, TargetNodeIndex = 5 }; // Heavy → RR
 
         return new ComboGraph { Nodes = nodes, Edges = edges };
     }

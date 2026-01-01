@@ -7,7 +7,7 @@ namespace Variable.Bounded;
 public static class BoundedExtensions
 {
     // BoundedFloat Extensions
-    
+
     /// <summary>
     ///     Sets the current value, clamping it to bounds.
     /// </summary>
@@ -73,7 +73,7 @@ public static class BoundedExtensions
     }
 
     // BoundedInt Extensions
-    
+
     /// <summary>
     ///     Sets the current value, clamping it to bounds.
     /// </summary>
@@ -139,7 +139,7 @@ public static class BoundedExtensions
     }
 
     // BoundedByte Extensions
-    
+
     /// <summary>
     ///     Sets the current value, clamping it to max.
     /// </summary>
@@ -204,7 +204,7 @@ public static class BoundedExtensions
     }
 
     // Regeneration Support Extensions
-    
+
     /// <summary>
     ///     Applies regeneration to a BoundedFloat.
     /// </summary>
@@ -213,7 +213,7 @@ public static class BoundedExtensions
     {
         var current = bounded.Current;
         // Decompose to primitives for logic
-        bounded.Current = current + (rate * deltaTime);
+        bounded.Current = current + rate * deltaTime;
         bounded.Normalize();
     }
 }

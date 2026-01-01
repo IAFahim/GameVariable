@@ -7,12 +7,12 @@ namespace Variable.Core;
 /// <remarks>
 ///     This interface is implemented by all bounded types in the GameVariable ecosystem,
 ///     including <c>BoundedFloat</c>, <c>BoundedInt</c>, <c>Timer</c>, <c>Cooldown</c>, and similar constructs.
-///     <para/>
+///     <para />
 ///     Implementations are expected to guarantee that the current value always lies within
-///     the inclusive range defined by <see cref="Min"/> and <see cref="Max"/>.
-///     <para/>
+///     the inclusive range defined by <see cref="Min" /> and <see cref="Max" />.
+///     <para />
 ///     For logic operations like IsFull(), IsEmpty(), and GetRatio(), use the extension methods
-///     in <see cref="BoundedInfoExtensions"/>.
+///     in <see cref="BoundedInfoExtensions" />.
 /// </remarks>
 public interface IBoundedInfo
 {
