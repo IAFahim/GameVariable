@@ -1,29 +1,35 @@
+using System;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
 namespace Variable.Timer;
 
 /// <summary>
-///     A countdown timer that tracks elapsed time from 0 to a target duration.
+///     A countdown timer that tracks elapsed time from 0 up to a target duration.
 ///     Useful for casting times, loading bars, buffs, and count-up timers.
 /// </summary>
 /// <remarks>
 ///     <para>The timer starts at 0 and counts up to <see cref="Duration" />.</para>
-///     <para>Use <see cref="Tick" /> to advance the timer each frame.</para>
-///     <para>Check <see cref="IsFull" /> to determine if the timer has completed.</para>
-///     <para>The <see cref="Tick" /> method returns overflow time for precise timing.</para>
+///     <para>Use <see cref="TryTick(float)" /> to advance the timer and check for completion in one call.</para>
+///     <para>Check <see cref="IsFull" /> to determine if the timer has reached the duration.</para>
 /// </remarks>
 /// <example>
 ///     <code>
-/// var castTime = new Timer(2.5f);
-/// float overflow = castTime.Tick(deltaTime);
-/// if (castTime.IsFull()) {
-///     CastSpell();
-///     castTime.Reset();
-///     // Apply overflow to next action if needed
+/// var castTimer = new Timer(2.0f);
+/// 
+/// void Update(float dt) {
+///     // TryTick returns true when Current >= Duration
+///     if (castTimer.TryTick(dt)) {
+///         FinishCast();
+///         castTimer.Reset();
+///     }
 /// }
 /// </code>
 /// </example>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
-[DebuggerDisplay("{Current}/{Duration}")]
+[DebuggerDisplay("{Current}/{Duration} ({(IsFull() ? \"Done\" : \"Running\")})")]
 public struct Timer :
     IBoundedInfo,
     IEquatable<Timer>,
@@ -31,30 +37,19 @@ public struct Timer :
     IComparable,
     IFormattable
 {
+    private const float Tolerance = 0.0001f;
+
     /// <summary>The current elapsed time.</summary>
     public float Current;
 
     /// <summary>The target duration.</summary>
     public float Duration;
-    
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float GetMin() => 0;
-
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float GetCurrent() => (int)Current;
-
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float GetMax() => (int)Duration;
-
 
     /// <summary>
-    ///     Creates a new timer with the specified duration.
+    ///     Initializes a new instance of the <see cref="Timer"/> struct.
     /// </summary>
     /// <param name="duration">The target duration in seconds.</param>
-    /// <param name="current">The initial elapsed time. Defaults to 0. Will be clamped to [0, duration].</param>
+    /// <param name="current">The initial elapsed time. Defaults to 0. Clamped between 0 and duration.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Timer(float duration, float current = 0f)
     {
@@ -62,8 +57,66 @@ public struct Timer :
         Current = current > duration ? duration : current < 0f ? 0f : current;
     }
 
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly float GetMin() => 0;
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly float GetCurrent() => Current;
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly float GetMax() => Duration;
+
     /// <summary>
-    ///     Resets the timer to 0.
+    ///     Advances the timer by the specified delta time.
+    /// </summary>
+    /// <param name="deltaTime">The time elapsed since the last tick.</param>
+    /// <returns>True if the timer is full (completed); otherwise, false.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool TryTick(float deltaTime)
+    {
+        if (Current >= Duration - Tolerance) return true;
+
+        Current += deltaTime;
+        if (Current >= Duration - Tolerance)
+        {
+            Current = Duration;
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    ///     Advances the timer and outputs the overflow time if it completes.
+    /// </summary>
+    /// <param name="deltaTime">The time elapsed since the last tick.</param>
+    /// <param name="overflow">The amount of time that exceeded the duration.</param>
+    /// <returns>True if the timer is full (completed); otherwise, false.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool TryTick(float deltaTime, out float overflow)
+    {
+        if (Current >= Duration - Tolerance)
+        {
+            overflow = deltaTime;
+            return true;
+        }
+
+        Current += deltaTime;
+        if (Current >= Duration - Tolerance)
+        {
+            overflow = Current - Duration;
+            Current = Duration;
+            return true;
+        }
+
+        overflow = 0f;
+        return false;
+    }
+
+    /// <summary>
+    ///     Resets the timer elapsed time to 0.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Reset()
@@ -72,14 +125,13 @@ public struct Timer :
     }
 
     /// <summary>
-    ///     Resets the timer to 0 and applies the specified overflow time.
-    ///     Useful for precise timing when chaining timers.
+    ///     Resets the timer and applies an overflow offset.
     /// </summary>
-    /// <param name="overflow">Excess time from a previous tick to apply.</param>
+    /// <param name="overflow">The amount of time to start the timer with (clamped to duration).</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Reset(float overflow)
     {
-        Current = overflow > 0f ? overflow > Duration ? Duration : overflow : 0f;
+        Current = overflow > 0f ? (overflow > Duration ? Duration : overflow) : 0f;
     }
 
     /// <summary>
@@ -92,78 +144,37 @@ public struct Timer :
     }
 
     /// <summary>
-    ///     Advances the timer by the specified delta time.
+    ///     Returns true when the timer has reached or exceeded its duration.
     /// </summary>
-    /// <param name="deltaTime">The time elapsed since the last tick (e.g., Time.deltaTime).</param>
-    /// <returns>The overflow time if the timer completed this tick; otherwise 0.</returns>
+    /// <returns>True if complete.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float Tick(float deltaTime)
-    {
-        Current += deltaTime;
-        if (Current > Duration)
-        {
-            var overflow = Current - Duration;
-            Current = Duration;
-            return overflow;
-        }
-
-        return 0f;
-    }
+    public readonly bool IsFull() => Current >= Duration - Tolerance;
 
     /// <summary>
-    ///     Advances the timer and automatically resets if completed, applying overflow.
-    ///     Useful for repeating timers.
+    ///     Returns true when the timer is at zero (not yet started).
     /// </summary>
-    /// <param name="deltaTime">The time elapsed since the last tick.</param>
-    /// <returns>True if the timer completed this tick; otherwise false.</returns>
+    /// <returns>True if current is near zero.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool TickAndReset(float deltaTime)
-    {
-        var overflow = Tick(deltaTime);
-        if (overflow > 0f || IsFull())
-        {
-            Reset(overflow);
-            return true;
-        }
-
-        return false;
-    }
+    public readonly bool IsEmpty() => Current <= Tolerance;
 
     /// <summary>
-    ///     Gets the remaining time until completion.
+    ///     Gets the remaining time until the timer reaches its duration.
     /// </summary>
     public readonly float Remaining
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => Duration - Current;
-    }
-
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool IsFull()
-    {
-        return Current >= Duration - MathConstants.Tolerance;
-    }
-
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool IsEmpty()
-    {
-        return Current <= MathConstants.Tolerance;
+        get => MathF.Max(0, Duration - Current);
     }
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly double GetRatio()
     {
-        return Math.Abs(Duration) < MathConstants.Tolerance ? 0.0 : Current / Duration;
+        return Math.Abs(Duration) < Tolerance ? 1.0 : (double)Current / Duration;
     }
 
     /// <inheritdoc />
-    public readonly override string ToString()
-    {
-        return $"{Current:F2}/{Duration:F2}";
-    }
+    public readonly override string ToString() => $"{Current:F2}/{Duration:F2}";
 
     /// <inheritdoc />
     public readonly string ToString(string? format, IFormatProvider? formatProvider)
@@ -173,35 +184,23 @@ public struct Timer :
     }
 
     /// <inheritdoc />
-    public readonly override bool Equals(object obj)
-    {
-        return obj is Timer other && Equals(in other);
-    }
+    public readonly override bool Equals(object? obj) => obj is Timer other && Equals(other);
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool Equals(Timer other)
-    {
-        return Equals(in other);
-    }
+    public readonly bool Equals(Timer other) => Current.Equals(other.Current) && Duration.Equals(other.Duration);
 
-    /// <summary>Compares equality with another timer using ref parameter.</summary>
+    /// <summary>
+    ///     Compares equality with another timer using the in modifier.
+    /// </summary>
+    /// <param name="other">The other timer.</param>
+    /// <returns>True if equal.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool Equals(in Timer other)
-    {
-        return Current.Equals(other.Current) && Duration.Equals(other.Duration);
-    }
+    public readonly bool Equals(in Timer other) => Current.Equals(other.Current) && Duration.Equals(other.Duration);
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly int CompareTo(Timer other)
-    {
-        return CompareTo(in other);
-    }
-
-    /// <summary>Compares with another timer using ref parameter.</summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly int CompareTo(in Timer other)
     {
         var cmp = Current.CompareTo(other.Current);
         return cmp != 0 ? cmp : Duration.CompareTo(other.Duration);
@@ -209,30 +208,27 @@ public struct Timer :
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly int CompareTo(object obj)
+    public readonly int CompareTo(object? obj)
     {
-        if (obj is Timer other) return CompareTo(in other);
+        if (obj is Timer other) return CompareTo(other);
         throw new ArgumentException($"Object must be of type {nameof(Timer)}");
     }
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly override int GetHashCode()
-    {
-        return HashCode.Combine(Current, Duration);
-    }
+    public readonly override int GetHashCode() => HashCode.Combine(Current, Duration);
 
     /// <summary>Determines whether two timers are equal.</summary>
+    /// <param name="left">The first timer.</param>
+    /// <param name="right">The second timer.</param>
+    /// <returns>True if equal.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator ==(in Timer left, in Timer right)
-    {
-        return left.Equals(in right);
-    }
+    public static bool operator ==(in Timer left, in Timer right) => left.Equals(in right);
 
     /// <summary>Determines whether two timers are not equal.</summary>
+    /// <param name="left">The first timer.</param>
+    /// <param name="right">The second timer.</param>
+    /// <returns>True if not equal.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator !=(in Timer left, in Timer right)
-    {
-        return !left.Equals(in right);
-    }
+    public static bool operator !=(in Timer left, in Timer right) => !left.Equals(in right);
 }

@@ -53,7 +53,7 @@ public class TimerTests
     public void Tick_IncreasesCurrentByDelta()
     {
         var timer = new Timer(10f);
-        timer.Tick(2.5f);
+        timer.TryTick(2.5f);
         Assert.Equal(2.5f, timer.Current);
     }
 
@@ -61,7 +61,7 @@ public class TimerTests
     public void Tick_ClampsAtDuration()
     {
         var timer = new Timer(10f, 8f);
-        timer.Tick(5f);
+        timer.TryTick(5f);
         Assert.Equal(10f, timer.Current);
     }
 
@@ -69,9 +69,9 @@ public class TimerTests
     public void Tick_MultipleCallsAccumulate()
     {
         var timer = new Timer(10f);
-        timer.Tick(1f);
-        timer.Tick(1f);
-        timer.Tick(1f);
+        timer.TryTick(1f);
+        timer.TryTick(1f);
+        timer.TryTick(1f);
         Assert.Equal(3f, timer.Current);
     }
 

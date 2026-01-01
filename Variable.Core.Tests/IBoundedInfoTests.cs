@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 namespace Variable.Core.Tests;
 
-public class IBoundedInfoTests
+public class BoundedInfoTests
 {
     #region Polymorphism Tests
 
@@ -29,31 +29,24 @@ public class IBoundedInfoTests
     /// <summary>
     ///     A test implementation of IBoundedInfo for testing the interface contract.
     /// </summary>
-    private readonly struct TestBounded : IBoundedInfo
+    private readonly struct TestBounded(float min, float max, float current) : IBoundedInfo
     {
-        public readonly float Current;
-        public readonly float Min;
-        public readonly float Max;
+        public readonly float Current = Math.Clamp(current, min, max);
+        public readonly float Min = min;
+        public readonly float Max = max;
         
         /// <inheritdoc />
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int GetMin() => 0;
+        public float GetMin() => 0;
 
         /// <inheritdoc />
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int GetCurrent() => Current;
+        public float GetCurrent() => Current;
 
         /// <inheritdoc />
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int GetMax() => Max;
+        public float GetMax() => Max;
 
-
-        public TestBounded(float min, float max, float current)
-        {
-            Min = min;
-            Max = max;
-            Current = Math.Clamp(current, min, max);
-        }
 
         public bool IsFull()
         {
