@@ -30,8 +30,10 @@ This package implements the **Data-Logic-Extension** pattern for a Combo Tree sy
 ## Features
 
 ✅ **Zero Allocation** — No `new`, no `List<T>`, no garbage collection  
-✅ **Array-Based** — CSR (Compressed Sparse Row) graph format  
-✅ **DOTS Compatible** — Can swap arrays for `BlobArray<T>` in Unity DOTS  
+✅ **Safe & Robust** — Internal bounds checks prevent crashes from corrupt graph data  
+✅ **Single Source of Truth** — Logic centralized in Span API, array API wraps it  
+✅ **DOTS Compatible** — Span-based API works with BlobArray  
+✅ **NativeArray Ready** — Direct support for Unity Jobs  
 ✅ **Cache Coherent** — Sequential memory access for CPU efficiency  
 ✅ **Dial-Up Buffering** — 8-input ring buffer for rapid inputs  
 ✅ **Deterministic** — Same inputs = same output, every time  
@@ -88,11 +90,30 @@ state.SignalActionFinished();
 
 ---
 
-## Why Integer IDs?
+## ECS & NativeArray Support
 
-**Problem**: Using `enum` locks users into predefined input types. The DLL becomes inflexible.
+The package provides **Span-based overloads** for maximum compatibility:
 
-**Solution**: Use `int` IDs. Users define their own constants:
+```csharp
+// Works with:
+// - T[] (managed arrays)
+// - NativeArray<T> (Unity Jobs)
+// - BlobArray<T> (Unity ECS)
+// - stackalloc (zero allocation)
+
+bool TryAdvanceState(
+    ref ComboState state,
+    ref InputRingBuffer buffer,
+    ReadOnlySpan<ComboNode> nodes,  // 🔥 Universal!
+    ReadOnlySpan<ComboEdge> edges,
+    out int actionID)
+```
+
+See [ECS_GUIDE.md](ECS_GUIDE.md) for detailed Unity DOTS integration examples.
+
+---
+
+Use `int` IDs. Users define their own constants:
 - `100-199` = Mouse inputs
 - `200-299` = Keyboard inputs  
 - `300-399` = Gamepad inputs
@@ -137,16 +158,6 @@ This enables linear scans for edge matching (fastest for N < 10 edges per node).
 - **Memory**: Fixed structs, no heap allocations
 - **Thread Safe**: Can be used in Burst-compiled jobs (Unity DOTS)
 
----
-
-## Rules Enforced
-
-1. **Data Layer** — Only structs, no logic
-2. **Logic Layer** — Only primitives/arrays, no structs in parameters
-3. **Extension Layer** — Sugar that decomposes structs before calling logic
-
----
-
 ## Testing
 
 Run tests with:
@@ -162,18 +173,3 @@ Tests cover:
 - Action busy state handling
 
 All tests use integer IDs (1=Light, 2=Heavy for simplicity).
-
----
-
-## Why This Design?
-
-> "You don't need 1.5 years. You just need to structure your data correctly."
-
-This architecture:
-- Separates **data** from **logic** from **sugar**
-- Enables **Unity DOTS migration** without rewriting core logic
-- Guarantees **zero GC pressure** in gameplay loops
-- Maintains **testability** (logic is pure functions)
-- **Universal** — No enum coupling, users define their own input space
-
-**Forged into steel.** 🔥
