@@ -7,6 +7,11 @@ namespace Variable.Bounded;
 /// <remarks>
 ///     <para>The value is automatically clamped on construction and arithmetic operations.</para>
 ///     <para>This struct is blittable and can be used in Unity ECS, Burst jobs, and network serialization.</para>
+///     <para>
+///         <b>Warning:</b> This is a mutable struct. For performance-critical scenarios, methods like
+///         <see cref="GetRatioUnsafe"/> assume that <see cref="Min"/> and <see cref="Max"/> are not changed
+///         after construction. If you modify them, cached internal data may become invalid.
+///     </para>
 /// </remarks>
 /// <example>
 ///     <code>
@@ -37,6 +42,9 @@ public struct BoundedFloat :
 
     /// <summary>The maximum allowed value (ceiling).</summary>
     public float Max;
+
+    /// <summary>The reciprocal of the range (1 / (Max - Min)), cached for performance.</summary>
+    private readonly float _rangeReciprocal;
     
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -60,6 +68,8 @@ public struct BoundedFloat :
         Max = max;
         Min = 0f;
         Current = max;
+        var range = Max - Min;
+        _rangeReciprocal = Math.Abs(range) < MathConstants.Tolerance ? 0f : 1.0f / range;
     }
 
     /// <summary>
@@ -73,6 +83,8 @@ public struct BoundedFloat :
         Max = max;
         Min = 0f;
         Current = current > max ? max : current < 0f ? 0f : current;
+        var range = Max - Min;
+        _rangeReciprocal = Math.Abs(range) < MathConstants.Tolerance ? 0f : 1.0f / range;
     }
 
     /// <summary>
@@ -87,6 +99,20 @@ public struct BoundedFloat :
         Min = min;
         Max = max;
         Current = current > max ? max : current < min ? min : current;
+        var range = Max - Min;
+        _rangeReciprocal = Math.Abs(range) < MathConstants.Tolerance ? 0f : 1.0f / range;
+    }
+
+    /// <summary>
+    ///     Internal constructor for optimized creation with a pre-calculated reciprocal.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal BoundedFloat(float max, float min, float current, float rangeReciprocal)
+    {
+        Min = min;
+        Max = max;
+        Current = current > max ? max : current < min ? min : current;
+        _rangeReciprocal = rangeReciprocal;
     }
 
     /// <summary>
@@ -137,6 +163,27 @@ public struct BoundedFloat :
     {
         var range = Max - Min;
         return Math.Abs(range) < MathConstants.Tolerance ? 0.0 : (Current - Min) / range;
+    }
+
+    /// <summary>
+    ///     Gets the ratio of the current value to the range, using a cached reciprocal for performance.
+    /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///         <b>Warning:</b> This method provides a significant performance increase over <see cref="GetRatio" />
+    ///         by using multiplication instead of division. However, it assumes that the <see cref="Min" /> and
+    ///         <see cref="Max" /> fields have not been modified since the struct was constructed.
+    ///     </para>
+    ///     <para>
+    ///         If you have manually changed <see cref="Min" /> or <see cref="Max" />, this method will return
+    ///         an incorrect result. In such cases, use the safe <see cref="GetRatio" /> method instead.
+    ///     </para>
+    /// </remarks>
+    /// <returns>The ratio as a double, from 0.0 to 1.0.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly double GetRatioUnsafe()
+    {
+        return (Current - Min) * _rangeReciprocal;
     }
 
     /// <inheritdoc />
@@ -406,7 +453,7 @@ public struct BoundedFloat :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BoundedFloat operator +(in BoundedFloat a, float b)
     {
-        return new BoundedFloat(a.Max, a.Min, a.Current + b);
+        return new BoundedFloat(a.Max, a.Min, a.Current + b, a._rangeReciprocal);
     }
 
     /// <summary>Adds a value to the bounded float, clamping the result.</summary>
@@ -420,6 +467,6 @@ public struct BoundedFloat :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BoundedFloat operator -(in BoundedFloat a, float b)
     {
-        return new BoundedFloat(a.Max, a.Min, a.Current - b);
+        return new BoundedFloat(a.Max, a.Min, a.Current - b, a._rangeReciprocal);
     }
 }
