@@ -45,7 +45,7 @@ public class ReservoirLogicTests_Int
     {
         var volume = new BoundedInt(10, 5);
         var reserve = 20;
-        var refilled = ReservoirLogic.Refill(ref volume, ref reserve);
+        var refilled = ReservoirLogic.Refill(ref volume.Current, volume.Max, ref reserve);
 
         Assert.Equal(10, volume.Current);
         Assert.Equal(15, reserve);

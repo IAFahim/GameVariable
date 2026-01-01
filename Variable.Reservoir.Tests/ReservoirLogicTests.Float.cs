@@ -33,7 +33,7 @@ public class ReservoirLogicTests_Float
     {
         var volume = new BoundedFloat(10f, 5f);
         var reserve = 20f;
-        var refilled = ReservoirLogic.Refill(ref volume, ref reserve);
+        var refilled = ReservoirLogic.Refill(ref volume.Current, volume.Max, ref reserve);
 
         Assert.Equal(10f, volume.Current);
         Assert.Equal(15f, reserve);
