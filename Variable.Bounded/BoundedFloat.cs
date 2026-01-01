@@ -97,24 +97,6 @@ public struct BoundedFloat :
     }
 
     /// <summary>
-    ///     Gets the range between min and max.
-    /// </summary>
-    public readonly float Range
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => Max - Min;
-    }
-
-    /// <summary>
-    ///     Gets the amount remaining until max.
-    /// </summary>
-    public readonly float Remaining
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => Max - Current;
-    }
-
-    /// <summary>
     ///     Implicitly converts the bounded float to its current value.
     /// </summary>
     /// <param name="value">The bounded float.</param>
@@ -125,10 +107,42 @@ public struct BoundedFloat :
         return value.Current;
     }
 
+    /// <summary>
+    ///     Deconstructs the bounded float into its components.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly void Deconstruct(out float current, out float min, out float max)
+    {
+        current = Current;
+        min = Min;
+        max = Max;
+    }
+
     /// <inheritdoc />
     public readonly override string ToString()
     {
         return $"{Current}/{Max}";
+    }
+
+    /// <summary>
+    ///     Formats the bounded float with custom format strings.
+    /// </summary>
+    /// <param name="format">
+    ///     Format code: "R" = Ratio (percentage), null = default format.
+    /// </param>
+    /// <param name="formatProvider">Unused, for IFormattable compatibility.</param>
+    /// <returns>Formatted string.</returns>
+    public readonly string ToString(string format, IFormatProvider formatProvider)
+    {
+        if (string.IsNullOrEmpty(format)) return ToString();
+        
+        if (format.ToUpperInvariant() == "R")
+        {
+            var ratio = this.GetRatio();
+            return $"{ratio * 100:F1}%";
+        }
+        
+        return ToString();
     }
 
     /// <inheritdoc />

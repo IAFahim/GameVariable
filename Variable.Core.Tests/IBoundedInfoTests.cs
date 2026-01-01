@@ -36,16 +36,25 @@ public class BoundedInfoTests
         public readonly float Max = max;
         
         /// <inheritdoc />
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public float GetMin() => 0;
+        float IBoundedInfo.Min
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Min;
+        }
 
         /// <inheritdoc />
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public float GetCurrent() => Current;
+        float IBoundedInfo.Current
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Current;
+        }
 
         /// <inheritdoc />
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public float GetMax() => Max;
+        float IBoundedInfo.Max
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Max;
+        }
 
 
         public bool IsFull()

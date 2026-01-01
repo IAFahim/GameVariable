@@ -26,4 +26,13 @@ public static partial class ReservoirLogic
 
         return toRefill;
     }
+
+    /// <summary>
+    ///     Refills a BoundedInt volume from reserve (convenience overload that decomposes struct).
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int Refill(ref BoundedInt volume, ref int reserve)
+    {
+        return Refill(ref volume.Current, volume.Max, ref reserve);
+    }
 }

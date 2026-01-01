@@ -79,24 +79,6 @@ public struct BoundedByte :
         Current = (byte)(current > max ? max : current < 0 ? 0 : current);
     }
 
-    /// <summary>
-    ///     Gets the range between min (0) and max.
-    /// </summary>
-    public readonly byte Range
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => Max;
-    }
-
-    /// <summary>
-    ///     Gets the amount remaining until max.
-    /// </summary>
-    public readonly byte Remaining
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => (byte)(Max - Current);
-    }
-
     /// <summary>Implicitly converts the bounded byte to its current value.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static implicit operator byte(BoundedByte value)

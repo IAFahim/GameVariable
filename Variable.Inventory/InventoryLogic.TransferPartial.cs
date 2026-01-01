@@ -43,4 +43,15 @@ public static partial class InventoryLogic
         actualTransferred = 0f;
         return false;
     }
+
+    /// <summary>
+    ///     Transfers as much as possible, returning the amount transferred.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float TransferPartial(ref float srcQty, ref float dstQty, float dstMax, float requestedAmount,
+        float tolerance = MathConstants.Tolerance)
+    {
+        TryTransferPartial(ref srcQty, ref dstQty, dstMax, requestedAmount, out var actualTransferred, tolerance);
+        return actualTransferred;
+    }
 }

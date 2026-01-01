@@ -23,6 +23,18 @@ public static class TimerExtensions
     }
 
     /// <summary>
+    ///     Advances the timer by the specified delta time (void version).
+    ///     Use this for "fire and forget" patterns where you don't need to check completion.
+    /// </summary>
+    /// <param name="timer">The timer to advance.</param>
+    /// <param name="deltaTime">The time elapsed since the last tick.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void Tick(ref this Timer timer, float deltaTime)
+    {
+        TimerLogic.Tick(ref timer.Current, timer.Duration, deltaTime);
+    }
+
+    /// <summary>
     ///     Advances the timer and outputs overflow time.
     /// </summary>
     /// <param name="timer">The timer to advance.</param>
@@ -82,7 +94,7 @@ public static class TimerExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double GetRatio(this Timer timer)
     {
-        return Math.Abs(timer.Duration) < Tolerance ? 1.0 : (double)timer.Current / timer.Duration;
+        return Math.Abs(timer.Duration) < Tolerance ? 0.0 : (double)timer.Current / timer.Duration;
     }
 
     // Cooldown Extensions
@@ -97,6 +109,18 @@ public static class TimerExtensions
     public static bool TryTick(ref this Cooldown cooldown, float deltaTime)
     {
         return TimerLogic.TickCooldown(ref cooldown.Current, deltaTime);
+    }
+
+    /// <summary>
+    ///     Advances the cooldown by the specified delta time (void version).
+    ///     Use this for "fire and forget" patterns where you don't need to check if ready.
+    /// </summary>
+    /// <param name="cooldown">The cooldown to advance.</param>
+    /// <param name="deltaTime">The time elapsed since the last tick.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void Tick(ref this Cooldown cooldown, float deltaTime)
+    {
+        TimerLogic.TickCooldown(ref cooldown.Current, deltaTime);
     }
 
     /// <summary>

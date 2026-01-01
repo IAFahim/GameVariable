@@ -78,10 +78,41 @@ public struct ExperienceInt :
         return value.Current;
     }
 
+    /// <summary>
+    ///     Deconstructs the experience into its components.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly void Deconstruct(out int current, out int max, out int level)
+    {
+        current = Current;
+        max = Max;
+        level = Level;
+    }
+
     /// <inheritdoc />
     public override string ToString()
     {
         return $"Lvl {Level} ({Current}/{Max})";
+    }
+
+    /// <summary>
+    ///     Formats the experience with custom format strings.
+    /// </summary>
+    /// <param name="format">
+    ///     Format code: "L" = Level only, "C" = Current/Max only, null = default format.
+    /// </param>
+    /// <param name="formatProvider">Unused, for IFormattable compatibility.</param>
+    /// <returns>Formatted string.</returns>
+    public string ToString(string format, IFormatProvider formatProvider)
+    {
+        if (string.IsNullOrEmpty(format)) return ToString();
+        
+        return format.ToUpperInvariant() switch
+        {
+            "L" => Level.ToString(),
+            "C" => $"{Current}/{Max}",
+            _ => ToString()
+        };
     }
 
     /// <inheritdoc />

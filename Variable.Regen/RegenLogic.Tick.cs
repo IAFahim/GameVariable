@@ -30,4 +30,13 @@ public static partial class RegenLogic
         if (current > max) current = max;
         else if (current < min) current = min;
     }
+
+    /// <summary>
+    ///     Updates a value based on a rate and time delta (assumes min = 0).
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void Tick(ref float current, float max, float rate, float deltaTime)
+    {
+        Tick(ref current, 0f, max, rate, deltaTime);
+    }
 }

@@ -37,4 +37,15 @@ public static partial class InventoryLogic
         actualAdded = toAdd;
         return toAdd > tolerance;
     }
+
+    /// <summary>
+    ///     Adds as much as possible to inventory, returning the amount added and outputting overflow.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float AddPartial(ref float current, float amount, float max, out float overflow,
+        float tolerance = MathConstants.Tolerance)
+    {
+        TryAddPartial(ref current, amount, max, out var actualAdded, out overflow, tolerance);
+        return actualAdded;
+    }
 }

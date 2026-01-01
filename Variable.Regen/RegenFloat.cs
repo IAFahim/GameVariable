@@ -52,16 +52,6 @@ public struct RegenFloat : IBoundedInfo
 
 
     /// <summary>
-    ///     Sets the current value directly.
-    /// </summary>
-    /// <param name="current">The value to set.</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void SetCurrent(float current)
-    {
-        Value.Current = current;
-    }
-
-    /// <summary>
     ///     Creates a new regenerating float with the specified bounds and rate.
     /// </summary>
     /// <param name="max">The maximum value.</param>

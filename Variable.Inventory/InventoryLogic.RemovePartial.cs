@@ -27,4 +27,14 @@ public static partial class InventoryLogic
         actualRemoved = toRemove;
         return true;
     }
+
+    /// <summary>
+    ///     Removes as much as possible from inventory, returning the amount removed.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float RemovePartial(ref float current, float amount, float tolerance = MathConstants.Tolerance)
+    {
+        TryRemovePartial(ref current, amount, out var actualRemoved, tolerance);
+        return actualRemoved;
+    }
 }

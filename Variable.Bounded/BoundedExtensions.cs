@@ -54,6 +54,24 @@ public static class BoundedExtensions
         return Math.Abs(range) < MathConstants.Tolerance ? 0.0 : (bounded.Current - bounded.Min) / range;
     }
 
+    /// <summary>
+    ///     Gets the range between min and max.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float GetRange(this BoundedFloat bounded)
+    {
+        return BoundedLogic.GetRange(bounded.Min, bounded.Max);
+    }
+
+    /// <summary>
+    ///     Gets the amount remaining until max.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float GetRemaining(this BoundedFloat bounded)
+    {
+        return BoundedLogic.GetRemaining(bounded.Current, bounded.Max);
+    }
+
     // BoundedInt Extensions
     
     /// <summary>
@@ -102,6 +120,24 @@ public static class BoundedExtensions
         return range == 0 ? 0.0 : (double)(bounded.Current - bounded.Min) / range;
     }
 
+    /// <summary>
+    ///     Gets the range between min and max.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int GetRange(this BoundedInt bounded)
+    {
+        return BoundedLogic.GetRange(bounded.Min, bounded.Max);
+    }
+
+    /// <summary>
+    ///     Gets the amount remaining until max.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int GetRemaining(this BoundedInt bounded)
+    {
+        return BoundedLogic.GetRemaining(bounded.Current, bounded.Max);
+    }
+
     // BoundedByte Extensions
     
     /// <summary>
@@ -147,5 +183,37 @@ public static class BoundedExtensions
     public static double GetRatio(this BoundedByte bounded)
     {
         return bounded.Max == 0 ? 0.0 : (double)bounded.Current / bounded.Max;
+    }
+
+    /// <summary>
+    ///     Gets the range (which is just max since min is always 0).
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static byte GetRange(this BoundedByte bounded)
+    {
+        return BoundedLogic.GetRange(bounded.Max);
+    }
+
+    /// <summary>
+    ///     Gets the amount remaining until max.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static byte GetRemaining(this BoundedByte bounded)
+    {
+        return BoundedLogic.GetRemaining(bounded.Current, bounded.Max);
+    }
+
+    // Regeneration Support Extensions
+    
+    /// <summary>
+    ///     Applies regeneration to a BoundedFloat.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void Tick(ref this BoundedFloat bounded, float rate, float deltaTime)
+    {
+        var current = bounded.Current;
+        // Decompose to primitives for logic
+        bounded.Current = current + (rate * deltaTime);
+        bounded.Normalize();
     }
 }

@@ -12,9 +12,16 @@ public static class ExperienceExtensions
     /// <param name="amount">The amount of experience to add.</param>
     /// <param name="nextMaxFormula">A function that takes the NEW level and returns the Max XP required for that level.</param>
     /// <returns>The number of levels gained (0 if no level up occurred).</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Add(ref this ExperienceInt xp, int amount, Func<int, int> nextMaxFormula)
     {
-        return ExperienceLogic.AddExperience(ref xp, amount, nextMaxFormula);
+        return ExperienceLogic.AddExperience(
+            ref xp.Current,
+            ref xp.Max,
+            ref xp.Level,
+            amount,
+            nextMaxFormula
+        );
     }
 
     /// <summary>
@@ -24,9 +31,16 @@ public static class ExperienceExtensions
     /// <param name="amount">The amount of experience to add.</param>
     /// <param name="nextMaxFormula">A function that takes the NEW level and returns the Max XP required for that level.</param>
     /// <returns>The number of levels gained (0 if no level up occurred).</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Add(ref this ExperienceLong xp, long amount, Func<int, long> nextMaxFormula)
     {
-        return ExperienceLogic.AddExperience(ref xp, amount, nextMaxFormula);
+        return ExperienceLogic.AddExperience(
+            ref xp.Current,
+            ref xp.Max,
+            ref xp.Level,
+            amount,
+            nextMaxFormula
+        );
     }
 
     /// <summary>

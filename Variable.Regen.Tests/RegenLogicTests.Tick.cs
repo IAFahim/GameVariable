@@ -40,7 +40,8 @@ public class RegenLogicTests_Tick
     public void Tick_BoundedFloat_Regenerates()
     {
         var bounded = new BoundedFloat(100f, 50f);
-        RegenLogic.Tick(ref bounded, 10f, 1f);
+        // Use extension method which properly decomposes the struct
+        bounded.Tick(10f, 1f);
         Assert.Equal(60f, bounded.Current);
     }
 }

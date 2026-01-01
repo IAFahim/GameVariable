@@ -98,24 +98,6 @@ public struct BoundedInt :
         Current = current > max ? max : current < min ? min : current;
     }
 
-    /// <summary>
-    ///     Gets the range between min and max.
-    /// </summary>
-    public readonly int Range
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => Max - Min;
-    }
-
-    /// <summary>
-    ///     Gets the amount remaining until max.
-    /// </summary>
-    public readonly int Remaining
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => Max - Current;
-    }
-
     /// <summary>Implicitly converts the bounded int to its current value.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static implicit operator int(in BoundedInt value)

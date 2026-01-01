@@ -65,4 +65,22 @@ public static partial class InventoryLogic
         actualTransferred = 0f;
         return false;
     }
+
+    /// <summary>
+    ///     Transfers as much as possible with weight, returning the amount transferred.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float TransferPartialWithWeight(
+        ref float srcQty,
+        ref float dstQty,
+        ref float dstCurWeight,
+        float dstMaxWeight,
+        float dstMaxQty, float unitWeight,
+        float requestedAmount,
+        float tolerance = MathConstants.Tolerance)
+    {
+        TryTransferPartialWithWeight(ref srcQty, ref dstQty, ref dstCurWeight, dstMaxWeight, dstMaxQty,
+            unitWeight, requestedAmount, out var actualTransferred, tolerance);
+        return actualTransferred;
+    }
 }
