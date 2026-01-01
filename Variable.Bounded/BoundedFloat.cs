@@ -159,7 +159,7 @@ public struct BoundedFloat :
     /// <param name="value">The bounded float.</param>
     /// <returns>The current value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static implicit operator float(in BoundedFloat value)
+    public static implicit operator float(BoundedFloat value)
     {
         return value.Current;
     }
@@ -195,19 +195,12 @@ public struct BoundedFloat :
     /// <inheritdoc />
     public readonly override bool Equals(object obj)
     {
-        return obj is BoundedFloat other && Equals(in other);
+        return obj is BoundedFloat other && Equals(other);
     }
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly bool Equals(BoundedFloat other)
-    {
-        return Equals(in other);
-    }
-
-    /// <summary>Compares equality with another bounded float using ref parameter.</summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool Equals(in BoundedFloat other)
     {
         return Current.Equals(other.Current) && Min.Equals(other.Min) && Max.Equals(other.Max);
     }
@@ -215,13 +208,6 @@ public struct BoundedFloat :
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly int CompareTo(BoundedFloat other)
-    {
-        return CompareTo(in other);
-    }
-
-    /// <summary>Compares with another bounded float using ref parameter.</summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly int CompareTo(in BoundedFloat other)
     {
         var cmp = Current.CompareTo(other.Current);
         if (cmp != 0) return cmp;
@@ -233,7 +219,7 @@ public struct BoundedFloat :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly int CompareTo(object obj)
     {
-        if (obj is BoundedFloat other) return CompareTo(in other);
+        if (obj is BoundedFloat other) return CompareTo(other);
         throw new ArgumentException($"Object must be of type {nameof(BoundedFloat)}");
     }
 
@@ -348,77 +334,77 @@ public struct BoundedFloat :
 
     /// <summary>Determines whether two bounded floats are equal.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator ==(in BoundedFloat left, in BoundedFloat right)
+    public static bool operator ==(BoundedFloat left, BoundedFloat right)
     {
-        return left.Equals(in right);
+        return left.Equals(right);
     }
 
     /// <summary>Determines whether two bounded floats are not equal.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator !=(in BoundedFloat left, in BoundedFloat right)
+    public static bool operator !=(BoundedFloat left, BoundedFloat right)
     {
-        return !left.Equals(in right);
+        return !left.Equals(right);
     }
 
     /// <summary>Determines whether one bounded float is less than another.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator <(in BoundedFloat left, in BoundedFloat right)
+    public static bool operator <(BoundedFloat left, BoundedFloat right)
     {
-        return left.CompareTo(in right) < 0;
+        return left.CompareTo(right) < 0;
     }
 
     /// <summary>Determines whether one bounded float is less than or equal to another.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator <=(in BoundedFloat left, in BoundedFloat right)
+    public static bool operator <=(BoundedFloat left, BoundedFloat right)
     {
-        return left.CompareTo(in right) <= 0;
+        return left.CompareTo(right) <= 0;
     }
 
     /// <summary>Determines whether one bounded float is greater than another.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator >(in BoundedFloat left, in BoundedFloat right)
+    public static bool operator >(BoundedFloat left, BoundedFloat right)
     {
-        return left.CompareTo(in right) > 0;
+        return left.CompareTo(right) > 0;
     }
 
     /// <summary>Determines whether one bounded float is greater than or equal to another.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator >=(in BoundedFloat left, in BoundedFloat right)
+    public static bool operator >=(BoundedFloat left, BoundedFloat right)
     {
-        return left.CompareTo(in right) >= 0;
+        return left.CompareTo(right) >= 0;
     }
 
     /// <summary>Increments the current value by 1, clamped to max.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static BoundedFloat operator ++(in BoundedFloat a)
+    public static BoundedFloat operator ++(BoundedFloat a)
     {
         return a + 1f;
     }
 
     /// <summary>Decrements the current value by 1, clamped to min.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static BoundedFloat operator --(in BoundedFloat a)
+    public static BoundedFloat operator --(BoundedFloat a)
     {
         return a - 1f;
     }
 
     /// <summary>Adds a value to the bounded float, clamping the result.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static BoundedFloat operator +(in BoundedFloat a, float b)
+    public static BoundedFloat operator +(BoundedFloat a, float b)
     {
         return new BoundedFloat(a.Max, a.Min, a.Current + b);
     }
 
     /// <summary>Adds a value to the bounded float, clamping the result.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static BoundedFloat operator +(float b, in BoundedFloat a)
+    public static BoundedFloat operator +(float b, BoundedFloat a)
     {
         return a + b;
     }
 
     /// <summary>Subtracts a value from the bounded float, clamping the result.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static BoundedFloat operator -(in BoundedFloat a, float b)
+    public static BoundedFloat operator -(BoundedFloat a, float b)
     {
         return new BoundedFloat(a.Max, a.Min, a.Current - b);
     }
