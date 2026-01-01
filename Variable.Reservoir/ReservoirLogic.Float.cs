@@ -2,6 +2,7 @@ namespace Variable.Reservoir;
 
 /// <summary>
 ///     Provides static methods for reservoir refill and transfer operations.
+///     All methods operate on primitives only - NO STRUCTS.
 /// </summary>
 /// <remarks>
 ///     <para>This class contains the core logic for transferring between volume and reserve.</para>
@@ -32,17 +33,5 @@ public static partial class ReservoirLogic
         if (reserve < MathConstants.Tolerance) reserve = 0f;
 
         return toRefill;
-    }
-
-    /// <summary>
-    ///     Refills the BoundedFloat volume from the reserve.
-    /// </summary>
-    /// <param name="volume">The bounded volume to refill.</param>
-    /// <param name="reserve">The reserve to draw from.</param>
-    /// <returns>The amount actually transferred.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float Refill(ref BoundedFloat volume, ref float reserve)
-    {
-        return Refill(ref volume.Current, volume.Max, ref reserve);
     }
 }

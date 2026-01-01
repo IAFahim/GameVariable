@@ -24,16 +24,13 @@ namespace Variable.Timer;
 /// </example>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
-[DebuggerDisplay("{Current}/{Duration} ({(IsReady() ? \"Ready\" : \"Cooling\")})")]
+[DebuggerDisplay("{Current}/{Duration}")]
 public struct Cooldown :
     IBoundedInfo,
     IEquatable<Cooldown>,
     IComparable<Cooldown>,
-    IComparable,
-    IFormattable
+    IComparable
 {
-    private const float Tolerance = 0.0001f;
-
     /// <summary>The current remaining cooldown time.</summary>
     public float Current;
 
@@ -53,145 +50,28 @@ public struct Cooldown :
     }
 
     /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly float GetMin() => 0;
-
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly float GetCurrent() => Current;
-
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly float GetMax() => Duration;
-
-    /// <summary>
-    ///     Attempts to progress the timer by the specified delta time.
-    /// </summary>
-    /// <param name="deltaTime">The time elapsed since the last tick.</param>
-    /// <returns>True if the cooldown is ready (Current is 0); otherwise, false.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool TryTick(float deltaTime)
-    {
-        if (Current <= Tolerance) return true;
-
-        Current -= deltaTime;
-        if (Current <= Tolerance)
-        {
-            Current = 0f;
-            return true;
-        }
-        return false;
-    }
-
-    /// <summary>
-    ///     Attempts to progress the timer and outputs the overflow time.
-    /// </summary>
-    /// <param name="deltaTime">The time elapsed since the last tick.</param>
-    /// <param name="overflow">The amount of time that exceeded the zero mark.</param>
-    /// <returns>True if the cooldown is ready (Current is 0); otherwise, false.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool TryTick(float deltaTime, out float overflow)
-    {
-        if (Current <= Tolerance)
-        {
-            overflow = deltaTime;
-            return true;
-        }
-
-        Current -= deltaTime;
-        if (Current <= Tolerance)
-        {
-            overflow = -Current;
-            Current = 0f;
-            return true;
-        }
-
-        overflow = 0f;
-        return false;
-    }
-
-    /// <summary>
-    ///     Starts the cooldown by setting <see cref="Current"/> to <see cref="Duration"/>.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Reset()
-    {
-        Current = Duration;
-    }
-
-    /// <summary>
-    ///     Starts the cooldown, reducing the start time by the provided overflow.
-    /// </summary>
-    /// <param name="overflow">Excess time to subtract from the new duration.</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Reset(float overflow)
-    {
-        Current = Duration - (overflow > 0f ? overflow : 0f);
-        if (Current < 0f) Current = 0f;
-    }
-
-    /// <summary>
-    ///     Finishes the cooldown immediately by setting <see cref="Current"/> to 0.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Finish()
-    {
-        Current = 0f;
-    }
-
-    /// <summary>
-    ///     Returns true when the cooldown is ready (Current &lt;= 0).
-    /// </summary>
-    /// <returns>True if ready; otherwise false.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool IsReady() => Current <= Tolerance;
-
-    /// <summary>
-    ///     Returns true when the cooldown is ready. Semantic alias for <see cref="IsReady"/>.
-    /// </summary>
-    /// <returns>True if the remaining time is zero.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool IsFull() => Current <= Tolerance;
-
-    /// <summary>
-    ///     Returns true when the cooldown is at its maximum duration (just started).
-    /// </summary>
-    /// <returns>True if current time matches or exceeds duration.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool IsEmpty() => Current >= Duration - Tolerance;
-
-    /// <summary>
-    ///     Returns true when the cooldown is active (not yet ready).
-    /// </summary>
-    /// <returns>True if on cooldown; otherwise false.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool IsOnCooldown() => Current > Tolerance;
-
-    /// <summary>
-    ///     Gets the progress of the cooldown as a ratio from 0 (just started) to 1 (ready).
-    /// </summary>
-    public readonly float Progress
+    float IBoundedInfo.Min
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => MathF.Abs(Duration) < Tolerance ? 1f : 1f - MathF.Max(0, Current / Duration);
+        get => 0;
     }
 
     /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly double GetRatio()
+    float IBoundedInfo.Current
     {
-        return Math.Abs(Duration) < Tolerance ? 0.0 : (double)Current / Duration;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Current;
     }
 
     /// <inheritdoc />
-    public readonly override string ToString() => IsReady() ? "Ready" : $"{Current:F2}s";
-
-    /// <inheritdoc />
-    public readonly string ToString(string? format, IFormatProvider? formatProvider)
+    float IBoundedInfo.Max
     {
-        if (string.IsNullOrEmpty(format)) format = "G";
-        return $"{Current.ToString(format, formatProvider)}/{Duration.ToString(format, formatProvider)}";
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Duration;
     }
+
+    /// <inheritdoc />
+    public readonly override string ToString() => Current <= 0.0001f ? "Ready" : $"{Current:F2}s";
 
     /// <inheritdoc />
     public readonly override bool Equals(object? obj) => obj is Cooldown other && Equals(other);

@@ -6,21 +6,23 @@ namespace Variable.Inventory;
 public static partial class InventoryLogic
 {
     /// <summary>
-    ///     Adds as much of the specified amount as possible to the inventory, up to the maximum capacity.
+    ///     Attempts to add as much of the specified amount as possible to the inventory, up to the maximum capacity.
     /// </summary>
     /// <param name="current">The reference to the current quantity variable.</param>
     /// <param name="amount">The amount to attempt to add.</param>
     /// <param name="max">The maximum capacity.</param>
+    /// <param name="actualAdded">The actual amount added to the inventory.</param>
     /// <param name="overflow">The amount that could not be added.</param>
     /// <param name="tolerance">The tolerance for floating point comparisons.</param>
-    /// <returns>The actual amount added to the inventory.</returns>
-    public static float AddPartial(ref float current, float amount, float max, out float overflow,
-        float tolerance = MathConstants.Tolerance)
+    /// <returns>True if any amount was added; otherwise, false.</returns>
+    public static bool TryAddPartial(ref float current, float amount, float max, out float actualAdded,
+        out float overflow, float tolerance = MathConstants.Tolerance)
     {
         if (amount <= tolerance)
         {
+            actualAdded = 0f;
             overflow = 0f;
-            return 0f;
+            return false;
         }
 
         var space = max - current;
@@ -32,6 +34,7 @@ public static partial class InventoryLogic
         current += toAdd;
         if (max - current < tolerance) current = max;
 
-        return toAdd;
+        actualAdded = toAdd;
+        return toAdd > tolerance;
     }
 }

@@ -1,5 +1,9 @@
 namespace Variable.Reservoir;
 
+/// <summary>
+///     Provides static methods for reservoir refill and transfer operations (Int version).
+///     All methods operate on primitives only - NO STRUCTS.
+/// </summary>
 public static partial class ReservoirLogic
 {
     /// <summary>
@@ -21,14 +25,5 @@ public static partial class ReservoirLogic
         reserve -= toRefill;
 
         return toRefill;
-    }
-
-    /// <summary>
-    ///     Refills the BoundedInt volume from the reserve.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Refill(ref BoundedInt volume, ref int reserve)
-    {
-        return Refill(ref volume.Current, volume.Max, ref reserve);
     }
 }

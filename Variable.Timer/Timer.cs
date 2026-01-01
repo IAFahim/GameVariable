@@ -29,16 +29,13 @@ namespace Variable.Timer;
 /// </example>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
-[DebuggerDisplay("{Current}/{Duration} ({(IsFull() ? \"Done\" : \"Running\")})")]
+[DebuggerDisplay("{Current}/{Duration}")]
 public struct Timer :
     IBoundedInfo,
     IEquatable<Timer>,
     IComparable<Timer>,
-    IComparable,
-    IFormattable
+    IComparable
 {
-    private const float Tolerance = 0.0001f;
-
     /// <summary>The current elapsed time.</summary>
     public float Current;
 
@@ -58,130 +55,28 @@ public struct Timer :
     }
 
     /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly float GetMin() => 0;
-
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly float GetCurrent() => Current;
-
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly float GetMax() => Duration;
-
-    /// <summary>
-    ///     Advances the timer by the specified delta time.
-    /// </summary>
-    /// <param name="deltaTime">The time elapsed since the last tick.</param>
-    /// <returns>True if the timer is full (completed); otherwise, false.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool TryTick(float deltaTime)
-    {
-        if (Current >= Duration - Tolerance) return true;
-
-        Current += deltaTime;
-        if (Current >= Duration - Tolerance)
-        {
-            Current = Duration;
-            return true;
-        }
-        return false;
-    }
-
-    /// <summary>
-    ///     Advances the timer and outputs the overflow time if it completes.
-    /// </summary>
-    /// <param name="deltaTime">The time elapsed since the last tick.</param>
-    /// <param name="overflow">The amount of time that exceeded the duration.</param>
-    /// <returns>True if the timer is full (completed); otherwise, false.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool TryTick(float deltaTime, out float overflow)
-    {
-        if (Current >= Duration - Tolerance)
-        {
-            overflow = deltaTime;
-            return true;
-        }
-
-        Current += deltaTime;
-        if (Current >= Duration - Tolerance)
-        {
-            overflow = Current - Duration;
-            Current = Duration;
-            return true;
-        }
-
-        overflow = 0f;
-        return false;
-    }
-
-    /// <summary>
-    ///     Resets the timer elapsed time to 0.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Reset()
-    {
-        Current = 0f;
-    }
-
-    /// <summary>
-    ///     Resets the timer and applies an overflow offset.
-    /// </summary>
-    /// <param name="overflow">The amount of time to start the timer with (clamped to duration).</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Reset(float overflow)
-    {
-        Current = overflow > 0f ? (overflow > Duration ? Duration : overflow) : 0f;
-    }
-
-    /// <summary>
-    ///     Completes the timer immediately by setting current to duration.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Finish()
-    {
-        Current = Duration;
-    }
-
-    /// <summary>
-    ///     Returns true when the timer has reached or exceeded its duration.
-    /// </summary>
-    /// <returns>True if complete.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool IsFull() => Current >= Duration - Tolerance;
-
-    /// <summary>
-    ///     Returns true when the timer is at zero (not yet started).
-    /// </summary>
-    /// <returns>True if current is near zero.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool IsEmpty() => Current <= Tolerance;
-
-    /// <summary>
-    ///     Gets the remaining time until the timer reaches its duration.
-    /// </summary>
-    public readonly float Remaining
+    float IBoundedInfo.Min
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => MathF.Max(0, Duration - Current);
+        get => 0;
     }
 
     /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly double GetRatio()
+    float IBoundedInfo.Current
     {
-        return Math.Abs(Duration) < Tolerance ? 1.0 : (double)Current / Duration;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Current;
+    }
+
+    /// <inheritdoc />
+    float IBoundedInfo.Max
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Duration;
     }
 
     /// <inheritdoc />
     public readonly override string ToString() => $"{Current:F2}/{Duration:F2}";
-
-    /// <inheritdoc />
-    public readonly string ToString(string? format, IFormatProvider? formatProvider)
-    {
-        if (string.IsNullOrEmpty(format)) format = "G";
-        return $"{Current.ToString(format, formatProvider)}/{Duration.ToString(format, formatProvider)}";
-    }
 
     /// <inheritdoc />
     public readonly override bool Equals(object? obj) => obj is Timer other && Equals(other);

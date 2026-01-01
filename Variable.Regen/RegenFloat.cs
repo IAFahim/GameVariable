@@ -30,16 +30,25 @@ public struct RegenFloat : IBoundedInfo
     public float Rate;
     
     /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float GetMin() => 0;
+    float IBoundedInfo.Min
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => 0;
+    }
 
     /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float GetCurrent() => Value.Current;
+    float IBoundedInfo.Current
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Value.Current;
+    }
 
     /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float GetMax() => Value.Max;
+    float IBoundedInfo.Max
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Value.Max;
+    }
 
 
     /// <summary>
@@ -50,27 +59,6 @@ public struct RegenFloat : IBoundedInfo
     public void SetCurrent(float current)
     {
         Value.Current = current;
-    }
-
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsEmpty()
-    {
-        return Value.IsEmpty();
-    }
-
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public double GetRatio()
-    {
-        return Value.GetRatio();
-    }
-
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsFull()
-    {
-        return Value.IsFull();
     }
 
     /// <summary>
@@ -94,16 +82,6 @@ public struct RegenFloat : IBoundedInfo
     {
         Value = value;
         Rate = rate;
-    }
-
-    /// <summary>
-    ///     Advances the regeneration by the specified time delta.
-    /// </summary>
-    /// <param name="deltaTime">The time elapsed since the last tick.</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Tick(float deltaTime)
-    {
-        RegenLogic.Tick(ref Value, Rate, deltaTime);
     }
 
     /// <summary>Implicitly converts the regenerating float to its current value.</summary>

@@ -16,9 +16,7 @@ public struct BoundedByte :
     IBoundedInfo,
     IEquatable<BoundedByte>,
     IComparable<BoundedByte>,
-    IComparable,
-    IFormattable,
-    IConvertible
+    IComparable
 {
     /// <summary>The current value, always clamped between 0 and <see cref="Max" />.</summary>
     public byte Current;
@@ -27,16 +25,25 @@ public struct BoundedByte :
     public byte Max;
     
     /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float GetMin() => 0;
+    float IBoundedInfo.Min
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => 0;
+    }
 
     /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float GetCurrent() => Current;
+    float IBoundedInfo.Current
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Current;
+    }
 
     /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float GetMax() => Max;
+    float IBoundedInfo.Max
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Max;
+    }
 
 
     /// <summary>
@@ -73,25 +80,6 @@ public struct BoundedByte :
     }
 
     /// <summary>
-    ///     Clamps the current value to the valid range [0, Max].
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Normalize()
-    {
-        Current = Current > Max ? Max : Current;
-    }
-
-    /// <summary>
-    ///     Deconstructs the bounded value into its components.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Deconstruct(out byte current, out byte max)
-    {
-        current = Current;
-        max = Max;
-    }
-
-    /// <summary>
     ///     Gets the range between min (0) and max.
     /// </summary>
     public readonly byte Range
@@ -109,27 +97,6 @@ public struct BoundedByte :
         get => (byte)(Max - Current);
     }
 
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public double GetRatio()
-    {
-        return Max == 0 ? 0.0 : (double)Current / Max;
-    }
-    
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool IsFull()
-    {
-        return Current == Max;
-    }
-
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool IsEmpty()
-    {
-        return Current == 0;
-    }
-
     /// <summary>Implicitly converts the bounded byte to its current value.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static implicit operator byte(BoundedByte value)
@@ -141,20 +108,6 @@ public struct BoundedByte :
     public override string ToString()
     {
         return $"{Current}/{Max}";
-    }
-
-    /// <inheritdoc />
-    public string ToString(string? format, IFormatProvider? formatProvider)
-    {
-        if (string.IsNullOrEmpty(format)) format = "G";
-
-        switch (format.ToUpperInvariant())
-        {
-            case "R": return GetRatio().ToString("P", formatProvider);
-            case "C": return $"{Current}/{Max}";
-            case "F": return $"{Current} [0, {Max}]";
-            default: return $"{Current.ToString(format, formatProvider)}/{Max.ToString(format, formatProvider)}";
-        }
     }
 
     /// <inheritdoc />
@@ -191,108 +144,6 @@ public struct BoundedByte :
     public override int GetHashCode()
     {
         return HashCode.Combine(Current, Max);
-    }
-
-    /// <inheritdoc />
-    public TypeCode GetTypeCode()
-    {
-        return TypeCode.Byte;
-    }
-
-    /// <inheritdoc />
-    bool IConvertible.ToBoolean(IFormatProvider provider)
-    {
-        return Current != 0;
-    }
-
-    /// <inheritdoc />
-    byte IConvertible.ToByte(IFormatProvider provider)
-    {
-        return Current;
-    }
-
-    /// <inheritdoc />
-    char IConvertible.ToChar(IFormatProvider provider)
-    {
-        return (char)Current;
-    }
-
-    /// <inheritdoc />
-    DateTime IConvertible.ToDateTime(IFormatProvider provider)
-    {
-        throw new InvalidCastException();
-    }
-
-    /// <inheritdoc />
-    decimal IConvertible.ToDecimal(IFormatProvider provider)
-    {
-        return Current;
-    }
-
-    /// <inheritdoc />
-    double IConvertible.ToDouble(IFormatProvider provider)
-    {
-        return Current;
-    }
-
-    /// <inheritdoc />
-    short IConvertible.ToInt16(IFormatProvider provider)
-    {
-        return Current;
-    }
-
-    /// <inheritdoc />
-    int IConvertible.ToInt32(IFormatProvider provider)
-    {
-        return Current;
-    }
-
-    /// <inheritdoc />
-    long IConvertible.ToInt64(IFormatProvider provider)
-    {
-        return Current;
-    }
-
-    /// <inheritdoc />
-    sbyte IConvertible.ToSByte(IFormatProvider provider)
-    {
-        return (sbyte)Current;
-    }
-
-    /// <inheritdoc />
-    float IConvertible.ToSingle(IFormatProvider provider)
-    {
-        return Current;
-    }
-
-    /// <inheritdoc />
-    string IConvertible.ToString(IFormatProvider provider)
-    {
-        return ToString("G", provider);
-    }
-
-    /// <inheritdoc />
-    object IConvertible.ToType(Type conversionType, IFormatProvider provider)
-    {
-        return Convert.ChangeType(Current, conversionType, provider);
-    }
-
-    /// <inheritdoc />
-    ushort IConvertible.ToUInt16(IFormatProvider provider)
-    {
-        return Current;
-    }
-
-    /// <inheritdoc />
-    uint IConvertible.ToUInt32(IFormatProvider provider)
-    {
-        return Current;
-    }
-
-    /// <inheritdoc />
-    ulong IConvertible.ToUInt64(IFormatProvider provider)
-    {
-        return Current;
     }
 
     /// <summary>Determines whether two bounded bytes are equal.</summary>

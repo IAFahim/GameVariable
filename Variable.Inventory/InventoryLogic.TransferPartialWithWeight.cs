@@ -3,7 +3,7 @@ namespace Variable.Inventory;
 public static partial class InventoryLogic
 {
     /// <summary>
-    ///     Transfers as much of the requested amount as possible from a source to a destination, considering weight limits.
+    ///     Attempts to transfer as much of the requested amount as possible from a source to a destination, considering weight limits.
     /// </summary>
     /// <param name="srcQty">The reference to the source quantity variable.</param>
     /// <param name="dstQty">The reference to the destination quantity variable.</param>
@@ -12,17 +12,24 @@ public static partial class InventoryLogic
     /// <param name="dstMaxQty">The maximum quantity capacity of the destination.</param>
     /// <param name="unitWeight">The weight of a single unit of the item.</param>
     /// <param name="requestedAmount">The amount requested to transfer.</param>
+    /// <param name="actualTransferred">The actual amount transferred.</param>
     /// <param name="tolerance">The tolerance for floating point comparisons.</param>
-    /// <returns>The actual amount transferred.</returns>
-    public static float TransferPartialWithWeight(
+    /// <returns>True if any amount was transferred; otherwise, false.</returns>
+    public static bool TryTransferPartialWithWeight(
         ref float srcQty,
         ref float dstQty,
         ref float dstCurWeight,
         float dstMaxWeight,
         float dstMaxQty, float unitWeight,
-        float requestedAmount, float tolerance = MathConstants.Tolerance)
+        float requestedAmount,
+        out float actualTransferred,
+        float tolerance = MathConstants.Tolerance)
     {
-        if (srcQty <= tolerance || requestedAmount <= 0) return 0f;
+        if (srcQty <= tolerance || requestedAmount <= 0)
+        {
+            actualTransferred = 0f;
+            return false;
+        }
 
         var limitSrc = srcQty < requestedAmount ? srcQty : requestedAmount;
 
@@ -51,9 +58,11 @@ public static partial class InventoryLogic
             if (dstMaxQty - dstQty < tolerance) dstQty = dstMaxQty;
             if (dstMaxWeight - dstCurWeight < tolerance) dstCurWeight = dstMaxWeight;
 
-            return actualMove;
+            actualTransferred = actualMove;
+            return true;
         }
 
-        return 0f;
+        actualTransferred = 0f;
+        return false;
     }
 }

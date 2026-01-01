@@ -25,9 +25,7 @@ public struct BoundedFloat :
     IBoundedInfo,
     IEquatable<BoundedFloat>,
     IComparable<BoundedFloat>,
-    IComparable,
-    IFormattable,
-    IConvertible
+    IComparable
 {
     /// <summary>The current value, always clamped between <see cref="Min" /> and <see cref="Max" />.</summary>
     public float Current;
@@ -39,16 +37,25 @@ public struct BoundedFloat :
     public float Max;
     
     /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float GetMin() => Min;
+    float IBoundedInfo.Min
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Min;
+    }
 
     /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float GetCurrent() => Current;
+    float IBoundedInfo.Current
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Current;
+    }
 
     /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float GetMax() => Max;
+    float IBoundedInfo.Max
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Max;
+    }
 
     /// <summary>
     ///     Creates a new bounded float with min = 0 and current = max.
@@ -90,30 +97,6 @@ public struct BoundedFloat :
     }
 
     /// <summary>
-    ///     Clamps the current value to the valid range [Min, Max].
-    ///     Call this after directly modifying <see cref="Current" />.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Normalize()
-    {
-        Current = Current > Max ? Max : Current < Min ? Min : Current;
-    }
-
-    /// <summary>
-    ///     Deconstructs the bounded value into its components.
-    /// </summary>
-    /// <param name="current">The current value.</param>
-    /// <param name="min">The minimum bound.</param>
-    /// <param name="max">The maximum bound.</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly void Deconstruct(out float current, out float min, out float max)
-    {
-        current = Current;
-        min = Min;
-        max = Max;
-    }
-
-    /// <summary>
     ///     Gets the range between min and max.
     /// </summary>
     public readonly float Range
@@ -131,28 +114,6 @@ public struct BoundedFloat :
         get => Max - Current;
     }
 
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly double GetRatio()
-    {
-        var range = Max - Min;
-        return Math.Abs(range) < MathConstants.Tolerance ? 0.0 : (Current - Min) / range;
-    }
-
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool IsFull()
-    {
-        return Current >= Max - MathConstants.Tolerance;
-    }
-
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool IsEmpty()
-    {
-        return Current <= Min + MathConstants.Tolerance;
-    }
-
     /// <summary>
     ///     Implicitly converts the bounded float to its current value.
     /// </summary>
@@ -168,28 +129,6 @@ public struct BoundedFloat :
     public readonly override string ToString()
     {
         return $"{Current}/{Max}";
-    }
-
-    /// <summary>
-    ///     Formats the bounded value as a string.
-    /// </summary>
-    /// <param name="format">
-    ///     Format string: "R" for ratio as percentage, "C" for current/max,
-    ///     "F" for full format with min, or standard numeric formats.
-    /// </param>
-    /// <param name="formatProvider">The format provider.</param>
-    /// <returns>The formatted string.</returns>
-    public readonly string ToString(string? format, IFormatProvider? formatProvider)
-    {
-        if (string.IsNullOrEmpty(format)) format = "G";
-
-        switch (format.ToUpperInvariant())
-        {
-            case "R": return GetRatio().ToString("P", formatProvider);
-            case "C": return $"{Current}/{Max}";
-            case "F": return $"{Current} [{Min}, {Max}]";
-            default: return $"{Current.ToString(format, formatProvider)}/{Max.ToString(format, formatProvider)}";
-        }
     }
 
     /// <inheritdoc />
@@ -242,108 +181,6 @@ public struct BoundedFloat :
     public readonly override int GetHashCode()
     {
         return HashCode.Combine(Current, Min, Max);
-    }
-
-    /// <inheritdoc />
-    public readonly TypeCode GetTypeCode()
-    {
-        return TypeCode.Single;
-    }
-
-    /// <inheritdoc />
-    readonly bool IConvertible.ToBoolean(IFormatProvider provider)
-    {
-        return Current != 0;
-    }
-
-    /// <inheritdoc />
-    readonly byte IConvertible.ToByte(IFormatProvider provider)
-    {
-        return (byte)Current;
-    }
-
-    /// <inheritdoc />
-    readonly char IConvertible.ToChar(IFormatProvider provider)
-    {
-        return (char)Current;
-    }
-
-    /// <inheritdoc />
-    readonly DateTime IConvertible.ToDateTime(IFormatProvider provider)
-    {
-        throw new InvalidCastException();
-    }
-
-    /// <inheritdoc />
-    readonly decimal IConvertible.ToDecimal(IFormatProvider provider)
-    {
-        return (decimal)Current;
-    }
-
-    /// <inheritdoc />
-    readonly double IConvertible.ToDouble(IFormatProvider provider)
-    {
-        return Current;
-    }
-
-    /// <inheritdoc />
-    readonly short IConvertible.ToInt16(IFormatProvider provider)
-    {
-        return (short)Current;
-    }
-
-    /// <inheritdoc />
-    readonly int IConvertible.ToInt32(IFormatProvider provider)
-    {
-        return (int)Current;
-    }
-
-    /// <inheritdoc />
-    readonly long IConvertible.ToInt64(IFormatProvider provider)
-    {
-        return (long)Current;
-    }
-
-    /// <inheritdoc />
-    readonly sbyte IConvertible.ToSByte(IFormatProvider provider)
-    {
-        return (sbyte)Current;
-    }
-
-    /// <inheritdoc />
-    readonly float IConvertible.ToSingle(IFormatProvider provider)
-    {
-        return Current;
-    }
-
-    /// <inheritdoc />
-    readonly string IConvertible.ToString(IFormatProvider provider)
-    {
-        return ToString("G", provider);
-    }
-
-    /// <inheritdoc />
-    readonly object IConvertible.ToType(Type conversionType, IFormatProvider provider)
-    {
-        return Convert.ChangeType(Current, conversionType, provider);
-    }
-
-    /// <inheritdoc />
-    readonly ushort IConvertible.ToUInt16(IFormatProvider provider)
-    {
-        return (ushort)Current;
-    }
-
-    /// <inheritdoc />
-    readonly uint IConvertible.ToUInt32(IFormatProvider provider)
-    {
-        return (uint)Current;
-    }
-
-    /// <inheritdoc />
-    readonly ulong IConvertible.ToUInt64(IFormatProvider provider)
-    {
-        return (ulong)Current;
     }
 
     /// <summary>Determines whether two bounded floats are equal.</summary>

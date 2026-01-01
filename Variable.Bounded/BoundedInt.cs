@@ -27,9 +27,7 @@ public struct BoundedInt :
     IBoundedInfo,
     IEquatable<BoundedInt>,
     IComparable<BoundedInt>,
-    IComparable,
-    IFormattable,
-    IConvertible
+    IComparable
 {
     /// <summary>The current value, always clamped between <see cref="Min" /> and <see cref="Max" />.</summary>
     public int Current;
@@ -41,16 +39,25 @@ public struct BoundedInt :
     public int Max;
 
     /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float GetMin() => Min;
+    float IBoundedInfo.Min
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Min;
+    }
 
     /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float GetCurrent() => Current;
+    float IBoundedInfo.Current
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Current;
+    }
 
     /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float GetMax() => Max;
+    float IBoundedInfo.Max
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Max;
+    }
 
     /// <summary>
     ///     Creates a new bounded int with min = 0 and current = max.
@@ -92,26 +99,6 @@ public struct BoundedInt :
     }
 
     /// <summary>
-    ///     Clamps the current value to the valid range [Min, Max].
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Normalize()
-    {
-        Current = Current > Max ? Max : Current < Min ? Min : Current;
-    }
-
-    /// <summary>
-    ///     Deconstructs the bounded value into its components.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly void Deconstruct(out int current, out int min, out int max)
-    {
-        current = Current;
-        min = Min;
-        max = Max;
-    }
-
-    /// <summary>
     ///     Gets the range between min and max.
     /// </summary>
     public readonly int Range
@@ -129,28 +116,6 @@ public struct BoundedInt :
         get => Max - Current;
     }
 
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly double GetRatio()
-    {
-        var range = Max - Min;
-        return range == 0 ? 0.0 : (double)(Current - Min) / range;
-    }
-
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool IsFull()
-    {
-        return Current == Max;
-    }
-
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool IsEmpty()
-    {
-        return Current == Min;
-    }
-
     /// <summary>Implicitly converts the bounded int to its current value.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static implicit operator int(in BoundedInt value)
@@ -162,20 +127,6 @@ public struct BoundedInt :
     public readonly override string ToString()
     {
         return $"{Current}/{Max}";
-    }
-
-    /// <inheritdoc />
-    public readonly string ToString(string? format, IFormatProvider? formatProvider)
-    {
-        if (string.IsNullOrEmpty(format)) format = "G";
-
-        switch (format.ToUpperInvariant())
-        {
-            case "R": return GetRatio().ToString("P", formatProvider);
-            case "C": return $"{Current}/{Max}";
-            case "F": return $"{Current} [{Min}, {Max}]";
-            default: return $"{Current.ToString(format, formatProvider)}/{Max.ToString(format, formatProvider)}";
-        }
     }
 
     /// <inheritdoc />
@@ -228,108 +179,6 @@ public struct BoundedInt :
     public readonly override int GetHashCode()
     {
         return HashCode.Combine(Current, Min, Max);
-    }
-
-    /// <inheritdoc />
-    public readonly TypeCode GetTypeCode()
-    {
-        return TypeCode.Int32;
-    }
-
-    /// <inheritdoc />
-    readonly bool IConvertible.ToBoolean(IFormatProvider provider)
-    {
-        return Current != 0;
-    }
-
-    /// <inheritdoc />
-    readonly byte IConvertible.ToByte(IFormatProvider provider)
-    {
-        return (byte)Current;
-    }
-
-    /// <inheritdoc />
-    readonly char IConvertible.ToChar(IFormatProvider provider)
-    {
-        return (char)Current;
-    }
-
-    /// <inheritdoc />
-    readonly DateTime IConvertible.ToDateTime(IFormatProvider provider)
-    {
-        throw new InvalidCastException();
-    }
-
-    /// <inheritdoc />
-    readonly decimal IConvertible.ToDecimal(IFormatProvider provider)
-    {
-        return Current;
-    }
-
-    /// <inheritdoc />
-    readonly double IConvertible.ToDouble(IFormatProvider provider)
-    {
-        return Current;
-    }
-
-    /// <inheritdoc />
-    readonly short IConvertible.ToInt16(IFormatProvider provider)
-    {
-        return (short)Current;
-    }
-
-    /// <inheritdoc />
-    readonly int IConvertible.ToInt32(IFormatProvider provider)
-    {
-        return Current;
-    }
-
-    /// <inheritdoc />
-    readonly long IConvertible.ToInt64(IFormatProvider provider)
-    {
-        return Current;
-    }
-
-    /// <inheritdoc />
-    readonly sbyte IConvertible.ToSByte(IFormatProvider provider)
-    {
-        return (sbyte)Current;
-    }
-
-    /// <inheritdoc />
-    readonly float IConvertible.ToSingle(IFormatProvider provider)
-    {
-        return Current;
-    }
-
-    /// <inheritdoc />
-    readonly string IConvertible.ToString(IFormatProvider provider)
-    {
-        return ToString("G", provider);
-    }
-
-    /// <inheritdoc />
-    readonly object IConvertible.ToType(Type conversionType, IFormatProvider provider)
-    {
-        return Convert.ChangeType(Current, conversionType, provider);
-    }
-
-    /// <inheritdoc />
-    readonly ushort IConvertible.ToUInt16(IFormatProvider provider)
-    {
-        return (ushort)Current;
-    }
-
-    /// <inheritdoc />
-    readonly uint IConvertible.ToUInt32(IFormatProvider provider)
-    {
-        return (uint)Current;
-    }
-
-    /// <inheritdoc />
-    readonly ulong IConvertible.ToUInt64(IFormatProvider provider)
-    {
-        return (ulong)Current;
     }
 
     /// <summary>Determines whether two bounded ints are equal.</summary>

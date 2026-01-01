@@ -50,16 +50,6 @@ public struct ReservoirInt
         Reserve = reserve;
     }
 
-    /// <summary>
-    ///     Refills the volume from the reserve.
-    /// </summary>
-    /// <returns>The amount actually refilled.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public int Refill()
-    {
-        return ReservoirLogic.Refill(ref Volume, ref Reserve);
-    }
-
     /// <summary>Implicitly converts the reservoir to its current volume value.</summary>
     public static implicit operator int(ReservoirInt res)
     {
