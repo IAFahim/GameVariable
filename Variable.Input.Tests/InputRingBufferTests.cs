@@ -1,3 +1,5 @@
+using Xunit;
+
 namespace Variable.Input.Tests;
 
 public class InputRingBufferTests
@@ -126,5 +128,40 @@ public class InputRingBufferTests
         Assert.Equal(0, buffer.Count);
         Assert.Equal(0, buffer.Head);
         Assert.Equal(0, buffer.Tail);
+    }
+
+    [Fact]
+    public void Complex_Interleaved_ReadWrite_Works()
+    {
+        var buffer = new InputRingBuffer();
+        
+        // 1. Fill halfway
+        for (int i = 1; i <= 4; i++) Assert.True(buffer.RegisterInput(i));
+        Assert.Equal(4, buffer.Count);
+        
+        // 2. Read 2
+        Assert.True(ComboLogic.TryDequeueInput(ref buffer, out int val)); Assert.Equal(1, val);
+        Assert.True(ComboLogic.TryDequeueInput(ref buffer, out val)); Assert.Equal(2, val);
+        Assert.Equal(2, buffer.Count);
+        
+        // 3. Fill to wrap around (Capacity 8. Head=2, Tail=4. Add 6 items -> Tail should wrap)
+        // Current items: [_, _, 3, 4, _, _, _, _]
+        // Add 5,6,7,8,9,10
+        for (int i = 5; i <= 10; i++) Assert.True(buffer.RegisterInput(i));
+        
+        Assert.Equal(8, buffer.Count); // Full
+        
+        // 4. Verify Full
+        Assert.False(buffer.RegisterInput(11)); // Should fail
+        
+        // 5. Read all and verify order
+        int[] expected = { 3, 4, 5, 6, 7, 8, 9, 10 };
+        foreach (var exp in expected)
+        {
+            Assert.True(ComboLogic.TryDequeueInput(ref buffer, out val));
+            Assert.Equal(exp, val);
+        }
+        
+        Assert.Equal(0, buffer.Count);
     }
 }

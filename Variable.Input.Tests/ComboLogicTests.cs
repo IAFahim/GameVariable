@@ -1,3 +1,5 @@
+using Xunit;
+
 namespace Variable.Input.Tests;
 
 public class ComboLogicTests
