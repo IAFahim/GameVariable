@@ -1,183 +1,74 @@
-# Variable.Input - Complete Unity Guide
+# Variable.Input - Advanced Unity Patterns
 
-**Full MonoBehaviour, ScriptableObject, ECS, and Jobs Integration**
+**ECS, Jobs, Animation Events, and Production Patterns**
+
+> 📖 **New to this library?** Start with [README.md](README.md) for beginner-friendly examples.
 
 ---
 
-## 🎮 MonoBehaviour (Copy-Paste Ready)
+## 🎬 Animation Event Integration
 
-### Complete Working Example
+The most reliable way to chain combos is using Animation Events.
+
+### Setup
+
+1. Open your attack animation in Unity
+2. Add an Animation Event at the end (or at the "cancellable" point)
+3. Set function name to `OnComboWindowOpen`
 
 ```csharp
-// 1. MyGameInputs.cs
-public static class MyGameInputs
-{
-    public const int LMB = 100;
-    public const int RMB = 101;
-    public const int Space = 200;
-}
-
-// 2. ComboGraphBuilder.cs
+// ComboAnimationHandler.cs
 using UnityEngine;
 using Variable.Input;
 
-public class ComboGraphBuilder
-{
-    public static ComboGraph BuildFightingCombo()
-    {
-        // Neutral → Light → Light-Light
-        //       └→ Heavy → Heavy-Heavy
-        
-        var nodes = new ComboNode[5];
-        nodes[0] = new ComboNode { ActionID = 0, EdgeStartIndex = 0, EdgeCount = 2 };    // Neutral
-        nodes[1] = new ComboNode { ActionID = 100, EdgeStartIndex = 2, EdgeCount = 1 };  // Light
-        nodes[2] = new ComboNode { ActionID = 200, EdgeStartIndex = 3, EdgeCount = 1 };  // Heavy
-        nodes[3] = new ComboNode { ActionID = 101, EdgeStartIndex = 4, EdgeCount = 0 };  // LL
-        nodes[4] = new ComboNode { ActionID = 201, EdgeStartIndex = 4, EdgeCount = 0 };  // HH
-
-        var edges = new ComboEdge[4];
-        edges[0] = new ComboEdge { InputTrigger = MyGameInputs.LMB, TargetNodeIndex = 1 };
-        edges[1] = new ComboEdge { InputTrigger = MyGameInputs.RMB, TargetNodeIndex = 2 };
-        edges[2] = new ComboEdge { InputTrigger = MyGameInputs.LMB, TargetNodeIndex = 3 };
-        edges[3] = new ComboEdge { InputTrigger = MyGameInputs.RMB, TargetNodeIndex = 4 };
-
-        return new ComboGraph { Nodes = nodes, Edges = edges };
-    }
-}
-
-// 3. PlayerComboController.cs
-using UnityEngine;
-using Variable.Input;
-
-public class PlayerComboController : MonoBehaviour
+public class ComboAnimationHandler : MonoBehaviour
 {
     [SerializeField] private Animator animator;
-
-    public ComboState State;      // Public for debugging
-    public InputRingBuffer Buffer;
+    
     private ComboGraph _graph;
-
-    private void Awake()
+    private ComboState _state;
+    private InputRingBuffer _buffer;
+    
+    void Update()
     {
-        _graph = ComboGraphBuilder.BuildFightingCombo();
-        State = new ComboState { CurrentNodeIndex = 0, IsActionBusy = false };
-        Buffer = new InputRingBuffer();
-    }
-
-    private void Update()
-    {
-        // Capture inputs
-        if (Input.GetMouseButtonDown(0)) Buffer.RegisterInput(MyGameInputs.LMB);
-        if (Input.GetMouseButtonDown(1)) Buffer.RegisterInput(MyGameInputs.RMB);
+        // Buffer inputs at any time
+        if (Input.GetMouseButtonDown(0)) _buffer.RegisterInput(Inputs.LMB);
+        if (Input.GetMouseButtonDown(1)) _buffer.RegisterInput(Inputs.RMB);
         
-        // Process combo
-        if (State.TryUpdate(ref Buffer, _graph, out int actionID))
+        // Only process when NOT busy (animation handles timing)
+        if (!_state.IsActionBusy && _state.TryUpdate(ref _buffer, _graph, out int actionID))
         {
-            ExecuteAction(actionID);
+            PlayAction(actionID);
         }
     }
-
-    private void ExecuteAction(int actionID)
+    
+    void PlayAction(int actionID)
     {
-        Debug.Log($"<color=green>Action: {actionID}</color>");
-        animator.Play($"Action_{actionID}");
-        StartCoroutine(WaitForAnimation(actionID));
+        _state.IsActionBusy = true;
+        animator.CrossFade($"Attack_{actionID}", 0.1f);
     }
-
-    private System.Collections.IEnumerator WaitForAnimation(int actionID)
+    
+    /// <summary>
+    /// Called from Animation Event when attack can be cancelled into next move.
+    /// </summary>
+    public void OnComboWindowOpen()
     {
-        yield return new WaitForSeconds(GetDuration(actionID));
-        State.SignalActionFinished();
+        _state.SignalActionFinished();
         
-        // Process next buffered input
-        if (State.TryUpdate(ref Buffer, _graph, out int nextID))
-            ExecuteAction(nextID);
+        // Immediately check for buffered input
+        if (_state.TryUpdate(ref _buffer, _graph, out int nextAction))
+        {
+            PlayAction(nextAction);
+        }
     }
-
-    private float GetDuration(int actionID) => actionID switch
+    
+    /// <summary>
+    /// Called from Animation Event when attack fully completes.
+    /// </summary>
+    public void OnAttackComplete()
     {
-        100 => 0.3f,  // Light
-        200 => 0.5f,  // Heavy
-        101 => 0.4f,  // LL
-        201 => 0.7f,  // HH
-        _ => 0f
-    };
-
-    // Debug GUI
-    private void OnGUI()
-    {
-        GUILayout.Label($"Node: {State.CurrentNodeIndex}, Busy: {State.IsActionBusy}, Buffer: {Buffer.Count}");
-    }
-}
-```
-
----
-
-## 📦 ScriptableObject Pattern
-
-### Create Asset Type
-
-```csharp
-// ComboGraphAsset.cs
-using UnityEngine;
-using Variable.Input;
-
-[CreateAssetMenu(menuName = "Game/Combo Graph")]
-public class ComboGraphAsset : ScriptableObject
-{
-    [System.Serializable]
-    public class Node
-    {
-        public int ActionID;
-        public int EdgeStartIndex;
-        public int EdgeCount;
-    }
-
-    [System.Serializable]
-    public class Edge
-    {
-        public int InputTrigger;
-        public int TargetNodeIndex;
-    }
-
-    public Node[] Nodes;
-    public Edge[] Edges;
-
-    public ComboGraph ToComboGraph()
-    {
-        var nodes = new ComboNode[Nodes.Length];
-        for (int i = 0; i < Nodes.Length; i++)
-            nodes[i] = new ComboNode
-            {
-                ActionID = Nodes[i].ActionID,
-                EdgeStartIndex = Nodes[i].EdgeStartIndex,
-                EdgeCount = Nodes[i].EdgeCount
-            };
-
-        var edges = new ComboEdge[Edges.Length];
-        for (int i = 0; i < Edges.Length; i++)
-            edges[i] = new ComboEdge
-            {
-                InputTrigger = Edges[i].InputTrigger,
-                TargetNodeIndex = Edges[i].TargetNodeIndex
-            };
-
-        return new ComboGraph { Nodes = nodes, Edges = edges };
-    }
-}
-```
-
-### Use in Controller
-
-```csharp
-public class PlayerComboController : MonoBehaviour
-{
-    [SerializeField] private ComboGraphAsset graphAsset;
-    private ComboGraph _graph;
-
-    private void Awake()
-    {
-        _graph = graphAsset.ToComboGraph();
+        _state.SignalActionFinished();
+        _state.Reset(); // Return to idle if no input buffered
     }
 }
 ```
@@ -202,11 +93,12 @@ public struct ComboStateComponent : IComponentData
     public ComboState State;
 }
 
-public struct ExecuteActionEvent : IComponentData
+public struct ComboActionEvent : IComponentData
 {
     public int ActionID;
 }
 
+// Blob for shared graph data (memory efficient)
 public struct ComboGraphBlob
 {
     public BlobArray<ComboNode> Nodes;
@@ -230,13 +122,15 @@ public partial class ComboInputSystem : SystemBase
 {
     protected override void OnUpdate()
     {
-        var lmb = Input.GetMouseButtonDown(0);
-        var rmb = Input.GetMouseButtonDown(1);
-
+        bool lmb = Input.GetMouseButtonDown(0);
+        bool rmb = Input.GetMouseButtonDown(1);
+        
+        if (!lmb && !rmb) return;
+        
         Entities.ForEach((ref ComboInputComponent input) =>
         {
-            if (lmb) input.Buffer.RegisterInput(MyGameInputs.LMB);
-            if (rmb) input.Buffer.RegisterInput(MyGameInputs.RMB);
+            if (lmb) input.Buffer.RegisterInput(Inputs.LMB);
+            if (rmb) input.Buffer.RegisterInput(Inputs.RMB);
         }).WithoutBurst().Run();
     }
 }
@@ -246,38 +140,80 @@ public partial class ComboInputSystem : SystemBase
 
 ```csharp
 using Unity.Entities;
+using Unity.Collections;
 
 [UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial class ComboProcessingSystem : SystemBase
 {
     protected override void OnUpdate()
     {
-        var ecb = new EntityCommandBuffer(Allocator.TempJob);
-
-        Entities.WithoutBurst().ForEach((Entity entity, 
-            ref ComboInputComponent input, 
-            ref ComboStateComponent state, 
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        
+        Entities.ForEach((
+            Entity entity,
+            ref ComboInputComponent input,
+            ref ComboStateComponent state,
             in ComboGraphReference graphRef) =>
         {
+            ref var graph = ref graphRef.Graph.Value;
+            
+            // Convert BlobArrays to ReadOnlySpan
+            ReadOnlySpan<ComboNode> nodes;
+            ReadOnlySpan<ComboEdge> edges;
             unsafe
             {
-                ref var graph = ref graphRef.Graph.Value;
-                
-                var nodeSpan = new ReadOnlySpan<ComboNode>(
+                nodes = new ReadOnlySpan<ComboNode>(
                     graph.Nodes.GetUnsafePtr(), graph.Nodes.Length);
-                var edgeSpan = new ReadOnlySpan<ComboEdge>(
+                edges = new ReadOnlySpan<ComboEdge>(
                     graph.Edges.GetUnsafePtr(), graph.Edges.Length);
-
-                if (ComboLogic.TryAdvanceState(
-                    ref state.State, ref input.Buffer, nodeSpan, edgeSpan, out int actionID))
-                {
-                    ecb.AddComponent(entity, new ExecuteActionEvent { ActionID = actionID });
-                }
             }
-        }).Run();
-
+            
+            if (ComboLogic.TryAdvanceState(
+                ref state.State, 
+                ref input.Buffer, 
+                nodes, 
+                edges, 
+                out int actionID))
+            {
+                ecb.AddComponent(entity, new ComboActionEvent { ActionID = actionID });
+            }
+        }).WithoutBurst().Run();
+        
         ecb.Playback(EntityManager);
         ecb.Dispose();
+    }
+}
+```
+
+### Creating BlobAssets
+
+```csharp
+using Unity.Entities;
+using Unity.Collections;
+using Variable.Input;
+
+public static class ComboGraphBlobBuilder
+{
+    public static BlobAssetReference<ComboGraphBlob> Build(ComboGraph source)
+    {
+        var builder = new BlobBuilder(Allocator.Temp);
+        
+        ref var root = ref builder.ConstructRoot<ComboGraphBlob>();
+        
+        // Copy nodes
+        var nodesArray = builder.Allocate(ref root.Nodes, source.Nodes.Length);
+        for (int i = 0; i < source.Nodes.Length; i++)
+            nodesArray[i] = source.Nodes[i];
+        
+        // Copy edges
+        var edgesArray = builder.Allocate(ref root.Edges, source.Edges.Length);
+        for (int i = 0; i < source.Edges.Length; i++)
+            edgesArray[i] = source.Edges[i];
+        
+        var result = builder.CreateBlobAssetReference<ComboGraphBlob>(Allocator.Persistent);
+        builder.Dispose();
+        
+        return result;
     }
 }
 ```
@@ -285,6 +221,8 @@ public partial class ComboProcessingSystem : SystemBase
 ---
 
 ## 🎨 Unity Jobs
+
+### Single Combo Job
 
 ```csharp
 using Unity.Jobs;
@@ -297,202 +235,345 @@ public struct ComboJob : IJob
     [ReadOnly] public NativeArray<ComboEdge> Edges;
     public ComboState State;
     public InputRingBuffer Buffer;
-    public NativeArray<int> Result;
-
+    public NativeReference<int> Result;
+    
     public void Execute()
     {
         if (ComboLogic.TryAdvanceState(ref State, ref Buffer, Nodes, Edges, out int actionID))
-            Result[0] = actionID;
+            Result.Value = actionID;
         else
-            Result[0] = -1;
+            Result.Value = -1;
+    }
+}
+```
+
+### Batch Processing (AI Enemies)
+
+```csharp
+using Unity.Jobs;
+using Unity.Collections;
+using Unity.Burst;
+using Variable.Input;
+
+[BurstCompile]
+public struct BatchComboJob : IJobParallelFor
+{
+    [ReadOnly] public NativeArray<ComboNode> Nodes;
+    [ReadOnly] public NativeArray<ComboEdge> Edges;
+    public NativeArray<ComboState> States;
+    public NativeArray<InputRingBuffer> Buffers;
+    public NativeArray<int> Results;
+    
+    public void Execute(int index)
+    {
+        var state = States[index];
+        var buffer = Buffers[index];
+        
+        if (ComboLogic.TryAdvanceState(ref state, ref buffer, Nodes, Edges, out int actionID))
+            Results[index] = actionID;
+        else
+            Results[index] = -1;
+        
+        States[index] = state;
+        Buffers[index] = buffer;
     }
 }
 
 // Usage
-public class ComboJobRunner : MonoBehaviour
+public class AIComboProcessor : MonoBehaviour
 {
     private NativeArray<ComboNode> _nodes;
     private NativeArray<ComboEdge> _edges;
-    private NativeArray<int> _result;
-
-    private void Update()
+    private NativeArray<ComboState> _aiStates;
+    private NativeArray<InputRingBuffer> _aiBuffers;
+    private NativeArray<int> _results;
+    
+    private const int AI_COUNT = 100;
+    
+    void Start()
     {
-        var job = new ComboJob
+        var graph = DirectComboBuilder.Build();
+        
+        _nodes = new NativeArray<ComboNode>(graph.Nodes, Allocator.Persistent);
+        _edges = new NativeArray<ComboEdge>(graph.Edges, Allocator.Persistent);
+        _aiStates = new NativeArray<ComboState>(AI_COUNT, Allocator.Persistent);
+        _aiBuffers = new NativeArray<InputRingBuffer>(AI_COUNT, Allocator.Persistent);
+        _results = new NativeArray<int>(AI_COUNT, Allocator.Persistent);
+    }
+    
+    void Update()
+    {
+        // AI decision system would populate buffers here
+        
+        var job = new BatchComboJob
         {
             Nodes = _nodes,
             Edges = _edges,
-            State = _state,
-            Buffer = _buffer,
-            Result = _result
+            States = _aiStates,
+            Buffers = _aiBuffers,
+            Results = _results
         };
-
-        job.Schedule().Complete();
-
-        if (_result[0] != -1)
-            ExecuteAction(_result[0]);
+        
+        job.Schedule(AI_COUNT, 32).Complete();
+        
+        // Process results
+        for (int i = 0; i < AI_COUNT; i++)
+        {
+            if (_results[i] != -1)
+            {
+                // Trigger AI animation/action
+            }
+        }
     }
-
-    private void OnDestroy()
+    
+    void OnDestroy()
     {
         _nodes.Dispose();
         _edges.Dispose();
-        _result.Dispose();
+        _aiStates.Dispose();
+        _aiBuffers.Dispose();
+        _results.Dispose();
     }
 }
 ```
 
 ---
 
-## 🛠️ Unity Tools
+## 🛠️ Editor Tools
 
-### Combo Debugger
-
-```csharp
-using UnityEngine;
-using Variable.Input;
-
-public class ComboDebugger : MonoBehaviour
-{
-    [SerializeField] private PlayerComboController controller;
-    
-    private void OnGUI()
-    {
-        GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-        GUILayout.Box("Combo Debugger");
-        
-        GUILayout.Label($"Node: {controller.State.CurrentNodeIndex}");
-        GUILayout.Label($"Busy: {controller.State.IsActionBusy}");
-        GUILayout.Label($"Buffer: {controller.Buffer.Count}");
-        
-        if (GUILayout.Button("Force LMB"))
-            controller.Buffer.RegisterInput(MyGameInputs.LMB);
-        
-        if (GUILayout.Button("Clear Buffer"))
-            controller.Buffer.Clear();
-        
-        if (GUILayout.Button("Reset"))
-            controller.State.Reset();
-        
-        GUILayout.EndArea();
-    }
-}
-```
-
-### Custom Inspector
+### Graph Visualizer
 
 ```csharp
 #if UNITY_EDITOR
-using UnityEditor;
 using UnityEngine;
+using UnityEditor;
+using Variable.Input;
 
-[CustomEditor(typeof(ComboGraphAsset))]
-public class ComboGraphEditor : Editor
+public class ComboGraphWindow : EditorWindow
 {
-    public override void OnInspectorGUI()
+    private ComboAsset _asset;
+    
+    [MenuItem("Tools/Combo Graph Viewer")]
+    static void Open() => GetWindow<ComboGraphWindow>("Combo Graph");
+    
+    void OnGUI()
     {
-        DrawDefaultInspector();
+        _asset = EditorGUILayout.ObjectField("Asset", _asset, typeof(ComboAsset), false) as ComboAsset;
         
-        var asset = (ComboGraphAsset)target;
+        if (_asset == null) return;
         
-        if (GUILayout.Button("Validate Graph"))
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Graph Structure", EditorStyles.boldLabel);
+        
+        for (int i = 0; i < _asset.Moves.Count; i++)
         {
-            bool valid = true;
+            var move = _asset.Moves[i];
+            EditorGUILayout.BeginVertical("box");
             
-            for (int i = 0; i < asset.Nodes.Length; i++)
+            EditorGUILayout.LabelField($"[{i}] {move.Name}", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField($"ActionID: {move.ActionID}");
+            
+            foreach (var t in move.Transitions)
             {
-                var node = asset.Nodes[i];
-                if (node.EdgeStartIndex + node.EdgeCount > asset.Edges.Length)
-                {
-                    Debug.LogError($"Node {i}: Invalid edge range!");
-                    valid = false;
-                }
+                string targetName = t.GoToMoveIndex < _asset.Moves.Count 
+                    ? _asset.Moves[t.GoToMoveIndex].Name 
+                    : "INVALID";
+                EditorGUILayout.LabelField($"  → Button {t.Button} → [{t.GoToMoveIndex}] {targetName}");
             }
             
-            for (int i = 0; i < asset.Edges.Length; i++)
-            {
-                var edge = asset.Edges[i];
-                if (edge.TargetNodeIndex >= asset.Nodes.Length)
-                {
-                    Debug.LogError($"Edge {i}: Invalid target!");
-                    valid = false;
-                }
-            }
-            
-            if (valid)
-                Debug.Log("<color=green>Graph Valid!</color>");
+            EditorGUILayout.EndVertical();
         }
     }
 }
 #endif
 ```
 
----
-
-## 📋 Common Patterns
-
-### Input Mapping
+### Runtime Debugger
 
 ```csharp
-public class InputMapper : MonoBehaviour
+using UnityEngine;
+using Variable.Input;
+
+public class ComboDebugOverlay : MonoBehaviour
 {
-    private Dictionary<KeyCode, int> _map = new();
-
-    private void Awake()
+    public ComboState State;
+    public InputRingBuffer Buffer;
+    public string[] MoveNames;
+    
+    void OnGUI()
     {
-        _map[KeyCode.Q] = 1;
-        _map[KeyCode.W] = 2;
-        _map[KeyCode.E] = 3;
-        _map[KeyCode.R] = 4;
+        GUILayout.BeginArea(new Rect(10, 10, 250, 200));
+        GUILayout.Box("Combo Debug");
+        
+        string currentMove = State.CurrentNodeIndex < MoveNames.Length 
+            ? MoveNames[State.CurrentNodeIndex] 
+            : $"Node {State.CurrentNodeIndex}";
+        
+        GUILayout.Label($"Current: {currentMove}");
+        GUILayout.Label($"Busy: {State.IsActionBusy}");
+        GUILayout.Label($"Buffer: {Buffer.Count} inputs");
+        
+        if (GUILayout.Button("Reset"))
+        {
+            State.Reset();
+            Buffer.Clear();
+        }
+        
+        GUILayout.EndArea();
     }
-
-    public bool TryGetInput(out int inputId)
-    {
-        inputId = 0;
-        foreach (var kvp in _map)
-            if (Input.GetKeyDown(kvp.Key))
-            {
-                inputId = kvp.Value;
-                return true;
-            }
-        return false;
-    }
-}
-```
-
-### Animation Event Integration
-
-```csharp
-// On Animation Clip, add event at end:
-// Function: OnComboAnimationComplete
-// Time: 0.9 (near end)
-
-public void OnComboAnimationComplete()
-{
-    State.SignalActionFinished();
-    if (State.TryUpdate(ref Buffer, _graph, out int nextID))
-        ExecuteAction(nextID);
 }
 ```
 
 ---
 
-## 🎯 Best Practices
+## 📋 Production Patterns
 
-1. **Make State/Buffer Public** for Inspector debugging
-2. **Use Animation Events** for precise timing
-3. **ScriptableObjects** for designer-friendly graphs
-4. **Validate Graphs** in custom editor
-5. **Clear Buffer** on player death/respawn
-6. **Jobs for AI** processing multiple combos
+### Input Mapping with New Input System
+
+```csharp
+using UnityEngine;
+using UnityEngine.InputSystem;
+using Variable.Input;
+
+public class NewInputSystemBridge : MonoBehaviour
+{
+    [SerializeField] private InputActionAsset inputActions;
+    
+    private InputAction _attackLight;
+    private InputAction _attackHeavy;
+    private InputRingBuffer _buffer;
+    
+    void Awake()
+    {
+        var combat = inputActions.FindActionMap("Combat");
+        _attackLight = combat.FindAction("AttackLight");
+        _attackHeavy = combat.FindAction("AttackHeavy");
+        
+        _attackLight.performed += _ => _buffer.RegisterInput(Inputs.LMB);
+        _attackHeavy.performed += _ => _buffer.RegisterInput(Inputs.RMB);
+    }
+    
+    void OnEnable()
+    {
+        _attackLight.Enable();
+        _attackHeavy.Enable();
+    }
+    
+    void OnDisable()
+    {
+        _attackLight.Disable();
+        _attackHeavy.Disable();
+    }
+}
+```
+
+### Timeout/Reset Logic
+
+```csharp
+using UnityEngine;
+using Variable.Input;
+
+public class ComboWithTimeout : MonoBehaviour
+{
+    [SerializeField] private float comboTimeout = 1.5f;
+    
+    private ComboGraph _graph;
+    private ComboState _state;
+    private InputRingBuffer _buffer;
+    private float _lastActionTime;
+    
+    void Update()
+    {
+        // Check timeout
+        if (!_state.IsActionBusy && 
+            _state.CurrentNodeIndex != 0 && 
+            Time.time - _lastActionTime > comboTimeout)
+        {
+            _state.Reset();
+            _buffer.Clear();
+            Debug.Log("Combo timed out - reset to idle");
+        }
+        
+        // Normal processing
+        if (_state.TryUpdate(ref _buffer, _graph, out int actionID))
+        {
+            _lastActionTime = Time.time;
+            ExecuteAction(actionID);
+        }
+    }
+    
+    void ExecuteAction(int actionID)
+    {
+        // ... play animation
+    }
+}
+```
+
+### Multiple Combo Graphs (Weapon Switching)
+
+```csharp
+using UnityEngine;
+using Variable.Input;
+
+public class WeaponComboController : MonoBehaviour
+{
+    [SerializeField] private ComboAsset swordCombo;
+    [SerializeField] private ComboAsset spearCombo;
+    [SerializeField] private ComboAsset fistCombo;
+    
+    private ComboGraph[] _graphs;
+    private ComboState _state;
+    private InputRingBuffer _buffer;
+    private int _currentWeapon;
+    
+    void Awake()
+    {
+        _graphs = new ComboGraph[]
+        {
+            swordCombo.BuildGraph(),
+            spearCombo.BuildGraph(),
+            fistCombo.BuildGraph()
+        };
+    }
+    
+    public void SwitchWeapon(int weaponIndex)
+    {
+        _currentWeapon = weaponIndex;
+        _state.Reset();
+        _buffer.Clear();
+    }
+    
+    void Update()
+    {
+        // ... input capture
+        
+        if (_state.TryUpdate(ref _buffer, _graphs[_currentWeapon], out int actionID))
+        {
+            ExecuteAction(actionID);
+        }
+    }
+}
+```
 
 ---
 
-## 📚 See Also
+## 🎯 Performance Tips
 
-- [EXAMPLES.md](EXAMPLES.md) - Game-specific patterns
-- [PERFECTION.md](PERFECTION.md) - Architecture details
-- [CHANGELOG.md](CHANGELOG.md) - Design rationale
+| Tip | Why |
+|-----|-----|
+| Cache `ComboGraph` at Awake | Avoid rebuilding every frame |
+| Use NativeArrays for Jobs | Zero GC, Burst compatible |
+| Use BlobAssets for ECS | Shared memory, cache friendly |
+| Process in batches | Parallel jobs for many entities |
+| Use `ref` parameters | Avoid struct copies |
 
 ---
 
-**Unity-Ready. Production-Tested. Drop-In Integration.** 🎮
+## 📚 Related Docs
+
+- [README.md](README.md) - Beginner guide with visual examples
+- API is fully documented with XML comments
+
+---
+
+**Production-Ready. Battle-Tested. Burst-Compatible.** 🎮
