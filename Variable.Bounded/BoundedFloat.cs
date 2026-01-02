@@ -36,6 +36,15 @@ public struct BoundedFloat :
     /// <summary>The maximum allowed value (ceiling).</summary>
     public float Max;
 
+    private readonly float _range;
+    private readonly float _inverseRange;
+
+    /// <summary>Gets the pre-calculated range (Max - Min).</summary>
+    public readonly float Range => _range;
+
+    /// <summary>Gets the pre-calculated inverse of the range (1 / (Max - Min)).</summary>
+    public readonly float InverseRange => _inverseRange;
+
     /// <inheritdoc />
     float IBoundedInfo.Min
     {
@@ -67,6 +76,8 @@ public struct BoundedFloat :
         Max = max;
         Min = 0f;
         Current = max;
+        _range = max;
+        _inverseRange = Math.Abs(max) < MathConstants.Tolerance ? 0f : 1f / max;
     }
 
     /// <summary>
@@ -80,6 +91,8 @@ public struct BoundedFloat :
         Max = max;
         Min = 0f;
         Current = current > max ? max : current < 0f ? 0f : current;
+        _range = max;
+        _inverseRange = Math.Abs(max) < MathConstants.Tolerance ? 0f : 1f / max;
     }
 
     /// <summary>
@@ -94,6 +107,8 @@ public struct BoundedFloat :
         Min = min;
         Max = max;
         Current = current > max ? max : current < min ? min : current;
+        _range = max - min;
+        _inverseRange = Math.Abs(_range) < MathConstants.Tolerance ? 0f : 1f / _range;
     }
 
     /// <summary>

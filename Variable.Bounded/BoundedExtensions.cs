@@ -55,6 +55,17 @@ public static class BoundedExtensions
     }
 
     /// <summary>
+    ///     Gets the normalized ratio using a pre-calculated inverse range for higher performance.
+    ///     This is faster than GetRatio() because it uses multiplication instead of division.
+    ///     It is "unsafe" because it assumes the Min/Max values have not been manually changed after construction.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float GetRatioUnsafe(this BoundedFloat bounded)
+    {
+        return BoundedLogic.GetRatioUnsafe(bounded.Current, bounded.Min, bounded.InverseRange);
+    }
+
+    /// <summary>
     ///     Gets the range between min and max.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -44,6 +44,16 @@ public static class BoundedLogic
     }
 
     /// <summary>
+    ///     Calculates the ratio of a value within a range using a pre-calculated inverse range.
+    ///     This is faster than GetRatio as it uses multiplication instead of division.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float GetRatioUnsafe(float current, float min, float inverseRange)
+    {
+        return (current - min) * inverseRange;
+    }
+
+    /// <summary>
     ///     Sets an int value, clamping it to the specified bounds.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
