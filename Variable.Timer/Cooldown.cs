@@ -6,16 +6,22 @@ namespace Variable.Timer;
 /// </summary>
 /// <remarks>
 ///     <para>The cooldown starts at 0 (ready) or Duration (on cooldown) and counts down to 0.</para>
-///     <para>Use <see cref="TryTick(float)" /> to reduce time and check readiness in one call.</para>
-///     <para>Use <see cref="Reset()" /> to start the cooldown after using an ability.</para>
+///     <para>Use <see>
+///             <cref>TickAndCheckReady(float)</cref>
+///         </see>
+///         to reduce time and check readiness in one call.</para>
+///     <para>Use <see>
+///             <cref>Reset()</cref>
+///         </see>
+///         to start the cooldown after using an ability.</para>
 /// </remarks>
 /// <example>
 ///     <code>
 /// var dashCd = new Cooldown(3f);
 /// 
 /// void Update(float dt) {
-///     // TryTick reduces time and returns true if ready
-///     if (dashCd.TryTick(dt) &amp;&amp; Input.Dash) {
+///     // TickAndCheckReady reduces time and returns true if ready
+///     if (dashCd.TickAndCheckReady(dt) &amp;&amp; Input.Dash) {
 ///         Dash();
 ///         dashCd.Reset();
 ///     }
@@ -27,6 +33,7 @@ namespace Variable.Timer;
 [DebuggerDisplay("{Current}/{Duration}")]
 public struct Cooldown :
     IBoundedInfo,
+    ICompletable,
     IEquatable<Cooldown>,
     IComparable<Cooldown>,
     IComparable
@@ -68,6 +75,13 @@ public struct Cooldown :
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => Duration;
+    }
+
+    /// <inheritdoc />
+    bool ICompletable.IsComplete
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Current <= 0.0001f;
     }
 
     /// <inheritdoc />

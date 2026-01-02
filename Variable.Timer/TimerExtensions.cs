@@ -11,217 +11,221 @@ public static class TimerExtensions
     // Timer Extensions
 
     /// <summary>
-    ///     Advances the timer by the specified delta time.
+    ///     Advances the timer by delta time and checks if it completed.
     /// </summary>
-    /// <param name="timer">The timer to advance.</param>
+    /// <param name="self">The timer to advance.</param>
     /// <param name="deltaTime">The time elapsed since the last tick.</param>
-    /// <returns>True if the timer is full (completed); otherwise, false.</returns>
+    /// <returns>True if the timer COMPLETED (Current >= Duration); false if still running.</returns>
+    /// <remarks>Use this when you need to detect completion, e.g., for spell casts or loading bars.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryTick(ref this Timer timer, float deltaTime)
+    public static bool TickAndCheckComplete(ref this Timer self, float deltaTime)
     {
-        return TimerLogic.Tick(ref timer.Current, timer.Duration, deltaTime);
+        return TimerLogic.TickAndCheckComplete(ref self.Current, self.Duration, deltaTime);
     }
 
     /// <summary>
-    ///     Advances the timer by the specified delta time (void version).
-    ///     Use this for "fire and forget" patterns where you don't need to check completion.
+    ///     Advances the timer by delta time without returning completion status.
     /// </summary>
-    /// <param name="timer">The timer to advance.</param>
+    /// <param name="self">The timer to advance.</param>
     /// <param name="deltaTime">The time elapsed since the last tick.</param>
+    /// <remarks>Use this for "fire and forget" patterns where you don't need to check completion.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Tick(ref this Timer timer, float deltaTime)
+    public static void Tick(ref this Timer self, float deltaTime)
     {
-        TimerLogic.Tick(ref timer.Current, timer.Duration, deltaTime);
+        TimerLogic.TickAndCheckComplete(ref self.Current, self.Duration, deltaTime);
     }
 
     /// <summary>
-    ///     Advances the timer and outputs overflow time.
+    ///     Advances the timer and captures overflow time beyond the duration.
     /// </summary>
-    /// <param name="timer">The timer to advance.</param>
+    /// <param name="self">The timer to advance.</param>
     /// <param name="deltaTime">The time elapsed since the last tick.</param>
-    /// <param name="overflow">The amount of time that exceeded the duration.</param>
-    /// <returns>True if the timer is full (completed); otherwise, false.</returns>
+    /// <param name="overflow">The amount of time that exceeded the duration (useful for chaining timers).</param>
+    /// <returns>True if the timer COMPLETED (Current >= Duration); false if still running.</returns>
+    /// <remarks>Use overflow to start the next timer with remaining time for seamless chaining.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryTick(ref this Timer timer, float deltaTime, out float overflow)
+    public static bool TickAndCheckComplete(ref this Timer self, float deltaTime, out float overflow)
     {
-        return TimerLogic.Tick(ref timer.Current, timer.Duration, deltaTime, out overflow);
+        return TimerLogic.TickAndCheckComplete(ref self.Current, self.Duration, deltaTime, out overflow);
     }
 
     /// <summary>
     ///     Resets the timer elapsed time to 0.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Reset(ref this Timer timer)
+    public static void Reset(ref this Timer self)
     {
-        TimerLogic.Reset(ref timer.Current, 0f);
+        TimerLogic.Reset(ref self.Current, 0f);
     }
 
     /// <summary>
     ///     Resets the timer and applies an overflow offset.
     /// </summary>
-    /// <param name="timer">The timer to reset.</param>
+    /// <param name="self">The timer to reset.</param>
     /// <param name="overflow">The amount of time to start the timer with (clamped to duration).</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Reset(ref this Timer timer, float overflow)
+    public static void Reset(ref this Timer self, float overflow)
     {
-        TimerLogic.ResetWithOverflow(ref timer.Current, 0f, overflow, 0f, timer.Duration);
+        TimerLogic.ResetWithOverflow(ref self.Current, 0f, overflow, 0f, self.Duration);
     }
 
     /// <summary>
     ///     Completes the timer immediately by setting current to duration.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Finish(ref this Timer timer)
+    public static void Finish(ref this Timer self)
     {
-        TimerLogic.Reset(ref timer.Current, timer.Duration);
+        TimerLogic.Reset(ref self.Current, self.Duration);
     }
 
     /// <summary>
     ///     Returns true when the timer has reached or exceeded its duration.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(this Timer timer)
+    public static bool IsFull(this Timer self)
     {
-        return timer.Current >= timer.Duration - Tolerance;
+        return self.Current >= self.Duration - Tolerance;
     }
 
     /// <summary>
     ///     Returns true when the timer is at zero (not yet started).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(this Timer timer)
+    public static bool IsEmpty(this Timer self)
     {
-        return timer.Current <= Tolerance;
+        return self.Current <= Tolerance;
     }
 
     /// <summary>
     ///     Gets the progress of the timer as a ratio from 0 (not started) to 1 (complete).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double GetRatio(this Timer timer)
+    public static double GetRatio(this Timer self)
     {
-        return Math.Abs(timer.Duration) < Tolerance ? 0.0 : (double)timer.Current / timer.Duration;
+        return Math.Abs(self.Duration) < Tolerance ? 0.0 : (double)self.Current / self.Duration;
     }
 
     // Cooldown Extensions
 
     /// <summary>
-    ///     Advances the cooldown by the specified delta time.
+    ///     Advances the cooldown by delta time and checks if it's ready.
     /// </summary>
-    /// <param name="cooldown">The cooldown to advance.</param>
+    /// <param name="self">The cooldown to advance.</param>
     /// <param name="deltaTime">The time elapsed since the last tick.</param>
-    /// <returns>True if the cooldown is ready (Current is 0); otherwise, false.</returns>
+    /// <returns>True if the cooldown is READY (Current <= 0); false if still cooling down.</returns>
+    /// <remarks>Use this to check if an ability can be used again.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryTick(ref this Cooldown cooldown, float deltaTime)
+    public static bool TickAndCheckReady(ref this Cooldown self, float deltaTime)
     {
-        return TimerLogic.TickCooldown(ref cooldown.Current, deltaTime);
+        return TimerLogic.TickAndCheckReady(ref self.Current, deltaTime);
     }
 
     /// <summary>
-    ///     Advances the cooldown by the specified delta time (void version).
-    ///     Use this for "fire and forget" patterns where you don't need to check if ready.
+    ///     Advances the cooldown by delta time without returning ready status.
     /// </summary>
-    /// <param name="cooldown">The cooldown to advance.</param>
+    /// <param name="self">The cooldown to advance.</param>
     /// <param name="deltaTime">The time elapsed since the last tick.</param>
+    /// <remarks>Use this for "fire and forget" patterns where you don't need to check if ready.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Tick(ref this Cooldown cooldown, float deltaTime)
+    public static void Tick(ref this Cooldown self, float deltaTime)
     {
-        TimerLogic.TickCooldown(ref cooldown.Current, deltaTime);
+        TimerLogic.TickAndCheckReady(ref self.Current, deltaTime);
     }
 
     /// <summary>
-    ///     Advances the cooldown and outputs overflow time.
+    ///     Advances the cooldown and captures overflow time beyond zero.
     /// </summary>
-    /// <param name="cooldown">The cooldown to advance.</param>
+    /// <param name="self">The cooldown to advance.</param>
     /// <param name="deltaTime">The time elapsed since the last tick.</param>
-    /// <param name="overflow">The amount of time that exceeded zero.</param>
-    /// <returns>True if the cooldown is ready (Current is 0); otherwise, false.</returns>
+    /// <param name="overflow">The amount of time that exceeded zero (useful for ability chains).</param>
+    /// <returns>True if the cooldown is READY (Current <= 0); false if still cooling down.</returns>
+    /// <remarks>Use overflow to reduce the next cooldown start time for fluid ability rotations.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryTick(ref this Cooldown cooldown, float deltaTime, out float overflow)
+    public static bool TickAndCheckReady(ref this Cooldown self, float deltaTime, out float overflow)
     {
-        return TimerLogic.TickCooldown(ref cooldown.Current, deltaTime, out overflow);
+        return TimerLogic.TickAndCheckReady(ref self.Current, deltaTime, out overflow);
     }
 
     /// <summary>
     ///     Starts the cooldown by setting Current to Duration.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Reset(ref this Cooldown cooldown)
+    public static void Reset(ref this Cooldown self)
     {
-        TimerLogic.Reset(ref cooldown.Current, cooldown.Duration);
+        TimerLogic.Reset(ref self.Current, self.Duration);
     }
 
     /// <summary>
     ///     Starts the cooldown, reducing the start time by the provided overflow.
     /// </summary>
-    /// <param name="cooldown">The cooldown to reset.</param>
+    /// <param name="self">The cooldown to reset.</param>
     /// <param name="overflow">Excess time to subtract from the new duration.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Reset(ref this Cooldown cooldown, float overflow)
+    public static void Reset(ref this Cooldown self, float overflow)
     {
-        TimerLogic.ResetWithOverflow(ref cooldown.Current, cooldown.Duration, -overflow, 0f, cooldown.Duration);
+        TimerLogic.ResetWithOverflow(ref self.Current, self.Duration, -overflow, 0f, self.Duration);
     }
 
     /// <summary>
     ///     Finishes the cooldown immediately by setting Current to 0.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Finish(ref this Cooldown cooldown)
+    public static void Finish(ref this Cooldown self)
     {
-        TimerLogic.Reset(ref cooldown.Current, 0f);
+        TimerLogic.Reset(ref self.Current, 0f);
     }
 
     /// <summary>
     ///     Returns true when the cooldown is ready (Current &lt;= 0).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsReady(this Cooldown cooldown)
+    public static bool IsReady(this Cooldown self)
     {
-        return cooldown.Current <= Tolerance;
+        return self.Current <= Tolerance;
     }
 
     /// <summary>
     ///     Returns true when the cooldown is ready. Alias for IsReady.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(this Cooldown cooldown)
+    public static bool IsFull(this Cooldown self)
     {
-        return cooldown.Current <= Tolerance;
+        return self.Current <= Tolerance;
     }
 
     /// <summary>
     ///     Returns true when the cooldown is at its maximum duration (just started).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(this Cooldown cooldown)
+    public static bool IsEmpty(this Cooldown self)
     {
-        return cooldown.Current >= cooldown.Duration - Tolerance;
+        return self.Current >= self.Duration - Tolerance;
     }
 
     /// <summary>
     ///     Returns true when the cooldown is active (not yet ready).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsOnCooldown(this Cooldown cooldown)
+    public static bool IsOnCooldown(this Cooldown self)
     {
-        return cooldown.Current > Tolerance;
+        return self.Current > Tolerance;
     }
 
     /// <summary>
     ///     Gets the ratio of remaining time.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double GetRatio(this Cooldown cooldown)
+    public static double GetRatio(this Cooldown self)
     {
-        return Math.Abs(cooldown.Duration) < Tolerance ? 0.0 : (double)cooldown.Current / cooldown.Duration;
+        return Math.Abs(self.Duration) < Tolerance ? 0.0 : (double)self.Current / self.Duration;
     }
 
     /// <summary>
     ///     Gets the progress of the cooldown as a ratio from 0 (just started) to 1 (ready).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float GetProgress(this Cooldown cooldown)
+    public static float GetProgress(this Cooldown self)
     {
-        return MathF.Abs(cooldown.Duration) < Tolerance ? 1f : 1f - MathF.Max(0, cooldown.Current / cooldown.Duration);
+        return MathF.Abs(self.Duration) < Tolerance ? 1f : 1f - MathF.Max(0, self.Current / self.Duration);
     }
 }

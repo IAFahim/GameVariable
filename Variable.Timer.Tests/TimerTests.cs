@@ -50,28 +50,83 @@ public class TimerTests
     #region Tick Tests
 
     [Fact]
-    public void Tick_IncreasesCurrentByDelta()
+    public void TickAndCheckComplete_IncreasesCurrentByDelta()
     {
         var timer = new Timer(10f);
-        timer.TryTick(2.5f);
+        timer.TickAndCheckComplete(2.5f);
         Assert.Equal(2.5f, timer.Current);
     }
 
     [Fact]
-    public void Tick_ClampsAtDuration()
+    public void TickAndCheckComplete_ClampsAtDuration()
     {
         var timer = new Timer(10f, 8f);
-        timer.TryTick(5f);
+        timer.TickAndCheckComplete(5f);
         Assert.Equal(10f, timer.Current);
     }
 
     [Fact]
-    public void Tick_MultipleCallsAccumulate()
+    public void TickAndCheckComplete_MultipleCallsAccumulate()
     {
         var timer = new Timer(10f);
-        timer.TryTick(1f);
-        timer.TryTick(1f);
-        timer.TryTick(1f);
+        timer.TickAndCheckComplete(1f);
+        timer.TickAndCheckComplete(1f);
+        timer.TickAndCheckComplete(1f);
+        Assert.Equal(3f, timer.Current);
+    }
+
+    [Fact]
+    public void TickAndCheckComplete_ReturnsFalse_WhenNotComplete()
+    {
+        var timer = new Timer(10f);
+        bool isComplete = timer.TickAndCheckComplete(5f);
+        Assert.False(isComplete);
+        Assert.Equal(5f, timer.Current);
+    }
+
+    [Fact]
+    public void TickAndCheckComplete_ReturnsTrue_WhenReachesDuration()
+    {
+        var timer = new Timer(10f, 9f);
+        bool isComplete = timer.TickAndCheckComplete(1f);
+        Assert.True(isComplete);
+        Assert.Equal(10f, timer.Current);
+    }
+
+    [Fact]
+    public void TickAndCheckComplete_ReturnsTrue_WhenExceedsDuration()
+    {
+        var timer = new Timer(10f, 8f);
+        bool isComplete = timer.TickAndCheckComplete(5f);
+        Assert.True(isComplete);
+        Assert.Equal(10f, timer.Current);
+    }
+
+    [Fact]
+    public void TickAndCheckComplete_WithOverflow_OutputsCorrectOverflow()
+    {
+        var timer = new Timer(10f, 8f);
+        bool isComplete = timer.TickAndCheckComplete(5f, out float overflow);
+        Assert.True(isComplete);
+        Assert.Equal(10f, timer.Current);
+        Assert.Equal(3f, overflow, 5); // 8 + 5 = 13, overflow = 13 - 10 = 3
+    }
+
+    [Fact]
+    public void TickAndCheckComplete_WithOverflow_NoOverflowWhenNotComplete()
+    {
+        var timer = new Timer(10f);
+        bool isComplete = timer.TickAndCheckComplete(5f, out float overflow);
+        Assert.False(isComplete);
+        Assert.Equal(5f, timer.Current);
+        Assert.Equal(0f, overflow);
+    }
+
+    [Fact]
+    public void Tick_VoidVersion_AdvancesTimer()
+    {
+        var timer = new Timer(10f);
+        timer.Tick(3f);
         Assert.Equal(3f, timer.Current);
     }
 

@@ -14,9 +14,9 @@ public static class TimerLogic
     /// <param name="current">The current elapsed time.</param>
     /// <param name="duration">The target duration.</param>
     /// <param name="deltaTime">The time to advance.</param>
-    /// <returns>True if the timer reached or exceeded duration; otherwise, false.</returns>
+    /// <returns>True if the timer COMPLETED (reached or exceeded duration); false if still running.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Tick(ref float current, float duration, float deltaTime)
+    public static bool TickAndCheckComplete(ref float current, float duration, float deltaTime)
     {
         if (current >= duration - Tolerance) return true;
 
@@ -37,9 +37,9 @@ public static class TimerLogic
     /// <param name="duration">The target duration.</param>
     /// <param name="deltaTime">The time to advance.</param>
     /// <param name="overflow">The amount of time that exceeded the duration.</param>
-    /// <returns>True if the timer reached or exceeded duration; otherwise, false.</returns>
+    /// <returns>True if the timer COMPLETED (reached or exceeded duration); false if still running.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Tick(ref float current, float duration, float deltaTime, out float overflow)
+    public static bool TickAndCheckComplete(ref float current, float duration, float deltaTime, out float overflow)
     {
         if (current >= duration - Tolerance)
         {
@@ -64,9 +64,9 @@ public static class TimerLogic
     /// </summary>
     /// <param name="current">The current remaining time.</param>
     /// <param name="deltaTime">The time to advance.</param>
-    /// <returns>True if the cooldown is ready (reached or passed zero); otherwise, false.</returns>
+    /// <returns>True if the cooldown is READY (reached or passed zero); false if still cooling down.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TickCooldown(ref float current, float deltaTime)
+    public static bool TickAndCheckReady(ref float current, float deltaTime)
     {
         if (current <= Tolerance) return true;
 
@@ -86,9 +86,9 @@ public static class TimerLogic
     /// <param name="current">The current remaining time.</param>
     /// <param name="deltaTime">The time to advance.</param>
     /// <param name="overflow">The amount of time that exceeded zero.</param>
-    /// <returns>True if the cooldown is ready (reached or passed zero); otherwise, false.</returns>
+    /// <returns>True if the cooldown is READY (reached or passed zero); false if still cooling down.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TickCooldown(ref float current, float deltaTime, out float overflow)
+    public static bool TickAndCheckReady(ref float current, float deltaTime, out float overflow)
     {
         if (current <= Tolerance)
         {

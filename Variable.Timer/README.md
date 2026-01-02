@@ -24,19 +24,22 @@ using Variable.Timer;
 
 public class Ability
 {
-    public Cooldown Cooldown = new Cooldown(5f); // 5 seconds
+    public Cooldown DashCooldown = new Cooldown(5f); // 5 seconds
 
     public void Update(float deltaTime)
     {
-        Cooldown.Tick(deltaTime);
+        // TickAndCheckReady returns true when cooldown hits zero
+        if (DashCooldown.TickAndCheckReady(deltaTime) && Input.GetKey(KeyCode.Space))
+        {
+            Cast();
+            DashCooldown.Reset(); // Start cooldown again
+        }
     }
 
-    public void Cast()
+    private void Cast()
     {
-        if (Cooldown.IsReady) {
-            // Perform ability
-            Cooldown.Restart();
-        }
+        // Perform ability
+        Debug.Log("Ability Cast!");
     }
 }
 ```
@@ -44,13 +47,15 @@ public class Ability
 ### Match Timer
 
 ```csharp
-Timer matchTimer = new Timer(300f); // 5 minutes
+Timer matchTime = new Timer(300f); // 5 minutes
 
 void Update(float dt) {
-    matchTimer.Tick(dt);
-    if (matchTimer.IsFinished) EndMatch();
+    // TickAndCheckComplete returns true when timer finishes
+    if (matchTime.TickAndCheckComplete(dt)) {
+        EndMatch();
+    }
     
-    Console.WriteLine($"Time Left: {matchTimer.CurrentTime}");
+    Console.WriteLine($"Time Left: {matchTime.Duration - matchTime.Current}");
 }
 ```
 

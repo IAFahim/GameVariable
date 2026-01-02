@@ -6,18 +6,18 @@ namespace Variable.Timer;
 /// </summary>
 /// <remarks>
 ///     <para>The timer starts at 0 and counts up to <see cref="Duration" />.</para>
-///     <para>Use <see cref="TryTick(float)" /> to advance the timer and check for completion in one call.</para>
+///     <para>Use <see cref="TickAndCheckComplete(float)" /> to advance and check completion in one call.</para>
 ///     <para>Check <see cref="IsFull" /> to determine if the timer has reached the duration.</para>
 /// </remarks>
 /// <example>
 ///     <code>
-/// var castTimer = new Timer(2.0f);
+/// var castTime = new Timer(2.0f);
 /// 
 /// void Update(float dt) {
-///     // TryTick returns true when Current >= Duration
-///     if (castTimer.TryTick(dt)) {
+///     // TickAndCheckComplete returns true when Current >= Duration
+///     if (castTime.TickAndCheckComplete(dt)) {
 ///         FinishCast();
-///         castTimer.Reset();
+///         castTime.Reset();
 ///     }
 /// }
 /// </code>
@@ -27,6 +27,7 @@ namespace Variable.Timer;
 [DebuggerDisplay("{Current}/{Duration}")]
 public struct Timer :
     IBoundedInfo,
+    ICompletable,
     IEquatable<Timer>,
     IComparable<Timer>,
     IComparable
@@ -68,6 +69,13 @@ public struct Timer :
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => Duration;
+    }
+
+    /// <inheritdoc />
+    bool ICompletable.IsComplete
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Current >= Duration - 0.0001f;
     }
 
     /// <inheritdoc />
