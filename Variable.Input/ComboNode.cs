@@ -4,6 +4,7 @@ namespace Variable.Input;
 ///     Represents a node in the combo graph.
 ///     Each node has an action ID and edges to other nodes.
 /// </summary>
+[Serializable]
 [StructLayout(LayoutKind.Sequential)]
 public struct ComboNode
 {

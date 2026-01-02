@@ -4,6 +4,7 @@ namespace Variable.Input;
 ///     The complete combo graph containing nodes and edges.
 ///     Uses CSR (Compressed Sparse Row) format for cache-friendly traversal.
 /// </summary>
+[Serializable]
 [StructLayout(LayoutKind.Sequential)]
 public struct ComboGraph
 {

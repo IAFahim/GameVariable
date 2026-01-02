@@ -4,6 +4,7 @@ namespace Variable.Input;
 ///     Represents an edge in the combo graph.
 ///     Defines input trigger and target node.
 /// </summary>
+[Serializable]
 [StructLayout(LayoutKind.Sequential)]
 public struct ComboEdge
 {

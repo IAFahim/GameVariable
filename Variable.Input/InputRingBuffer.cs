@@ -5,6 +5,7 @@ namespace Variable.Input;
 ///     Uses explicit fields instead of arrays for full serialization compatibility.
 ///     Stores input IDs as integers for universal extensibility.
 /// </summary>
+[Serializable]
 [StructLayout(LayoutKind.Sequential)]
 public struct InputRingBuffer
 {

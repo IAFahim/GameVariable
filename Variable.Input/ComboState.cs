@@ -3,6 +3,7 @@ namespace Variable.Input;
 /// <summary>
 ///     Runtime state for combo system traversal.
 /// </summary>
+[Serializable]
 [StructLayout(LayoutKind.Sequential)]
 public struct ComboState
 {
