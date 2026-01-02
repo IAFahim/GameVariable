@@ -529,6 +529,35 @@ When at Node 0 (Idle):
   - If RMB pressed: edges[1] matches → go to node 2
 ```
 
+### Mermaid Diagram: CSR Structure
+
+```mermaid
+graph LR
+    subgraph Nodes["Nodes Array"]
+        direction TB
+        N0["Idx 0: Idle<br/>Start=0, Count=2"]
+        N1["Idx 1: Light<br/>Start=2, Count=1"]
+        N2["Idx 2: Heavy<br/>Start=3, Count=1"]
+    end
+
+    subgraph Edges["Edges Array"]
+        direction TB
+        E0["Idx 0: LMB -> Node 1"]
+        E1["Idx 1: RMB -> Node 2"]
+        E2["Idx 2: LMB -> Node 3"]
+        E3["Idx 3: RMB -> Node 4"]
+    end
+
+    N0 -.-> E0
+    N0 -.-> E1
+    N1 -.-> E2
+    N2 -.-> E3
+
+    style N0 fill:#2d2d2d,stroke:#fff,stroke-width:2px,color:#fff
+    style E0 fill:#1a1a1a,stroke:#666,stroke-width:1px,color:#fff
+    style E1 fill:#1a1a1a,stroke:#666,stroke-width:1px,color:#fff
+```
+
 ### ECS/Jobs Usage
 
 ```csharp
