@@ -6,6 +6,12 @@ namespace Variable.Input;
 /// </summary>
 public static partial class ComboLogic
 {
+    /// <summary>
+    ///     Attempts to add an input ID to the ring buffer.
+    /// </summary>
+    /// <param name="buffer">The ring buffer to modify.</param>
+    /// <param name="inputId">The input ID to enqueue.</param>
+    /// <returns>True if the input was successfully added; false if the buffer is full.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryEnqueueInput(ref InputRingBuffer buffer, int inputId)
     {
@@ -18,6 +24,12 @@ public static partial class ComboLogic
         return true;
     }
 
+    /// <summary>
+    ///     Attempts to remove and return the oldest input ID from the ring buffer.
+    /// </summary>
+    /// <param name="buffer">The ring buffer to modify.</param>
+    /// <param name="inputId">The dequeued input ID, or InputId.None if empty.</param>
+    /// <returns>True if an input was dequeued; false if the buffer was empty.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryDequeueInput(ref InputRingBuffer buffer, out int inputId)
     {
@@ -31,6 +43,12 @@ public static partial class ComboLogic
         return true;
     }
 
+    /// <summary>
+    ///     Returns the oldest input ID from the ring buffer without removing it.
+    /// </summary>
+    /// <param name="buffer">The ring buffer to query.</param>
+    /// <param name="inputId">The peeked input ID, or InputId.None if empty.</param>
+    /// <returns>True if an input was found; false if the buffer was empty.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool PeekInput(ref InputRingBuffer buffer, out int inputId)
     {

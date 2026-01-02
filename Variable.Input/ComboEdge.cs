@@ -7,6 +7,13 @@ namespace Variable.Input;
 [StructLayout(LayoutKind.Sequential)]
 public struct ComboEdge
 {
+    /// <summary>
+    ///     The input ID that triggers the transition.
+    /// </summary>
     public int InputTrigger;
+
+    /// <summary>
+    ///     The index of the target node in the graph's node array.
+    /// </summary>
     public int TargetNodeIndex;
 }

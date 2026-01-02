@@ -5,5 +5,8 @@ namespace Variable.Input;
 /// </summary>
 public static class InputId
 {
+    /// <summary>
+    ///     Represents no input or an invalid input state.
+    /// </summary>
     public const int None = 0;
 }

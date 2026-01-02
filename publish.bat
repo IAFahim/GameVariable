@@ -143,7 +143,7 @@ if "%NEW_VERSION%"=="DEFAULT" (
 
 :: 3. Pack
 echo    Packing...
-dotnet pack "%PROJ_PATH%" --configuration Release --output "%OUTPUT_DIR%" /p:ContinuousIntegrationBuild=true >nul
+dotnet pack "%PROJ_PATH%" --configuration Release --output "%OUTPUT_DIR%" /p:ContinuousIntegrationBuild=true
 if !errorlevel! NEQ 0 (
     echo    !RED![FAIL] Pack Failed!NC!
     exit /b 1
