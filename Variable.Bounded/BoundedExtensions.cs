@@ -30,7 +30,7 @@ public static class BoundedExtensions
     ///     Determines whether the current value has reached its maximum bound.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(this BoundedFloat bounded, float tolerance = MathConstants.Tolerance)
+    public static bool IsFull(in this BoundedFloat bounded, float tolerance = MathConstants.Tolerance)
     {
         return bounded.Current >= bounded.Max - tolerance;
     }
@@ -39,7 +39,7 @@ public static class BoundedExtensions
     ///     Determines whether the current value has reached its minimum bound.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(this BoundedFloat bounded, float tolerance = MathConstants.Tolerance)
+    public static bool IsEmpty(in this BoundedFloat bounded, float tolerance = MathConstants.Tolerance)
     {
         return bounded.Current <= bounded.Min + tolerance;
     }
@@ -48,7 +48,7 @@ public static class BoundedExtensions
     ///     Gets the normalized ratio of the current value within the bounded range.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double GetRatio(this BoundedFloat bounded)
+    public static double GetRatio(in this BoundedFloat bounded)
     {
         var range = bounded.Max - bounded.Min;
         return Math.Abs(range) < MathConstants.Tolerance ? 0.0 : (bounded.Current - bounded.Min) / range;
@@ -58,7 +58,7 @@ public static class BoundedExtensions
     ///     Gets the range between min and max.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float GetRange(this BoundedFloat bounded)
+    public static float GetRange(in this BoundedFloat bounded)
     {
         return BoundedLogic.GetRange(bounded.Min, bounded.Max);
     }
@@ -67,7 +67,7 @@ public static class BoundedExtensions
     ///     Gets the amount remaining until max.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float GetRemaining(this BoundedFloat bounded)
+    public static float GetRemaining(in this BoundedFloat bounded)
     {
         return BoundedLogic.GetRemaining(bounded.Current, bounded.Max);
     }
@@ -96,7 +96,7 @@ public static class BoundedExtensions
     ///     Determines whether the current value has reached its maximum bound.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(this BoundedInt bounded)
+    public static bool IsFull(in this BoundedInt bounded)
     {
         return bounded.Current == bounded.Max;
     }
@@ -105,7 +105,7 @@ public static class BoundedExtensions
     ///     Determines whether the current value has reached its minimum bound.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(this BoundedInt bounded)
+    public static bool IsEmpty(in this BoundedInt bounded)
     {
         return bounded.Current == bounded.Min;
     }
@@ -114,7 +114,7 @@ public static class BoundedExtensions
     ///     Gets the normalized ratio of the current value within the bounded range.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double GetRatio(this BoundedInt bounded)
+    public static double GetRatio(in this BoundedInt bounded)
     {
         var range = bounded.Max - bounded.Min;
         return range == 0 ? 0.0 : (double)(bounded.Current - bounded.Min) / range;
@@ -124,7 +124,7 @@ public static class BoundedExtensions
     ///     Gets the range between min and max.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int GetRange(this BoundedInt bounded)
+    public static int GetRange(in this BoundedInt bounded)
     {
         return BoundedLogic.GetRange(bounded.Min, bounded.Max);
     }
@@ -133,7 +133,7 @@ public static class BoundedExtensions
     ///     Gets the amount remaining until max.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int GetRemaining(this BoundedInt bounded)
+    public static int GetRemaining(in this BoundedInt bounded)
     {
         return BoundedLogic.GetRemaining(bounded.Current, bounded.Max);
     }
