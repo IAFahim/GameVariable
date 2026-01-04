@@ -163,4 +163,13 @@ public static class BoundedLogic
     {
         return (byte)(max - current);
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int Add(int current, int min, int max, int amount)
+    {
+        var result = (long)current + amount;
+        if (result > max) result = max;
+        else if (result < min) result = min;
+        return (int)result;
+    }
 }

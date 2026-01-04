@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace Variable.Input;
 
 /// <summary>
@@ -12,9 +14,40 @@ public static class ComboStateExtensions
         ref this ComboState state,
         ref InputRingBuffer buffer,
         ComboGraph graph,
-        out int actionID)
+        out int actionId)
     {
-        return ComboLogic.TryAdvanceState(ref state, ref buffer, graph.Nodes, graph.Edges, out actionID);
+        var inputs = MemoryMarshal.CreateSpan(ref buffer.Input0, 8);
+        return ComboLogic.TryAdvanceState(
+            ref state.CurrentNodeIndex,
+            ref state.IsActionBusy,
+            ref buffer.Head,
+            ref buffer.Count,
+            inputs,
+            graph.Nodes,
+            graph.Edges,
+            out actionId);
+    }
+
+    /// <summary>
+    ///     Attempts to update the combo state based on buffered inputs (Span overload).
+    /// </summary>
+    public static bool TryUpdate(
+        ref this ComboState state,
+        ref InputRingBuffer buffer,
+        ReadOnlySpan<ComboNode> nodes,
+        ReadOnlySpan<ComboEdge> edges,
+        out int actionId)
+    {
+        var inputs = MemoryMarshal.CreateSpan(ref buffer.Input0, 8);
+        return ComboLogic.TryAdvanceState(
+            ref state.CurrentNodeIndex,
+            ref state.IsActionBusy,
+            ref buffer.Head,
+            ref buffer.Count,
+            inputs,
+            nodes,
+            edges,
+            out actionId);
     }
 
     /// <summary>
@@ -22,7 +55,7 @@ public static class ComboStateExtensions
     /// </summary>
     public static void SignalActionFinished(ref this ComboState state)
     {
-        ComboLogic.SignalActionFinished(ref state);
+        ComboLogic.SignalActionFinished(ref state.IsActionBusy);
     }
 
     /// <summary>

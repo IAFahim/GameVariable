@@ -209,10 +209,8 @@ public struct BoundedInt :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BoundedInt operator +(BoundedInt a, int b)
     {
-        var result = (long)a.Current + b;
-        if (result > a.Max) result = a.Max;
-        else if (result < a.Min) result = a.Min;
-        return new BoundedInt(a.Max, a.Min, (int)result);
+        var newCurrent = BoundedLogic.Add(a.Current, a.Min, a.Max, b);
+        return new BoundedInt(a.Max, a.Min, newCurrent);
     }
 
     /// <summary>Adds a value to the bounded int, clamping the result.</summary>

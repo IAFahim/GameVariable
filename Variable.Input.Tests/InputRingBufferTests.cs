@@ -8,7 +8,7 @@ public class InputRingBufferTests
     public void Enqueue_SingleInput_Works()
     {
         var buffer = new InputRingBuffer();
-        var result = ComboLogic.TryEnqueueInput(ref buffer, 1);
+        var result = buffer.RegisterInput(1);
 
         Assert.True(result);
         Assert.Equal(1, buffer.Count);
@@ -18,7 +18,7 @@ public class InputRingBufferTests
     public void Enqueue_MaxCapacity_Works()
     {
         var buffer = new InputRingBuffer();
-        for (var i = 0; i < InputRingBuffer.CAPACITY; i++) Assert.True(ComboLogic.TryEnqueueInput(ref buffer, 1));
+        for (var i = 0; i < InputRingBuffer.CAPACITY; i++) Assert.True(buffer.RegisterInput(1));
 
         Assert.Equal(InputRingBuffer.CAPACITY, buffer.Count);
     }
@@ -27,9 +27,9 @@ public class InputRingBufferTests
     public void Enqueue_OverCapacity_Fails()
     {
         var buffer = new InputRingBuffer();
-        for (var i = 0; i < InputRingBuffer.CAPACITY; i++) ComboLogic.TryEnqueueInput(ref buffer, 1);
+        for (var i = 0; i < InputRingBuffer.CAPACITY; i++) buffer.RegisterInput(1);
 
-        var result = ComboLogic.TryEnqueueInput(ref buffer, 2);
+        var result = buffer.RegisterInput(2);
 
         Assert.False(result);
         Assert.Equal(InputRingBuffer.CAPACITY, buffer.Count);
@@ -39,7 +39,7 @@ public class InputRingBufferTests
     public void Dequeue_EmptyBuffer_Fails()
     {
         var buffer = new InputRingBuffer();
-        var result = ComboLogic.TryDequeueInput(ref buffer, out var input);
+        var result = buffer.TryDequeue(out var input);
 
         Assert.False(result);
         Assert.Equal(InputId.None, input);
@@ -49,17 +49,17 @@ public class InputRingBufferTests
     public void Dequeue_FIFO_Order()
     {
         var buffer = new InputRingBuffer();
-        ComboLogic.TryEnqueueInput(ref buffer, 1);
-        ComboLogic.TryEnqueueInput(ref buffer, 2);
-        ComboLogic.TryEnqueueInput(ref buffer, 1);
+        buffer.RegisterInput(1);
+        buffer.RegisterInput(2);
+        buffer.RegisterInput(1);
 
-        Assert.True(ComboLogic.TryDequeueInput(ref buffer, out var input1));
+        Assert.True(buffer.TryDequeue(out var input1));
         Assert.Equal(1, input1);
 
-        Assert.True(ComboLogic.TryDequeueInput(ref buffer, out var input2));
+        Assert.True(buffer.TryDequeue(out var input2));
         Assert.Equal(2, input2);
 
-        Assert.True(ComboLogic.TryDequeueInput(ref buffer, out var input3));
+        Assert.True(buffer.TryDequeue(out var input3));
         Assert.Equal(1, input3);
 
         Assert.Equal(0, buffer.Count);
@@ -69,13 +69,13 @@ public class InputRingBufferTests
     public void Peek_DoesNotConsume()
     {
         var buffer = new InputRingBuffer();
-        ComboLogic.TryEnqueueInput(ref buffer, 1);
+        buffer.RegisterInput(1);
 
-        Assert.True(ComboLogic.PeekInput(ref buffer, out var input1));
+        Assert.True(buffer.Peek(out var input1));
         Assert.Equal(1, input1);
         Assert.Equal(1, buffer.Count);
 
-        Assert.True(ComboLogic.PeekInput(ref buffer, out var input2));
+        Assert.True(buffer.Peek(out var input2));
         Assert.Equal(1, input2);
         Assert.Equal(1, buffer.Count);
     }
@@ -85,25 +85,25 @@ public class InputRingBufferTests
     {
         var buffer = new InputRingBuffer();
 
-        for (var i = 0; i < InputRingBuffer.CAPACITY; i++) ComboLogic.TryEnqueueInput(ref buffer, 1);
+        for (var i = 0; i < InputRingBuffer.CAPACITY; i++) buffer.RegisterInput(1);
 
-        for (var i = 0; i < 4; i++) ComboLogic.TryDequeueInput(ref buffer, out _);
+        for (var i = 0; i < 4; i++) buffer.TryDequeue(out _);
 
         Assert.Equal(4, buffer.Count);
 
-        for (var i = 0; i < 4; i++) Assert.True(ComboLogic.TryEnqueueInput(ref buffer, 2));
+        for (var i = 0; i < 4; i++) Assert.True(buffer.RegisterInput(2));
 
         Assert.Equal(8, buffer.Count);
 
         for (var i = 0; i < 4; i++)
         {
-            ComboLogic.TryDequeueInput(ref buffer, out var input);
+            buffer.TryDequeue(out var input);
             Assert.Equal(1, input);
         }
 
         for (var i = 0; i < 4; i++)
         {
-            ComboLogic.TryDequeueInput(ref buffer, out var input);
+            buffer.TryDequeue(out var input);
             Assert.Equal(2, input);
         }
     }
@@ -140,8 +140,8 @@ public class InputRingBufferTests
         Assert.Equal(4, buffer.Count);
         
         // 2. Read 2
-        Assert.True(ComboLogic.TryDequeueInput(ref buffer, out int val)); Assert.Equal(1, val);
-        Assert.True(ComboLogic.TryDequeueInput(ref buffer, out val)); Assert.Equal(2, val);
+        Assert.True(buffer.TryDequeue(out int val)); Assert.Equal(1, val);
+        Assert.True(buffer.TryDequeue(out val)); Assert.Equal(2, val);
         Assert.Equal(2, buffer.Count);
         
         // 3. Fill to wrap around (Capacity 8. Head=2, Tail=4. Add 6 items -> Tail should wrap)
@@ -158,7 +158,7 @@ public class InputRingBufferTests
         int[] expected = { 3, 4, 5, 6, 7, 8, 9, 10 };
         foreach (var exp in expected)
         {
-            Assert.True(ComboLogic.TryDequeueInput(ref buffer, out val));
+            Assert.True(buffer.TryDequeue(out val));
             Assert.Equal(exp, val);
         }
         

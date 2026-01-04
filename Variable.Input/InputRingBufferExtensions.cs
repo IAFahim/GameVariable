@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace Variable.Input;
 
 /// <summary>
@@ -10,7 +12,8 @@ public static class InputRingBufferExtensions
     /// </summary>
     public static bool RegisterInput(ref this InputRingBuffer buffer, int inputId)
     {
-        return ComboLogic.TryEnqueueInput(ref buffer, inputId);
+        var inputs = MemoryMarshal.CreateSpan(ref buffer.Input0, 8);
+        return ComboLogic.TryEnqueueInput(ref buffer.Tail, ref buffer.Count, inputs, inputId);
     }
 
     /// <summary>
@@ -18,7 +21,17 @@ public static class InputRingBufferExtensions
     /// </summary>
     public static bool Peek(ref this InputRingBuffer buffer, out int inputId)
     {
-        return ComboLogic.PeekInput(ref buffer, out inputId);
+        var inputs = MemoryMarshal.CreateReadOnlySpan(ref buffer.Input0, 8);
+        return ComboLogic.PeekInput(buffer.Head, buffer.Count, inputs, out inputId);
+    }
+
+    /// <summary>
+    ///     Attempts to remove and return the oldest input ID from the ring buffer.
+    /// </summary>
+    public static bool TryDequeue(ref this InputRingBuffer buffer, out int inputId)
+    {
+        var inputs = MemoryMarshal.CreateSpan(ref buffer.Input0, 8);
+        return ComboLogic.TryDequeueInput(ref buffer.Head, ref buffer.Count, inputs, out inputId);
     }
 
     /// <summary>

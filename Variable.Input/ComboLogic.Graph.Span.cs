@@ -13,8 +13,11 @@ public static partial class ComboLogic
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryAdvanceState(
-        ref ComboState state,
-        ref InputRingBuffer buffer,
+        ref int currentNodeIndex,
+        ref bool isActionBusy,
+        ref int bufferHead,
+        ref int bufferCount,
+        Span<int> bufferInputs,
         ReadOnlySpan<ComboNode> nodes,
         ReadOnlySpan<ComboEdge> edges,
         out int newActionID)
@@ -25,16 +28,16 @@ public static partial class ComboLogic
         if (nodes.Length == 0) return false;
 
         // 1. Busy Check
-        if (state.IsActionBusy) return false;
+        if (isActionBusy) return false;
 
         // 2. Input Check
-        if (!PeekInput(ref buffer, out var nextInput)) return false;
+        if (!PeekInput(bufferHead, bufferCount, bufferInputs, out var nextInput)) return false;
 
         // 3. Safety: Ensure current index is valid (recovery from bad state)
-        if (state.CurrentNodeIndex < 0 || state.CurrentNodeIndex >= nodes.Length) state.CurrentNodeIndex = 0;
+        if (currentNodeIndex < 0 || currentNodeIndex >= nodes.Length) currentNodeIndex = 0;
 
         // 4. Graph Traversal (CSR Look-up)
-        var currentNode = nodes[state.CurrentNodeIndex];
+        var currentNode = nodes[currentNodeIndex];
         var targetNodeIndex = -1;
         var start = currentNode.EdgeStartIndex;
         var end = start + currentNode.EdgeCount;
@@ -54,19 +57,28 @@ public static partial class ComboLogic
             // Safety: Validate target node exists before jumping
             if (targetNodeIndex >= 0 && targetNodeIndex < nodes.Length)
             {
-                TryDequeueInput(ref buffer, out _);
+                TryDequeueInput(ref bufferHead, ref bufferCount, bufferInputs, out _);
 
-                state.CurrentNodeIndex = targetNodeIndex;
-                state.IsActionBusy = true;
+                currentNodeIndex = targetNodeIndex;
+                isActionBusy = true;
                 newActionID = nodes[targetNodeIndex].ActionID;
                 return true;
             }
 
         // If target index was invalid, treat as dead end (fall through to reset)
         // 6. Failure / Reset Logic (consumes invalid input)
-        TryDequeueInput(ref buffer, out _);
-        state.CurrentNodeIndex = 0;
+        TryDequeueInput(ref bufferHead, ref bufferCount, bufferInputs, out _);
+        currentNodeIndex = 0;
         newActionID = nodes[0].ActionID;
         return false;
+    }
+
+    /// <summary>
+    ///     Signals that the current action has finished, allowing state transitions.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void SignalActionFinished(ref bool isActionBusy)
+    {
+        isActionBusy = false;
     }
 }

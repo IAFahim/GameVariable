@@ -15,13 +15,21 @@ public static class ExperienceExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Add(ref this ExperienceInt xp, int amount, Func<int, int> nextMaxFormula)
     {
-        return ExperienceLogic.AddExperience(
-            ref xp.Current,
-            ref xp.Max,
-            ref xp.Level,
-            amount,
-            nextMaxFormula
-        );
+        ExperienceLogic.AddExperience(ref xp.Current, amount);
+        var levelsGained = 0;
+        while (xp.Current >= xp.Max)
+        {
+            var newMax = Math.Max(1, nextMaxFormula(xp.Level + 1));
+            if (ExperienceLogic.TryApplyLevelUp(ref xp.Current, ref xp.Max, ref xp.Level, newMax))
+            {
+                levelsGained++;
+            }
+            else
+            {
+                break;
+            }
+        }
+        return levelsGained;
     }
 
     /// <summary>
@@ -34,13 +42,21 @@ public static class ExperienceExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Add(ref this ExperienceLong xp, long amount, Func<int, long> nextMaxFormula)
     {
-        return ExperienceLogic.AddExperience(
-            ref xp.Current,
-            ref xp.Max,
-            ref xp.Level,
-            amount,
-            nextMaxFormula
-        );
+        ExperienceLogic.AddExperience(ref xp.Current, amount);
+        var levelsGained = 0;
+        while (xp.Current >= xp.Max)
+        {
+            var newMax = Math.Max(1, nextMaxFormula(xp.Level + 1));
+            if (ExperienceLogic.TryApplyLevelUp(ref xp.Current, ref xp.Max, ref xp.Level, newMax))
+            {
+                levelsGained++;
+            }
+            else
+            {
+                break;
+            }
+        }
+        return levelsGained;
     }
 
     /// <summary>

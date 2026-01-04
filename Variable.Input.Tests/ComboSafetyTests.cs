@@ -23,7 +23,7 @@ public class ComboSafetyTests
         buffer.RegisterInput(1);
 
         // Should NOT crash, should reset to neutral
-        var result = ComboLogic.TryAdvanceState(ref state, ref buffer, nodes, edges, out var actionID);
+        var result = state.TryUpdate(ref buffer, nodes.AsSpan(), edges.AsSpan(), out var actionID);
 
         Assert.False(result);
         Assert.Equal(0, actionID);
@@ -44,7 +44,7 @@ public class ComboSafetyTests
         var buffer = new InputRingBuffer();
         buffer.RegisterInput(1);
 
-        var result = ComboLogic.TryAdvanceState(ref state, ref buffer, nodes, edges, out var actionID);
+        var result = state.TryUpdate(ref buffer, nodes.AsSpan(), edges.AsSpan(), out var actionID);
 
         Assert.False(result);
         Assert.Equal(0, state.CurrentNodeIndex);
@@ -66,7 +66,7 @@ public class ComboSafetyTests
         buffer.RegisterInput(1);
 
         // Should NOT crash, should scan only available edges
-        var result = ComboLogic.TryAdvanceState(ref state, ref buffer, nodes, edges, out var actionID);
+        var result = state.TryUpdate(ref buffer, nodes.AsSpan(), edges.AsSpan(), out var actionID);
 
         Assert.True(result);
         Assert.Equal(100, actionID);
@@ -89,7 +89,7 @@ public class ComboSafetyTests
         buffer.RegisterInput(1);
 
         // Should auto-recover to node 0
-        var result = ComboLogic.TryAdvanceState(ref state, ref buffer, nodes, edges, out var actionID);
+        var result = state.TryUpdate(ref buffer, nodes.AsSpan(), edges.AsSpan(), out var actionID);
 
         // After recovery, it's at node 0, input 1 takes it to node 1
         Assert.True(result);
@@ -108,7 +108,7 @@ public class ComboSafetyTests
         buffer.RegisterInput(1);
 
         // Should handle gracefully - returns false immediately for empty graph
-        var result = ComboLogic.TryAdvanceState(ref state, ref buffer, nodes, edges, out var actionID);
+        var result = state.TryUpdate(ref buffer, nodes.AsSpan(), edges.AsSpan(), out var actionID);
 
         Assert.False(result);
         Assert.Equal(-1, actionID); // No action executed
@@ -130,8 +130,7 @@ public class ComboSafetyTests
         var buffer = new InputRingBuffer();
         buffer.RegisterInput(1);
 
-        var result = ComboLogic.TryAdvanceState(
-            ref state,
+        var result = state.TryUpdate(
             ref buffer,
             nodes.AsSpan(),
             edges.AsSpan(),
@@ -154,7 +153,7 @@ public class ComboSafetyTests
         buffer.RegisterInput(1);
 
         // Should not crash
-        var result = ComboLogic.TryAdvanceState(ref state, ref buffer, nodes, edges, out var actionID);
+        var result = state.TryUpdate(ref buffer, nodes.AsSpan(), edges.AsSpan(), out var actionID);
 
         Assert.False(result); // No valid edges, resets
         Assert.Equal(0, state.CurrentNodeIndex);

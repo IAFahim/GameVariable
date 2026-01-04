@@ -7,65 +7,49 @@ namespace Variable.Experience;
 public static class ExperienceLogic
 {
     /// <summary>
-    ///     Attempts to apply a level up if the experience is full.
+    ///     Attempts to apply a single level up if the experience is full.
+    ///     Requires the caller to provide the new max experience for the next level.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryLevelUp(ref int current, ref int max, ref int level, Func<int, int> nextMaxFormula)
+    public static bool TryApplyLevelUp(ref int current, ref int max, ref int level, int newMax)
     {
         if (current < max) return false;
 
-        while (current >= max)
-        {
-            current -= max;
-            level++;
-            // Calculate new max based on the NEW level
-            max = Math.Max(1, nextMaxFormula(level));
-        }
-
+        current -= max;
+        level++;
+        max = newMax;
         return true;
     }
 
     /// <summary>
-    ///     Attempts to apply a level up if the experience is full (Long version).
+    ///     Attempts to apply a single level up if the experience is full (Long version).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryLevelUp(ref long current, ref long max, ref int level, Func<int, long> nextMaxFormula)
+    public static bool TryApplyLevelUp(ref long current, ref long max, ref int level, long newMax)
     {
         if (current < max) return false;
 
-        while (current >= max)
-        {
-            current -= max;
-            level++;
-            max = Math.Max(1, nextMaxFormula(level));
-        }
-
+        current -= max;
+        level++;
+        max = newMax;
         return true;
     }
 
     /// <summary>
-    ///     Adds experience and processes level ups.
+    ///     Adds experience. Does NOT handle leveling up.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int AddExperience(ref int current, ref int max, ref int level, int amount,
-        Func<int, int> nextMaxFormula)
+    public static void AddExperience(ref int current, int amount)
     {
-        var levelsGained = 0;
         current += amount;
-        while (TryLevelUp(ref current, ref max, ref level, nextMaxFormula)) levelsGained++;
-        return levelsGained;
     }
 
     /// <summary>
-    ///     Adds experience and processes level ups (Long version).
+    ///     Adds experience. Does NOT handle leveling up.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int AddExperience(ref long current, ref long max, ref int level, long amount,
-        Func<int, long> nextMaxFormula)
+    public static void AddExperience(ref long current, long amount)
     {
-        var levelsGained = 0;
         current += amount;
-        while (TryLevelUp(ref current, ref max, ref level, nextMaxFormula)) levelsGained++;
-        return levelsGained;
     }
 }

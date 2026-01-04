@@ -30,8 +30,7 @@ public class ComboLogicSpanTests
         buffer.RegisterInput(1);
 
         // Use Span overload
-        var result = ComboLogic.TryAdvanceState(
-            ref state,
+        var result = state.TryUpdate(
             ref buffer,
             nodes.AsSpan(),
             edges.AsSpan(),
@@ -59,8 +58,7 @@ public class ComboLogicSpanTests
         edges[0] = new ComboEdge { InputTrigger = 1, TargetNodeIndex = 1 };
         edges[1] = new ComboEdge { InputTrigger = 2, TargetNodeIndex = 2 };
 
-        var result = ComboLogic.TryAdvanceState(
-            ref state,
+        var result = state.TryUpdate(
             ref buffer,
             nodes,
             edges,
@@ -82,8 +80,7 @@ public class ComboLogicSpanTests
         var nodeSlice = allNodes.AsSpan().Slice(0, 3);
         var edgeSlice = allEdges.AsSpan().Slice(0, 2);
 
-        var result = ComboLogic.TryAdvanceState(
-            ref state,
+        var result = state.TryUpdate(
             ref buffer,
             nodeSlice,
             edgeSlice,
@@ -114,17 +111,17 @@ public class ComboLogicSpanTests
         buffer.RegisterInput(1);
 
         // First hit
-        Assert.True(ComboLogic.TryAdvanceState(ref state, ref buffer, nodes.AsSpan(), edges.AsSpan(), out var act1));
+        Assert.True(state.TryUpdate(ref buffer, nodes.AsSpan(), edges.AsSpan(), out var act1));
         Assert.Equal(100, act1);
-        ComboLogic.SignalActionFinished(ref state);
+        state.SignalActionFinished();
 
         // Second hit
-        Assert.True(ComboLogic.TryAdvanceState(ref state, ref buffer, nodes.AsSpan(), edges.AsSpan(), out var act2));
+        Assert.True(state.TryUpdate(ref buffer, nodes.AsSpan(), edges.AsSpan(), out var act2));
         Assert.Equal(101, act2);
-        ComboLogic.SignalActionFinished(ref state);
+        state.SignalActionFinished();
 
         // Third hit
-        Assert.True(ComboLogic.TryAdvanceState(ref state, ref buffer, nodes.AsSpan(), edges.AsSpan(), out var act3));
+        Assert.True(state.TryUpdate(ref buffer, nodes.AsSpan(), edges.AsSpan(), out var act3));
         Assert.Equal(102, act3);
     }
 }

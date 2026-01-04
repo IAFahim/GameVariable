@@ -41,7 +41,7 @@ public class ComboLogicTests
         var state = new ComboState { CurrentNodeIndex = 0, IsActionBusy = false };
         var buffer = new InputRingBuffer();
 
-        var result = ComboLogic.TryAdvanceState(ref state, ref buffer, graph.Nodes, graph.Edges, out var actionID);
+        var result = state.TryUpdate(ref buffer, graph, out var actionID);
 
         Assert.False(result);
         Assert.Equal(-1, actionID);
@@ -53,9 +53,9 @@ public class ComboLogicTests
         var graph = CreateSimpleGraph();
         var state = new ComboState { CurrentNodeIndex = 0, IsActionBusy = true };
         var buffer = new InputRingBuffer();
-        ComboLogic.TryEnqueueInput(ref buffer, 1);
+        buffer.RegisterInput(1);
 
-        var result = ComboLogic.TryAdvanceState(ref state, ref buffer, graph.Nodes, graph.Edges, out var actionID);
+        var result = state.TryUpdate(ref buffer, graph, out var actionID);
 
         Assert.False(result);
         Assert.Equal(-1, actionID);
@@ -68,9 +68,9 @@ public class ComboLogicTests
         var graph = CreateSimpleGraph();
         var state = new ComboState { CurrentNodeIndex = 0, IsActionBusy = false };
         var buffer = new InputRingBuffer();
-        ComboLogic.TryEnqueueInput(ref buffer, 1);
+        buffer.RegisterInput(1);
 
-        var result = ComboLogic.TryAdvanceState(ref state, ref buffer, graph.Nodes, graph.Edges, out var actionID);
+        var result = state.TryUpdate(ref buffer, graph, out var actionID);
 
         Assert.True(result);
         Assert.Equal(100, actionID);
@@ -85,9 +85,9 @@ public class ComboLogicTests
         var graph = CreateSimpleGraph();
         var state = new ComboState { CurrentNodeIndex = 1, IsActionBusy = false };
         var buffer = new InputRingBuffer();
-        ComboLogic.TryEnqueueInput(ref buffer, 2);
+        buffer.RegisterInput(2);
 
-        var result = ComboLogic.TryAdvanceState(ref state, ref buffer, graph.Nodes, graph.Edges, out var actionID);
+        var result = state.TryUpdate(ref buffer, graph, out var actionID);
 
         Assert.False(result);
         Assert.Equal(0, actionID);
@@ -101,17 +101,17 @@ public class ComboLogicTests
         var graph = CreateSimpleGraph();
         var state = new ComboState { CurrentNodeIndex = 0, IsActionBusy = false };
         var buffer = new InputRingBuffer();
-        ComboLogic.TryEnqueueInput(ref buffer, 1);
-        ComboLogic.TryEnqueueInput(ref buffer, 1);
+        buffer.RegisterInput(1);
+        buffer.RegisterInput(1);
 
-        var result1 = ComboLogic.TryAdvanceState(ref state, ref buffer, graph.Nodes, graph.Edges, out var actionID1);
+        var result1 = state.TryUpdate(ref buffer, graph, out var actionID1);
         Assert.True(result1);
         Assert.Equal(100, actionID1);
         Assert.Equal(1, state.CurrentNodeIndex);
 
-        ComboLogic.SignalActionFinished(ref state);
+        state.SignalActionFinished();
 
-        var result2 = ComboLogic.TryAdvanceState(ref state, ref buffer, graph.Nodes, graph.Edges, out var actionID2);
+        var result2 = state.TryUpdate(ref buffer, graph, out var actionID2);
         Assert.True(result2);
         Assert.Equal(101, actionID2);
         Assert.Equal(3, state.CurrentNodeIndex);
@@ -125,18 +125,18 @@ public class ComboLogicTests
         var state = new ComboState { CurrentNodeIndex = 0, IsActionBusy = false };
         var buffer = new InputRingBuffer();
 
-        ComboLogic.TryEnqueueInput(ref buffer, 2);
-        ComboLogic.TryEnqueueInput(ref buffer, 2);
+        buffer.RegisterInput(2);
+        buffer.RegisterInput(2);
 
-        var result1 = ComboLogic.TryAdvanceState(ref state, ref buffer, graph.Nodes, graph.Edges, out var actionID1);
+        var result1 = state.TryUpdate(ref buffer, graph, out var actionID1);
         Assert.True(result1);
         Assert.Equal(200, actionID1);
         Assert.Equal(2, state.CurrentNodeIndex);
         Assert.Equal(1, buffer.Count);
 
-        ComboLogic.SignalActionFinished(ref state);
+        state.SignalActionFinished();
 
-        var result2 = ComboLogic.TryAdvanceState(ref state, ref buffer, graph.Nodes, graph.Edges, out var actionID2);
+        var result2 = state.TryUpdate(ref buffer, graph, out var actionID2);
         Assert.True(result2);
         Assert.Equal(201, actionID2);
         Assert.Equal(4, state.CurrentNodeIndex);
@@ -148,7 +148,7 @@ public class ComboLogicTests
     {
         var state = new ComboState { CurrentNodeIndex = 1, IsActionBusy = true };
 
-        ComboLogic.SignalActionFinished(ref state);
+        state.SignalActionFinished();
 
         Assert.False(state.IsActionBusy);
     }
