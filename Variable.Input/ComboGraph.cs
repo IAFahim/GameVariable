@@ -2,19 +2,38 @@ namespace Variable.Input;
 
 /// <summary>
 ///     The complete combo graph containing nodes and edges.
-///     Uses CSR (Compressed Sparse Row) format for cache-friendly traversal.
+///     Unmanaged, Burst-compatible structure.
 /// </summary>
-[Serializable]
 [StructLayout(LayoutKind.Sequential)]
-public struct ComboGraph
+public unsafe struct ComboGraph
 {
     /// <summary>
-    ///     The array of all nodes in the graph.
+    ///     Pointer to the nodes array.
     /// </summary>
-    public ComboNode[] Nodes;
+    public ComboNode* Nodes;
 
     /// <summary>
-    ///     The flattened array of all edges in the graph.
+    ///     Number of nodes.
     /// </summary>
-    public ComboEdge[] Edges;
+    public int NodeCount;
+
+    /// <summary>
+    ///     Pointer to the edges array.
+    /// </summary>
+    public ComboEdge* Edges;
+
+    /// <summary>
+    ///     Number of edges.
+    /// </summary>
+    public int EdgeCount;
+
+    /// <summary>
+    ///     Gets the nodes as a ReadOnlySpan.
+    /// </summary>
+    public ReadOnlySpan<ComboNode> NodesSpan => new(Nodes, NodeCount);
+
+    /// <summary>
+    ///     Gets the edges as a ReadOnlySpan.
+    /// </summary>
+    public ReadOnlySpan<ComboEdge> EdgesSpan => new(Edges, EdgeCount);
 }

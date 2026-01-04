@@ -25,7 +25,7 @@ public class ComboAnimationHandler : MonoBehaviour
 {
     [SerializeField] private Animator animator;
     
-    private ComboGraph _graph;
+    private ComboGraphData _graph;
     private ComboState _state;
     private InputRingBuffer _buffer;
     
@@ -194,7 +194,7 @@ using Variable.Input;
 
 public static class ComboGraphBlobBuilder
 {
-    public static BlobAssetReference<ComboGraphBlob> Build(ComboGraph source)
+    public static BlobAssetReference<ComboGraphBlob> Build(ComboGraphData source)
     {
         var builder = new BlobBuilder(Allocator.Temp);
         
@@ -477,7 +477,7 @@ public class ComboWithTimeout : MonoBehaviour
 {
     [SerializeField] private float comboTimeout = 1.5f;
     
-    private ComboGraph _graph;
+    private ComboGraphData _graph;
     private ComboState _state;
     private InputRingBuffer _buffer;
     private float _lastActionTime;
@@ -521,14 +521,14 @@ public class WeaponComboController : MonoBehaviour
     [SerializeField] private ComboAsset spearCombo;
     [SerializeField] private ComboAsset fistCombo;
     
-    private ComboGraph[] _graphs;
+    private ComboGraphData[] _graphs;
     private ComboState _state;
     private InputRingBuffer _buffer;
     private int _currentWeapon;
     
     void Awake()
     {
-        _graphs = new ComboGraph[]
+        _graphs = new ComboGraphData[]
         {
             swordCombo.BuildGraph(),
             spearCombo.BuildGraph(),

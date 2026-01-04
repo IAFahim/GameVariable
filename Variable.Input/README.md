@@ -117,7 +117,7 @@ public class VisualComboController : MonoBehaviour
     public int BufferedInputs;
     
     // Internal
-    private ComboGraph _graph;
+    private ComboGraphData _graph;
     private ComboState _state;
     private InputRingBuffer _buffer;
     private Dictionary<GameObject, int> _nodeToIndex;
@@ -200,7 +200,7 @@ public class VisualComboController : MonoBehaviour
             }
         }
         
-        _graph = new ComboGraph { Nodes = nodes, Edges = edges };
+        _graph = new ComboGraphData { Nodes = nodes, Edges = edges };
     }
     
     void ExecuteMove(int actionID)
@@ -299,7 +299,7 @@ public class ComboAsset : ScriptableObject
     /// <summary>
     /// Converts this designer-friendly format to the optimized runtime format.
     /// </summary>
-    public ComboGraph BuildGraph()
+    public ComboGraphData BuildGraph()
     {
         // Count edges
         int totalEdges = 0;
@@ -331,7 +331,7 @@ public class ComboAsset : ScriptableObject
             }
         }
         
-        return new ComboGraph { Nodes = nodes, Edges = edges };
+        return new ComboGraphData { Nodes = nodes, Edges = edges };
     }
     
     #if UNITY_EDITOR
@@ -366,7 +366,7 @@ public class ComboPlayer : MonoBehaviour
     [SerializeField] ComboAsset comboAsset;
     [SerializeField] Animator animator;
     
-    ComboGraph _graph;
+    ComboGraphData _graph;
     ComboState _state;
     InputRingBuffer _buffer;
     
@@ -435,7 +435,7 @@ public static class DirectComboBuilder
     /// Builds: Idle --LMB--> Light --LMB--> LightLight
     ///              --RMB--> Heavy --RMB--> HeavyHeavy
     /// </summary>
-    public static ComboGraph Build()
+    public static ComboGraphData Build()
     {
         // NODES: Each move in your combo tree
         // =====================================
@@ -491,7 +491,7 @@ public static class DirectComboBuilder
             // Nodes 3 & 4 have no edges (EdgeCount = 0), so nothing here for them
         };
         
-        return new ComboGraph { Nodes = nodes, Edges = edges };
+        return new ComboGraphData { Nodes = nodes, Edges = edges };
     }
 }
 ```
@@ -637,7 +637,8 @@ buffer.Clear();
 
 | File | Purpose |
 |------|---------|
-| `ComboGraph.cs` | Container for nodes + edges |
+| `ComboGraph.cs` | Container for nodes + edges (Unmanaged) |
+| `ComboGraphData` | Managed container for serialization |
 | `ComboNode.cs` | A single move (ActionID + edge pointers) |
 | `ComboEdge.cs` | A transition (button → target node) |
 | `ComboState.cs` | Runtime state (current node + busy flag) |

@@ -23,15 +23,18 @@ namespace Variable.Input
             Func<int, string>? getActionName = null, 
             Func<int, string>? getInputName = null)
         {
-            if (graph.Nodes == null) return "graph TD\n    Error[Graph Empty]";
+            if (graph.NodeCount == 0) return "graph TD\n    Error[Graph Empty]";
 
             var sb = new StringBuilder();
             sb.AppendLine("graph TD");
 
+            var nodes = graph.NodesSpan;
+            var edges = graph.EdgesSpan;
+
             // 1. Define Nodes and Edges
-            for (int i = 0; i < graph.Nodes.Length; i++)
+            for (int i = 0; i < nodes.Length; i++)
             {
-                var node = graph.Nodes[i];
+                var node = nodes[i];
                 bool isCurrent = i == state.CurrentNodeIndex;
                 
                 // Resolve Name
@@ -48,14 +51,14 @@ namespace Variable.Input
                 sb.AppendLine($"    N{i}[\"{name}\"]");
 
                 // Define Outgoing Edges
-                if (node.EdgeCount > 0 && graph.Edges != null)
+                if (node.EdgeCount > 0)
                 {
                     for (int e = 0; e < node.EdgeCount; e++)
                     {
                         int edgeIdx = node.EdgeStartIndex + e;
-                        if (edgeIdx < graph.Edges.Length)
+                        if (edgeIdx < edges.Length)
                         {
-                            var edge = graph.Edges[edgeIdx];
+                            var edge = edges[edgeIdx];
                             string input = getInputName?.Invoke(edge.InputTrigger) ?? $"Input {edge.InputTrigger}";
                             
                             // Highlight valid transitions from current node if not busy
@@ -75,5 +78,7 @@ namespace Variable.Input
 
             return sb.ToString();
         }
+
+
     }
 }

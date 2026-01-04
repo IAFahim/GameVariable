@@ -4,7 +4,7 @@ namespace Variable.Input.Tests;
 
 public class ComboLogicTests
 {
-    private static ComboGraph CreateSimpleGraph()
+    private static TestGraph CreateSimpleGraph()
     {
         // Node 0: Idle (ActionID=0)
         //   -> L goes to Node 1
@@ -31,13 +31,14 @@ public class ComboLogicTests
         edges[2] = new ComboEdge { InputTrigger = 1, TargetNodeIndex = 3 };
         edges[3] = new ComboEdge { InputTrigger = 2, TargetNodeIndex = 4 };
 
-        return new ComboGraph { Nodes = nodes, Edges = edges };
+        return new TestGraph(nodes, edges);
     }
 
     [Fact]
     public void TryAdvanceState_NoInput_ReturnsFalse()
     {
-        var graph = CreateSimpleGraph();
+        using var graphWrapper = CreateSimpleGraph();
+        var graph = graphWrapper.Graph;
         var state = new ComboState { CurrentNodeIndex = 0, IsActionBusy = false };
         var buffer = new InputRingBuffer();
 
@@ -50,7 +51,8 @@ public class ComboLogicTests
     [Fact]
     public void TryAdvanceState_ActionBusy_ReturnsFalse()
     {
-        var graph = CreateSimpleGraph();
+        using var graphWrapper = CreateSimpleGraph();
+        var graph = graphWrapper.Graph;
         var state = new ComboState { CurrentNodeIndex = 0, IsActionBusy = true };
         var buffer = new InputRingBuffer();
         buffer.RegisterInput(1);
@@ -65,7 +67,8 @@ public class ComboLogicTests
     [Fact]
     public void TryAdvanceState_ValidTransition_Works()
     {
-        var graph = CreateSimpleGraph();
+        using var graphWrapper = CreateSimpleGraph();
+        var graph = graphWrapper.Graph;
         var state = new ComboState { CurrentNodeIndex = 0, IsActionBusy = false };
         var buffer = new InputRingBuffer();
         buffer.RegisterInput(1);
@@ -82,7 +85,8 @@ public class ComboLogicTests
     [Fact]
     public void TryAdvanceState_InvalidInput_ResetsToIdle()
     {
-        var graph = CreateSimpleGraph();
+        using var graphWrapper = CreateSimpleGraph();
+        var graph = graphWrapper.Graph;
         var state = new ComboState { CurrentNodeIndex = 1, IsActionBusy = false };
         var buffer = new InputRingBuffer();
         buffer.RegisterInput(2);
@@ -98,7 +102,8 @@ public class ComboLogicTests
     [Fact]
     public void TryAdvanceState_ComboChain_Works()
     {
-        var graph = CreateSimpleGraph();
+        using var graphWrapper = CreateSimpleGraph();
+        var graph = graphWrapper.Graph;
         var state = new ComboState { CurrentNodeIndex = 0, IsActionBusy = false };
         var buffer = new InputRingBuffer();
         buffer.RegisterInput(1);
@@ -121,7 +126,8 @@ public class ComboLogicTests
     [Fact]
     public void TryAdvanceState_MultipleInputs_Buffered()
     {
-        var graph = CreateSimpleGraph();
+        using var graphWrapper = CreateSimpleGraph();
+        var graph = graphWrapper.Graph;
         var state = new ComboState { CurrentNodeIndex = 0, IsActionBusy = false };
         var buffer = new InputRingBuffer();
 
@@ -156,7 +162,8 @@ public class ComboLogicTests
     [Fact]
     public void Extension_TryUpdate_Works()
     {
-        var graph = CreateSimpleGraph();
+        using var graphWrapper = CreateSimpleGraph();
+        var graph = graphWrapper.Graph;
         var state = new ComboState { CurrentNodeIndex = 0, IsActionBusy = false };
         var buffer = new InputRingBuffer();
         buffer.RegisterInput(1);

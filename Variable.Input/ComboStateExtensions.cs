@@ -23,10 +23,11 @@ public static class ComboStateExtensions
             ref buffer.Head,
             ref buffer.Count,
             inputs,
-            graph.Nodes,
-            graph.Edges,
+            graph.NodesSpan,
+            graph.EdgesSpan,
             out actionId);
     }
+    
 
     /// <summary>
     ///     Attempts to update the combo state based on buffered inputs (Span overload).

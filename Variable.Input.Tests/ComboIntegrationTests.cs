@@ -16,7 +16,7 @@ public class ComboIntegrationTests
     ///     └─ R → Heavy Attack (200)
     ///     └─ R → Heavy-Heavy Finisher (201)
     /// </summary>
-    private static ComboGraph CreateFightingGameGraph()
+    private static TestGraph CreateFightingGameGraph()
     {
         var nodes = new ComboNode[6];
         nodes[0] = new ComboNode { ActionID = 0, EdgeStartIndex = 0, EdgeCount = 2 }; // Neutral
@@ -33,13 +33,14 @@ public class ComboIntegrationTests
         edges[3] = new ComboEdge { InputTrigger = 2, TargetNodeIndex = 4 }; // Light → LR
         edges[4] = new ComboEdge { InputTrigger = 2, TargetNodeIndex = 5 }; // Heavy → RR
 
-        return new ComboGraph { Nodes = nodes, Edges = edges };
+        return new TestGraph(nodes, edges);
     }
 
     [Fact]
     public void FightingGame_SimpleLightAttack()
     {
-        var graph = CreateFightingGameGraph();
+        using var graphWrapper = CreateFightingGameGraph();
+        var graph = graphWrapper.Graph;
         var state = new ComboState { CurrentNodeIndex = 0, IsActionBusy = false };
         var buffer = new InputRingBuffer();
 
@@ -55,7 +56,8 @@ public class ComboIntegrationTests
     [Fact]
     public void FightingGame_LightLightCombo()
     {
-        var graph = CreateFightingGameGraph();
+        using var graphWrapper = CreateFightingGameGraph();
+        var graph = graphWrapper.Graph;
         var state = new ComboState { CurrentNodeIndex = 0, IsActionBusy = false };
         var buffer = new InputRingBuffer();
 
@@ -78,7 +80,8 @@ public class ComboIntegrationTests
     [Fact]
     public void FightingGame_LightHeavyCombo()
     {
-        var graph = CreateFightingGameGraph();
+        using var graphWrapper = CreateFightingGameGraph();
+        var graph = graphWrapper.Graph;
         var state = new ComboState { CurrentNodeIndex = 0, IsActionBusy = false };
         var buffer = new InputRingBuffer();
 
@@ -100,7 +103,8 @@ public class ComboIntegrationTests
     [Fact]
     public void FightingGame_HeavyHeavyFinisher()
     {
-        var graph = CreateFightingGameGraph();
+        using var graphWrapper = CreateFightingGameGraph();
+        var graph = graphWrapper.Graph;
         var state = new ComboState { CurrentNodeIndex = 0, IsActionBusy = false };
         var buffer = new InputRingBuffer();
 
@@ -122,7 +126,8 @@ public class ComboIntegrationTests
     [Fact]
     public void FightingGame_InvalidInputResetsCombo()
     {
-        var graph = CreateFightingGameGraph();
+        using var graphWrapper = CreateFightingGameGraph();
+        var graph = graphWrapper.Graph;
         var state = new ComboState { CurrentNodeIndex = 0, IsActionBusy = false };
         var buffer = new InputRingBuffer();
 
@@ -154,7 +159,8 @@ public class ComboIntegrationTests
     [Fact]
     public void FightingGame_BufferingMultipleInputs()
     {
-        var graph = CreateFightingGameGraph();
+        using var graphWrapper = CreateFightingGameGraph();
+        var graph = graphWrapper.Graph;
         var state = new ComboState { CurrentNodeIndex = 0, IsActionBusy = false };
         var buffer = new InputRingBuffer();
 
@@ -187,7 +193,8 @@ public class ComboIntegrationTests
     [Fact]
     public void FightingGame_ActionBusy_BlocksTransition()
     {
-        var graph = CreateFightingGameGraph();
+        using var graphWrapper = CreateFightingGameGraph();
+        var graph = graphWrapper.Graph;
         var state = new ComboState { CurrentNodeIndex = 0, IsActionBusy = false };
         var buffer = new InputRingBuffer();
 
