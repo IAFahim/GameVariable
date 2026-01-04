@@ -5,6 +5,8 @@ namespace Variable.Core;
 
 /// <summary>
 ///     Extension methods for <see cref="IBoundedInfo" /> providing common logic operations.
+///     WARNING: These methods cause boxing on struct implementations. For performance-critical code,
+///     use the non-boxing generic extensions in <see cref="BoundedInfoUnsafe" />.
 /// </summary>
 public static class BoundedInfoExtensions
 {
