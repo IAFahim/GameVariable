@@ -6,8 +6,6 @@ namespace Variable.Bounded;
 /// </summary>
 public static class BoundedExtensions
 {
-    // BoundedFloat Extensions
-
     /// <summary>
     ///     Sets the current value, clamping it to bounds.
     /// </summary>
@@ -32,7 +30,7 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsFull(this BoundedFloat bounded, float tolerance = MathConstants.Tolerance)
     {
-        return bounded.Current >= bounded.Max - tolerance;
+        return BoundedLogic.IsFull(bounded.Current, bounded.Max, tolerance);
     }
 
     /// <summary>
@@ -41,7 +39,7 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsEmpty(this BoundedFloat bounded, float tolerance = MathConstants.Tolerance)
     {
-        return bounded.Current <= bounded.Min + tolerance;
+        return BoundedLogic.IsEmpty(bounded.Current, bounded.Min, tolerance);
     }
 
     /// <summary>
@@ -50,8 +48,7 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double GetRatio(this BoundedFloat bounded)
     {
-        var range = bounded.Max - bounded.Min;
-        return Math.Abs(range) < MathConstants.Tolerance ? 0.0 : (bounded.Current - bounded.Min) / range;
+        return BoundedLogic.GetRatio(bounded.Current, bounded.Min, bounded.Max);
     }
 
     /// <summary>
@@ -71,8 +68,6 @@ public static class BoundedExtensions
     {
         return BoundedLogic.GetRemaining(bounded.Current, bounded.Max);
     }
-
-    // BoundedInt Extensions
 
     /// <summary>
     ///     Sets the current value, clamping it to bounds.
@@ -98,7 +93,7 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsFull(this BoundedInt bounded)
     {
-        return bounded.Current == bounded.Max;
+        return BoundedLogic.IsFull(bounded.Current, bounded.Max);
     }
 
     /// <summary>
@@ -107,7 +102,7 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsEmpty(this BoundedInt bounded)
     {
-        return bounded.Current == bounded.Min;
+        return BoundedLogic.IsEmpty(bounded.Current, bounded.Min);
     }
 
     /// <summary>
@@ -116,8 +111,7 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double GetRatio(this BoundedInt bounded)
     {
-        var range = bounded.Max - bounded.Min;
-        return range == 0 ? 0.0 : (double)(bounded.Current - bounded.Min) / range;
+        return BoundedLogic.GetRatio(bounded.Current, bounded.Min, bounded.Max);
     }
 
     /// <summary>
@@ -137,8 +131,6 @@ public static class BoundedExtensions
     {
         return BoundedLogic.GetRemaining(bounded.Current, bounded.Max);
     }
-
-    // BoundedByte Extensions
 
     /// <summary>
     ///     Sets the current value, clamping it to max.
@@ -164,7 +156,7 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsFull(this BoundedByte bounded)
     {
-        return bounded.Current == bounded.Max;
+        return BoundedLogic.IsFull(bounded.Current, bounded.Max);
     }
 
     /// <summary>
@@ -173,7 +165,7 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsEmpty(this BoundedByte bounded)
     {
-        return bounded.Current == 0;
+        return BoundedLogic.IsEmpty(bounded.Current);
     }
 
     /// <summary>
@@ -182,7 +174,7 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double GetRatio(this BoundedByte bounded)
     {
-        return bounded.Max == 0 ? 0.0 : (double)bounded.Current / bounded.Max;
+        return BoundedLogic.GetRatio(bounded.Current, bounded.Max);
     }
 
     /// <summary>
@@ -203,8 +195,6 @@ public static class BoundedExtensions
         return BoundedLogic.GetRemaining(bounded.Current, bounded.Max);
     }
 
-    // Regeneration Support Extensions
-
     /// <summary>
     ///     Applies regeneration to a BoundedFloat.
     /// </summary>
@@ -212,7 +202,6 @@ public static class BoundedExtensions
     public static void Tick(ref this BoundedFloat bounded, float rate, float deltaTime)
     {
         var current = bounded.Current;
-        // Decompose to primitives for logic
         bounded.Current = current + rate * deltaTime;
         bounded.Normalize();
     }

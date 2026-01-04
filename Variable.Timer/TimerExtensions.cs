@@ -84,7 +84,7 @@ public static class TimerExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsFull(this Timer self)
     {
-        return self.Current >= self.Duration - Tolerance;
+        return TimerLogic.IsFull(self.Current, self.Duration);
     }
 
     /// <summary>
@@ -93,7 +93,7 @@ public static class TimerExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsEmpty(this Timer self)
     {
-        return self.Current <= Tolerance;
+        return TimerLogic.IsEmpty(self.Current);
     }
 
     /// <summary>
@@ -102,7 +102,7 @@ public static class TimerExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double GetRatio(this Timer self)
     {
-        return Math.Abs(self.Duration) < Tolerance ? 0.0 : (double)self.Current / self.Duration;
+        return TimerLogic.GetRatio(self.Current, self.Duration);
     }
 
     // Cooldown Extensions
@@ -181,7 +181,7 @@ public static class TimerExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsReady(this Cooldown self)
     {
-        return self.Current <= Tolerance;
+        return TimerLogic.IsEmpty(self.Current);
     }
 
     /// <summary>
@@ -190,7 +190,7 @@ public static class TimerExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsFull(this Cooldown self)
     {
-        return self.Current <= Tolerance;
+        return TimerLogic.IsEmpty(self.Current);
     }
 
     /// <summary>
@@ -199,7 +199,7 @@ public static class TimerExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsEmpty(this Cooldown self)
     {
-        return self.Current >= self.Duration - Tolerance;
+        return TimerLogic.IsFull(self.Current, self.Duration);
     }
 
     /// <summary>
@@ -208,7 +208,7 @@ public static class TimerExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsOnCooldown(this Cooldown self)
     {
-        return self.Current > Tolerance;
+        return !TimerLogic.IsEmpty(self.Current);
     }
 
     /// <summary>
@@ -217,7 +217,7 @@ public static class TimerExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double GetRatio(this Cooldown self)
     {
-        return Math.Abs(self.Duration) < Tolerance ? 0.0 : (double)self.Current / self.Duration;
+        return TimerLogic.GetRatio(self.Current, self.Duration);
     }
 
     /// <summary>
@@ -226,6 +226,6 @@ public static class TimerExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float GetProgress(this Cooldown self)
     {
-        return MathF.Abs(self.Duration) < Tolerance ? 1f : 1f - MathF.Max(0, self.Current / self.Duration);
+        return TimerLogic.GetInverseRatio(self.Current, self.Duration);
     }
 }

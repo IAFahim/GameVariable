@@ -81,7 +81,7 @@ public struct BoundedInt :
     {
         Max = max;
         Min = 0;
-        Current = current > max ? max : current < 0 ? 0 : current;
+        Current = BoundedLogic.Clamp(current, 0, max);
     }
 
     /// <summary>
@@ -95,12 +95,12 @@ public struct BoundedInt :
     {
         Min = min;
         Max = max;
-        Current = current > max ? max : current < min ? min : current;
+        Current = BoundedLogic.Clamp(current, min, max);
     }
 
     /// <summary>Implicitly converts the bounded int to its current value.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static implicit operator int(in BoundedInt value)
+    public static implicit operator int(BoundedInt value)
     {
         return value.Current;
     }
@@ -114,19 +114,12 @@ public struct BoundedInt :
     /// <inheritdoc />
     public readonly override bool Equals(object obj)
     {
-        return obj is BoundedInt other && Equals(in other);
+        return obj is BoundedInt other && Equals(other);
     }
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly bool Equals(BoundedInt other)
-    {
-        return Equals(in other);
-    }
-
-    /// <summary>Compares equality with another bounded int using ref parameter.</summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool Equals(in BoundedInt other)
     {
         return Current == other.Current && Min == other.Min && Max == other.Max;
     }
@@ -134,13 +127,6 @@ public struct BoundedInt :
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly int CompareTo(BoundedInt other)
-    {
-        return CompareTo(in other);
-    }
-
-    /// <summary>Compares with another bounded int using ref parameter.</summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly int CompareTo(in BoundedInt other)
     {
         var cmp = Current.CompareTo(other.Current);
         if (cmp != 0) return cmp;
@@ -152,7 +138,7 @@ public struct BoundedInt :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly int CompareTo(object obj)
     {
-        if (obj is BoundedInt other) return CompareTo(in other);
+        if (obj is BoundedInt other) return CompareTo(other);
         throw new ArgumentException($"Object must be of type {nameof(BoundedInt)}");
     }
 
@@ -165,63 +151,63 @@ public struct BoundedInt :
 
     /// <summary>Determines whether two bounded ints are equal.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator ==(in BoundedInt left, in BoundedInt right)
+    public static bool operator ==(BoundedInt left, BoundedInt right)
     {
-        return left.Equals(in right);
+        return left.Equals(right);
     }
 
     /// <summary>Determines whether two bounded ints are not equal.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator !=(in BoundedInt left, in BoundedInt right)
+    public static bool operator !=(BoundedInt left, BoundedInt right)
     {
-        return !left.Equals(in right);
+        return !left.Equals(right);
     }
 
     /// <summary>Determines whether one bounded int is less than another.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator <(in BoundedInt left, in BoundedInt right)
+    public static bool operator <(BoundedInt left, BoundedInt right)
     {
-        return left.CompareTo(in right) < 0;
+        return left.CompareTo(right) < 0;
     }
 
     /// <summary>Determines whether one bounded int is less than or equal to another.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator <=(in BoundedInt left, in BoundedInt right)
+    public static bool operator <=(BoundedInt left, BoundedInt right)
     {
-        return left.CompareTo(in right) <= 0;
+        return left.CompareTo(right) <= 0;
     }
 
     /// <summary>Determines whether one bounded int is greater than another.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator >(in BoundedInt left, in BoundedInt right)
+    public static bool operator >(BoundedInt left, BoundedInt right)
     {
-        return left.CompareTo(in right) > 0;
+        return left.CompareTo(right) > 0;
     }
 
     /// <summary>Determines whether one bounded int is greater than or equal to another.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator >=(in BoundedInt left, in BoundedInt right)
+    public static bool operator >=(BoundedInt left, BoundedInt right)
     {
-        return left.CompareTo(in right) >= 0;
+        return left.CompareTo(right) >= 0;
     }
 
     /// <summary>Increments the current value by 1, clamped to max.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static BoundedInt operator ++(in BoundedInt a)
+    public static BoundedInt operator ++(BoundedInt a)
     {
         return a + 1;
     }
 
     /// <summary>Decrements the current value by 1, clamped to min.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static BoundedInt operator --(in BoundedInt a)
+    public static BoundedInt operator --(BoundedInt a)
     {
         return a - 1;
     }
 
     /// <summary>Adds a value to the bounded int, clamping the result. Uses long to prevent overflow.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static BoundedInt operator +(in BoundedInt a, int b)
+    public static BoundedInt operator +(BoundedInt a, int b)
     {
         var result = (long)a.Current + b;
         if (result > a.Max) result = a.Max;
@@ -231,14 +217,14 @@ public struct BoundedInt :
 
     /// <summary>Adds a value to the bounded int, clamping the result.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static BoundedInt operator +(int b, in BoundedInt a)
+    public static BoundedInt operator +(int b, BoundedInt a)
     {
         return a + b;
     }
 
     /// <summary>Subtracts a value from the bounded int, clamping the result.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static BoundedInt operator -(in BoundedInt a, int b)
+    public static BoundedInt operator -(BoundedInt a, int b)
     {
         return a + -b;
     }

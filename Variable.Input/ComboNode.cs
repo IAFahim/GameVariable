@@ -6,7 +6,7 @@ namespace Variable.Input;
 /// </summary>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
-public struct ComboNode
+public partial struct ComboNode
 {
     /// <summary>
     ///     The ID of the action associated with this node.

@@ -9,6 +9,53 @@ public static class TimerLogic
     private const float Tolerance = 0.0001f;
 
     /// <summary>
+    ///     Clamps a value between min and max.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float Clamp(float value, float min, float max)
+    {
+        if (value < min) return min;
+        if (value > max) return max;
+        return value;
+    }
+
+    /// <summary>
+    ///     Checks if a value is close enough to max to be considered full.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsFull(float current, float max)
+    {
+        return current >= max - Tolerance;
+    }
+
+    /// <summary>
+    ///     Checks if a value is close enough to min (0) to be considered empty.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsEmpty(float current)
+    {
+        return current <= Tolerance;
+    }
+
+    /// <summary>
+    ///     Calculates the ratio of current vs duration.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static double GetRatio(float current, float duration)
+    {
+        return Math.Abs(duration) < Tolerance ? 0.0 : (double)current / duration;
+    }
+
+    /// <summary>
+    ///     Calculates the inverse ratio (1 - ratio).
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float GetInverseRatio(float current, float duration)
+    {
+        return Math.Abs(duration) < Tolerance ? 1f : 1f - Math.Max(0, current / duration);
+    }
+
+    /// <summary>
     ///     Advances a timer by delta time.
     /// </summary>
     /// <param name="current">The current elapsed time.</param>

@@ -53,7 +53,7 @@ public struct Cooldown :
     public Cooldown(float duration, float current = 0f)
     {
         Duration = duration;
-        Current = current > duration ? duration : current < 0f ? 0f : current;
+        Current = TimerLogic.Clamp(current, 0f, duration);
     }
 
     /// <inheritdoc />
@@ -81,13 +81,13 @@ public struct Cooldown :
     bool ICompletable.IsComplete
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => Current <= 0.0001f;
+        get => TimerLogic.IsEmpty(Current);
     }
 
     /// <inheritdoc />
     public readonly override string ToString()
     {
-        return Current <= 0.0001f ? "Ready" : $"{Current:F2}s";
+        return TimerLogic.IsEmpty(Current) ? "Ready" : $"{Current:F2}s";
     }
 
     /// <inheritdoc />
@@ -99,17 +99,6 @@ public struct Cooldown :
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly bool Equals(Cooldown other)
-    {
-        return Current.Equals(other.Current) && Duration.Equals(other.Duration);
-    }
-
-    /// <summary>
-    ///     Compares equality with another cooldown using the in modifier for performance.
-    /// </summary>
-    /// <param name="other">The other cooldown to compare.</param>
-    /// <returns>True if Current and Duration are equal.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool Equals(in Cooldown other)
     {
         return Current.Equals(other.Current) && Duration.Equals(other.Duration);
     }
@@ -142,9 +131,9 @@ public struct Cooldown :
     /// <param name="right">The second cooldown.</param>
     /// <returns>True if equal.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator ==(in Cooldown left, in Cooldown right)
+    public static bool operator ==(Cooldown left, Cooldown right)
     {
-        return left.Equals(in right);
+        return left.Equals(right);
     }
 
     /// <summary>Determines whether two cooldowns are not equal.</summary>
@@ -152,8 +141,8 @@ public struct Cooldown :
     /// <param name="right">The second cooldown.</param>
     /// <returns>True if not equal.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator !=(in Cooldown left, in Cooldown right)
+    public static bool operator !=(Cooldown left, Cooldown right)
     {
-        return !left.Equals(in right);
+        return !left.Equals(right);
     }
 }

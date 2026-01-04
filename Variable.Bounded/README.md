@@ -11,7 +11,7 @@ dotnet add package Variable.Bounded
 
 ## Features
 
-* **BoundedFloat / BoundedInt**: Automatically clamps values between 0 and Max (or custom Min/Max).
+* **BoundedFloat / BoundedInt / BoundedByte**: Automatically clamps values between 0 and Max (or custom Min/Max).
 * **Allocation-Free**: Implemented as `struct` for zero garbage collection overhead.
 * **Operator Overloads**: Use `+`, `-`, `++`, `--` naturally.
 

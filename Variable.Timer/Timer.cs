@@ -47,7 +47,7 @@ public struct Timer :
     public Timer(float duration, float current = 0f)
     {
         Duration = duration;
-        Current = current > duration ? duration : current < 0f ? 0f : current;
+        Current = TimerLogic.Clamp(current, 0f, duration);
     }
 
     /// <inheritdoc />
@@ -75,7 +75,7 @@ public struct Timer :
     bool ICompletable.IsComplete
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => Current >= Duration - 0.0001f;
+        get => TimerLogic.IsFull(Current, Duration);
     }
 
     /// <inheritdoc />
@@ -93,17 +93,6 @@ public struct Timer :
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly bool Equals(Timer other)
-    {
-        return Current.Equals(other.Current) && Duration.Equals(other.Duration);
-    }
-
-    /// <summary>
-    ///     Compares equality with another timer using the in modifier.
-    /// </summary>
-    /// <param name="other">The other timer.</param>
-    /// <returns>True if equal.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool Equals(in Timer other)
     {
         return Current.Equals(other.Current) && Duration.Equals(other.Duration);
     }
@@ -136,9 +125,9 @@ public struct Timer :
     /// <param name="right">The second timer.</param>
     /// <returns>True if equal.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator ==(in Timer left, in Timer right)
+    public static bool operator ==(Timer left, Timer right)
     {
-        return left.Equals(in right);
+        return left.Equals(right);
     }
 
     /// <summary>Determines whether two timers are not equal.</summary>
@@ -146,8 +135,8 @@ public struct Timer :
     /// <param name="right">The second timer.</param>
     /// <returns>True if not equal.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator !=(in Timer left, in Timer right)
+    public static bool operator !=(Timer left, Timer right)
     {
-        return !left.Equals(in right);
+        return !left.Equals(right);
     }
 }

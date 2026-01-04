@@ -36,7 +36,7 @@ public static partial class ComboLogic
         inputId = InputId.None;
         if (buffer.Count == 0) return false;
 
-        inputId = GetBufferAt(ref buffer, buffer.Head);
+        inputId = GetBufferAt(buffer, buffer.Head);
 
         buffer.Head = (buffer.Head + 1) % InputRingBuffer.CAPACITY;
         buffer.Count--;
@@ -54,7 +54,7 @@ public static partial class ComboLogic
     {
         inputId = InputId.None;
         if (buffer.Count == 0) return false;
-        inputId = GetBufferAt(ref buffer, buffer.Head);
+        inputId = GetBufferAt(buffer, buffer.Head);
         return true;
     }
 
@@ -91,7 +91,7 @@ public static partial class ComboLogic
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int GetBufferAt(ref InputRingBuffer b, int index)
+    private static int GetBufferAt(InputRingBuffer b, int index)
     {
         switch (index)
         {

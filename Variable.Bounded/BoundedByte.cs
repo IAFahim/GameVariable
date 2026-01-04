@@ -55,7 +55,7 @@ public struct BoundedByte :
     public BoundedByte(byte max, byte current)
     {
         Max = max;
-        Current = current > max ? max : current;
+        Current = BoundedLogic.Clamp(current, max);
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ public struct BoundedByte :
     public BoundedByte(byte max, int current)
     {
         Max = max;
-        Current = (byte)(current > max ? max : current < 0 ? 0 : current);
+        Current = BoundedLogic.Clamp(current, max);
     }
 
     /// <summary>Implicitly converts the bounded byte to its current value.</summary>
