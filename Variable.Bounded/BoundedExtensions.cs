@@ -201,7 +201,14 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Tick(ref this BoundedFloat bounded, float rate, float deltaTime)
     {
+        // ⚡ Bolt: Early exit if value is already at a boundary and rate would push it further away.
+        // This avoids a needless multiplication, addition, and clamp check in a common scenario.
         var current = bounded.Current;
+        if ((current >= bounded.Max && rate > 0) || (current <= bounded.Min && rate < 0))
+        {
+            return;
+        }
+
         bounded.Current = current + rate * deltaTime;
         bounded.Normalize();
     }
