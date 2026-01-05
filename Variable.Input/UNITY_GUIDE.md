@@ -25,7 +25,8 @@ public class ComboAnimationHandler : MonoBehaviour
 {
     [SerializeField] private Animator animator;
     
-    private ComboGraph _graph; // Ensure this is initialized with unmanaged memory!
+    private ComboNode[] _nodes;
+    private ComboEdge[] _edges;
     private ComboState _state;
     private InputRingBuffer _buffer;
     
@@ -35,8 +36,11 @@ public class ComboAnimationHandler : MonoBehaviour
         if (Input.GetMouseButtonDown(0)) _buffer.RegisterInput(Inputs.LMB);
         if (Input.GetMouseButtonDown(1)) _buffer.RegisterInput(Inputs.RMB);
         
+        // Create graph view
+        var graph = new ComboGraph(_nodes, _edges);
+        
         // Only process when NOT busy (animation handles timing)
-        if (!_state.IsActionBusy && _state.TryUpdate(ref _buffer, _graph, out int actionID))
+        if (!_state.IsActionBusy && _state.TryUpdate(ref _buffer, graph, out int actionID))
         {
             PlayAction(actionID);
         }
@@ -55,8 +59,10 @@ public class ComboAnimationHandler : MonoBehaviour
     {
         _state.SignalActionFinished();
         
+        var graph = new ComboGraph(_nodes, _edges);
+        
         // Immediately check for buffered input
-        if (_state.TryUpdate(ref _buffer, _graph, out int nextAction))
+        if (_state.TryUpdate(ref _buffer, graph, out int nextAction))
         {
             PlayAction(nextAction);
         }
@@ -244,17 +250,10 @@ public struct ComboJob : IJob
     
     public void Execute()
     {
-        var inputs = MemoryMarshal.CreateSpan(ref Buffer.Input0, 8);
+        // Create graph view from NativeArrays (implicit conversion to Span)
+        var graph = new ComboGraph(Nodes, Edges);
         
-        if (ComboLogic.TryAdvanceState(
-            ref State.CurrentNodeIndex,
-            ref State.IsActionBusy,
-            ref Buffer.Head,
-            ref Buffer.Count,
-            inputs,
-            Nodes,
-            Edges,
-            out int actionID))
+        if (State.TryUpdate(ref Buffer, graph, out int actionID))
             Result.Value = actionID;
         else
             Result.Value = -1;
@@ -283,17 +282,11 @@ public struct BatchComboJob : IJobParallelFor
     {
         var state = States[index];
         var buffer = Buffers[index];
-        var inputs = MemoryMarshal.CreateSpan(ref buffer.Input0, 8);
         
-        if (ComboLogic.TryAdvanceState(
-            ref state.CurrentNodeIndex,
-            ref state.IsActionBusy,
-            ref buffer.Head,
-            ref buffer.Count,
-            inputs,
-            Nodes,
-            Edges,
-            out int actionID))
+        // Create graph view
+        var graph = new ComboGraph(Nodes, Edges);
+        
+        if (state.TryUpdate(ref buffer, graph, out int actionID))
             Results[index] = actionID;
         else
             Results[index] = -1;
@@ -545,17 +538,19 @@ public class WeaponComboController : MonoBehaviour
     [SerializeField] private ComboAsset spearCombo;
     [SerializeField] private ComboAsset fistCombo;
     
-    private ComboGraph[] _graphs;
+    // Store raw data (arrays)
+    private (ComboNode[] nodes, ComboEdge[] edges)[] _weaponData;
+    
     private ComboState _state;
     private InputRingBuffer _buffer;
     private int _currentWeapon;
     
     void Awake()
     {
-        // Note: You must implement a helper to convert arrays to ComboGraph (unmanaged)
-        // See README.md for memory management details
-        _graphs = new ComboGraph[3];
-        // ... initialization logic ...
+        _weaponData = new (ComboNode[], ComboEdge[])[3];
+        _weaponData[0] = swordCombo.BuildArrays();
+        _weaponData[1] = spearCombo.BuildArrays();
+        _weaponData[2] = fistCombo.BuildArrays();
     }
     
     public void SwitchWeapon(int weaponIndex)
@@ -569,7 +564,10 @@ public class WeaponComboController : MonoBehaviour
     {
         // ... input capture
         
-        if (_state.TryUpdate(ref _buffer, _graphs[_currentWeapon], out int actionID))
+        var (nodes, edges) = _weaponData[_currentWeapon];
+        var graph = new ComboGraph(nodes, edges);
+        
+        if (_state.TryUpdate(ref _buffer, graph, out int actionID))
         {
             ExecuteAction(actionID);
         }

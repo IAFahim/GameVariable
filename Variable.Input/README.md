@@ -117,9 +117,8 @@ public class VisualComboController : MonoBehaviour
     public int BufferedInputs;
     
     // Internal
-    private ComboGraph _graph;
-    private IntPtr _nodesPtr;
-    private IntPtr _edgesPtr;
+    private ComboNode[] _nodes;
+    private ComboEdge[] _edges;
     private ComboState _state;
     private InputRingBuffer _buffer;
     private Dictionary<GameObject, int> _nodeToIndex;
@@ -129,11 +128,7 @@ public class VisualComboController : MonoBehaviour
         BuildGraphFromGameObjects();
     }
 
-    void OnDestroy()
-    {
-        if (_nodesPtr != IntPtr.Zero) Marshal.FreeHGlobal(_nodesPtr);
-        if (_edgesPtr != IntPtr.Zero) Marshal.FreeHGlobal(_edgesPtr);
-    }
+    // No OnDestroy needed for managed arrays!
     
     void Update()
     {
@@ -143,92 +138,29 @@ public class VisualComboController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space)) _buffer.RegisterInput(Inputs.Space);
         
         // 2. Try to advance combo
-        if (_state.TryUpdate(ref _buffer, _graph, out int actionID))
+        // Create a graph view from our arrays
+        var graph = new ComboGraph(_nodes, _edges);
+        
+        if (_state.TryUpdate(ref _buffer, graph, out int actionID))
         {
             ExecuteMove(actionID);
         }
         
-        // 3. Update debug view
-        CurrentMoveIndex = _state.CurrentNodeIndex;
-        IsAttacking = _state.IsActionBusy;
-        BufferedInputs = _buffer.Count;
-        
-        // 4. Visual: Enable only the active node
-        UpdateVisuals();
+        // ... rest of update
     }
     
     void BuildGraphFromGameObjects()
     {
-        // Map each GameObject to an index
-        _nodeToIndex = new Dictionary<GameObject, int>();
-        for (int i = 0; i < AllMoves.Length; i++)
-        {
-            _nodeToIndex[AllMoves[i].gameObject] = i;
-        }
-        
-        // Count total edges
-        int totalEdges = 0;
-        foreach (var move in AllMoves)
-        {
-            totalEdges += move.NextMoves?.Length ?? 0;
-        }
+        // ... (same mapping logic) ...
         
         // Build arrays
-        var nodes = new ComboNode[AllMoves.Length];
-        var edges = new ComboEdge[totalEdges];
-        int edgeIndex = 0;
+        _nodes = new ComboNode[AllMoves.Length];
+        _edges = new ComboEdge[totalEdges];
         
-        for (int i = 0; i < AllMoves.Length; i++)
-        {
-            var move = AllMoves[i];
-            int edgeCount = move.NextMoves?.Length ?? 0;
-            
-            nodes[i] = new ComboNode
-            {
-                ActionID = move.ActionID,
-                EdgeStartIndex = edgeIndex,
-                EdgeCount = edgeCount
-            };
-            
-            // Add edges
-            if (move.NextMoves != null)
-            {
-                foreach (var transition in move.NextMoves)
-                {
-                    if (transition.TargetNode != null && 
-                        _nodeToIndex.TryGetValue(transition.TargetNode, out int targetIdx))
-                    {
-                        edges[edgeIndex++] = new ComboEdge
-                        {
-                            InputTrigger = transition.InputButton,
-                            TargetNodeIndex = targetIdx
-                        };
-                    }
-                }
-            }
-        }
+        // ... (same population logic) ...
         
-        // Allocate unmanaged memory for the graph
-        int nodeSize = Marshal.SizeOf<ComboNode>() * nodes.Length;
-        int edgeSize = Marshal.SizeOf<ComboEdge>() * edges.Length;
-
-        _nodesPtr = Marshal.AllocHGlobal(nodeSize);
-        _edgesPtr = Marshal.AllocHGlobal(edgeSize);
-
-        // Copy data
-        unsafe
-        {
-            fixed (ComboNode* src = nodes) Buffer.MemoryCopy(src, (void*)_nodesPtr, nodeSize, nodeSize);
-            fixed (ComboEdge* src = edges) Buffer.MemoryCopy(src, (void*)_edgesPtr, edgeSize, edgeSize);
-
-            _graph = new ComboGraph
-            {
-                Nodes = (ComboNode*)_nodesPtr,
-                NodeCount = nodes.Length,
-                Edges = (ComboEdge*)_edgesPtr,
-                EdgeCount = edges.Length
-            };
-        }
+        // No unsafe memory allocation needed!
+        // The arrays are ready to use.
     }
     
     void ExecuteMove(int actionID)
@@ -395,41 +327,15 @@ public class ComboPlayer : MonoBehaviour
     [SerializeField] ComboAsset comboAsset;
     [SerializeField] Animator animator;
     
-    ComboGraph _graph;
-    IntPtr _nodesPtr;
-    IntPtr _edgesPtr;
+    ComboNode[] _nodes;
+    ComboEdge[] _edges;
     ComboState _state;
     InputRingBuffer _buffer;
     
     void Awake()
     {
-        var (nodes, edges) = comboAsset.BuildArrays();
-        
-        // Allocate and copy (simplified for brevity - see Example 1 for full implementation)
-        int nodeSize = Marshal.SizeOf<ComboNode>() * nodes.Length;
-        int edgeSize = Marshal.SizeOf<ComboEdge>() * edges.Length;
-        _nodesPtr = Marshal.AllocHGlobal(nodeSize);
-        _edgesPtr = Marshal.AllocHGlobal(edgeSize);
-        
-        unsafe
-        {
-            fixed (ComboNode* src = nodes) Buffer.MemoryCopy(src, (void*)_nodesPtr, nodeSize, nodeSize);
-            fixed (ComboEdge* src = edges) Buffer.MemoryCopy(src, (void*)_edgesPtr, edgeSize, edgeSize);
-            
-            _graph = new ComboGraph
-            {
-                Nodes = (ComboNode*)_nodesPtr,
-                NodeCount = nodes.Length,
-                Edges = (ComboEdge*)_edgesPtr,
-                EdgeCount = edges.Length
-            };
-        }
-    }
-    
-    void OnDestroy()
-    {
-        if (_nodesPtr != IntPtr.Zero) Marshal.FreeHGlobal(_nodesPtr);
-        if (_edgesPtr != IntPtr.Zero) Marshal.FreeHGlobal(_edgesPtr);
+        // Build managed arrays from the asset
+        (_nodes, _edges) = comboAsset.BuildArrays();
     }
     
     void Update()
@@ -439,7 +345,10 @@ public class ComboPlayer : MonoBehaviour
         if (Input.GetMouseButtonDown(1)) _buffer.RegisterInput(Inputs.RMB);
         
         // Process
-        if (_state.TryUpdate(ref _buffer, _graph, out int actionID))
+        // Create a graph view on the fly (zero allocation struct)
+        var graph = new ComboGraph(_nodes, _edges);
+        
+        if (_state.TryUpdate(ref _buffer, graph, out int actionID))
         {
             animator.SetTrigger($"Action_{actionID}");
         }
@@ -706,7 +615,7 @@ buffer.Clear();
 
 | File                 | Purpose                                  |
 |----------------------|------------------------------------------|
-| `ComboGraph.cs`      | Container for nodes + edges (Unmanaged)  |
+| `ComboGraph.cs`      | Ref struct wrapper for Spans (View)      |
 | `ComboNode.cs`       | A single move (ActionID + edge pointers) |
 | `ComboEdge.cs`       | A transition (button → target node)      |
 | `ComboState.cs`      | Runtime state (current node + busy flag) |

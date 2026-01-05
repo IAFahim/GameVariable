@@ -4,9 +4,9 @@
 classDiagram
     %% Data Layer (Structs)
     class ComboGraph {
-        <<Struct>>
-        +ComboNode* Nodes
-        +ComboEdge* Edges
+        <<Ref Struct>>
+        +ReadOnlySpan~ComboNode~ Nodes
+        +ReadOnlySpan~ComboEdge~ Edges
         +int NodeCount
         +int EdgeCount
     }

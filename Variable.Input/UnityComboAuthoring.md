@@ -78,67 +78,34 @@ public class ComboGraphBaker : MonoBehaviour
 {
     public ComboNodeAuthoring RootNode;
     
-    // The baked graph (Runtime Data)
-    // We use a raw pointer wrapper or manage the lifecycle explicitly
-    public ComboGraph Graph; 
-    
-    // Pointers to unmanaged memory
-    private IntPtr _nodesPtr;
-    private IntPtr _edgesPtr;
+    // The baked graph data (Managed Arrays)
+    public ComboNode[] Nodes;
+    public ComboEdge[] Edges;
 
     private void Awake()
     {
         Bake();
     }
 
-    private void OnDestroy()
+    public void Bake()
     {
-        // CRITICAL: Free unmanaged memory to avoid leaks
-        if (_nodesPtr != IntPtr.Zero) Marshal.FreeHGlobal(_nodesPtr);
-        if (_edgesPtr != IntPtr.Zero) Marshal.FreeHGlobal(_edgesPtr);
-    }
-
-    public unsafe void Bake()
-    {
-        // 1. Build using the helper (creates temporary managed arrays)
+        // 1. Build using the helper
         var builder = new ComboGraphBuilder();
         // ... (Collection logic same as above) ...
         
         // (Assume we collected nodes/edges into the builder)
         // For this example, let's assume we have the result:
-        var (managedNodes, managedEdges) = builder.Build();
+        (Nodes, Edges) = builder.Build();
         
-        // 2. Allocate Unmanaged Memory (The "Smart" DOD way)
-        // We move data off the GC heap immediately.
-        
-        int nodeSize = sizeof(ComboNode) * managedNodes.Length;
-        int edgeSize = sizeof(ComboEdge) * managedEdges.Length;
-
-        _nodesPtr = Marshal.AllocHGlobal(nodeSize);
-        _edgesPtr = Marshal.AllocHGlobal(edgeSize);
-
-        // 3. Copy Data (Blit)
-        // Using fixed to get source pointers, then memcpy
-        fixed (ComboNode* srcNodes = managedNodes)
-        {
-            Buffer.MemoryCopy(srcNodes, (void*)_nodesPtr, nodeSize, nodeSize);
-        }
-        
-        fixed (ComboEdge* srcEdges = managedEdges)
-        {
-            Buffer.MemoryCopy(srcEdges, (void*)_edgesPtr, edgeSize, edgeSize);
-        }
-
-        // 4. Assign to Graph
-        Graph = new ComboGraph
-        {
-            Nodes = (ComboNode*)_nodesPtr,
-            NodeCount = managedNodes.Length,
-            Edges = (ComboEdge*)_edgesPtr,
-            EdgeCount = managedEdges.Length
-        };
-        
-        Debug.Log($"Baked ComboGraph: {Graph.NodeCount} Nodes, {Graph.EdgeCount} Edges. (Unmanaged)");
+        Debug.Log($"Baked ComboGraph: {Nodes.Length} Nodes, {Edges.Length} Edges.");
+    }
+    
+    /// <summary>
+    /// Helper to get a graph view for logic processing
+    /// </summary>
+    public ComboGraph GetGraphView()
+    {
+        return new ComboGraph(Nodes, Edges);
     }
 }
 ```
@@ -157,16 +124,10 @@ If you need to support adding moves at runtime (e.g., "On and when gameobject wi
 ```csharp
 public void OnNewMoveAdded()
 {
-    // 1. Bake new data to temp pointers
-    // 2. Swap
-    var oldNodes = _nodesPtr;
-    var oldEdges = _edgesPtr;
+    // 1. Re-Bake (allocates new arrays)
+    Bake(); 
     
-    Bake(); // Allocates new pointers
-    
-    // 3. Free old
-    if (oldNodes != IntPtr.Zero) Marshal.FreeHGlobal(oldNodes);
-    if (oldEdges != IntPtr.Zero) Marshal.FreeHGlobal(oldEdges);
+    // Old arrays are garbage collected automatically
 }
 ```
 

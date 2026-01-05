@@ -79,6 +79,17 @@ public class ComboGraphBuilder
         return (builtNodes, allEdges.ToArray());
     }
 
+    /// <summary>
+    ///     Builds and returns a ComboGraph using Span-based construction.
+    ///     NOTE: The returned graph holds pointers to the arrays - keep arrays alive!
+    /// </summary>
+    /// <returns>A ComboGraph struct wrapping the managed arrays.</returns>
+    public ComboGraph BuildGraph()
+    {
+        var (nodes, edges) = Build();
+        return new ComboGraph(nodes.AsSpan(), edges.AsSpan());
+    }
+
     private class NodeDefinition
     {
         public readonly List<EdgeDefinition> OutgoingEdges = new();

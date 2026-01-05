@@ -10,16 +10,18 @@ public static class ExperienceExtensions
     /// </summary>
     /// <param name="xp">The experience struct to modify.</param>
     /// <param name="amount">The amount of experience to add.</param>
-    /// <param name="nextMaxFormula">A function that takes the NEW level and returns the Max XP required for that level.</param>
+    /// <param name="formula">A struct implementing the formula that calculates Max XP for a level.</param>
+    /// <typeparam name="TFormula">Struct type implementing INextMaxFormula.</typeparam>
     /// <returns>The number of levels gained (0 if no level up occurred).</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Add(ref this ExperienceInt xp, int amount, Func<int, int> nextMaxFormula)
+    public static int Add<TFormula>(ref this ExperienceInt xp, int amount, TFormula formula)
+        where TFormula : struct, INextMaxFormula<int>
     {
         ExperienceLogic.AddExperience(ref xp.Current, amount);
         var levelsGained = 0;
         while (xp.Current >= xp.Max)
         {
-            var newMax = Math.Max(1, nextMaxFormula(xp.Level + 1));
+            var newMax = Math.Max(1, formula.Calculate(xp.Level + 1));
             if (ExperienceLogic.TryApplyLevelUp(ref xp.Current, ref xp.Max, ref xp.Level, newMax))
                 levelsGained++;
             else
@@ -34,16 +36,18 @@ public static class ExperienceExtensions
     /// </summary>
     /// <param name="xp">The experience struct to modify.</param>
     /// <param name="amount">The amount of experience to add.</param>
-    /// <param name="nextMaxFormula">A function that takes the NEW level and returns the Max XP required for that level.</param>
+    /// <param name="formula">A struct implementing the formula that calculates Max XP for a level.</param>
+    /// <typeparam name="TFormula">Struct type implementing INextMaxFormula.</typeparam>
     /// <returns>The number of levels gained (0 if no level up occurred).</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Add(ref this ExperienceLong xp, long amount, Func<int, long> nextMaxFormula)
+    public static int Add<TFormula>(ref this ExperienceLong xp, long amount, TFormula formula)
+        where TFormula : struct, INextMaxFormula<long>
     {
         ExperienceLogic.AddExperience(ref xp.Current, amount);
         var levelsGained = 0;
         while (xp.Current >= xp.Max)
         {
-            var newMax = Math.Max(1, nextMaxFormula(xp.Level + 1));
+            var newMax = Math.Max(1, formula.Calculate(xp.Level + 1));
             if (ExperienceLogic.TryApplyLevelUp(ref xp.Current, ref xp.Max, ref xp.Level, newMax))
                 levelsGained++;
             else

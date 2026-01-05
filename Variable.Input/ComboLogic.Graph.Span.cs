@@ -52,6 +52,7 @@ public static partial class ComboLogic
         var end = start + currentNode.EdgeCount;
 
         // Safety: Clamp edge loop to actual array bounds to prevent crashes on bad data
+        if (start < 0) start = 0;
         if (end > edges.Length) end = edges.Length;
 
         for (var i = start; i < end; i++)
