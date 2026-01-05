@@ -26,15 +26,15 @@ Forget the technical terms. Think of your combo system as a **tree of moves**:
 
 ## 📖 Plain English Glossary
 
-| Term | What It Actually Means |
-|------|------------------------|
-| **Node** | A single move/attack/ability (like "Light Punch" or "Heavy Kick") |
-| **Edge** | "If I press THIS button, go to THAT move" |
-| **ActionID** | A number you assign to identify the move (e.g., `100` = "Light Attack") |
-| **InputTrigger** | Which button activates this transition (e.g., `LMB = 1`) |
-| **TargetNodeIndex** | Which move to go to next (index in your nodes array) |
-| **EdgeStartIndex** | Where this node's edges begin in the edges array |
-| **EdgeCount** | How many edges (button options) this node has |
+| Term                | What It Actually Means                                                  |
+|---------------------|-------------------------------------------------------------------------|
+| **Node**            | A single move/attack/ability (like "Light Punch" or "Heavy Kick")       |
+| **Edge**            | "If I press THIS button, go to THAT move"                               |
+| **ActionID**        | A number you assign to identify the move (e.g., `100` = "Light Attack") |
+| **InputTrigger**    | Which button activates this transition (e.g., `LMB = 1`)                |
+| **TargetNodeIndex** | Which move to go to next (index in your nodes array)                    |
+| **EdgeStartIndex**  | Where this node's edges begin in the edges array                        |
+| **EdgeCount**       | How many edges (button options) this node has                           |
 
 ---
 
@@ -692,27 +692,27 @@ buffer.Clear();
 
 ## ✨ Features
 
-| Feature | Description |
-|---------|-------------|
-| **Zero GC** | No allocations during gameplay |
-| **Burst-Compatible** | Works with Unity Jobs and Burst compiler |
-| **Input Buffering** | Stores up to 8 inputs for responsive combos |
-| **Crash-Proof** | Validates all indices, auto-recovers from bad state |
-| **Framework-Agnostic** | Core logic is pure C#, no Unity dependency |
+| Feature                | Description                                         |
+|------------------------|-----------------------------------------------------|
+| **Zero GC**            | No allocations during gameplay                      |
+| **Burst-Compatible**   | Works with Unity Jobs and Burst compiler            |
+| **Input Buffering**    | Stores up to 8 inputs for responsive combos         |
+| **Crash-Proof**        | Validates all indices, auto-recovers from bad state |
+| **Framework-Agnostic** | Core logic is pure C#, no Unity dependency          |
 
 ---
 
 ## 📁 Files Overview
 
-| File | Purpose |
-|------|---------|
-| `ComboGraph.cs` | Container for nodes + edges (Unmanaged) |
-| `ComboNode.cs` | A single move (ActionID + edge pointers) |
-| `ComboEdge.cs` | A transition (button → target node) |
-| `ComboState.cs` | Runtime state (current node + busy flag) |
-| `InputRingBuffer.cs` | Stores buffered button presses |
-| `ComboLogic.*.cs` | Core traversal logic (stateless) |
-| `*Extensions.cs` | Convenience methods |
+| File                 | Purpose                                  |
+|----------------------|------------------------------------------|
+| `ComboGraph.cs`      | Container for nodes + edges (Unmanaged)  |
+| `ComboNode.cs`       | A single move (ActionID + edge pointers) |
+| `ComboEdge.cs`       | A transition (button → target node)      |
+| `ComboState.cs`      | Runtime state (current node + busy flag) |
+| `InputRingBuffer.cs` | Stores buffered button presses           |
+| `ComboLogic.*.cs`    | Core traversal logic (stateless)         |
+| `*Extensions.cs`     | Convenience methods                      |
 
 ---
 

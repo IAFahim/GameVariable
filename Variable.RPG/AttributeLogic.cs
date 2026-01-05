@@ -11,7 +11,8 @@ public static class AttributeLogic
     ///     Formula: (Base + Add) * Mult, clamped to [Min, Max].
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Recalculate(float baseVal, float modAdd, float modMult, float min, float max, out float cachedValue, out byte isDirty)
+    public static void Recalculate(float baseVal, float modAdd, float modMult, float min, float max,
+        out float cachedValue, out byte isDirty)
     {
         var val = (baseVal + modAdd) * modMult;
 
@@ -48,7 +49,8 @@ public static class AttributeLogic
     ///     Gets the value, recalculating immediately if dirty.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float GetValue(ref float cachedValue, ref byte isDirty, float baseVal, float modAdd, float modMult, float min, float max)
+    public static float GetValue(ref float cachedValue, ref byte isDirty, float baseVal, float modAdd, float modMult,
+        float min, float max)
     {
         if (isDirty != 0) Recalculate(baseVal, modAdd, modMult, min, max, out cachedValue, out isDirty);
         return cachedValue;

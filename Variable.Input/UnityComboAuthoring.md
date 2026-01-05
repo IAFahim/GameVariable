@@ -1,19 +1,23 @@
 # Unity Hierarchy Combo Authoring
 
-This guide explains how to use the Unity Hierarchy to author `ComboGraph` data while maintaining the strict Data-Oriented Design (DOD) architecture.
+This guide explains how to use the Unity Hierarchy to author `ComboGraph` data while maintaining the strict
+Data-Oriented Design (DOD) architecture.
 
 ## Concept
 
 Instead of manually editing arrays or code, we use the Unity Scene Hierarchy to represent the Combo Tree.
+
 - **GameObjects** represent **Nodes** (Actions).
 - **Child GameObjects** represent **Edges** (Transitions).
 - **Components** hold the data (`ActionID`, `InputTrigger`).
 
-At runtime (or build time), we traverse this hierarchy using the `ComboGraphBuilder` to "bake" the flat, optimized arrays.
+At runtime (or build time), we traverse this hierarchy using the `ComboGraphBuilder` to "bake" the flat, optimized
+arrays.
 
 ## The Components
 
 ### 1. `ComboNodeAuthoring`
+
 Place this on a GameObject to define a state/action.
 
 ```csharp
@@ -29,6 +33,7 @@ public class ComboNodeAuthoring : MonoBehaviour
 ```
 
 ### 2. `ComboEdgeAuthoring`
+
 Place this on a child GameObject to define a transition to another node.
 
 ```csharp
@@ -142,12 +147,12 @@ public class ComboGraphBaker : MonoBehaviour
 
 If you need to support adding moves at runtime (e.g., "On and when gameobject with input added"):
 
-1.  **Re-Baking**: Since the graph is a flat array, you cannot "insert" easily. The smartest path is to **Re-Bake**.
-2.  **Double Buffering**: 
-    *   Allocate *New* Graph.
-    *   Bake.
-    *   Swap `Graph` reference.
-    *   Free *Old* Graph.
+1. **Re-Baking**: Since the graph is a flat array, you cannot "insert" easily. The smartest path is to **Re-Bake**.
+2. **Double Buffering**:
+    * Allocate *New* Graph.
+    * Bake.
+    * Swap `Graph` reference.
+    * Free *Old* Graph.
 
 ```csharp
 public void OnNewMoveAdded()
@@ -167,7 +172,8 @@ public void OnNewMoveAdded()
 
 ## Runtime Visualization (The "Enable" Lifecycle)
 
-You mentioned using `OnEnable`/`OnDisable` to represent the active state. In DOD, logic is separated from data, but we can use a **System** or **Controller** to sync the visual state.
+You mentioned using `OnEnable`/`OnDisable` to represent the active state. In DOD, logic is separated from data, but we
+can use a **System** or **Controller** to sync the visual state.
 
 ```csharp
 public class ComboVisualizer : MonoBehaviour
@@ -201,10 +207,12 @@ public class ComboVisualizer : MonoBehaviour
 ```
 
 ### How it works
-1.  **Input**: Player presses a button.
-2.  **Logic**: `ComboLogic.TryUpdate` runs (pure C#). It changes `State.CurrentNodeIndex` from `0` to `1`.
-3.  **Visualizer**: The `ComboVisualizer` sees the index changed.
-    *   It calls `SetActive(false)` on Node 0 (Neutral). -> **Triggers OnDisable**
-    *   It calls `SetActive(true)` on Node 1 (Light Attack). -> **Triggers OnEnable**
 
-This gives you the Unity Lifecycle hooks you want for animations/VFX, while keeping the core logic in the high-performance, burst-compatible struct.
+1. **Input**: Player presses a button.
+2. **Logic**: `ComboLogic.TryUpdate` runs (pure C#). It changes `State.CurrentNodeIndex` from `0` to `1`.
+3. **Visualizer**: The `ComboVisualizer` sees the index changed.
+    * It calls `SetActive(false)` on Node 0 (Neutral). -> **Triggers OnDisable**
+    * It calls `SetActive(true)` on Node 1 (Light Attack). -> **Triggers OnEnable**
+
+This gives you the Unity Lifecycle hooks you want for animations/VFX, while keeping the core logic in the
+high-performance, burst-compatible struct.

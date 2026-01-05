@@ -1,6 +1,3 @@
-using System;
-using System.Runtime.CompilerServices;
-
 namespace Variable.RPG;
 
 /// <summary>
@@ -38,7 +35,6 @@ public static class DamageExtensions
 
             // 1. Get Mitigation Stat ID for this element
             if (config.TryGetMitigationStat(dmg.ElementId, out var statId, out var isFlat))
-            {
                 // Safety check
                 if (statId >= 0 && statId < stats.Length)
                 {
@@ -46,7 +42,6 @@ public static class DamageExtensions
                     var mitigationValue = stats[statId].GetValue();
                     amount = DamageLogic.ApplyMitigation(amount, mitigationValue, isFlat);
                 }
-            }
 
             // 3. Aggregate
             totalDamage += amount;

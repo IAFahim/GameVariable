@@ -24,8 +24,9 @@ public static class DamageLogic
         {
             // Resistance style: Damage * (1 - Resist%)
             // Allows amplified damage from negative resistance
-            damage *= (1.0f - mitigationValue);
+            damage *= 1.0f - mitigationValue;
         }
+
         return damage;
     }
 }

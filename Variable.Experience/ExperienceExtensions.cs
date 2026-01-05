@@ -21,14 +21,11 @@ public static class ExperienceExtensions
         {
             var newMax = Math.Max(1, nextMaxFormula(xp.Level + 1));
             if (ExperienceLogic.TryApplyLevelUp(ref xp.Current, ref xp.Max, ref xp.Level, newMax))
-            {
                 levelsGained++;
-            }
             else
-            {
                 break;
-            }
         }
+
         return levelsGained;
     }
 
@@ -48,14 +45,11 @@ public static class ExperienceExtensions
         {
             var newMax = Math.Max(1, nextMaxFormula(xp.Level + 1));
             if (ExperienceLogic.TryApplyLevelUp(ref xp.Current, ref xp.Max, ref xp.Level, newMax))
-            {
                 levelsGained++;
-            }
             else
-            {
                 break;
-            }
         }
+
         return levelsGained;
     }
 

@@ -6,7 +6,10 @@ namespace Variable.Timer;
 /// </summary>
 /// <remarks>
 ///     <para>The cooldown starts at 0 (ready) or Duration (on cooldown) and counts down to 0.</para>
-///     <para>Use <see cref="TimerExtensions.TickAndCheckReady(ref Cooldown, float)" /> to reduce time and check readiness in one call.</para>
+///     <para>
+///         Use <see cref="TimerExtensions.TickAndCheckReady(ref Cooldown, float)" /> to reduce time and check readiness
+///         in one call.
+///     </para>
 ///     <para>Use <see cref="TimerExtensions.Reset(ref Cooldown)" /> to start the cooldown after using an ability.</para>
 /// </remarks>
 /// <example>

@@ -18,9 +18,11 @@ dotnet add package Variable.Core
 ## Interfaces
 
 ### IBoundedInfo
+
 Represents any value constrained by a minimum and maximum range (health, mana, stamina, etc.).
 
 ### ICompletable
+
 Represents time-based values that progress toward completion (timers, cooldowns).
 
 ## Usage

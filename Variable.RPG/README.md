@@ -1,4 +1,4 @@
-  # Variable.RPG
+# Variable.RPG
 
 **Diamond Architecture for RPG Attributes and Damage Pipelines** — AAA-grade, zero-allocation, framework-agnostic.
 
@@ -7,6 +7,7 @@
 ## 🎯 What Is This?
 
 A complete RPG stat system implementing the **Diamond Architecture** pattern:
+
 - **Aggregation**: Multiple damage sources → single result
 - **Pipeline**: Damage → Mitigation → Final Value
 - **Span-Based**: Works with arrays, NativeArray, BlobArray
@@ -129,6 +130,7 @@ Multiple Sources         Aggregation         Single Result
 ```
 
 **Pipeline Steps**:
+
 1. **Lookup**: Map ElementID → MitigationStatID
 2. **Calculate**: Apply Armor (flat) or Resist (%)
 3. **Aggregate**: Sum all mitigated damages
@@ -263,12 +265,14 @@ var dmg = new DamagePacket { ElementId = DmgTypes.Physical, Amount = 10f };
 ## 📊 Formula Reference
 
 ### Attribute Calculation
+
 ```
 Value = (Base + ModAdd) * ModMult
 Clamped to [Min, Max]
 ```
 
 **Example**:
+
 ```
 Base = 10
 ModAdd = +5 (from items)
@@ -280,12 +284,14 @@ Value = (10 + 5) * 1.2 = 18
 ### Damage Mitigation
 
 **Flat (Armor)**:
+
 ```
 FinalDamage = IncomingDamage - Armor
 Clamped to >= 0
 ```
 
 **Percentage (Resistance)**:
+
 ```
 FinalDamage = IncomingDamage * (1 - Resistance)
 No clamp (allows amplification)
@@ -302,7 +308,7 @@ No clamp (allows amplification)
 ✅ **Type-Safe Config** — Interface for game-specific rules  
 ✅ **Aggregation** — Multiple damage sources in one call  
 ✅ **Bounded** — Min/Max enforcement  
-✅ **Tested** — 14 unit tests covering edge cases  
+✅ **Tested** — 14 unit tests covering edge cases
 
 ---
 
@@ -324,6 +330,7 @@ No clamp (allows amplification)
 ## 🎯 Use Cases
 
 ### Action RPG
+
 ```csharp
 // Player takes multi-element hit
 var damages = new[] {
@@ -333,6 +340,7 @@ var damages = new[] {
 ```
 
 ### Turn-Based RPG
+
 ```csharp
 // Calculate damage before animation
 var preview = DamageLogic.ResolveDamage(target.Stats.AsSpan(), spell.Damages, config);
@@ -340,6 +348,7 @@ var preview = DamageLogic.ResolveDamage(target.Stats.AsSpan(), spell.Damages, co
 ```
 
 ### MMO
+
 ```csharp
 // Server authoritative damage
 for (var i = 0; i < targets.Length; i++) {

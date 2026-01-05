@@ -79,7 +79,7 @@ public class TimerTests
     public void TickAndCheckComplete_ReturnsFalse_WhenNotComplete()
     {
         var timer = new Timer(10f);
-        bool isComplete = timer.TickAndCheckComplete(5f);
+        var isComplete = timer.TickAndCheckComplete(5f);
         Assert.False(isComplete);
         Assert.Equal(5f, timer.Current);
     }
@@ -88,7 +88,7 @@ public class TimerTests
     public void TickAndCheckComplete_ReturnsTrue_WhenReachesDuration()
     {
         var timer = new Timer(10f, 9f);
-        bool isComplete = timer.TickAndCheckComplete(1f);
+        var isComplete = timer.TickAndCheckComplete(1f);
         Assert.True(isComplete);
         Assert.Equal(10f, timer.Current);
     }
@@ -97,7 +97,7 @@ public class TimerTests
     public void TickAndCheckComplete_ReturnsTrue_WhenExceedsDuration()
     {
         var timer = new Timer(10f, 8f);
-        bool isComplete = timer.TickAndCheckComplete(5f);
+        var isComplete = timer.TickAndCheckComplete(5f);
         Assert.True(isComplete);
         Assert.Equal(10f, timer.Current);
     }
@@ -106,7 +106,7 @@ public class TimerTests
     public void TickAndCheckComplete_WithOverflow_OutputsCorrectOverflow()
     {
         var timer = new Timer(10f, 8f);
-        bool isComplete = timer.TickAndCheckComplete(5f, out float overflow);
+        var isComplete = timer.TickAndCheckComplete(5f, out var overflow);
         Assert.True(isComplete);
         Assert.Equal(10f, timer.Current);
         Assert.Equal(3f, overflow, 5); // 8 + 5 = 13, overflow = 13 - 10 = 3
@@ -116,7 +116,7 @@ public class TimerTests
     public void TickAndCheckComplete_WithOverflow_NoOverflowWhenNotComplete()
     {
         var timer = new Timer(10f);
-        bool isComplete = timer.TickAndCheckComplete(5f, out float overflow);
+        var isComplete = timer.TickAndCheckComplete(5f, out var overflow);
         Assert.False(isComplete);
         Assert.Equal(5f, timer.Current);
         Assert.Equal(0f, overflow);

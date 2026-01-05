@@ -58,7 +58,7 @@ public class CooldownTests
     public void TickAndCheckReady_ReturnsFalse_WhenNotReady()
     {
         var cooldown = new Cooldown(10f, 5f);
-        bool isReady = cooldown.TickAndCheckReady(2f);
+        var isReady = cooldown.TickAndCheckReady(2f);
         Assert.False(isReady);
         Assert.Equal(3f, cooldown.Current);
     }
@@ -67,7 +67,7 @@ public class CooldownTests
     public void TickAndCheckReady_ReturnsTrue_WhenReachesZero()
     {
         var cooldown = new Cooldown(10f, 2f);
-        bool isReady = cooldown.TickAndCheckReady(2f);
+        var isReady = cooldown.TickAndCheckReady(2f);
         Assert.True(isReady);
         Assert.Equal(0f, cooldown.Current);
     }
@@ -76,7 +76,7 @@ public class CooldownTests
     public void TickAndCheckReady_ReturnsTrue_WhenExceedsZero()
     {
         var cooldown = new Cooldown(10f, 2f);
-        bool isReady = cooldown.TickAndCheckReady(5f);
+        var isReady = cooldown.TickAndCheckReady(5f);
         Assert.True(isReady);
         Assert.Equal(0f, cooldown.Current);
     }
@@ -84,8 +84,8 @@ public class CooldownTests
     [Fact]
     public void TickAndCheckReady_ReturnsTrue_WhenAlreadyReady()
     {
-        var cooldown = new Cooldown(10f, 0f);
-        bool isReady = cooldown.TickAndCheckReady(1f);
+        var cooldown = new Cooldown(10f);
+        var isReady = cooldown.TickAndCheckReady(1f);
         Assert.True(isReady);
         Assert.Equal(0f, cooldown.Current);
     }
@@ -94,7 +94,7 @@ public class CooldownTests
     public void TickAndCheckReady_WithOverflow_OutputsCorrectOverflow()
     {
         var cooldown = new Cooldown(10f, 2f);
-        bool isReady = cooldown.TickAndCheckReady(5f, out float overflow);
+        var isReady = cooldown.TickAndCheckReady(5f, out var overflow);
         Assert.True(isReady);
         Assert.Equal(0f, cooldown.Current);
         Assert.Equal(3f, overflow, 5); // 2 - 5 = -3, overflow = 3
@@ -104,7 +104,7 @@ public class CooldownTests
     public void TickAndCheckReady_WithOverflow_NoOverflowWhenNotReady()
     {
         var cooldown = new Cooldown(10f, 5f);
-        bool isReady = cooldown.TickAndCheckReady(2f, out float overflow);
+        var isReady = cooldown.TickAndCheckReady(2f, out var overflow);
         Assert.False(isReady);
         Assert.Equal(3f, cooldown.Current);
         Assert.Equal(0f, overflow);
@@ -125,7 +125,7 @@ public class CooldownTests
     [Fact]
     public void IsReady_ReturnsTrue_WhenZero()
     {
-        var cooldown = new Cooldown(10f, 0f);
+        var cooldown = new Cooldown(10f);
         Assert.True(cooldown.IsReady());
     }
 
@@ -139,7 +139,7 @@ public class CooldownTests
     [Fact]
     public void IsFull_ReturnsTrue_WhenReady()
     {
-        var cooldown = new Cooldown(10f, 0f);
+        var cooldown = new Cooldown(10f);
         Assert.True(cooldown.IsFull());
     }
 
@@ -167,7 +167,7 @@ public class CooldownTests
     [Fact]
     public void IsOnCooldown_ReturnsFalse_WhenReady()
     {
-        var cooldown = new Cooldown(10f, 0f);
+        var cooldown = new Cooldown(10f);
         Assert.False(cooldown.IsOnCooldown());
     }
 
@@ -186,7 +186,7 @@ public class CooldownTests
     [Fact]
     public void Reset_WithOverflow_AppliesOverflow()
     {
-        var cooldown = new Cooldown(10f, 0f);
+        var cooldown = new Cooldown(10f);
         cooldown.Reset(3f); // Duration 10, overflow 3 -> should be 7
         Assert.Equal(7f, cooldown.Current);
     }
@@ -220,7 +220,7 @@ public class CooldownTests
     [Fact]
     public void GetProgress_ReturnsOne_WhenReady()
     {
-        var cooldown = new Cooldown(10f, 0f);
+        var cooldown = new Cooldown(10f);
         Assert.Equal(1f, cooldown.GetProgress(), 5);
     }
 
@@ -238,7 +238,7 @@ public class CooldownTests
     [Fact]
     public void ToString_ReturnsReady_WhenZero()
     {
-        var cooldown = new Cooldown(10f, 0f);
+        var cooldown = new Cooldown(10f);
         Assert.Equal("Ready", cooldown.ToString());
     }
 

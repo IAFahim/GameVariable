@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices;
-
 namespace Variable.Input;
 
 /// <summary>
@@ -27,7 +25,7 @@ public static class ComboStateExtensions
             graph.EdgesSpan,
             out actionId);
     }
-    
+
 
     /// <summary>
     ///     Attempts to update the combo state based on buffered inputs (Span overload).

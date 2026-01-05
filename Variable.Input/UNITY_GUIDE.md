@@ -581,13 +581,13 @@ public class WeaponComboController : MonoBehaviour
 
 ## 🎯 Performance Tips
 
-| Tip | Why |
-|-----|-----|
-| Cache `ComboGraph` at Awake | Avoid rebuilding every frame |
-| Use NativeArrays for Jobs | Zero GC, Burst compatible |
-| Use BlobAssets for ECS | Shared memory, cache friendly |
-| Process in batches | Parallel jobs for many entities |
-| Use `ref` parameters | Avoid struct copies |
+| Tip                         | Why                             |
+|-----------------------------|---------------------------------|
+| Cache `ComboGraph` at Awake | Avoid rebuilding every frame    |
+| Use NativeArrays for Jobs   | Zero GC, Burst compatible       |
+| Use BlobAssets for ECS      | Shared memory, cache friendly   |
+| Process in batches          | Parallel jobs for many entities |
+| Use `ref` parameters        | Avoid struct copies             |
 
 ---
 

@@ -10,7 +10,7 @@ public struct AttributeSheet
     public AttributeSheet(int count)
     {
         Attributes = new Attribute[count];
-        for (int i = 0; i < count; i++)
+        for (var i = 0; i < count; i++)
             Attributes[i] = new Attribute(0f);
     }
 
@@ -32,5 +32,8 @@ public struct AttributeSheet
     /// <summary>
     ///     Returns a Span for logic processing (Zero Alloc).
     /// </summary>
-    public Span<Attribute> AsSpan() => Attributes.AsSpan();
+    public Span<Attribute> AsSpan()
+    {
+        return Attributes.AsSpan();
+    }
 }

@@ -1,6 +1,3 @@
-using Variable.RPG;
-using Attribute = Variable.RPG.Attribute;
-
 namespace Variable.RPG.Tests;
 
 public class AttributeLogicTests
