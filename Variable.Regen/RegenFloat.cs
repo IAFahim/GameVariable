@@ -5,7 +5,7 @@ namespace Variable.Regen;
 ///     Ideal for mana, stamina, shields, and other resources that recover passively.
 /// </summary>
 /// <remarks>
-///     <para>Call <see cref="Tick" /> each frame with deltaTime to apply regeneration.</para>
+///     <para>Call <see cref="RegenExtensions.Tick(ref RegenFloat, float)" /> each frame with deltaTime to apply regeneration.</para>
 ///     <para>Positive <see cref="Rate" /> regenerates; negative <see cref="Rate" /> causes decay.</para>
 ///     <para>This struct is blittable and can be used in Unity ECS and Burst jobs.</para>
 /// </remarks>

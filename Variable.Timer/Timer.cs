@@ -6,8 +6,8 @@ namespace Variable.Timer;
 /// </summary>
 /// <remarks>
 ///     <para>The timer starts at 0 and counts up to <see cref="Duration" />.</para>
-///     <para>Use <see cref="TickAndCheckComplete(float)" /> to advance and check completion in one call.</para>
-///     <para>Check <see cref="IsFull" /> to determine if the timer has reached the duration.</para>
+///     <para>Use <see cref="TimerExtensions.TickAndCheckComplete(ref Timer, float)" /> to advance and check completion in one call.</para>
+///     <para>Check <see cref="TimerExtensions.IsFull(Timer)" /> to determine if the timer has reached the duration.</para>
 /// </remarks>
 /// <example>
 ///     <code>

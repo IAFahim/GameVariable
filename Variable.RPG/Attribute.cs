@@ -26,17 +26,8 @@ public struct Attribute
     /// <summary>The cached result of the calculation.</summary>
     public float CachedValue;
 
-    /// <summary>1 if dirty, 0 if clean. Used byte for strict memory layout and DOTS compatibility.</summary>
+    /// <summary>Flag indicating if the cached value needs recalculation (0 = clean, 1 = dirty).</summary>
     public byte IsDirty;
-
-    /// <summary>Helper property for clean boolean access.</summary>
-    public bool IsDirtyBool
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => IsDirty != 0;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        set => IsDirty = value ? (byte)1 : (byte)0;
-    }
 
     /// <summary>
     ///     Creates a new Attribute with default bounds.
@@ -50,6 +41,6 @@ public struct Attribute
         Min = min;
         Max = max;
         CachedValue = baseVal;
-        IsDirty = 1;
+        IsDirty = 0;
     }
 }

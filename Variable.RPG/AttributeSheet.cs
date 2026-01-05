@@ -8,6 +8,7 @@ public unsafe struct AttributeSheet
 {
     private Attribute* _attributes;
     private int _count;
+    private bool _ownsMemory;
 
     /// <summary>
     ///     Gets the number of attributes.
@@ -16,6 +17,44 @@ public unsafe struct AttributeSheet
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => _count;
+    }
+
+    /// <summary>
+    ///     Provides direct indexer access to attributes for test convenience.
+    /// </summary>
+    public ref Attribute this[int index]
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get
+        {
+            if (index < 0 || index >= _count || _attributes == null)
+                throw new IndexOutOfRangeException($"Index {index} out of range [0, {_count})");
+            return ref _attributes[index];
+        }
+    }
+
+    /// <summary>
+    ///     Gets a Span view of all attributes for compatibility.
+    /// </summary>
+    public Span<Attribute> Attributes
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => AsSpan();
+    }
+
+    /// <summary>
+    ///     Creates a new AttributeSheet with allocated memory.
+    /// </summary>
+    /// <param name="count">The number of attributes to allocate.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public AttributeSheet(int count)
+    {
+        _count = count;
+        _attributes = (Attribute*)Marshal.AllocHGlobal(count * sizeof(Attribute));
+        _ownsMemory = true;
+
+        // Initialize all attributes to default
+        for (var i = 0; i < count; i++) _attributes[i] = new Attribute(0f);
     }
 
     /// <summary>
@@ -28,6 +67,7 @@ public unsafe struct AttributeSheet
     {
         _attributes = attributes;
         _count = count;
+        _ownsMemory = false;
     }
 
     /// <summary>
@@ -41,6 +81,22 @@ public unsafe struct AttributeSheet
         {
             _attributes = ptr;
             _count = attributes.Length;
+            _ownsMemory = false;
+        }
+    }
+
+    /// <summary>
+    ///     Disposes the AttributeSheet, freeing allocated memory if owned.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Dispose()
+    {
+        if (_ownsMemory && _attributes != null)
+        {
+            Marshal.FreeHGlobal((IntPtr)_attributes);
+            _attributes = null;
+            _count = 0;
+            _ownsMemory = false;
         }
     }
 

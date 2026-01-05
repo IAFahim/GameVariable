@@ -7,7 +7,7 @@ namespace Variable.Reservoir;
 /// <remarks>
 ///     <para>The <see cref="Volume" /> is the active/usable amount (e.g., ammo in clip).</para>
 ///     <para>The <see cref="Reserve" /> is the backup supply (e.g., extra ammo).</para>
-///     <para>Use <see cref="Refill" /> to transfer from reserve to volume.</para>
+///     <para>Use <see cref="ReservoirExtensions.Refill(ref ReservoirFloat)" /> to transfer from reserve to volume.</para>
 /// </remarks>
 /// <example>
 ///     <code>

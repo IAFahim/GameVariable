@@ -7,7 +7,7 @@ public class DamageLogicTests
     {
         var sheet = new AttributeSheet(5);
         sheet.SetBase(MyIds.Armor, 10f);
-        sheet.Attributes[MyIds.Armor].IsDirty = 1; // 10 Armor
+        sheet[MyIds.Armor].IsDirty = 1; // 10 Armor
 
         var damages = new[]
         {
@@ -18,6 +18,8 @@ public class DamageLogicTests
 
         // 50 Dmg - 10 Armor = 40
         Assert.Equal(40f, final);
+        
+        sheet.Dispose();
     }
 
     [Fact]
@@ -25,7 +27,7 @@ public class DamageLogicTests
     {
         var sheet = new AttributeSheet(5);
         sheet.SetBase(MyIds.FireResist, 0.5f);
-        sheet.Attributes[MyIds.FireResist].IsDirty = 1; // 50% Resist
+        sheet[MyIds.FireResist].IsDirty = 1; // 50% Resist
 
         var damages = new[]
         {
@@ -36,6 +38,8 @@ public class DamageLogicTests
 
         // 100 Dmg * (1.0 - 0.5) = 50
         Assert.Equal(50f, final);
+        
+        sheet.Dispose();
     }
 
     [Fact]
@@ -54,6 +58,8 @@ public class DamageLogicTests
         var final = sheet.AsSpan().ResolveDamage(damages, new MyConfig());
 
         Assert.Equal(90f, final); // 15 + 75
+        
+        sheet.Dispose();
     }
 
     [Fact]
@@ -61,7 +67,7 @@ public class DamageLogicTests
     {
         var sheet = new AttributeSheet(5);
         sheet.SetBase(MyIds.Armor, 100f);
-        sheet.Attributes[MyIds.Armor].IsDirty = 1; // Massive armor
+        sheet[MyIds.Armor].IsDirty = 1; // Massive armor
 
         var damages = new[]
         {
@@ -72,6 +78,8 @@ public class DamageLogicTests
 
         // 10 - 100 = -90, clamped to 0
         Assert.Equal(0f, final);
+        
+        sheet.Dispose();
     }
 
     [Fact]
@@ -87,6 +95,8 @@ public class DamageLogicTests
         var final = sheet.AsSpan().ResolveDamage(damages, new MyConfig());
 
         Assert.Equal(50f, final); // Full damage
+        
+        sheet.Dispose();
     }
 
     [Fact]
@@ -94,7 +104,7 @@ public class DamageLogicTests
     {
         var sheet = new AttributeSheet(5);
         // Allow negative resistance (amplified damage)
-        sheet.Attributes[MyIds.FireResist] = new Attribute(-0.5f, -1f, 1f); // Min -1, Max 1
+        sheet[MyIds.FireResist] = new Attribute(-0.5f, -1f, 1f); // Min -1, Max 1
 
         var damages = new[]
         {
@@ -105,6 +115,8 @@ public class DamageLogicTests
 
         // 100 * (1 - (-0.5)) = 100 * 1.5 = 150
         Assert.Equal(150f, final);
+        
+        sheet.Dispose();
     }
 
     [Fact]
@@ -116,6 +128,8 @@ public class DamageLogicTests
         var final = sheet.AsSpan().ResolveDamage(damages, new MyConfig());
 
         Assert.Equal(0f, final);
+        
+        sheet.Dispose();
     }
 
     // 1. Define Game Constants

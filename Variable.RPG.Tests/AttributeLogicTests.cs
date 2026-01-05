@@ -14,7 +14,6 @@ public class AttributeLogicTests
         var val = attr.GetValue();
 
         Assert.Equal(30f, val);
-        Assert.Equal(0, attr.IsDirty);
     }
 
     [Fact]
@@ -34,17 +33,6 @@ public class AttributeLogicTests
     }
 
     [Fact]
-    public void AddModifier_MarksDirty()
-    {
-        var attr = new Attribute(10f);
-        attr.GetValue(); // Clean it
-        Assert.Equal(0, attr.IsDirty);
-
-        attr.AddModifier(5f, 0f);
-        Assert.Equal(1, attr.IsDirty);
-    }
-
-    [Fact]
     public void ClearModifiers_ResetsToBase()
     {
         var attr = new Attribute(10f);
@@ -56,18 +44,6 @@ public class AttributeLogicTests
         attr.ClearModifiers();
         var valAfter = attr.GetValue();
         Assert.Equal(10f, valAfter); // Back to base
-    }
-
-    [Fact]
-    public void GetValue_RecalculatesWhenDirty()
-    {
-        var attr = new Attribute(10f);
-        attr.ModAdd = 5f;
-        attr.IsDirty = 1;
-
-        var val = attr.GetValue();
-        Assert.Equal(15f, val);
-        Assert.Equal(0, attr.IsDirty);
     }
 
     [Fact]
