@@ -83,6 +83,9 @@ public struct InputRingBuffer : IEquatable<InputRingBuffer>
     }
 
     /// <summary>Determines whether two buffers are equal.</summary>
+    /// <param name="left">The first buffer to compare.</param>
+    /// <param name="right">The second buffer to compare.</param>
+    /// <returns>True if the buffers are equal; otherwise, false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator ==(InputRingBuffer left, InputRingBuffer right)
     {
@@ -90,6 +93,9 @@ public struct InputRingBuffer : IEquatable<InputRingBuffer>
     }
 
     /// <summary>Determines whether two buffers are not equal.</summary>
+    /// <param name="left">The first buffer to compare.</param>
+    /// <param name="right">The second buffer to compare.</param>
+    /// <returns>True if the buffers are not equal; otherwise, false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator !=(InputRingBuffer left, InputRingBuffer right)
     {

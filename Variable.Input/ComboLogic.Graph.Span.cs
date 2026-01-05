@@ -11,6 +11,15 @@ public static partial class ComboLogic
     ///     Works with T[], NativeArray&lt;T&gt;, BlobArray&lt;T&gt;, and stackalloc.
     ///     Includes safety checks to prevent crashes from corrupt graph data.
     /// </summary>
+    /// <param name="currentNodeIndex">Reference to the current node index.</param>
+    /// <param name="isActionBusy">Reference to the action busy flag.</param>
+    /// <param name="bufferHead">Reference to the buffer head index.</param>
+    /// <param name="bufferCount">Reference to the buffer count.</param>
+    /// <param name="bufferInputs">Span of buffer inputs.</param>
+    /// <param name="nodes">ReadOnlySpan of combo nodes.</param>
+    /// <param name="edges">ReadOnlySpan of combo edges.</param>
+    /// <param name="newActionID">Output for the new action ID if transition occurs.</param>
+    /// <returns>True if state advanced; otherwise, false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryAdvanceState(
         ref int currentNodeIndex,
@@ -76,6 +85,7 @@ public static partial class ComboLogic
     /// <summary>
     ///     Signals that the current action has finished, allowing state transitions.
     /// </summary>
+    /// <param name="isActionBusy">Reference to the action busy flag.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SignalActionFinished(ref bool isActionBusy)
     {

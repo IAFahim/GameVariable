@@ -39,6 +39,9 @@ public struct ComboEdge : IEquatable<ComboEdge>
     }
 
     /// <summary>Determines whether two edges are equal.</summary>
+    /// <param name="left">The first edge to compare.</param>
+    /// <param name="right">The second edge to compare.</param>
+    /// <returns>True if the edges are equal; otherwise, false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator ==(ComboEdge left, ComboEdge right)
     {
@@ -46,6 +49,9 @@ public struct ComboEdge : IEquatable<ComboEdge>
     }
 
     /// <summary>Determines whether two edges are not equal.</summary>
+    /// <param name="left">The first edge to compare.</param>
+    /// <param name="right">The second edge to compare.</param>
+    /// <returns>True if the edges are not equal; otherwise, false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator !=(ComboEdge left, ComboEdge right)
     {
