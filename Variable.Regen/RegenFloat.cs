@@ -21,7 +21,7 @@ namespace Variable.Regen;
 /// </example>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
-public struct RegenFloat : IBoundedInfo
+public struct RegenFloat : IBoundedInfo, IEquatable<RegenFloat>
 {
     /// <summary>The underlying bounded value being regenerated.</summary>
     public BoundedFloat Value;
@@ -84,5 +84,39 @@ public struct RegenFloat : IBoundedInfo
     public static implicit operator BoundedFloat(RegenFloat regen)
     {
         return regen.Value;
+    }
+
+    /// <inheritdoc />
+    public override bool Equals(object obj)
+    {
+        return obj is RegenFloat other && Equals(other);
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool Equals(RegenFloat other)
+    {
+        return Value.Equals(other.Value) && Rate.Equals(other.Rate);
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Value, Rate);
+    }
+
+    /// <summary>Determines whether two regen floats are equal.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator ==(RegenFloat left, RegenFloat right)
+    {
+        return left.Equals(right);
+    }
+
+    /// <summary>Determines whether two regen floats are not equal.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator !=(RegenFloat left, RegenFloat right)
+    {
+        return !left.Equals(right);
     }
 }

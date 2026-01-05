@@ -19,7 +19,7 @@ namespace Variable.Reservoir;
 /// </example>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
-public struct ReservoirFloat
+public struct ReservoirFloat : IEquatable<ReservoirFloat>
 {
     /// <summary>The active volume (bounded capacity).</summary>
     public BoundedFloat Volume;
@@ -54,5 +54,39 @@ public struct ReservoirFloat
     public static implicit operator float(ReservoirFloat res)
     {
         return res.Volume.Current;
+    }
+
+    /// <inheritdoc />
+    public override bool Equals(object obj)
+    {
+        return obj is ReservoirFloat other && Equals(other);
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool Equals(ReservoirFloat other)
+    {
+        return Volume.Equals(other.Volume) && Reserve.Equals(other.Reserve);
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Volume, Reserve);
+    }
+
+    /// <summary>Determines whether two reservoirs are equal.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator ==(ReservoirFloat left, ReservoirFloat right)
+    {
+        return left.Equals(right);
+    }
+
+    /// <summary>Determines whether two reservoirs are not equal.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator !=(ReservoirFloat left, ReservoirFloat right)
+    {
+        return !left.Equals(right);
     }
 }

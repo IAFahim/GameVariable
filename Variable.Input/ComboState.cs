@@ -5,7 +5,7 @@ namespace Variable.Input;
 /// </summary>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
-public struct ComboState
+public struct ComboState : IEquatable<ComboState>
 {
     /// <summary>
     ///     The index of the current active node in the graph.
@@ -16,4 +16,38 @@ public struct ComboState
     ///     Indicates whether the current action is still executing, preventing transitions.
     /// </summary>
     public bool IsActionBusy;
+
+    /// <inheritdoc />
+    public override bool Equals(object obj)
+    {
+        return obj is ComboState other && Equals(other);
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool Equals(ComboState other)
+    {
+        return CurrentNodeIndex == other.CurrentNodeIndex && IsActionBusy == other.IsActionBusy;
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(CurrentNodeIndex, IsActionBusy);
+    }
+
+    /// <summary>Determines whether two states are equal.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator ==(ComboState left, ComboState right)
+    {
+        return left.Equals(right);
+    }
+
+    /// <summary>Determines whether two states are not equal.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator !=(ComboState left, ComboState right)
+    {
+        return !left.Equals(right);
+    }
 }

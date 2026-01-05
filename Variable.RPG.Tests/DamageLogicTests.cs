@@ -1,3 +1,6 @@
+using Variable.RPG;
+using Attribute = Variable.RPG.Attribute;
+
 namespace Variable.RPG.Tests;
 
 public class DamageLogicTests
@@ -5,7 +8,6 @@ public class DamageLogicTests
     // 1. Define Game Constants
     private static class MyIds
     {
-        public const int Health = 0;
         public const int Armor = 1;      // Flat
         public const int FireResist = 2; // Percent
 
@@ -51,7 +53,7 @@ public class DamageLogicTests
             new DamagePacket { ElementId = MyIds.DmgPhysical, Amount = 50f }
         };
 
-        var final = DamageLogic.ResolveDamage(sheet.AsSpan(), damages, new MyConfig());
+        var final = sheet.AsSpan().ResolveDamage(damages, new MyConfig());
 
         // 50 Dmg - 10 Armor = 40
         Assert.Equal(40f, final);
@@ -69,7 +71,7 @@ public class DamageLogicTests
             new DamagePacket { ElementId = MyIds.DmgFire, Amount = 100f }
         };
 
-        var final = DamageLogic.ResolveDamage(sheet.AsSpan(), damages, new MyConfig());
+        var final = sheet.AsSpan().ResolveDamage(damages, new MyConfig());
 
         // 100 Dmg * (1.0 - 0.5) = 50
         Assert.Equal(50f, final);
@@ -88,7 +90,7 @@ public class DamageLogicTests
             new DamagePacket { ElementId = MyIds.DmgFire, Amount = 100f }     // -> 75
         };
 
-        var final = DamageLogic.ResolveDamage(sheet.AsSpan(), damages, new MyConfig());
+        var final = sheet.AsSpan().ResolveDamage(damages, new MyConfig());
 
         Assert.Equal(90f, final); // 15 + 75
     }
@@ -105,7 +107,7 @@ public class DamageLogicTests
             new DamagePacket { ElementId = MyIds.DmgPhysical, Amount = 10f }
         };
 
-        var final = DamageLogic.ResolveDamage(sheet.AsSpan(), damages, new MyConfig());
+        var final = sheet.AsSpan().ResolveDamage(damages, new MyConfig());
 
         // 10 - 100 = -90, clamped to 0
         Assert.Equal(0f, final);
@@ -121,7 +123,7 @@ public class DamageLogicTests
             new DamagePacket { ElementId = 999, Amount = 50f } // No mapping for 999
         };
 
-        var final = DamageLogic.ResolveDamage(sheet.AsSpan(), damages, new MyConfig());
+        var final = sheet.AsSpan().ResolveDamage(damages, new MyConfig());
 
         Assert.Equal(50f, final); // Full damage
     }
@@ -138,7 +140,7 @@ public class DamageLogicTests
             new DamagePacket { ElementId = MyIds.DmgFire, Amount = 100f }
         };
 
-        var final = DamageLogic.ResolveDamage(sheet.AsSpan(), damages, new MyConfig());
+        var final = sheet.AsSpan().ResolveDamage(damages, new MyConfig());
 
         // 100 * (1 - (-0.5)) = 100 * 1.5 = 150
         Assert.Equal(150f, final);
@@ -150,7 +152,7 @@ public class DamageLogicTests
         var sheet = new AttributeSheet(5);
         var damages = Array.Empty<DamagePacket>();
 
-        var final = DamageLogic.ResolveDamage(sheet.AsSpan(), damages, new MyConfig());
+        var final = sheet.AsSpan().ResolveDamage(damages, new MyConfig());
 
         Assert.Equal(0f, final);
     }

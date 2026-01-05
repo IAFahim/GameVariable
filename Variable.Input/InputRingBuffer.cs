@@ -7,7 +7,7 @@ namespace Variable.Input;
 /// </summary>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
-public struct InputRingBuffer
+public struct InputRingBuffer : IEquatable<InputRingBuffer>
 {
     /// <summary>
     ///     The maximum number of inputs the buffer can hold.
@@ -37,4 +37,53 @@ public struct InputRingBuffer
     public int Tail;
     /// <summary>The current number of items in the buffer.</summary>
     public int Count;
+
+    /// <inheritdoc />
+    public override bool Equals(object obj)
+    {
+        return obj is InputRingBuffer other && Equals(other);
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool Equals(InputRingBuffer other)
+    {
+        return Head == other.Head && Tail == other.Tail && Count == other.Count &&
+               Input0 == other.Input0 && Input1 == other.Input1 && Input2 == other.Input2 &&
+               Input3 == other.Input3 && Input4 == other.Input4 && Input5 == other.Input5 &&
+               Input6 == other.Input6 && Input7 == other.Input7;
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public override int GetHashCode()
+    {
+        var hash = new HashCode();
+        hash.Add(Head);
+        hash.Add(Tail);
+        hash.Add(Count);
+        hash.Add(Input0);
+        hash.Add(Input1);
+        hash.Add(Input2);
+        hash.Add(Input3);
+        hash.Add(Input4);
+        hash.Add(Input5);
+        hash.Add(Input6);
+        hash.Add(Input7);
+        return hash.ToHashCode();
+    }
+
+    /// <summary>Determines whether two buffers are equal.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator ==(InputRingBuffer left, InputRingBuffer right)
+    {
+        return left.Equals(right);
+    }
+
+    /// <summary>Determines whether two buffers are not equal.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator !=(InputRingBuffer left, InputRingBuffer right)
+    {
+        return !left.Equals(right);
+    }
 }

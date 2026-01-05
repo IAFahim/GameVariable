@@ -26,7 +26,7 @@ public struct AttributeSheet
     public float Get(int statId)
     {
         if (statId < 0 || statId >= Attributes.Length) return 0f;
-        return AttributeLogic.GetValue(ref Attributes[statId]);
+        return Attributes[statId].GetValue();
     }
 
     /// <summary>

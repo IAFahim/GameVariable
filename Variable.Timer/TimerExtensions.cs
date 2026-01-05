@@ -15,7 +15,7 @@ public static class TimerExtensions
     /// </summary>
     /// <param name="self">The timer to advance.</param>
     /// <param name="deltaTime">The time elapsed since the last tick.</param>
-    /// <returns>True if the timer COMPLETED (Current >= Duration); false if still running.</returns>
+    /// <returns>True if the timer COMPLETED (Current &gt;= Duration); false if still running.</returns>
     /// <remarks>Use this when you need to detect completion, e.g., for spell casts or loading bars.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TickAndCheckComplete(ref this Timer self, float deltaTime)
@@ -41,7 +41,7 @@ public static class TimerExtensions
     /// <param name="self">The timer to advance.</param>
     /// <param name="deltaTime">The time elapsed since the last tick.</param>
     /// <param name="overflow">The amount of time that exceeded the duration (useful for chaining timers).</param>
-    /// <returns>True if the timer COMPLETED (Current >= Duration); false if still running.</returns>
+    /// <returns>True if the timer COMPLETED (Current &gt;= Duration); false if still running.</returns>
     /// <remarks>Use overflow to start the next timer with remaining time for seamless chaining.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TickAndCheckComplete(ref this Timer self, float deltaTime, out float overflow)
@@ -112,7 +112,7 @@ public static class TimerExtensions
     /// </summary>
     /// <param name="self">The cooldown to advance.</param>
     /// <param name="deltaTime">The time elapsed since the last tick.</param>
-    /// <returns>True if the cooldown is READY (Current <= 0); false if still cooling down.</returns>
+    /// <returns>True if the cooldown is READY (Current &lt;= 0); false if still cooling down.</returns>
     /// <remarks>Use this to check if an ability can be used again.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TickAndCheckReady(ref this Cooldown self, float deltaTime)
@@ -138,7 +138,7 @@ public static class TimerExtensions
     /// <param name="self">The cooldown to advance.</param>
     /// <param name="deltaTime">The time elapsed since the last tick.</param>
     /// <param name="overflow">The amount of time that exceeded zero (useful for ability chains).</param>
-    /// <returns>True if the cooldown is READY (Current <= 0); false if still cooling down.</returns>
+    /// <returns>True if the cooldown is READY (Current &lt;= 0); false if still cooling down.</returns>
     /// <remarks>Use overflow to reduce the next cooldown start time for fluid ability rotations.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TickAndCheckReady(ref this Cooldown self, float deltaTime, out float overflow)
