@@ -25,7 +25,7 @@ public class ComboAnimationHandler : MonoBehaviour
 {
     [SerializeField] private Animator animator;
     
-    private ComboGraphData _graph;
+    private ComboGraph _graph; // Ensure this is initialized with unmanaged memory!
     private ComboState _state;
     private InputRingBuffer _buffer;
     
@@ -168,9 +168,14 @@ public partial class ComboProcessingSystem : SystemBase
                     graph.Edges.GetUnsafePtr(), graph.Edges.Length);
             }
             
+            var inputs = MemoryMarshal.CreateSpan(ref input.Buffer.Input0, 8);
+
             if (ComboLogic.TryAdvanceState(
-                ref state.State, 
-                ref input.Buffer, 
+                ref state.State.CurrentNodeIndex, 
+                ref state.State.IsActionBusy,
+                ref input.Buffer.Head,
+                ref input.Buffer.Count,
+                inputs, 
                 nodes, 
                 edges, 
                 out int actionID))
@@ -194,21 +199,21 @@ using Variable.Input;
 
 public static class ComboGraphBlobBuilder
 {
-    public static BlobAssetReference<ComboGraphBlob> Build(ComboGraphData source)
+    public static BlobAssetReference<ComboGraphBlob> Build(ComboNode[] nodes, ComboEdge[] edges)
     {
         var builder = new BlobBuilder(Allocator.Temp);
         
         ref var root = ref builder.ConstructRoot<ComboGraphBlob>();
         
         // Copy nodes
-        var nodesArray = builder.Allocate(ref root.Nodes, source.Nodes.Length);
-        for (int i = 0; i < source.Nodes.Length; i++)
-            nodesArray[i] = source.Nodes[i];
+        var nodesArray = builder.Allocate(ref root.Nodes, nodes.Length);
+        for (int i = 0; i < nodes.Length; i++)
+            nodesArray[i] = nodes[i];
         
         // Copy edges
-        var edgesArray = builder.Allocate(ref root.Edges, source.Edges.Length);
-        for (int i = 0; i < source.Edges.Length; i++)
-            edgesArray[i] = source.Edges[i];
+        var edgesArray = builder.Allocate(ref root.Edges, edges.Length);
+        for (int i = 0; i < edges.Length; i++)
+            edgesArray[i] = edges[i];
         
         var result = builder.CreateBlobAssetReference<ComboGraphBlob>(Allocator.Persistent);
         builder.Dispose();
@@ -239,7 +244,17 @@ public struct ComboJob : IJob
     
     public void Execute()
     {
-        if (ComboLogic.TryAdvanceState(ref State, ref Buffer, Nodes, Edges, out int actionID))
+        var inputs = MemoryMarshal.CreateSpan(ref Buffer.Input0, 8);
+        
+        if (ComboLogic.TryAdvanceState(
+            ref State.CurrentNodeIndex,
+            ref State.IsActionBusy,
+            ref Buffer.Head,
+            ref Buffer.Count,
+            inputs,
+            Nodes,
+            Edges,
+            out int actionID))
             Result.Value = actionID;
         else
             Result.Value = -1;
@@ -268,8 +283,17 @@ public struct BatchComboJob : IJobParallelFor
     {
         var state = States[index];
         var buffer = Buffers[index];
+        var inputs = MemoryMarshal.CreateSpan(ref buffer.Input0, 8);
         
-        if (ComboLogic.TryAdvanceState(ref state, ref buffer, Nodes, Edges, out int actionID))
+        if (ComboLogic.TryAdvanceState(
+            ref state.CurrentNodeIndex,
+            ref state.IsActionBusy,
+            ref buffer.Head,
+            ref buffer.Count,
+            inputs,
+            Nodes,
+            Edges,
+            out int actionID))
             Results[index] = actionID;
         else
             Results[index] = -1;
@@ -292,10 +316,10 @@ public class AIComboProcessor : MonoBehaviour
     
     void Start()
     {
-        var graph = DirectComboBuilder.Build();
+        var (nodes, edges) = DirectComboBuilder.Build();
         
-        _nodes = new NativeArray<ComboNode>(graph.Nodes, Allocator.Persistent);
-        _edges = new NativeArray<ComboEdge>(graph.Edges, Allocator.Persistent);
+        _nodes = new NativeArray<ComboNode>(nodes, Allocator.Persistent);
+        _edges = new NativeArray<ComboEdge>(edges, Allocator.Persistent);
         _aiStates = new NativeArray<ComboState>(AI_COUNT, Allocator.Persistent);
         _aiBuffers = new NativeArray<InputRingBuffer>(AI_COUNT, Allocator.Persistent);
         _results = new NativeArray<int>(AI_COUNT, Allocator.Persistent);
@@ -477,7 +501,7 @@ public class ComboWithTimeout : MonoBehaviour
 {
     [SerializeField] private float comboTimeout = 1.5f;
     
-    private ComboGraphData _graph;
+    private ComboGraph _graph;
     private ComboState _state;
     private InputRingBuffer _buffer;
     private float _lastActionTime;
@@ -521,19 +545,17 @@ public class WeaponComboController : MonoBehaviour
     [SerializeField] private ComboAsset spearCombo;
     [SerializeField] private ComboAsset fistCombo;
     
-    private ComboGraphData[] _graphs;
+    private ComboGraph[] _graphs;
     private ComboState _state;
     private InputRingBuffer _buffer;
     private int _currentWeapon;
     
     void Awake()
     {
-        _graphs = new ComboGraphData[]
-        {
-            swordCombo.BuildGraph(),
-            spearCombo.BuildGraph(),
-            fistCombo.BuildGraph()
-        };
+        // Note: You must implement a helper to convert arrays to ComboGraph (unmanaged)
+        // See README.md for memory management details
+        _graphs = new ComboGraph[3];
+        // ... initialization logic ...
     }
     
     public void SwitchWeapon(int weaponIndex)
