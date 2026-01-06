@@ -235,8 +235,8 @@ public class RpgStatOperationTests
         // Weapon: +5 damage, +20% damage multiplier
         var weaponMods = new[]
         {
-            RpgStatModifier.AddFlat(RpgStatField.Base, 5f, sourceId: 1001),
-            RpgStatModifier.AddFlat(RpgStatField.ModMult, 0.2f, sourceId: 1001) // Add 0.2 to multiplier
+            RpgStatModifier.AddFlat(RpgStatField.Base, 5f),
+            RpgStatModifier.AddFlat(RpgStatField.ModMult, 0.2f) // Add 0.2 to multiplier
         };
         
         damage.ApplyModifiers(weaponMods);
@@ -263,7 +263,7 @@ public class RpgStatOperationTests
         var strength = new RpgStat(50f);
         
         // Buff: +30% strength multiplier for 10 seconds
-        var buffMod = RpgStatModifier.AddFlat(RpgStatField.ModMult, 0.3f, sourceId: 2001);
+        var buffMod = RpgStatModifier.AddFlat(RpgStatField.ModMult, 0.3f);
         strength.ApplyModifier(buffMod);
         
         // 50 * 1.3 = 65
@@ -276,7 +276,7 @@ public class RpgStatOperationTests
         var armor = new RpgStat(100f);
         
         // Debuff: -50% armor
-        var debuffMod = new RpgStatModifier(RpgStatField.Base, RpgStatOperation.SubtractPercentOfCurrent, 0.5f, sourceId: 3001);
+        var debuffMod = new RpgStatModifier(RpgStatField.Base, RpgStatOperation.SubtractPercentOfCurrent, 0.5f);
         armor.ApplyModifier(debuffMod);
         
         Assert.Equal(50f, armor.Base);
@@ -289,8 +289,8 @@ public class RpgStatOperationTests
         var health = new RpgStat(100f, 0f, 200f);
         
         // Enchanted Armor: +10 armor, +20% max health (of base)
-        var armorMod = RpgStatModifier.AddFlat(RpgStatField.Base, 10f, sourceId: 4001);
-        var healthMod = RpgStatModifier.AddPercent(RpgStatField.Max, 0.2f, sourceId: 4001);
+        var armorMod = RpgStatModifier.AddFlat(RpgStatField.Base, 10f);
+        var healthMod = RpgStatModifier.AddPercent(RpgStatField.Max, 0.2f);
         
         armor.ApplyModifier(armorMod);
         health.ApplyModifier(healthMod);
@@ -306,7 +306,7 @@ public class RpgStatOperationTests
         var magicDamage = new RpgStat(15f);
         
         // Passive: +15% all damage (add to multiplier)
-        var passiveMod = RpgStatModifier.AddFlat(RpgStatField.ModMult, 0.15f, sourceId: 5001);
+        var passiveMod = RpgStatModifier.AddFlat(RpgStatField.ModMult, 0.15f);
         
         physicalDamage.ApplyModifier(passiveMod);
         magicDamage.ApplyModifier(passiveMod);
@@ -358,7 +358,7 @@ public class RpgStatOperationTests
     [Fact]
     public void Factory_AddFlat_CreatesCorrectModifier()
     {
-        var mod = RpgStatModifier.AddFlat(RpgStatField.Base, 5f, 123);
+        var mod = RpgStatModifier.AddFlat(RpgStatField.Base, 5f);
         
         Assert.Equal(RpgStatField.Base, mod.Field);
         Assert.Equal(RpgStatOperation.Add, mod.Operation);
@@ -368,7 +368,7 @@ public class RpgStatOperationTests
     [Fact]
     public void Factory_AddPercent_CreatesCorrectModifier()
     {
-        var mod = RpgStatModifier.AddPercent(RpgStatField.ModMult, 0.2f, 456);
+        var mod = RpgStatModifier.AddPercent(RpgStatField.ModMult, 0.2f);
         
         Assert.Equal(RpgStatField.ModMult, mod.Field);
         Assert.Equal(RpgStatOperation.AddPercent, mod.Operation);
@@ -378,7 +378,7 @@ public class RpgStatOperationTests
     [Fact]
     public void Factory_SetValue_CreatesCorrectModifier()
     {
-        var mod = RpgStatModifier.SetValue(RpgStatField.Max, 200f, 789);
+        var mod = RpgStatModifier.SetValue(RpgStatField.Max, 200f);
         
         Assert.Equal(RpgStatField.Max, mod.Field);
         Assert.Equal(RpgStatOperation.Set, mod.Operation);

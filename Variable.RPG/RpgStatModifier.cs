@@ -17,7 +17,6 @@ public struct RpgStatModifier
     
     /// <summary>The value for the operation.</summary>
     public float Value;
-    
 
     /// <summary>
     ///     Creates a new stat modifier.
@@ -25,9 +24,8 @@ public struct RpgStatModifier
     /// <param name="field">Which field to modify.</param>
     /// <param name="operation">What operation to perform.</param>
     /// <param name="value">The value for the operation.</param>
-    /// <param name="sourceId">Optional source identifier for tracking.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public RpgStatModifier(RpgStatField field, RpgStatOperation operation, float value, int sourceId = 0)
+    public RpgStatModifier(RpgStatField field, RpgStatOperation operation, float value)
     {
         Field = field;
         Operation = operation;
@@ -39,22 +37,53 @@ public struct RpgStatModifier
     ///     Example: "+5 Strength"
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static RpgStatModifier AddFlat(RpgStatField field, float value, int sourceId = 0)
-        => new(field, RpgStatOperation.Add, value, sourceId);
+    public static RpgStatModifier AddFlat(RpgStatField field, float value)
+        => new(field, RpgStatOperation.Add, value);
 
     /// <summary>
     ///     Creates a modifier that adds a multiplier.
     ///     Example: "+20% (pass 0.2f, not 20f)"
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static RpgStatModifier AddPercent(RpgStatField field, float percent, int sourceId = 0)
-        => new(field, RpgStatOperation.AddPercent, percent, sourceId);
+    public static RpgStatModifier AddPercent(RpgStatField field, float percent)
+        => new(field, RpgStatOperation.AddPercent, percent);
 
     /// <summary>
     ///     Creates a modifier that sets an absolute value.
     ///     Example: "Set Max Health to 150"
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static RpgStatModifier SetValue(RpgStatField field, float value, int sourceId = 0)
-        => new(field, RpgStatOperation.Set, value, sourceId);
+    public static RpgStatModifier SetValue(RpgStatField field, float value)
+        => new(field, RpgStatOperation.Set, value);
+
+    /// <summary>
+    ///     Returns the inverse of this modifier for easy removal.
+    ///     Example: Add becomes Subtract, Multiply becomes Divide.
+    ///     Non-invertible operations (Set, Min, Max) throw exception.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public RpgStatModifier GetInverse()
+    {
+        if (!Operation.IsInvertible())
+            throw new InvalidOperationException($"Operation {Operation} cannot be inverted. Use manual removal instead.");
+        
+        return new RpgStatModifier(Field, Operation.GetInverse(), Value);
+    }
+
+    /// <summary>
+    ///     Tries to get the inverse of this modifier.
+    ///     Returns false for non-invertible operations (Set, Min, Max).
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool TryGetInverse(out RpgStatModifier inverse)
+    {
+        if (!Operation.IsInvertible())
+        {
+            inverse = default;
+            return false;
+        }
+
+        inverse = new RpgStatModifier(Field, Operation.GetInverse(), Value);
+        return true;
+    }
 }

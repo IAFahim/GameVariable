@@ -39,3 +39,52 @@ public enum RpgStatOperation
     /// <summary>Set to maximum of current and value (e.g., "At least 10").</summary>
     Max = 10
 }
+
+/// <summary>
+///     Extension methods for RpgStatOperation.
+/// </summary>
+public static class RpgStatOperationExtensions
+{
+    /// <summary>
+    ///     Gets the inverse operation for reverting a modifier.
+    ///     Example: Add becomes Subtract, Multiply becomes Divide.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static RpgStatOperation GetInverse(this RpgStatOperation operation)
+    {
+        return operation switch
+        {
+            RpgStatOperation.Add => RpgStatOperation.Subtract,
+            RpgStatOperation.Subtract => RpgStatOperation.Add,
+            RpgStatOperation.Multiply => RpgStatOperation.Divide,
+            RpgStatOperation.Divide => RpgStatOperation.Multiply,
+            RpgStatOperation.AddPercent => RpgStatOperation.SubtractPercent,
+            RpgStatOperation.SubtractPercent => RpgStatOperation.AddPercent,
+            RpgStatOperation.AddPercentOfCurrent => RpgStatOperation.SubtractPercentOfCurrent,
+            RpgStatOperation.SubtractPercentOfCurrent => RpgStatOperation.AddPercentOfCurrent,
+            
+            // Non-invertible operations return themselves
+            RpgStatOperation.Set => RpgStatOperation.Set,
+            RpgStatOperation.Min => RpgStatOperation.Min,
+            RpgStatOperation.Max => RpgStatOperation.Max,
+            
+            _ => operation
+        };
+    }
+
+    /// <summary>
+    ///     Checks if an operation can be safely inverted.
+    ///     Set, Min, and Max operations cannot be inverted.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsInvertible(this RpgStatOperation operation)
+    {
+        return operation switch
+        {
+            RpgStatOperation.Set => false,
+            RpgStatOperation.Min => false,
+            RpgStatOperation.Max => false,
+            _ => true
+        };
+    }
+}

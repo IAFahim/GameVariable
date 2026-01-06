@@ -4,27 +4,64 @@
 
 A complete, production-grade RPG stat modification system inspired by classic RPGs (Diablo 2, Path of Exile, Baldur's Gate). Provides 11 different operation types for equipment, buffs, debuffs, passives, and consumables.
 
+**NEW:** ✨ **Automatic Modifier Inversion** - Easily remove modifiers without manual math!
+
 ## Architecture
 
 ### The Three Layers
 
 ```
 ┌────────────────────────────────────────────────────────────┐
-│ Data Layer                                                  │
+│ Data Layer (12 bytes)                                      │
 │ • RpgStatOperation (enum) - What to do                     │
-│ • RpgStatModifier (struct) - The complete instruction     │
+│ • RpgStatModifier (struct) - Field + Operation + Value     │
 └────────────────────────────────────────────────────────────┘
 ┌────────────────────────────────────────────────────────────┐
 │ Logic Layer                                                 │
 │ • ApplyOperation() - Pure primitive logic                  │
+│ • GetInverse() - Operation inversion                       │
 │ • Takes floats, returns float, no mutation                 │
 └────────────────────────────────────────────────────────────┘
 ┌────────────────────────────────────────────────────────────┐
 │ Extension Layer                                             │
 │ • ApplyModifier() - Apply single modifier                  │
-│ • ApplyModifiers() - Batch apply (zero GC)                │
+│ • RemoveModifier() - Auto-invert and remove!               │
+│ • ApplyModifiers() / RemoveModifiers() - Batch (zero GC)  │
 └────────────────────────────────────────────────────────────┘
 ```
+
+## 🎯 Automatic Inversion System
+
+**The killer feature**: Just call `RemoveModifier()` and it automatically inverts the math!
+
+```csharp
+// Apply equipment bonuses
+var weaponMods = new[]
+{
+    RpgStatModifier.AddFlat(RpgStatField.Base, 15f),
+    RpgStatModifier.AddFlat(RpgStatField.ModMult, 0.2f)
+};
+damage.ApplyModifiers(weaponMods);
+
+// Unequip - ONE LINE, AUTOMATIC INVERSION!
+damage.RemoveModifiers(weaponMods);
+```
+
+### Inversion Table
+
+| Original | Inverse | Invertible? |
+|----------|---------|-------------|
+| Add | Subtract | ✅ Yes |
+| Subtract | Add | ✅ Yes |
+| Multiply | Divide | ✅ Yes |
+| Divide | Multiply | ✅ Yes |
+| AddPercent | SubtractPercent | ✅ Yes |
+| SubtractPercent | AddPercent | ✅ Yes |
+| AddPercentOfCurrent | SubtractPercentOfCurrent | ✅ Yes |
+| SubtractPercentOfCurrent | AddPercentOfCurrent | ✅ Yes |
+| Set | - | ❌ No |
+| Min | - | ❌ No |
+| Max | - | ❌ No |
 
 ## Operation Types
 
@@ -147,23 +184,27 @@ RpgStatModifier.SetValue(RpgStatField.Base, 0f, sourceId: 3001);
 // Legendary Sword: +15 damage, +20% attack speed
 var weapon = new[]
 {
-    RpgStatModifier.AddFlat(RpgStatField.Base, 15f, sourceId: ItemId.LegendarySword),
-    RpgStatModifier.AddFlat(RpgStatField.ModMult, 0.2f, sourceId: ItemId.LegendarySword)
+    RpgStatModifier.AddFlat(RpgStatField.Base, 15f),
+    RpgStatModifier.AddFlat(RpgStatField.ModMult, 0.2f)
 };
 
+// Equip
 damage.ApplyModifiers(weapon);
 attackSpeed.ApplyModifiers(weapon);
+
+// Unequip - AUTOMATIC INVERSION!
+damage.RemoveModifiers(weapon);
+attackSpeed.RemoveModifiers(weapon);
 ```
 
 ### Buff System
 ```csharp
 // Strength Potion: +30% strength for 60 seconds
-var buff = RpgStatModifier.AddFlat(RpgStatField.ModMult, 0.3f, sourceId: BuffId.StrengthPotion);
+var buff = RpgStatModifier.AddFlat(RpgStatField.ModMult, 0.3f);
 strength.ApplyModifier(buff);
 
-// After 60 seconds, remove:
-var removeBuff = RpgStatModifier.AddFlat(RpgStatField.ModMult, -0.3f, sourceId: BuffId.StrengthPotion);
-strength.ApplyModifier(removeBuff);
+// After 60 seconds - AUTOMATIC INVERSION!
+strength.RemoveModifier(buff);
 ```
 
 ### Level-Up System
@@ -176,7 +217,7 @@ health.ApplyModifier(levelUp);
 ### Passive Abilities
 ```csharp
 // Passive: +15% all damage
-var passive = RpgStatModifier.AddFlat(RpgStatField.ModMult, 0.15f, sourceId: PassiveId.DamageMastery);
+var passive = RpgStatModifier.AddFlat(RpgStatField.ModMult, 0.15f);
 
 physicalDamage.ApplyModifier(passive);
 magicDamage.ApplyModifier(passive);
@@ -193,8 +234,11 @@ health.ApplyModifier(potion);
 ### Debuffs
 ```csharp
 // Curse: -50% armor
-var curse = new RpgStatModifier(RpgStatField.Base, RpgStatOperation.SubtractPercentOfCurrent, 0.5f, sourceId: DebuffId.ArmorBreak);
+var curse = new RpgStatModifier(RpgStatField.Base, RpgStatOperation.SubtractPercentOfCurrent, 0.5f);
 armor.ApplyModifier(curse);
+
+// Curse expires - AUTOMATIC INVERSION!
+armor.RemoveModifier(curse);
 ```
 
 ### Endurance Scaling
@@ -243,9 +287,10 @@ foreach (var stat in stats)
 
 - ✅ **Zero Allocation** - Struct-based, no GC
 - ✅ **Burst Compatible** - Logic layer uses primitives only
-- ✅ **Cache Friendly** - Sequential layout
+- ✅ **Cache Friendly** - Sequential layout, 12 bytes
 - ✅ **Inline-Friendly** - AggressiveInlining attributes
 - ✅ **Batch Optimized** - Single recalculation for multiple mods
+- ✅ **Auto-Inversion** - Remove modifiers without manual math
 
 ## Formula Summary
 
@@ -297,11 +342,12 @@ RpgStatModifier.AddPercent(RpgStatField.Max, 20f);
 
 ## Testing
 
-**62 tests covering:**
+**90 tests covering:**
 - ✅ All 11 operation types
 - ✅ Batch modifier application
+- ✅ Automatic inversion system
 - ✅ Real RPG scenarios (equipment, buffs, passives)
-- ✅ Edge cases (division by zero, clamping)
+- ✅ Edge cases (division by zero, clamping, non-invertible ops)
 - ✅ Factory methods
 
 Run tests:
@@ -311,8 +357,9 @@ dotnet test Variable.RPG.Tests/Variable.RPG.Tests.csproj
 
 ---
 
-**Status:** ✅ 62/62 tests passing  
+**Status:** ✅ 90/90 tests passing  
 **Architecture:** Data-Logic-Extension Triad  
 **Inspired By:** Diablo 2, Path of Exile, Baldur's Gate  
 **Zero Allocation:** Yes  
-**Burst Compatible:** Yes
+**Burst Compatible:** Yes  
+**Struct Size:** 12 bytes

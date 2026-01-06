@@ -191,4 +191,49 @@ public static class RpgStatExtensions
 
         return appliedCount;
     }
+
+    /// <summary>
+    ///     Removes a modifier by applying its inverse.
+    ///     Example: If you added +5, this subtracts 5.
+    ///     Only works for invertible operations (Add, Subtract, Multiply, Divide, percentages).
+    /// </summary>
+    /// <param name="stat">The stat to modify.</param>
+    /// <param name="modifier">The original modifier to remove.</param>
+    /// <param name="autoRecalculate">If true, recalculates after removal.</param>
+    /// <returns>True if successfully removed, false if operation is not invertible.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool RemoveModifier(ref this RpgStat stat, RpgStatModifier modifier, bool autoRecalculate = true)
+    {
+        if (!modifier.TryGetInverse(out var inverse))
+            return false;
+
+        return stat.ApplyModifier(inverse, autoRecalculate);
+    }
+
+    /// <summary>
+    ///     Removes multiple modifiers by applying their inverses.
+    ///     Example: Remove all bonuses from unequipped item.
+    /// </summary>
+    /// <param name="stat">The stat to modify.</param>
+    /// <param name="modifiers">Array of modifiers to remove.</param>
+    /// <param name="autoRecalculate">If true, recalculates once after all removals.</param>
+    /// <returns>Number of successfully removed modifiers.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int RemoveModifiers(ref this RpgStat stat, ReadOnlySpan<RpgStatModifier> modifiers, bool autoRecalculate = true)
+    {
+        var removedCount = 0;
+
+        // Remove all modifiers without recalculation
+        for (var i = 0; i < modifiers.Length; i++)
+        {
+            if (stat.RemoveModifier(modifiers[i], autoRecalculate: false))
+                removedCount++;
+        }
+
+        // Recalculate once at the end if requested
+        if (autoRecalculate && removedCount > 0)
+            stat.Recalculate();
+
+        return removedCount;
+    }
 }
