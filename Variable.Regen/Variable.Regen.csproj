@@ -8,7 +8,7 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <Version>1.0.10</Version>
+        <Version>1.0.11</Version>
         <Authors>Md Ishtiaq Ahamed Fahim</Authors>
         <Company>IAFahim</Company>
         <Description>Systems for regeneration and decay over time.</Description>

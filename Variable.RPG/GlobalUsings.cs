@@ -2,4 +2,3 @@ global using System;
 global using System.Globalization;
 global using System.Runtime.CompilerServices;
 global using System.Runtime.InteropServices;
-global using Variable.Core;
