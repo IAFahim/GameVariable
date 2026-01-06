@@ -5,7 +5,7 @@ public class DamageLogicTests
     [Fact]
     public void Resolve_Physical_UsesArmor()
     {
-        var sheet = new AttributeSheet(5);
+        var sheet = new RpgStatSheet(5);
         sheet.SetBase(MyIds.Armor, 10f);
 
         var damages = new[]
@@ -24,7 +24,7 @@ public class DamageLogicTests
     [Fact]
     public void Resolve_Fire_UsesResistance()
     {
-        var sheet = new AttributeSheet(5);
+        var sheet = new RpgStatSheet(5);
         sheet.SetBase(MyIds.FireResist, 0.5f);
 
         var damages = new[]
@@ -43,7 +43,7 @@ public class DamageLogicTests
     [Fact]
     public void Resolve_MixedDamage_Aggregates()
     {
-        var sheet = new AttributeSheet(5);
+        var sheet = new RpgStatSheet(5);
         sheet.SetBase(MyIds.Armor, 5f); // -5 Flat
         sheet.SetBase(MyIds.FireResist, 0.25f); // -25% Percent
 
@@ -63,7 +63,7 @@ public class DamageLogicTests
     [Fact]
     public void Resolve_NegativeDamage_ClampsToZero()
     {
-        var sheet = new AttributeSheet(5);
+        var sheet = new RpgStatSheet(5);
         sheet.SetBase(MyIds.Armor, 100f);
 
         var damages = new[]
@@ -82,7 +82,7 @@ public class DamageLogicTests
     [Fact]
     public void Resolve_UnmappedElement_TakesFullDamage()
     {
-        var sheet = new AttributeSheet(5);
+        var sheet = new RpgStatSheet(5);
 
         var damages = new[]
         {
@@ -99,9 +99,9 @@ public class DamageLogicTests
     [Fact]
     public void Resolve_OverResistance_AmplifiedDamage()
     {
-        var sheet = new AttributeSheet(5);
+        var sheet = new RpgStatSheet(5);
         // Allow negative resistance (amplified damage)
-        sheet[MyIds.FireResist] = new Attribute(-0.5f, -1f, 1f); // Min -1, Max 1
+        sheet[MyIds.FireResist] = new RpgStat(-0.5f, -1f, 1f); // Min -1, Max 1
 
         var damages = new[]
         {
@@ -119,7 +119,7 @@ public class DamageLogicTests
     [Fact]
     public void Resolve_EmptyDamageArray_ReturnsZero()
     {
-        var sheet = new AttributeSheet(5);
+        var sheet = new RpgStatSheet(5);
         var damages = Array.Empty<DamagePacket>();
 
         var final = sheet.AsSpan().ResolveDamage(damages, new MyConfig());

@@ -4,9 +4,9 @@ namespace Variable.RPG;
 ///     A container for attributes using unmanaged memory.
 ///     Supports both managed wrapper (for Unity SerializeField) and pure unsafe usage.
 /// </summary>
-public unsafe struct AttributeSheet
+public unsafe struct RpgStatSheet
 {
-    private Attribute* _attributes;
+    private RpgStat* _attributes;
     private int _count;
     private bool _ownsMemory;
 
@@ -22,7 +22,7 @@ public unsafe struct AttributeSheet
     /// <summary>
     ///     Provides direct indexer access to attributes for test convenience.
     /// </summary>
-    public ref Attribute this[int index]
+    public ref RpgStat this[int index]
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
@@ -36,34 +36,34 @@ public unsafe struct AttributeSheet
     /// <summary>
     ///     Gets a Span view of all attributes for compatibility.
     /// </summary>
-    public Span<Attribute> Attributes
+    public Span<RpgStat> Attributes
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => AsSpan();
     }
 
     /// <summary>
-    ///     Creates a new AttributeSheet with allocated memory.
+    ///     Creates a new RpgStatSheet with allocated memory.
     /// </summary>
     /// <param name="count">The number of attributes to allocate.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public AttributeSheet(int count)
+    public RpgStatSheet(int count)
     {
         _count = count;
-        _attributes = (Attribute*)Marshal.AllocHGlobal(count * sizeof(Attribute));
+        _attributes = (RpgStat*)Marshal.AllocHGlobal(count * sizeof(RpgStat));
         _ownsMemory = true;
 
         // Initialize all attributes to default
-        for (var i = 0; i < count; i++) _attributes[i] = new Attribute(0f);
+        for (var i = 0; i < count; i++) _attributes[i] = new RpgStat(0f);
     }
 
     /// <summary>
-    ///     Creates a new AttributeSheet from externally allocated memory.
+    ///     Creates a new RpgStatSheet from externally allocated memory.
     /// </summary>
     /// <param name="attributes">Pointer to attribute array.</param>
     /// <param name="count">Number of attributes.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public AttributeSheet(Attribute* attributes, int count)
+    public RpgStatSheet(RpgStat* attributes, int count)
     {
         _attributes = attributes;
         _count = count;
@@ -71,13 +71,13 @@ public unsafe struct AttributeSheet
     }
 
     /// <summary>
-    ///     Creates a new AttributeSheet from a Span.
+    ///     Creates a new RpgStatSheet from a Span.
     /// </summary>
     /// <param name="attributes">Span of attributes.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public AttributeSheet(Span<Attribute> attributes)
+    public RpgStatSheet(Span<RpgStat> attributes)
     {
-        fixed (Attribute* ptr = attributes)
+        fixed (RpgStat* ptr = attributes)
         {
             _attributes = ptr;
             _count = attributes.Length;
@@ -86,7 +86,7 @@ public unsafe struct AttributeSheet
     }
 
     /// <summary>
-    ///     Disposes the AttributeSheet, freeing allocated memory if owned.
+    ///     Disposes the RpgStatSheet, freeing allocated memory if owned.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Dispose()
@@ -128,17 +128,17 @@ public unsafe struct AttributeSheet
     ///     Returns a Span for logic processing (Zero Alloc).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Span<Attribute> AsSpan()
+    public Span<RpgStat> AsSpan()
     {
-        if (_attributes == null || _count == 0) return Span<Attribute>.Empty;
-        return new Span<Attribute>(_attributes, _count);
+        if (_attributes == null || _count == 0) return Span<RpgStat>.Empty;
+        return new Span<RpgStat>(_attributes, _count);
     }
 
     /// <summary>
     ///     Gets a reference to an attribute by ID.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ref Attribute GetRef(int statId)
+    public ref RpgStat GetRef(int statId)
     {
         if (statId < 0 || statId >= _count || _attributes == null)
             throw new IndexOutOfRangeException($"Stat ID {statId} out of range [0, {_count})");

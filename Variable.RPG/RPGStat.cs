@@ -6,7 +6,7 @@ namespace Variable.RPG;
 /// </summary>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
-public struct Attribute
+public struct RpgStat
 {
     /// <summary>The base value (e.g., base Strength = 10).</summary>
     public float Base;
@@ -27,10 +27,10 @@ public struct Attribute
     public float Value;
 
     /// <summary>
-    ///     Creates a new Attribute with default bounds.
+    ///     Creates a new RPGStat with default bounds.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Attribute(float baseVal, float min = 0f, float max = float.MaxValue)
+    public RpgStat(float baseVal, float min = 0f, float max = float.MaxValue)
     {
         Base = baseVal;
         ModAdd = 0f;

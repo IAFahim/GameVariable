@@ -4,7 +4,7 @@ namespace Variable.RPG;
 ///     Pure logic for recalculating attributes.
 ///     All methods operate on primitives only - NO STRUCTS in parameters.
 /// </summary>
-public static class AttributeLogic
+public static class RpgStatLogic
 {
     /// <summary>
     ///     Formula: (Base + Add) * Mult, clamped to [Min, Max].

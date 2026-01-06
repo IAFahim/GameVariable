@@ -1,6 +1,6 @@
 namespace Variable.RPG.Tests;
 
-public class AttributeLogicTests
+public class RpgStatLogicTests
 {
     [Fact]
     public void Calculate_DiamondPattern_Works()
@@ -8,7 +8,7 @@ public class AttributeLogicTests
         // 10 Base + 5 Flat = 15
         // 15 * 2.0 Mult (1.0 + 1.0) = 30
 
-        var attr = new Attribute(10f);
+        var attr = new RpgStat(10f);
         attr.AddModifier(5f, 1.0f); // +5 Flat, +100%
 
         var val = attr.GetValue();
@@ -19,7 +19,7 @@ public class AttributeLogicTests
     [Fact]
     public void Calculate_ClampsMinMax()
     {
-        var attr = new Attribute(100f, 0f, 50f); // Max 50
+        var attr = new RpgStat(100f, 0f, 50f); // Max 50
         var val = attr.GetValue();
         Assert.Equal(50f, val);
     }
@@ -27,7 +27,7 @@ public class AttributeLogicTests
     [Fact]
     public void Calculate_ClampsToMin()
     {
-        var attr = new Attribute(10f, 20f, 100f); // Min 20, but base is 10
+        var attr = new RpgStat(10f, 20f, 100f); // Min 20, but base is 10
         var val = attr.GetValue();
         Assert.Equal(20f, val); // Should clamp to min
     }
@@ -35,7 +35,7 @@ public class AttributeLogicTests
     [Fact]
     public void ClearModifiers_ResetsToBase()
     {
-        var attr = new Attribute(10f);
+        var attr = new RpgStat(10f);
         attr.AddModifier(20f, 2.0f);
 
         var valBefore = attr.GetValue();
@@ -49,7 +49,7 @@ public class AttributeLogicTests
     [Fact]
     public void GetValue_UsesCacheWhenClean()
     {
-        var attr = new Attribute(10f);
+        var attr = new RpgStat(10f);
         attr.GetValue(); // Calculate once
 
         // Manually corrupt the modifiers without marking dirty

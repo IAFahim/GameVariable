@@ -22,7 +22,7 @@ public static class DamageExtensions
     /// <returns>The total damage to apply to Health.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float ResolveDamage<TConfig>(
-        this Span<Attribute> stats,
+        this Span<RpgStat> stats,
         ReadOnlySpan<DamagePacket> damages,
         TConfig config) where TConfig : IDamageConfig
     {
@@ -38,7 +38,7 @@ public static class DamageExtensions
                 // Safety check
                 if (statId >= 0 && statId < stats.Length)
                 {
-                    // Use AttributeExtensions to get value (which calls Logic)
+                    // Use RpgStatExtensions to get value (which calls Logic)
                     var mitigationValue = stats[statId].GetValue();
                     amount = DamageLogic.ApplyMitigation(amount, mitigationValue, isFlat);
                 }
