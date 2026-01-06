@@ -4,6 +4,14 @@ namespace Variable.RPG;
 ///     A container for attributes using unmanaged memory.
 ///     Supports both managed wrapper (for Unity SerializeField) and pure unsafe usage.
 /// </summary>
+/// <remarks>
+/// <para><b>CRITICAL - Memory Safety Warning:</b></para>
+/// <para>This struct allocates unmanaged memory via Marshal.AllocHGlobal.</para>
+/// <para>You MUST call Dispose() when finished, OR use a using statement.</para>
+/// <para><b>DO NOT COPY THIS STRUCT</b> after construction - copying creates a shallow copy with the same pointer,
+/// leading to use-after-free vulnerabilities if one copy is disposed.</para>
+/// <para>Recommended usage: Create once, use by reference, dispose once.</para>
+/// </remarks>
 public unsafe struct RpgStatSheet
 {
     private RpgStat* _attributes;

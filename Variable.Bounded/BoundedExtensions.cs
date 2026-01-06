@@ -205,4 +205,49 @@ public static class BoundedExtensions
         bounded.Current = current + rate * deltaTime;
         bounded.Normalize();
     }
+
+    /// <summary>
+    ///     Attempts to consume (subtract) an amount from the bounded float.
+    ///     Returns false if there's not enough available.
+    /// </summary>
+    /// <param name="bounded">The bounded float to consume from.</param>
+    /// <param name="amount">The amount to consume.</param>
+    /// <returns>True if successful; false if insufficient.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool TryConsume(ref this BoundedFloat bounded, float amount)
+    {
+        if (bounded.Current < amount) return false;
+        bounded.Current -= amount;
+        return true;
+    }
+
+    /// <summary>
+    ///     Attempts to consume (subtract) an amount from the bounded int.
+    ///     Returns false if there's not enough available.
+    /// </summary>
+    /// <param name="bounded">The bounded int to consume from.</param>
+    /// <param name="amount">The amount to consume.</param>
+    /// <returns>True if successful; false if insufficient.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool TryConsume(ref this BoundedInt bounded, int amount)
+    {
+        if (bounded.Current < amount) return false;
+        bounded.Current -= amount;
+        return true;
+    }
+
+    /// <summary>
+    ///     Attempts to consume (subtract) an amount from the bounded byte.
+    ///     Returns false if there's not enough available.
+    /// </summary>
+    /// <param name="bounded">The bounded byte to consume from.</param>
+    /// <param name="amount">The amount to consume.</param>
+    /// <returns>True if successful; false if insufficient.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool TryConsume(ref this BoundedByte bounded, byte amount)
+    {
+        if (bounded.Current < amount) return false;
+        bounded.Current -= amount;
+        return true;
+    }
 }

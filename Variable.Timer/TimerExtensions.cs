@@ -6,7 +6,6 @@ namespace Variable.Timer;
 /// </summary>
 public static class TimerExtensions
 {
-    private const float Tolerance = 0.0001f;
 
     // Timer Extensions
 

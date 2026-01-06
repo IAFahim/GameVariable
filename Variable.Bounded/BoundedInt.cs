@@ -111,6 +111,51 @@ public struct BoundedInt :
         return $"{Current}/{Max}";
     }
 
+    /// <summary>
+    ///     Formats the bounded int into a character span (zero allocation).
+    /// </summary>
+    /// <param name="destination">The span to write the formatted value into.</param>
+    /// <param name="charsWritten">The number of characters written.</param>
+    /// <param name="format">Optional format string. "R" for ratio percentage.</param>
+    /// <returns>True if formatting succeeded; false if destination was too small.</returns>
+    /// <remarks>
+    ///     This method is allocation-free and suitable for hot paths.
+    ///     Example usage: Span&lt;char&gt; buffer = stackalloc char[32]; bounded.TryFormat(buffer, out var len);
+    /// </remarks>
+    public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default)
+    {
+        charsWritten = 0;
+
+        // Handle ratio format
+        if (format.Length > 0 && (format[0] == 'R' || format[0] == 'r'))
+        {
+            var ratio = this.GetRatio() * 100.0;
+            if (!ratio.TryFormat(destination, out var written, "F1"))
+                return false;
+            charsWritten = written;
+            
+            if (charsWritten >= destination.Length)
+                return false;
+            destination[charsWritten++] = '%';
+            return true;
+        }
+
+        // Default format: "Current/Max"
+        if (!Current.TryFormat(destination, out var currentWritten))
+            return false;
+        charsWritten = currentWritten;
+
+        if (charsWritten >= destination.Length)
+            return false;
+        destination[charsWritten++] = '/';
+
+        if (!Max.TryFormat(destination.Slice(charsWritten), out var maxWritten))
+            return false;
+        charsWritten += maxWritten;
+
+        return true;
+    }
+
     /// <inheritdoc />
     public readonly override bool Equals(object obj)
     {

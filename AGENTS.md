@@ -17,64 +17,85 @@ You must strictly adhere to a 3-layer separation for all game systems. **Never m
 - **Role:** The brain. Performs calculations.
 - **Constraints:**
   - **Stateless Static Class:** e.g., `InventoryLogic`, `TimerLogic`.
-  - **Pure Functions Only:** Methods must take **Value Inputs** and return **Value Outputs**.
-  - **NO `ref` Parameters:** Logic methods must not mutate inputs via reference. They must return the new state.
-  - **Burst Compatible:** Strict adherence to Burst rules (No managed objects, no LINQ).
   - **Primitives Only:** Methods must NOT take the Struct as a parameter. They must take `int`, `float`, `bool`.
+  - **NO `ref` Parameters:** Inputs are passed by value.
+  - **Burst Compatible:** Strict adherence to Burst rules (No managed objects, no LINQ).
+  - **Void/Bool Return Only:** Methods must **NEVER** return a value (int, float, etc.) directly.
+    - Results must be returned via `out` parameters.
+    - Return type allows only `void` or `bool` (for TryX/State checks).
 
 ### Layer C: The Adapter ( The Extension Class )
 - **Role:** Syntax sugar, Mutation, and Developer Experience (DX).
 - **Constraints:**
   - **Extension Methods Only:** e.g., `public static void Tick(ref this Timer t, float dt)`.
   - **State Mutation:** This is the *only* layer allowed to assign values back to the struct using `ref this`.
-  - **Decomposition:** Decomposes the Struct into primitives, calls Layer B, and assigns the result back.
+  - **Decomposition:** Decomposes the Struct into primitives, calls Layer B (using `out`), and assigns the result back.
 
 ---
 
 ## 2. Core Architectural Principles
 
-### TryX Pattern Mastery
-Methods return `bool` for success/failure, with results passed via `out` parameters (or Tuples).
+### The "TryX" & "Out" Mandate
+Logic Layer methods are strictly forbidden from returning data directly. You must follow these two patterns:
+
+**1. The Operation Pattern (Void + Out)**
+For standard calculations, return `void` and output the result via `out`.
 ```csharp
-// ✓ CORRECT - Logic Layer Style
-public static bool TryCalculate(float input, out float result) { ... }
+// ✅ CORRECT
+public static void CalculateDamage(float damage, float armor, out float result) {
+    result = damage - armor;
+}
 ```
+
+**2. The TryX Pattern (Bool + Out)**
+If an operation can fail, return `bool` (success/failure) and name the method `TryX`.
+```csharp
+// ✅ CORRECT
+public static bool TryConsume(float current, float amount, out float remaining) {
+    if (current < amount) {
+        remaining = current;
+        return false;
+    }
+    remaining = current - amount;
+    return true;
+}
+```
+
+*Exception: State queries that perform no calculation (e.g., `IsFull`, `IsEmpty`) may return `bool`.*
 
 ### Early Exit Pattern (MANDATORY)
 **Every method MUST validate inputs and exit early on failure.**
-Do not nest `if` statements. Check conditions, fail fast, and return.
+Do not nest `if` statements. Check conditions, assign default `out` values, fail fast, and return.
 
 ---
 
 ## 3. Burst Compatibility Checklist (Strict)
 
 Before writing any `*Logic` class method, verify:
-- ✓ **Primitives Only**: Arguments must be `int`, `float`, `bool`. **Never pass a struct into a Logic method.**
+- ✓ **Primitives Only**: Arguments are `int`, `float`, `bool`. **Never pass a struct.**
 - ✓ **No Instance Methods**: The Logic class is `static`.
-- ✓ **No Managed Objects**: No `string`, `class`, or `interface` in signatures.
-- ✓ **No `ref` Mutation**: Inputs are passed by value. New state is returned.
+- ✓ **No Managed Objects**: No `string`, `class`, or `interface`.
+- ✓ **No Return Values**: Return type is `void` or `bool`. All results use `out`.
 
 ---
 
 ## 4. Code Examples (Do vs Don't)
 
-### ❌ WRONG (OOP Style or Impure Logic)
+### ❌ WRONG (Returns Value, Impure)
 ```csharp
 public struct Cooldown {
     public float Current;
-    // WRONG: Logic inside struct
-    public void Tick(float dt) { Current -= dt; } 
 }
 
-// WRONG: Logic Layer using ref mutation
 public static class CooldownLogic {
-    public static void Tick(ref float current, float dt) { 
-        current -= dt; // Ref not allowed in Logic Layer
+    // WRONG: Returns float directly
+    public static float Tick(float current, float dt) { 
+        return current - dt; 
     }
 }
 ```
 
-### ✅ CORRECT (DOD & Pure Functional Style)
+### ✅ CORRECT (Out Params, TryX, DOD)
 
 **1. The Data**
 ```csharp
@@ -86,19 +107,34 @@ public struct Cooldown {
 }
 ```
 
-**2. The Logic (Pure Functions, Primitives Only)**
+**2. The Logic (Void/Bool Return, Out Params)**
 ```csharp
 public static class CooldownLogic {
-    // Input: Current State -> Output: New State
+    // Input: Values -> Output: Out Parameter
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float Tick(float current, float dt) {
-        if (current <= 0) return 0;
-        return current - dt;
+    public static void Tick(float current, float dt, out float result) {
+        if (current <= 0) {
+            result = 0;
+            return;
+        }
+        result = current - dt;
     }
     
+    // State Query: Bool return allowed
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsReady(float current) {
         return current <= 0;
+    }
+    
+    // Try Pattern: Bool return + Out result
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool TryReset(float duration, out float newCurrent) {
+        if (duration <= 0) {
+            newCurrent = 0;
+            return false;
+        }
+        newCurrent = duration;
+        return true;
     }
 }
 ```
@@ -106,9 +142,9 @@ public static class CooldownLogic {
 **3. The Extension (Adapter & Mutation)**
 ```csharp
 public static class CooldownExtensions {
-    // Ref is allowed here ONLY to assign the result from Logic
     public static void Tick(ref this Cooldown c, float dt) {
-        c.Current = CooldownLogic.Tick(c.Current, dt);
+        // Decompose -> Call Logic via Out -> Assign Back
+        CooldownLogic.Tick(c.Current, dt, out c.Current);
     }
 
     public static bool IsReady(ref this Cooldown c) {
@@ -130,7 +166,7 @@ public static class CooldownExtensions {
 
 You don't just write code—you architect solutions. You:
 - **Enforce the Data-Logic-Extension separation** rigorously.
-- **Ensure Logic classes are Pure Functions** (Pass Values -> Return New Value).
+- **Ensure Logic methods NEVER return values directly** (Always use `out`).
+- **Use `TryX` pattern** for any fallible boolean operations.
 - **Isolate all state mutation to Extension methods**.
-- **Always enforce Early Exit** patterns.
 - Write code that is self-documenting, maintainable, and Burst-ready.

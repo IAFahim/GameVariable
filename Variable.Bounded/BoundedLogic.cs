@@ -14,9 +14,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float Clamp(float value, float min, float max)
     {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
+        return CoreMath.Clamp(value, min, max);
     }
 
     /// <summary>Sets a value within bounds.</summary>
@@ -27,7 +25,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Set(ref float current, float min, float max, float value)
     {
-        current = Clamp(value, min, max);
+        current = CoreMath.Clamp(value, min, max);
     }
 
     /// <summary>Normalizes the current value to be within bounds.</summary>
@@ -37,7 +35,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Normalize(ref float current, float min, float max)
     {
-        current = Clamp(current, min, max);
+        current = CoreMath.Clamp(current, min, max);
     }
 
     /// <summary>Checks if the value is full (at max) within a tolerance.</summary>
@@ -102,9 +100,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Clamp(int value, int min, int max)
     {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
+        return CoreMath.Clamp(value, min, max);
     }
 
     /// <summary>Sets an int value within bounds.</summary>
@@ -115,7 +111,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Set(ref int current, int min, int max, int value)
     {
-        current = Clamp(value, min, max);
+        current = CoreMath.Clamp(value, min, max);
     }
 
     /// <summary>Normalizes the current int value to be within bounds.</summary>
@@ -125,7 +121,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Normalize(ref int current, int min, int max)
     {
-        current = Clamp(current, min, max);
+        current = CoreMath.Clamp(current, min, max);
     }
 
     /// <summary>Checks if the int value is full (at max).</summary>
@@ -187,7 +183,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte Clamp(byte value, byte max)
     {
-        return value > max ? max : value;
+        return CoreMath.Clamp(value, max);
     }
 
     /// <summary>Clamps an int value to a byte range [0, max].</summary>
@@ -197,9 +193,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte Clamp(int value, byte max)
     {
-        if (value > max) return max;
-        if (value < 0) return 0;
-        return (byte)value;
+        return CoreMath.Clamp(value, max);
     }
 
     /// <summary>Sets a byte value within bounds.</summary>
@@ -209,7 +203,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Set(ref byte current, byte max, byte value)
     {
-        current = Clamp(value, max);
+        current = CoreMath.Clamp(value, max);
     }
 
     /// <summary>Normalizes the current byte value to be within bounds.</summary>
@@ -218,7 +212,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Normalize(ref byte current, byte max)
     {
-        current = Clamp(current, max);
+        current = CoreMath.Clamp(current, max);
     }
 
     /// <summary>Checks if the byte value is full (at max).</summary>

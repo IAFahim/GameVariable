@@ -6,17 +6,13 @@ namespace Variable.Timer;
 /// </summary>
 public static class TimerLogic
 {
-    private const float Tolerance = 0.0001f;
-
     /// <summary>
     ///     Clamps a value between min and max.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float Clamp(float value, float min, float max)
     {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
+        return CoreMath.Clamp(value, min, max);
     }
 
     /// <summary>
@@ -25,7 +21,7 @@ public static class TimerLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsFull(float current, float max)
     {
-        return current >= max - Tolerance;
+        return current >= max - MathConstants.Tolerance;
     }
 
     /// <summary>
@@ -34,7 +30,7 @@ public static class TimerLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsEmpty(float current)
     {
-        return current <= Tolerance;
+        return current <= MathConstants.Tolerance;
     }
 
     /// <summary>
@@ -43,7 +39,7 @@ public static class TimerLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double GetRatio(float current, float duration)
     {
-        return Math.Abs(duration) < Tolerance ? 0.0 : (double)current / duration;
+        return Math.Abs(duration) < MathConstants.Tolerance ? 0.0 : (double)current / duration;
     }
 
     /// <summary>
@@ -52,7 +48,7 @@ public static class TimerLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float GetInverseRatio(float current, float duration)
     {
-        return Math.Abs(duration) < Tolerance ? 1f : 1f - Math.Max(0, current / duration);
+        return Math.Abs(duration) < MathConstants.Tolerance ? 1f : 1f - Math.Max(0, current / duration);
     }
 
     /// <summary>
@@ -65,10 +61,10 @@ public static class TimerLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TickAndCheckComplete(ref float current, float duration, float deltaTime)
     {
-        if (current >= duration - Tolerance) return true;
+        if (current >= duration - MathConstants.Tolerance) return true;
 
         current += deltaTime;
-        if (current >= duration - Tolerance)
+        if (current >= duration - MathConstants.Tolerance)
         {
             current = duration;
             return true;
@@ -88,14 +84,14 @@ public static class TimerLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TickAndCheckComplete(ref float current, float duration, float deltaTime, out float overflow)
     {
-        if (current >= duration - Tolerance)
+        if (current >= duration - MathConstants.Tolerance)
         {
             overflow = deltaTime;
             return true;
         }
 
         current += deltaTime;
-        if (current >= duration - Tolerance)
+        if (current >= duration - MathConstants.Tolerance)
         {
             overflow = current - duration;
             current = duration;
@@ -115,10 +111,10 @@ public static class TimerLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TickAndCheckReady(ref float current, float deltaTime)
     {
-        if (current <= Tolerance) return true;
+        if (current <= MathConstants.Tolerance) return true;
 
         current -= deltaTime;
-        if (current <= Tolerance)
+        if (current <= MathConstants.Tolerance)
         {
             current = 0f;
             return true;
@@ -137,14 +133,14 @@ public static class TimerLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TickAndCheckReady(ref float current, float deltaTime, out float overflow)
     {
-        if (current <= Tolerance)
+        if (current <= MathConstants.Tolerance)
         {
             overflow = deltaTime;
             return true;
         }
 
         current -= deltaTime;
-        if (current <= Tolerance)
+        if (current <= MathConstants.Tolerance)
         {
             overflow = -current;
             current = 0f;
@@ -179,7 +175,6 @@ public static class TimerLogic
         float clampMax)
     {
         current = targetValue + overflow;
-        if (current < clampMin) current = clampMin;
-        else if (current > clampMax) current = clampMax;
+        current = CoreMath.Clamp(current, clampMin, clampMax);
     }
 }
