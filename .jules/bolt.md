@@ -1,0 +1,3 @@
+## 2026-01-06 - C# Struct Performance: Pass-by-Reference with 'in'
+**Learning:** For C# structs larger than the native pointer size (e.g., 8 bytes on a 64-bit system), passing them to methods using the `in` modifier is a significant performance optimization. It avoids a stack copy of the struct's data by passing a readonly reference instead.
+**Action:** In performance-critical C# code, always check the size of structs. For any struct larger than a pointer, use the `in` modifier on method parameters for any methods that do not need to modify the struct's state. This is a low-risk, high-impact optimization for read-only operations.
