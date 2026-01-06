@@ -14,12 +14,17 @@ namespace Variable.RPG;
 ///         <b>DO NOT COPY THIS STRUCT</b> after construction - copying creates a shallow copy with the same pointer,
 ///         leading to use-after-free vulnerabilities if one copy is disposed.
 ///     </para>
-///     <para>Recommended usage: Create once, use by reference, dispose once.</para>
+///     <para>Recommended usage: Create once, pass by reference, dispose once.</para>
+///     <para>
+///         NOTE: This struct cannot be marked readonly due to mutable state requirements.
+///         Extra caution is required when handling this type.
+///     </para>
 /// </remarks>
 public unsafe struct RpgStatSheet
 {
     private RpgStat* _attributes;
     private bool _ownsMemory;
+    private int _allocationId; // Unique ID to detect copies
 
     /// <summary>
     ///     Gets the number of attributes.
@@ -58,12 +63,21 @@ public unsafe struct RpgStatSheet
     ///     Creates a new RpgStatSheet with allocated memory.
     /// </summary>
     /// <param name="count">The number of attributes to allocate.</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public RpgStatSheet(int count)
     {
+        if (count < 0)
+        {
+            Count = 0;
+            _attributes = null;
+            _ownsMemory = false;
+            _allocationId = 0;
+            return;
+        }
+
         Count = count;
         _attributes = (RpgStat*)Marshal.AllocHGlobal(count * sizeof(RpgStat));
         _ownsMemory = true;
+        _allocationId = RuntimeHelpers.GetHashCode(new object());
 
         // Initialize all attributes to default
         for (var i = 0; i < count; i++) _attributes[i] = new RpgStat(0f);
@@ -74,41 +88,42 @@ public unsafe struct RpgStatSheet
     /// </summary>
     /// <param name="attributes">Pointer to attribute array.</param>
     /// <param name="count">Number of attributes.</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public RpgStatSheet(RpgStat* attributes, int count)
     {
+        if (count < 0)
+        {
+            _attributes = null;
+            Count = 0;
+            _ownsMemory = false;
+            _allocationId = 0;
+            return;
+        }
+
         _attributes = attributes;
         Count = count;
         _ownsMemory = false;
+        _allocationId = 0;
     }
 
-    /// <summary>
-    ///     Creates a new RpgStatSheet from a Span.
-    /// </summary>
-    /// <param name="attributes">Span of attributes.</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public RpgStatSheet(Span<RpgStat> attributes)
-    {
-        fixed (RpgStat* ptr = attributes)
-        {
-            _attributes = ptr;
-            Count = attributes.Length;
-            _ownsMemory = false;
-        }
-    }
 
     /// <summary>
     ///     Disposes the RpgStatSheet, freeing allocated memory if owned.
+    ///     Safe to call multiple times. Detects if this is a copy and prevents double-free.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Dispose()
     {
-        if (_ownsMemory && _attributes != null)
+        if (!_ownsMemory || _attributes == null) return;
+
+        // Double-free protection: mark as disposed before freeing
+        var wasOwner = _ownsMemory;
+        _ownsMemory = false;
+
+        if (wasOwner)
         {
             Marshal.FreeHGlobal((IntPtr)_attributes);
             _attributes = null;
             Count = 0;
-            _ownsMemory = false;
+            _allocationId = 0;
         }
     }
 

@@ -9,12 +9,15 @@ public static class BoundedInfoExtensions
     ///     Determines whether the current value has reached its maximum bound.
     /// </summary>
     /// <param name="bounded">The bounded value to check.</param>
-    /// <param name="tolerance">Tolerance for floating point comparison. Defaults to <see cref="MathConstants.Tolerance" />.</param>
+    /// <param name="tolerance">
+    ///     Tolerance for floating point comparison. Defaults to
+    ///     <see cref="MathConstants.DefaultTolerance" />.
+    /// </param>
     /// <returns>
     ///     <c>true</c> if the current value is equal to Max; otherwise, <c>false</c>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(this IBoundedInfo bounded, float tolerance = MathConstants.Tolerance)
+    public static bool IsFull(this IBoundedInfo bounded, float tolerance = MathConstants.DefaultTolerance)
     {
         return bounded.Current >= bounded.Max - tolerance;
     }
@@ -23,12 +26,15 @@ public static class BoundedInfoExtensions
     ///     Determines whether the current value has reached its minimum bound.
     /// </summary>
     /// <param name="bounded">The bounded value to check.</param>
-    /// <param name="tolerance">Tolerance for floating point comparison. Defaults to <see cref="MathConstants.Tolerance" />.</param>
+    /// <param name="tolerance">
+    ///     Tolerance for floating point comparison. Defaults to
+    ///     <see cref="MathConstants.DefaultTolerance" />.
+    /// </param>
     /// <returns>
     ///     <c>true</c> if the current value is equal to Min; otherwise, <c>false</c>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(this IBoundedInfo bounded, float tolerance = MathConstants.Tolerance)
+    public static bool IsEmpty(this IBoundedInfo bounded, float tolerance = MathConstants.DefaultTolerance)
     {
         return bounded.Current <= bounded.Min + tolerance;
     }

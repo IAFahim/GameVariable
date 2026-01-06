@@ -217,7 +217,7 @@ public class RpgStatOperationTests
             RpgStatModifier.AddFlat(RpgStatField.ModMult, 0.2f) // Add to multiplier
         };
 
-        stat.ApplyModifiers(modifiers, true);
+        stat.ApplyModifiers(modifiers);
 
         // (15 + 3) * 1.2 = 21.6
         Assert.Equal(21.6f, stat.GetValue(), 0.01f);

@@ -28,7 +28,7 @@ public static class RegenExtensions
     ///     Determines whether the value is at maximum.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(this RegenFloat regen, float tolerance = MathConstants.Tolerance)
+    public static bool IsFull(this RegenFloat regen, float tolerance = MathConstants.DefaultTolerance)
     {
         return regen.Value.Current >= regen.Value.Max - tolerance;
     }
@@ -37,7 +37,7 @@ public static class RegenExtensions
     ///     Determines whether the value is at minimum (empty).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(this RegenFloat regen, float tolerance = MathConstants.Tolerance)
+    public static bool IsEmpty(this RegenFloat regen, float tolerance = MathConstants.DefaultTolerance)
     {
         return regen.Value.Current <= regen.Value.Min + tolerance;
     }

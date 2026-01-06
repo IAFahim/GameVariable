@@ -28,7 +28,7 @@ public static class BoundedExtensions
     ///     Determines whether the current value has reached its maximum bound.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(this BoundedFloat bounded, float tolerance = MathConstants.Tolerance)
+    public static bool IsFull(this BoundedFloat bounded, float tolerance = MathConstants.DefaultTolerance)
     {
         return BoundedLogic.IsFull(bounded.Current, bounded.Max, tolerance);
     }
@@ -37,7 +37,7 @@ public static class BoundedExtensions
     ///     Determines whether the current value has reached its minimum bound.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(this BoundedFloat bounded, float tolerance = MathConstants.Tolerance)
+    public static bool IsEmpty(this BoundedFloat bounded, float tolerance = MathConstants.DefaultTolerance)
     {
         return BoundedLogic.IsEmpty(bounded.Current, bounded.Min, tolerance);
     }

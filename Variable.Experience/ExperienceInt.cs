@@ -92,7 +92,7 @@ public struct ExperienceInt :
     /// <inheritdoc />
     public override string ToString()
     {
-        return $"Lvl {Level} ({Current}/{Max})";
+        return string.Format(CultureInfo.InvariantCulture, "Lvl {0} ({1}/{2})", Level, Current, Max);
     }
 
     /// <summary>
@@ -109,8 +109,8 @@ public struct ExperienceInt :
 
         return format.ToUpperInvariant() switch
         {
-            "L" => Level.ToString(),
-            "C" => $"{Current}/{Max}",
+            "L" => Level.ToString(CultureInfo.InvariantCulture),
+            "C" => string.Format(CultureInfo.InvariantCulture, "{0}/{1}", Current, Max),
             _ => ToString()
         };
     }

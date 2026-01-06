@@ -12,7 +12,7 @@ public struct InputRingBuffer : IEquatable<InputRingBuffer>
     /// <summary>
     ///     The maximum number of inputs the buffer can hold.
     /// </summary>
-    public const int CAPACITY = 8;
+    public const int CAPACITY = InputBufferConfig.StandardCapacity;
 
     /// <summary>Slot 0 for input storage.</summary>
     public int Input0;

@@ -1,4 +1,4 @@
-﻿namespace Variable.Inventory;
+namespace Variable.Inventory;
 
 /// <summary>
 ///     Transfer operations for moving items between inventories.
@@ -17,7 +17,7 @@ public static partial class InventoryLogic
     /// <param name="tolerance">The tolerance for floating point comparisons.</param>
     /// <returns>True if any amount was transferred; otherwise, false.</returns>
     public static bool TryTransferPartial(ref float srcQty, ref float dstQty, float dstMax, float requestedAmount,
-        out float actualTransferred, float tolerance = MathConstants.Tolerance)
+        out float actualTransferred, float tolerance = MathConstants.DefaultTolerance)
     {
         if (srcQty <= tolerance || requestedAmount <= 0)
         {
@@ -70,7 +70,7 @@ public static partial class InventoryLogic
         float dstMaxQty, float unitWeight,
         float requestedAmount,
         out float actualTransferred,
-        float tolerance = MathConstants.Tolerance)
+        float tolerance = MathConstants.DefaultTolerance)
     {
         if (srcQty <= tolerance || requestedAmount <= 0)
         {
@@ -126,7 +126,7 @@ public static partial class InventoryLogic
     ///     destination is full.
     /// </returns>
     public static bool TryTransferExact(ref float srcQty, ref float dstQty, float dstMax, float amount,
-        float tolerance = MathConstants.Tolerance)
+        float tolerance = MathConstants.DefaultTolerance)
     {
         if (amount <= tolerance) return true;
 
@@ -160,7 +160,7 @@ public static partial class InventoryLogic
         ref float dstCurWeight,
         float dstMaxWeight,
         float dstMaxQty, float itemUnitWeight,
-        float amount, float tolerance = MathConstants.Tolerance)
+        float amount, float tolerance = MathConstants.DefaultTolerance)
     {
         if (amount <= tolerance) return true;
 

@@ -10,7 +10,7 @@ public static partial class InventoryLogic
     ///     Determines whether the inventory is full based on the current quantity and maximum capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(float current, float max, float tolerance = MathConstants.Tolerance)
+    public static bool IsFull(float current, float max, float tolerance = MathConstants.DefaultTolerance)
     {
         return current >= max - tolerance;
     }
@@ -46,7 +46,7 @@ public static partial class InventoryLogic
     ///     Determines whether the inventory is empty.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(float current, float tolerance = MathConstants.Tolerance)
+    public static bool IsEmpty(float current, float tolerance = MathConstants.DefaultTolerance)
     {
         return current <= tolerance;
     }
@@ -82,7 +82,7 @@ public static partial class InventoryLogic
     ///     Checks if the inventory has enough items to satisfy a requirement.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool HasEnough(float current, float required, float tolerance = MathConstants.Tolerance)
+    public static bool HasEnough(float current, float required, float tolerance = MathConstants.DefaultTolerance)
     {
         return current >= required - tolerance;
     }
@@ -118,7 +118,8 @@ public static partial class InventoryLogic
     ///     Checks if the inventory can accept a specific amount of items without exceeding its capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool CanAccept(float current, float max, float amountToAdd, float tolerance = MathConstants.Tolerance)
+    public static bool CanAccept(float current, float max, float amountToAdd,
+        float tolerance = MathConstants.DefaultTolerance)
     {
         return current + amountToAdd <= max + tolerance;
     }
@@ -205,7 +206,7 @@ public static partial class InventoryLogic
         float maxWeight,
         float unitWeight,
         out float result,
-        float tolerance = MathConstants.Tolerance)
+        float tolerance = MathConstants.DefaultTolerance)
     {
         var spaceByQty = currentQty >= maxQty ? 0f : maxQty - currentQty;
 

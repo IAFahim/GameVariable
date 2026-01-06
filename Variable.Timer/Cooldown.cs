@@ -84,7 +84,7 @@ public struct Cooldown :
     /// <inheritdoc />
     public readonly override string ToString()
     {
-        return TimerLogic.IsEmpty(Current) ? "Ready" : $"{Current:F2}s";
+        return TimerLogic.IsEmpty(Current) ? "Ready" : string.Format(CultureInfo.InvariantCulture, "{0:F2}s", Current);
     }
 
     /// <inheritdoc />

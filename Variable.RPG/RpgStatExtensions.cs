@@ -84,7 +84,8 @@ public static class RpgStatExtensions
         // P0 = Percentage format (1.1 -> 110%)
         // ◀  = Visual separator indicating "Derived from"
 
-        return $"{s.Value:F1} ◀ [{s.Base:F1} + {s.ModAdd:F1}] × {s.ModMult:P0}";
+        return string.Format(CultureInfo.InvariantCulture,
+            "{0:F1} ◀ [{1:F1} + {2:F1}] × {3:P0}", s.Value, s.Base, s.ModAdd, s.ModMult);
     }
 
     /// <summary>
@@ -94,7 +95,9 @@ public static class RpgStatExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string ToString(ref this RpgStat s)
     {
-        return $"{s.Value:F2} ◀ [{s.Base:F2} + {s.ModAdd:F2}] × {s.ModMult:F2} :: Bounds({s.Min}, {s.Max})";
+        return string.Format(CultureInfo.InvariantCulture,
+            "{0:F2} ◀ [{1:F2} + {2:F2}] × {3:F2} :: Bounds({4}, {5})",
+            s.Value, s.Base, s.ModAdd, s.ModMult, s.Min, s.Max);
     }
 
     /// <summary>

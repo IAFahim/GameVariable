@@ -89,7 +89,7 @@ public struct BoundedByte :
     /// <inheritdoc />
     public override string ToString()
     {
-        return $"{Current}/{Max}";
+        return string.Format(CultureInfo.InvariantCulture, "{0}/{1}", Current, Max);
     }
 
     /// <inheritdoc />

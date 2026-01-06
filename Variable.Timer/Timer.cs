@@ -84,7 +84,7 @@ public struct Timer :
     /// <inheritdoc />
     public readonly override string ToString()
     {
-        return $"{Current:F2}/{Duration:F2}";
+        return string.Format(CultureInfo.InvariantCulture, "{0:F2}/{1:F2}", Current, Duration);
     }
 
     /// <inheritdoc />

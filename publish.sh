@@ -13,15 +13,25 @@ YELLOW='\033[1;33m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
-API_KEY=$1
+# Security: Read API Key from environment variable instead of command-line argument
+if [ -z "$NUGET_API_KEY" ]; then
+  API_KEY=$1
+  if [ -z "$API_KEY" ]; then
+    echo -e "${RED}Error: NuGet API Key is missing.${NC}"
+    echo -e ""
+    echo -e "Please provide the API key in one of two ways:"
+    echo -e "  1. Set environment variable: export NUGET_API_KEY=your-key-here"
+    echo -e "  2. Pass as argument: ./publish.sh your-key-here"
+    echo -e ""
+    echo -e "${YELLOW}WARNING: Using environment variable is more secure!${NC}"
+    exit 1
+  fi
+else
+  API_KEY=$NUGET_API_KEY
+fi
+
 SOURCE="https://api.nuget.org/v3/index.json"
 OUTPUT_DIR="./nupkgs"
-
-if [ -z "$API_KEY" ]; then
-  echo -e "${RED}Error: NuGet API Key is missing.${NC}"
-  echo -e "Usage: ./publish.sh <Your-NuGet-Api-Key>"
-  exit 1
-fi
 
 # Find all non-test projects
 # We use a while loop to read lines into an array safely

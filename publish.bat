@@ -9,7 +9,23 @@ setlocal EnableDelayedExpansion
 chcp 65001 >nul
 
 :: --- Configuration ---
-set "API_KEY=%~1"
+:: Security: Read API Key from environment variable instead of command-line argument
+if "%NUGET_API_KEY%"=="" (
+    set "API_KEY=%~1"
+    if "!API_KEY!"=="" (
+        echo [ERROR] NuGet API Key is missing.
+        echo.
+        echo Please provide the API key in one of two ways:
+        echo   1. Set environment variable: set NUGET_API_KEY=your-key-here
+        echo   2. Pass as argument: publish.bat your-key-here
+        echo.
+        echo WARNING: Using environment variable is more secure!
+        exit /b 1
+    )
+) else (
+    set "API_KEY=%NUGET_API_KEY%"
+)
+
 set "SOURCE=https://api.nuget.org/v3/index.json"
 set "OUTPUT_DIR=.\nupkgs"
 
@@ -24,11 +40,7 @@ set "CYAN=!ESC![36m"
 set "NC=!ESC![0m"
 
 :: --- Validation ---
-if "%API_KEY%"=="" (
-    echo !RED!Error: NuGet API Key is missing.!NC!
-    echo Usage: publish.bat ^<Your-NuGet-Api-Key^>
-    exit /b 1
-)
+:: Validation is now handled above in the configuration section
 
 :: --- Find Projects ---
 echo.

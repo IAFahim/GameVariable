@@ -67,7 +67,7 @@ public struct ExperienceLong :
     /// <inheritdoc />
     public override string ToString()
     {
-        return $"Lvl {Level} ({Current}/{Max})";
+        return string.Format(CultureInfo.InvariantCulture, "Lvl {0} ({1}/{2})", Level, Current, Max);
     }
 
     /// <inheritdoc />

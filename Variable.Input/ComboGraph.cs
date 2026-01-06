@@ -18,32 +18,32 @@ public unsafe struct ComboGraph
     /// <param name="nodeCount">Number of nodes.</param>
     /// <param name="edges">Pointer to edges array.</param>
     /// <param name="edgeCount">Number of edges.</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ComboGraph(ComboNode* nodes, int nodeCount, ComboEdge* edges, int edgeCount)
     {
+        if (nodeCount < 0)
+        {
+            _nodes = null;
+            NodeCount = 0;
+            _edges = null;
+            EdgeCount = 0;
+            return;
+        }
+
+        if (edgeCount < 0)
+        {
+            _nodes = null;
+            NodeCount = 0;
+            _edges = null;
+            EdgeCount = 0;
+            return;
+        }
+
         _nodes = nodes;
         NodeCount = nodeCount;
         _edges = edges;
         EdgeCount = edgeCount;
     }
 
-    /// <summary>
-    ///     Creates a ComboGraph from a Span (typically from managed arrays).
-    /// </summary>
-    /// <param name="nodes">Span of nodes.</param>
-    /// <param name="edges">Span of edges.</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ComboGraph(Span<ComboNode> nodes, Span<ComboEdge> edges)
-    {
-        fixed (ComboNode* nodePtr = nodes)
-        fixed (ComboEdge* edgePtr = edges)
-        {
-            _nodes = nodePtr;
-            NodeCount = nodes.Length;
-            _edges = edgePtr;
-            EdgeCount = edges.Length;
-        }
-    }
 
     /// <summary>
     ///     Number of nodes.

@@ -16,38 +16,53 @@ public struct InputRingBuffer16 : IEquatable<InputRingBuffer16>
     /// <summary>
     ///     The maximum number of inputs the buffer can hold.
     /// </summary>
-    public const int CAPACITY = 16;
+    public const int CAPACITY = InputBufferConfig.ExtendedCapacity;
 
     /// <summary>Input slot 0 (oldest when buffer is full).</summary>
     public int Input0;
+
     /// <summary>Input slot 1.</summary>
     public int Input1;
+
     /// <summary>Input slot 2.</summary>
     public int Input2;
+
     /// <summary>Input slot 3.</summary>
     public int Input3;
+
     /// <summary>Input slot 4.</summary>
     public int Input4;
+
     /// <summary>Input slot 5.</summary>
     public int Input5;
+
     /// <summary>Input slot 6.</summary>
     public int Input6;
+
     /// <summary>Input slot 7.</summary>
     public int Input7;
+
     /// <summary>Input slot 8.</summary>
     public int Input8;
+
     /// <summary>Input slot 9.</summary>
     public int Input9;
+
     /// <summary>Input slot 10.</summary>
     public int Input10;
+
     /// <summary>Input slot 11.</summary>
     public int Input11;
+
     /// <summary>Input slot 12.</summary>
     public int Input12;
+
     /// <summary>Input slot 13.</summary>
     public int Input13;
+
     /// <summary>Input slot 14.</summary>
     public int Input14;
+
     /// <summary>Input slot 15 (newest when buffer is full).</summary>
     public int Input15;
 
