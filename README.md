@@ -1,4 +1,4 @@
-<div align="center">
+﻿<div align="center">
 
 # 🎮 GameVariable
 
@@ -136,7 +136,6 @@ graph LR
     
     Bounded["📊 Variable.Bounded"] --> Core
     Timer["⏱️ Variable.Timer"] --> Core
-    Range["📏 Variable.Range"] --> Core
     Regen["♻️ Variable.Regen"] --> Bounded
     Reservoir["🔋 Variable.Reservoir"] --> Bounded
     Experience["⭐ Variable.Experience"] --> Core
@@ -159,7 +158,7 @@ graph LR
 | **Variable.Core** | `IBoundedInfo` | Base interface for all bounded types |
 | **Variable.Bounded** | `BoundedFloat`, `BoundedInt`, `BoundedShort`, `BoundedByte` | Health, mana, stamina, armor, shields |
 | **Variable.Timer** | `Timer`, `Cooldown` | Ability cooldowns, buffs, casting times |
-| **Variable.Range** | `RangeFloat`, `RangeInt` | Temperature (-50 to 50), volume (0 to 1) |
+
 | **Variable.Regen** | `RegenFloat`, `RegenLogic` | Auto-regenerating resources, decay |
 | **Variable.Reservoir** | `ReservoirFloat`, `ReservoirInt` | Ammo clips + reserves, batteries |
 | **Variable.Experience** | `ExperienceInt`, `ExperienceLong` | XP, leveling, skill progression |

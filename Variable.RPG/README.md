@@ -1,4 +1,4 @@
-# Variable.RPG
+﻿# Variable.RPG
 
 **Diamond Architecture for RPG Attributes and Damage Pipelines** — AAA-grade, zero-allocation, framework-agnostic.
 
