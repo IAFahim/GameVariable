@@ -1,0 +1,804 @@
+<?xml version="1.0" encoding="utf-8"?>
+<coverage line-rate="0.7867000000000001" branch-rate="0.6976" version="1.9" timestamp="1767690664" lines-covered="166" lines-valid="211" branches-covered="60" branches-valid="86">
+  <sources>
+    <source>D:\IAFahim\Github\GameVariable\</source>
+  </sources>
+  <packages>
+    <package name="Variable.Core" line-rate="0" branch-rate="0" complexity="4">
+      <classes>
+        <class name="Variable.Core.BoundedInfoExtensions" filename="Variable.Core\BoundedInfoExtensions.cs" line-rate="0" branch-rate="0" complexity="4">
+          <methods>
+            <method name="IsFull" signature="(Variable.Core.IBoundedInfo,System.Single)" line-rate="0" branch-rate="1" complexity="1">
+              <lines>
+                <line number="21" hits="0" branch="False" />
+                <line number="22" hits="0" branch="False" />
+                <line number="23" hits="0" branch="False" />
+              </lines>
+            </method>
+            <method name="IsEmpty" signature="(Variable.Core.IBoundedInfo,System.Single)" line-rate="0" branch-rate="1" complexity="1">
+              <lines>
+                <line number="35" hits="0" branch="False" />
+                <line number="36" hits="0" branch="False" />
+                <line number="37" hits="0" branch="False" />
+              </lines>
+            </method>
+            <method name="GetRatio" signature="(Variable.Core.IBoundedInfo)" line-rate="0" branch-rate="0" complexity="2">
+              <lines>
+                <line number="57" hits="0" branch="False" />
+                <line number="58" hits="0" branch="False" />
+                <line number="59" hits="0" branch="True" condition-coverage="0% (0/2)">
+                  <conditions>
+                    <condition number="26" type="jump" coverage="0%" />
+                  </conditions>
+                </line>
+                <line number="60" hits="0" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="21" hits="0" branch="False" />
+            <line number="22" hits="0" branch="False" />
+            <line number="23" hits="0" branch="False" />
+            <line number="35" hits="0" branch="False" />
+            <line number="36" hits="0" branch="False" />
+            <line number="37" hits="0" branch="False" />
+            <line number="57" hits="0" branch="False" />
+            <line number="58" hits="0" branch="False" />
+            <line number="59" hits="0" branch="True" condition-coverage="0% (0/2)">
+              <conditions>
+                <condition number="26" type="jump" coverage="0%" />
+              </conditions>
+            </line>
+            <line number="60" hits="0" branch="False" />
+          </lines>
+        </class>
+      </classes>
+    </package>
+    <package name="Variable.RPG" line-rate="0.8258" branch-rate="0.7142000000000001" complexity="98">
+      <classes>
+        <class name="Variable.RPG.DamageExtensions" filename="Variable.RPG\DamageExtensions.cs" line-rate="1" branch-rate="0.875" complexity="8">
+          <methods>
+            <method name="ResolveDamage" signature="(System.Span`1&lt;Variable.RPG.RpgStat&gt;,System.ReadOnlySpan`1&lt;Variable.RPG.DamagePacket&gt;,TConfig)" line-rate="1" branch-rate="0.875" complexity="8">
+              <lines>
+                <line number="28" hits="7" branch="False" />
+                <line number="29" hits="7" branch="False" />
+                <line number="31" hits="28" branch="True" condition-coverage="100% (2/2)">
+                  <conditions>
+                    <condition number="139" type="jump" coverage="100%" />
+                  </conditions>
+                </line>
+                <line number="32" hits="7" branch="False" />
+                <line number="33" hits="7" branch="False" />
+                <line number="34" hits="7" branch="False" />
+                <line number="37" hits="7" branch="True" condition-coverage="100% (2/2)">
+                  <conditions>
+                    <condition number="60" type="jump" coverage="100%" />
+                  </conditions>
+                </line>
+                <line number="39" hits="6" branch="True" condition-coverage="75% (3/4)">
+                  <conditions>
+                    <condition number="65" type="jump" coverage="50%" />
+                    <condition number="85" type="jump" coverage="100%" />
+                  </conditions>
+                </line>
+                <line number="40" hits="6" branch="False" />
+                <line number="42" hits="6" branch="False" />
+                <line number="43" hits="6" branch="False" />
+                <line number="44" hits="6" branch="False" />
+                <line number="47" hits="7" branch="False" />
+                <line number="48" hits="7" branch="False" />
+                <line number="50" hits="7" branch="False" />
+                <line number="51" hits="7" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="28" hits="7" branch="False" />
+            <line number="29" hits="7" branch="False" />
+            <line number="31" hits="28" branch="True" condition-coverage="100% (2/2)">
+              <conditions>
+                <condition number="139" type="jump" coverage="100%" />
+              </conditions>
+            </line>
+            <line number="32" hits="7" branch="False" />
+            <line number="33" hits="7" branch="False" />
+            <line number="34" hits="7" branch="False" />
+            <line number="37" hits="7" branch="True" condition-coverage="100% (2/2)">
+              <conditions>
+                <condition number="60" type="jump" coverage="100%" />
+              </conditions>
+            </line>
+            <line number="39" hits="6" branch="True" condition-coverage="75% (3/4)">
+              <conditions>
+                <condition number="65" type="jump" coverage="50%" />
+                <condition number="85" type="jump" coverage="100%" />
+              </conditions>
+            </line>
+            <line number="40" hits="6" branch="False" />
+            <line number="42" hits="6" branch="False" />
+            <line number="43" hits="6" branch="False" />
+            <line number="44" hits="6" branch="False" />
+            <line number="47" hits="7" branch="False" />
+            <line number="48" hits="7" branch="False" />
+            <line number="50" hits="7" branch="False" />
+            <line number="51" hits="7" branch="False" />
+          </lines>
+        </class>
+        <class name="Variable.RPG.DamageLogic" filename="Variable.RPG\DamageLogic.cs" line-rate="1" branch-rate="1" complexity="4">
+          <methods>
+            <method name="ApplyMitigation" signature="(System.Single,System.Single,System.Boolean)" line-rate="1" branch-rate="1" complexity="4">
+              <lines>
+                <line number="15" hits="6" branch="False" />
+                <line number="16" hits="6" branch="True" condition-coverage="100% (2/2)">
+                  <conditions>
+                    <condition number="4" type="jump" coverage="100%" />
+                  </conditions>
+                </line>
+                <line number="17" hits="3" branch="False" />
+                <line number="19" hits="3" branch="False" />
+                <line number="21" hits="4" branch="True" condition-coverage="100% (2/2)">
+                  <conditions>
+                    <condition number="22" type="jump" coverage="100%" />
+                  </conditions>
+                </line>
+                <line number="22" hits="3" branch="False" />
+                <line number="24" hits="3" branch="False" />
+                <line number="27" hits="3" branch="False" />
+                <line number="28" hits="3" branch="False" />
+                <line number="30" hits="6" branch="False" />
+                <line number="31" hits="6" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="15" hits="6" branch="False" />
+            <line number="16" hits="6" branch="True" condition-coverage="100% (2/2)">
+              <conditions>
+                <condition number="4" type="jump" coverage="100%" />
+              </conditions>
+            </line>
+            <line number="17" hits="3" branch="False" />
+            <line number="19" hits="3" branch="False" />
+            <line number="21" hits="4" branch="True" condition-coverage="100% (2/2)">
+              <conditions>
+                <condition number="22" type="jump" coverage="100%" />
+              </conditions>
+            </line>
+            <line number="22" hits="3" branch="False" />
+            <line number="24" hits="3" branch="False" />
+            <line number="27" hits="3" branch="False" />
+            <line number="28" hits="3" branch="False" />
+            <line number="30" hits="6" branch="False" />
+            <line number="31" hits="6" branch="False" />
+          </lines>
+        </class>
+        <class name="Variable.RPG.RpgStat" filename="Variable.RPG\RPGStat.cs" line-rate="1" branch-rate="1" complexity="4">
+          <methods>
+            <method name=".ctor" signature="(System.Single,System.Single,System.Single)" line-rate="1" branch-rate="1" complexity="4">
+              <lines>
+                <line number="37" hits="64" branch="False" />
+                <line number="38" hits="64" branch="False" />
+                <line number="39" hits="64" branch="False" />
+                <line number="40" hits="64" branch="False" />
+                <line number="41" hits="64" branch="False" />
+                <line number="42" hits="64" branch="False" />
+                <line number="45" hits="64" branch="False" />
+                <line number="46" hits="65" branch="True" condition-coverage="100% (2/2)">
+                  <conditions>
+                    <condition number="52" type="jump" coverage="100%" />
+                  </conditions>
+                </line>
+                <line number="47" hits="64" branch="True" condition-coverage="100% (2/2)">
+                  <conditions>
+                    <condition number="64" type="jump" coverage="100%" />
+                  </conditions>
+                </line>
+                <line number="48" hits="64" branch="False" />
+                <line number="49" hits="64" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="37" hits="64" branch="False" />
+            <line number="38" hits="64" branch="False" />
+            <line number="39" hits="64" branch="False" />
+            <line number="40" hits="64" branch="False" />
+            <line number="41" hits="64" branch="False" />
+            <line number="42" hits="64" branch="False" />
+            <line number="45" hits="64" branch="False" />
+            <line number="46" hits="65" branch="True" condition-coverage="100% (2/2)">
+              <conditions>
+                <condition number="52" type="jump" coverage="100%" />
+              </conditions>
+            </line>
+            <line number="47" hits="64" branch="True" condition-coverage="100% (2/2)">
+              <conditions>
+                <condition number="64" type="jump" coverage="100%" />
+              </conditions>
+            </line>
+            <line number="48" hits="64" branch="False" />
+            <line number="49" hits="64" branch="False" />
+          </lines>
+        </class>
+        <class name="Variable.RPG.RpgStatExtensions" filename="Variable.RPG\RpgStatExtensions.cs" line-rate="0.9" branch-rate="1" complexity="11">
+          <methods>
+            <method name="Recalculate" signature="(Variable.RPG.RpgStat&amp;)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="15" hits="31" branch="False" />
+                <line number="16" hits="31" branch="False" />
+                <line number="17" hits="31" branch="False" />
+                <line number="18" hits="31" branch="False" />
+                <line number="19" hits="31" branch="False" />
+                <line number="20" hits="31" branch="False" />
+                <line number="21" hits="31" branch="False" />
+                <line number="22" hits="31" branch="False" />
+                <line number="23" hits="31" branch="False" />
+                <line number="24" hits="31" branch="False" />
+              </lines>
+            </method>
+            <method name="AddModifier" signature="(Variable.RPG.RpgStat&amp;,System.Single,System.Single)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="34" hits="4" branch="False" />
+                <line number="35" hits="4" branch="False" />
+                <line number="36" hits="4" branch="False" />
+                <line number="37" hits="4" branch="False" />
+                <line number="38" hits="4" branch="False" />
+                <line number="39" hits="4" branch="False" />
+                <line number="40" hits="4" branch="False" />
+                <line number="41" hits="4" branch="False" />
+              </lines>
+            </method>
+            <method name="ClearModifiers" signature="(Variable.RPG.RpgStat&amp;)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="49" hits="1" branch="False" />
+                <line number="50" hits="1" branch="False" />
+                <line number="51" hits="1" branch="False" />
+                <line number="52" hits="1" branch="False" />
+                <line number="53" hits="1" branch="False" />
+                <line number="54" hits="1" branch="False" />
+              </lines>
+            </method>
+            <method name="GetValue" signature="(Variable.RPG.RpgStat&amp;)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="63" hits="28" branch="False" />
+                <line number="64" hits="28" branch="False" />
+                <line number="65" hits="28" branch="False" />
+                <line number="66" hits="28" branch="False" />
+                <line number="67" hits="28" branch="False" />
+                <line number="68" hits="28" branch="False" />
+                <line number="69" hits="28" branch="False" />
+                <line number="70" hits="28" branch="False" />
+                <line number="71" hits="28" branch="False" />
+                <line number="72" hits="28" branch="False" />
+              </lines>
+            </method>
+            <method name="ToStringCompact" signature="(Variable.RPG.RpgStat&amp;)" line-rate="0" branch-rate="1" complexity="1">
+              <lines>
+                <line number="80" hits="0" branch="False" />
+                <line number="85" hits="0" branch="False" />
+                <line number="86" hits="0" branch="False" />
+              </lines>
+            </method>
+            <method name="ToString" signature="(Variable.RPG.RpgStat&amp;)" line-rate="0" branch-rate="1" complexity="1">
+              <lines>
+                <line number="94" hits="0" branch="False" />
+                <line number="95" hits="0" branch="False" />
+                <line number="96" hits="0" branch="False" />
+              </lines>
+            </method>
+            <method name="TrySetField" signature="(Variable.RPG.RpgStat&amp;,Variable.RPG.RpgStatField,System.Single,System.Boolean)" line-rate="1" branch-rate="1" complexity="4">
+              <lines>
+                <line number="108" hits="33" branch="False" />
+                <line number="109" hits="33" branch="False" />
+                <line number="110" hits="33" branch="False" />
+                <line number="111" hits="33" branch="False" />
+                <line number="112" hits="33" branch="False" />
+                <line number="113" hits="33" branch="False" />
+                <line number="115" hits="33" branch="True" condition-coverage="100% (4/4)">
+                  <conditions>
+                    <condition number="48" type="jump" coverage="100%" />
+                    <condition number="63" type="jump" coverage="100%" />
+                  </conditions>
+                </line>
+                <line number="116" hits="31" branch="False" />
+                <line number="117" hits="31" branch="False" />
+                <line number="118" hits="31" branch="False" />
+                <line number="120" hits="33" branch="False" />
+                <line number="121" hits="33" branch="False" />
+              </lines>
+            </method>
+            <method name="TryGetField" signature="(Variable.RPG.RpgStat&amp;,Variable.RPG.RpgStatField,System.Single&amp;)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="132" hits="18" branch="False" />
+                <line number="133" hits="18" branch="False" />
+                <line number="134" hits="18" branch="False" />
+                <line number="135" hits="18" branch="False" />
+                <line number="136" hits="18" branch="False" />
+                <line number="137" hits="18" branch="False" />
+                <line number="138" hits="18" branch="False" />
+                <line number="139" hits="18" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="15" hits="31" branch="False" />
+            <line number="16" hits="31" branch="False" />
+            <line number="17" hits="31" branch="False" />
+            <line number="18" hits="31" branch="False" />
+            <line number="19" hits="31" branch="False" />
+            <line number="20" hits="31" branch="False" />
+            <line number="21" hits="31" branch="False" />
+            <line number="22" hits="31" branch="False" />
+            <line number="23" hits="31" branch="False" />
+            <line number="24" hits="31" branch="False" />
+            <line number="34" hits="4" branch="False" />
+            <line number="35" hits="4" branch="False" />
+            <line number="36" hits="4" branch="False" />
+            <line number="37" hits="4" branch="False" />
+            <line number="38" hits="4" branch="False" />
+            <line number="39" hits="4" branch="False" />
+            <line number="40" hits="4" branch="False" />
+            <line number="41" hits="4" branch="False" />
+            <line number="49" hits="1" branch="False" />
+            <line number="50" hits="1" branch="False" />
+            <line number="51" hits="1" branch="False" />
+            <line number="52" hits="1" branch="False" />
+            <line number="53" hits="1" branch="False" />
+            <line number="54" hits="1" branch="False" />
+            <line number="63" hits="28" branch="False" />
+            <line number="64" hits="28" branch="False" />
+            <line number="65" hits="28" branch="False" />
+            <line number="66" hits="28" branch="False" />
+            <line number="67" hits="28" branch="False" />
+            <line number="68" hits="28" branch="False" />
+            <line number="69" hits="28" branch="False" />
+            <line number="70" hits="28" branch="False" />
+            <line number="71" hits="28" branch="False" />
+            <line number="72" hits="28" branch="False" />
+            <line number="80" hits="0" branch="False" />
+            <line number="85" hits="0" branch="False" />
+            <line number="86" hits="0" branch="False" />
+            <line number="94" hits="0" branch="False" />
+            <line number="95" hits="0" branch="False" />
+            <line number="96" hits="0" branch="False" />
+            <line number="108" hits="33" branch="False" />
+            <line number="109" hits="33" branch="False" />
+            <line number="110" hits="33" branch="False" />
+            <line number="111" hits="33" branch="False" />
+            <line number="112" hits="33" branch="False" />
+            <line number="113" hits="33" branch="False" />
+            <line number="115" hits="33" branch="True" condition-coverage="100% (4/4)">
+              <conditions>
+                <condition number="48" type="jump" coverage="100%" />
+                <condition number="63" type="jump" coverage="100%" />
+              </conditions>
+            </line>
+            <line number="116" hits="31" branch="False" />
+            <line number="117" hits="31" branch="False" />
+            <line number="118" hits="31" branch="False" />
+            <line number="120" hits="33" branch="False" />
+            <line number="121" hits="33" branch="False" />
+            <line number="132" hits="18" branch="False" />
+            <line number="133" hits="18" branch="False" />
+            <line number="134" hits="18" branch="False" />
+            <line number="135" hits="18" branch="False" />
+            <line number="136" hits="18" branch="False" />
+            <line number="137" hits="18" branch="False" />
+            <line number="138" hits="18" branch="False" />
+            <line number="139" hits="18" branch="False" />
+          </lines>
+        </class>
+        <class name="Variable.RPG.RpgStatLogic" filename="Variable.RPG\RpgStatLogic.cs" line-rate="0.9215000000000001" branch-rate="0.9" complexity="33">
+          <methods>
+            <method name="Recalculate" signature="(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single&amp;)" line-rate="1" branch-rate="1" complexity="4">
+              <lines>
+                <line number="14" hits="59" branch="False" />
+                <line number="15" hits="59" branch="False" />
+                <line number="17" hits="66" branch="True" condition-coverage="100% (2/2)">
+                  <conditions>
+                    <condition number="14" type="jump" coverage="100%" />
+                  </conditions>
+                </line>
+                <line number="18" hits="57" branch="True" condition-coverage="100% (2/2)">
+                  <conditions>
+                    <condition number="27" type="jump" coverage="100%" />
+                  </conditions>
+                </line>
+                <line number="20" hits="59" branch="False" />
+                <line number="21" hits="59" branch="False" />
+              </lines>
+            </method>
+            <method name="AddModifier" signature="(System.Single&amp;,System.Single&amp;,System.Single,System.Single)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="28" hits="4" branch="False" />
+                <line number="29" hits="4" branch="False" />
+                <line number="30" hits="4" branch="False" />
+                <line number="31" hits="4" branch="False" />
+              </lines>
+            </method>
+            <method name="ClearModifiers" signature="(System.Single&amp;,System.Single&amp;)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="38" hits="1" branch="False" />
+                <line number="39" hits="1" branch="False" />
+                <line number="40" hits="1" branch="False" />
+                <line number="41" hits="1" branch="False" />
+              </lines>
+            </method>
+            <method name="GetValueRecalculated" signature="(System.Single&amp;,System.Single,System.Single,System.Single,System.Single,System.Single)" line-rate="1" branch-rate="1" complexity="1">
+              <lines>
+                <line number="49" hits="28" branch="False" />
+                <line number="50" hits="28" branch="False" />
+                <line number="51" hits="28" branch="False" />
+                <line number="52" hits="28" branch="False" />
+              </lines>
+            </method>
+            <method name="TrySetField" signature="(Variable.RPG.RpgStatField,System.Single,System.Single&amp;,System.Single&amp;,System.Single&amp;,System.Single&amp;,System.Single&amp;,System.Single&amp;)" line-rate="1" branch-rate="1" complexity="13">
+              <lines>
+                <line number="62" hits="33" branch="False" />
+                <line number="63" hits="33" branch="True" condition-coverage="100% (13/13)">
+                  <conditions>
+                    <condition number="7" type="jump" coverage="100%" />
+                    <condition number="12" type="switch" coverage="100%" />
+                    <condition number="44" type="jump" coverage="100%" />
+                    <condition number="37" type="jump" coverage="100%" />
+                    <condition number="51" type="jump" coverage="100%" />
+                  </conditions>
+                </line>
+                <line number="66" hits="11" branch="False" />
+                <line number="67" hits="11" branch="False" />
+                <line number="69" hits="4" branch="False" />
+                <line number="70" hits="4" branch="False" />
+                <line number="72" hits="3" branch="False" />
+                <line number="73" hits="3" branch="False" />
+                <line number="75" hits="1" branch="False" />
+                <line number="76" hits="1" branch="False" />
+                <line number="78" hits="12" branch="False" />
+                <line number="79" hits="12" branch="False" />
+                <line number="81" hits="1" branch="False" />
+                <line number="82" hits="1" branch="False" />
+                <line number="84" hits="1" branch="False" />
+                <line number="86" hits="33" branch="False" />
+              </lines>
+            </method>
+            <method name="TryGetField" signature="(Variable.RPG.RpgStatField,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single&amp;)" line-rate="0.7646999999999999" branch-rate="0.7692" complexity="13">
+              <lines>
+                <line number="97" hits="18" branch="False" />
+                <line number="98" hits="18" branch="True" condition-coverage="76.92% (10/13)">
+                  <conditions>
+                    <condition number="7" type="jump" coverage="100%" />
+                    <condition number="12" type="switch" coverage="100%" />
+                    <condition number="44" type="jump" coverage="50%" />
+                    <condition number="37" type="jump" coverage="50%" />
+                    <condition number="51" type="jump" coverage="50%" />
+                  </conditions>
+                </line>
+                <line number="101" hits="8" branch="False" />
+                <line number="102" hits="8" branch="False" />
+                <line number="104" hits="1" branch="False" />
+                <line number="105" hits="1" branch="False" />
+                <line number="107" hits="1" branch="False" />
+                <line number="108" hits="1" branch="False" />
+                <line number="110" hits="0" branch="False" />
+                <line number="111" hits="0" branch="False" />
+                <line number="113" hits="7" branch="False" />
+                <line number="114" hits="7" branch="False" />
+                <line number="116" hits="0" branch="False" />
+                <line number="117" hits="0" branch="False" />
+                <line number="119" hits="1" branch="False" />
+                <line number="120" hits="1" branch="False" />
+                <line number="122" hits="18" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="14" hits="59" branch="False" />
+            <line number="15" hits="59" branch="False" />
+            <line number="17" hits="66" branch="True" condition-coverage="100% (2/2)">
+              <conditions>
+                <condition number="14" type="jump" coverage="100%" />
+              </conditions>
+            </line>
+            <line number="18" hits="57" branch="True" condition-coverage="100% (2/2)">
+              <conditions>
+                <condition number="27" type="jump" coverage="100%" />
+              </conditions>
+            </line>
+            <line number="20" hits="59" branch="False" />
+            <line number="21" hits="59" branch="False" />
+            <line number="28" hits="4" branch="False" />
+            <line number="29" hits="4" branch="False" />
+            <line number="30" hits="4" branch="False" />
+            <line number="31" hits="4" branch="False" />
+            <line number="38" hits="1" branch="False" />
+            <line number="39" hits="1" branch="False" />
+            <line number="40" hits="1" branch="False" />
+            <line number="41" hits="1" branch="False" />
+            <line number="49" hits="28" branch="False" />
+            <line number="50" hits="28" branch="False" />
+            <line number="51" hits="28" branch="False" />
+            <line number="52" hits="28" branch="False" />
+            <line number="62" hits="33" branch="False" />
+            <line number="63" hits="33" branch="True" condition-coverage="100% (13/13)">
+              <conditions>
+                <condition number="7" type="jump" coverage="100%" />
+                <condition number="12" type="switch" coverage="100%" />
+                <condition number="44" type="jump" coverage="100%" />
+                <condition number="37" type="jump" coverage="100%" />
+                <condition number="51" type="jump" coverage="100%" />
+              </conditions>
+            </line>
+            <line number="66" hits="11" branch="False" />
+            <line number="67" hits="11" branch="False" />
+            <line number="69" hits="4" branch="False" />
+            <line number="70" hits="4" branch="False" />
+            <line number="72" hits="3" branch="False" />
+            <line number="73" hits="3" branch="False" />
+            <line number="75" hits="1" branch="False" />
+            <line number="76" hits="1" branch="False" />
+            <line number="78" hits="12" branch="False" />
+            <line number="79" hits="12" branch="False" />
+            <line number="81" hits="1" branch="False" />
+            <line number="82" hits="1" branch="False" />
+            <line number="84" hits="1" branch="False" />
+            <line number="86" hits="33" branch="False" />
+            <line number="97" hits="18" branch="False" />
+            <line number="98" hits="18" branch="True" condition-coverage="76.92% (10/13)">
+              <conditions>
+                <condition number="7" type="jump" coverage="100%" />
+                <condition number="12" type="switch" coverage="100%" />
+                <condition number="44" type="jump" coverage="50%" />
+                <condition number="37" type="jump" coverage="50%" />
+                <condition number="51" type="jump" coverage="50%" />
+              </conditions>
+            </line>
+            <line number="101" hits="8" branch="False" />
+            <line number="102" hits="8" branch="False" />
+            <line number="104" hits="1" branch="False" />
+            <line number="105" hits="1" branch="False" />
+            <line number="107" hits="1" branch="False" />
+            <line number="108" hits="1" branch="False" />
+            <line number="110" hits="0" branch="False" />
+            <line number="111" hits="0" branch="False" />
+            <line number="113" hits="7" branch="False" />
+            <line number="114" hits="7" branch="False" />
+            <line number="116" hits="0" branch="False" />
+            <line number="117" hits="0" branch="False" />
+            <line number="119" hits="1" branch="False" />
+            <line number="120" hits="1" branch="False" />
+            <line number="122" hits="18" branch="False" />
+          </lines>
+        </class>
+        <class name="Variable.RPG.RpgStatSheet" filename="Variable.RPG\RpgStatSheet.cs" line-rate="0.5192" branch-rate="0.4117" complexity="38">
+          <methods>
+            <method name="get_Count" signature="()" line-rate="0" branch-rate="1" complexity="1">
+              <lines>
+                <line number="19" hits="0" branch="False" />
+              </lines>
+            </method>
+            <method name="get_Item" signature="(System.Int32)" line-rate="0.8" branch-rate="0.5" complexity="6">
+              <lines>
+                <line number="29" hits="1" branch="False" />
+                <line number="30" hits="1" branch="True" condition-coverage="50% (3/6)">
+                  <conditions>
+                    <condition number="3" type="jump" coverage="50%" />
+                    <condition number="12" type="jump" coverage="50%" />
+                    <condition number="29" type="jump" coverage="50%" />
+                  </conditions>
+                </line>
+                <line number="31" hits="0" branch="False" />
+                <line number="32" hits="1" branch="False" />
+                <line number="33" hits="1" branch="False" />
+              </lines>
+            </method>
+            <method name="get_Attributes" signature="()" line-rate="0" branch-rate="1" complexity="1">
+              <lines>
+                <line number="42" hits="0" branch="False" />
+              </lines>
+            </method>
+            <method name="Dispose" signature="()" line-rate="1" branch-rate="0.75" complexity="4">
+              <lines>
+                <line number="93" hits="7" branch="False" />
+                <line number="94" hits="7" branch="True" condition-coverage="75% (3/4)">
+                  <conditions>
+                    <condition number="7" type="jump" coverage="50%" />
+                    <condition number="27" type="jump" coverage="100%" />
+                  </conditions>
+                </line>
+                <line number="95" hits="7" branch="False" />
+                <line number="96" hits="7" branch="False" />
+                <line number="97" hits="7" branch="False" />
+                <line number="98" hits="7" branch="False" />
+                <line number="99" hits="7" branch="False" />
+                <line number="100" hits="7" branch="False" />
+                <line number="101" hits="7" branch="False" />
+              </lines>
+            </method>
+            <method name="SetBase" signature="(System.Int32,System.Single)" line-rate="1" branch-rate="0.6666" complexity="6">
+              <lines>
+                <line number="110" hits="5" branch="False" />
+                <line number="111" hits="5" branch="True" condition-coverage="66.66% (4/6)">
+                  <conditions>
+                    <condition number="3" type="jump" coverage="50%" />
+                    <condition number="12" type="jump" coverage="50%" />
+                    <condition number="29" type="jump" coverage="100%" />
+                  </conditions>
+                </line>
+                <line number="112" hits="5" branch="False" />
+                <line number="113" hits="5" branch="False" />
+              </lines>
+            </method>
+            <method name="Get" signature="(System.Int32)" line-rate="0" branch-rate="0" complexity="6">
+              <lines>
+                <line number="122" hits="0" branch="False" />
+                <line number="123" hits="0" branch="True" condition-coverage="0% (0/6)">
+                  <conditions>
+                    <condition number="3" type="jump" coverage="0%" />
+                    <condition number="12" type="jump" coverage="0%" />
+                    <condition number="29" type="jump" coverage="0%" />
+                  </conditions>
+                </line>
+                <line number="124" hits="0" branch="False" />
+                <line number="125" hits="0" branch="False" />
+              </lines>
+            </method>
+            <method name="AsSpan" signature="()" line-rate="1" branch-rate="0.5" complexity="4">
+              <lines>
+                <line number="132" hits="7" branch="False" />
+                <line number="133" hits="7" branch="True" condition-coverage="50% (2/4)">
+                  <conditions>
+                    <condition number="9" type="jump" coverage="50%" />
+                    <condition number="25" type="jump" coverage="50%" />
+                  </conditions>
+                </line>
+                <line number="134" hits="7" branch="False" />
+                <line number="135" hits="7" branch="False" />
+              </lines>
+            </method>
+            <method name="GetRef" signature="(System.Int32)" line-rate="0" branch-rate="0" complexity="6">
+              <lines>
+                <line number="142" hits="0" branch="False" />
+                <line number="143" hits="0" branch="True" condition-coverage="0% (0/6)">
+                  <conditions>
+                    <condition number="3" type="jump" coverage="0%" />
+                    <condition number="12" type="jump" coverage="0%" />
+                    <condition number="29" type="jump" coverage="0%" />
+                  </conditions>
+                </line>
+                <line number="144" hits="0" branch="False" />
+                <line number="145" hits="0" branch="False" />
+                <line number="146" hits="0" branch="False" />
+              </lines>
+            </method>
+            <method name=".ctor" signature="(System.Int32)" line-rate="1" branch-rate="1" complexity="2">
+              <lines>
+                <line number="51" hits="7" branch="False" />
+                <line number="52" hits="7" branch="False" />
+                <line number="53" hits="7" branch="False" />
+                <line number="54" hits="7" branch="False" />
+                <line number="57" hits="119" branch="True" condition-coverage="100% (2/2)">
+                  <conditions>
+                    <condition number="94" type="jump" coverage="100%" />
+                  </conditions>
+                </line>
+                <line number="58" hits="7" branch="False" />
+              </lines>
+            </method>
+            <method name=".ctor" signature="(Variable.RPG.RpgStat*,System.Int32)" line-rate="0" branch-rate="1" complexity="1">
+              <lines>
+                <line number="67" hits="0" branch="False" />
+                <line number="68" hits="0" branch="False" />
+                <line number="69" hits="0" branch="False" />
+                <line number="70" hits="0" branch="False" />
+                <line number="71" hits="0" branch="False" />
+              </lines>
+            </method>
+            <method name=".ctor" signature="(System.Span`1&lt;Variable.RPG.RpgStat&gt;)" line-rate="0" branch-rate="1" complexity="1">
+              <lines>
+                <line number="79" hits="0" branch="False" />
+                <line number="80" hits="0" branch="False" />
+                <line number="81" hits="0" branch="False" />
+                <line number="82" hits="0" branch="False" />
+                <line number="83" hits="0" branch="False" />
+                <line number="84" hits="0" branch="False" />
+                <line number="85" hits="0" branch="False" />
+                <line number="86" hits="0" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="19" hits="0" branch="False" />
+            <line number="29" hits="1" branch="False" />
+            <line number="30" hits="1" branch="True" condition-coverage="50% (3/6)">
+              <conditions>
+                <condition number="3" type="jump" coverage="50%" />
+                <condition number="12" type="jump" coverage="50%" />
+                <condition number="29" type="jump" coverage="50%" />
+              </conditions>
+            </line>
+            <line number="31" hits="0" branch="False" />
+            <line number="32" hits="1" branch="False" />
+            <line number="33" hits="1" branch="False" />
+            <line number="42" hits="0" branch="False" />
+            <line number="93" hits="7" branch="False" />
+            <line number="94" hits="7" branch="True" condition-coverage="75% (3/4)">
+              <conditions>
+                <condition number="7" type="jump" coverage="50%" />
+                <condition number="27" type="jump" coverage="100%" />
+              </conditions>
+            </line>
+            <line number="95" hits="7" branch="False" />
+            <line number="96" hits="7" branch="False" />
+            <line number="97" hits="7" branch="False" />
+            <line number="98" hits="7" branch="False" />
+            <line number="99" hits="7" branch="False" />
+            <line number="100" hits="7" branch="False" />
+            <line number="101" hits="7" branch="False" />
+            <line number="110" hits="5" branch="False" />
+            <line number="111" hits="5" branch="True" condition-coverage="66.66% (4/6)">
+              <conditions>
+                <condition number="3" type="jump" coverage="50%" />
+                <condition number="12" type="jump" coverage="50%" />
+                <condition number="29" type="jump" coverage="100%" />
+              </conditions>
+            </line>
+            <line number="112" hits="5" branch="False" />
+            <line number="113" hits="5" branch="False" />
+            <line number="122" hits="0" branch="False" />
+            <line number="123" hits="0" branch="True" condition-coverage="0% (0/6)">
+              <conditions>
+                <condition number="3" type="jump" coverage="0%" />
+                <condition number="12" type="jump" coverage="0%" />
+                <condition number="29" type="jump" coverage="0%" />
+              </conditions>
+            </line>
+            <line number="124" hits="0" branch="False" />
+            <line number="125" hits="0" branch="False" />
+            <line number="132" hits="7" branch="False" />
+            <line number="133" hits="7" branch="True" condition-coverage="50% (2/4)">
+              <conditions>
+                <condition number="9" type="jump" coverage="50%" />
+                <condition number="25" type="jump" coverage="50%" />
+              </conditions>
+            </line>
+            <line number="134" hits="7" branch="False" />
+            <line number="135" hits="7" branch="False" />
+            <line number="142" hits="0" branch="False" />
+            <line number="143" hits="0" branch="True" condition-coverage="0% (0/6)">
+              <conditions>
+                <condition number="3" type="jump" coverage="0%" />
+                <condition number="12" type="jump" coverage="0%" />
+                <condition number="29" type="jump" coverage="0%" />
+              </conditions>
+            </line>
+            <line number="144" hits="0" branch="False" />
+            <line number="145" hits="0" branch="False" />
+            <line number="146" hits="0" branch="False" />
+            <line number="51" hits="7" branch="False" />
+            <line number="52" hits="7" branch="False" />
+            <line number="53" hits="7" branch="False" />
+            <line number="54" hits="7" branch="False" />
+            <line number="57" hits="119" branch="True" condition-coverage="100% (2/2)">
+              <conditions>
+                <condition number="94" type="jump" coverage="100%" />
+              </conditions>
+            </line>
+            <line number="58" hits="7" branch="False" />
+            <line number="67" hits="0" branch="False" />
+            <line number="68" hits="0" branch="False" />
+            <line number="69" hits="0" branch="False" />
+            <line number="70" hits="0" branch="False" />
+            <line number="71" hits="0" branch="False" />
+            <line number="79" hits="0" branch="False" />
+            <line number="80" hits="0" branch="False" />
+            <line number="81" hits="0" branch="False" />
+            <line number="82" hits="0" branch="False" />
+            <line number="83" hits="0" branch="False" />
+            <line number="84" hits="0" branch="False" />
+            <line number="85" hits="0" branch="False" />
+            <line number="86" hits="0" branch="False" />
+          </lines>
+        </class>
+      </classes>
+    </package>
+  </packages>
+</coverage>
