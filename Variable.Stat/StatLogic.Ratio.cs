@@ -6,12 +6,17 @@ public static partial class StatLogic
     ///     Calculates the ratio of current value to maximum value (0.0 to 1.0).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float GetRatio(float current, float max)
+    public static void GetRatio(float current, float max, out float result)
     {
-        if (max <= MathConstants.Tolerance) return 0f;
+        if (max <= MathConstants.Tolerance)
+        {
+            result = 0f;
+            return;
+        }
+
         var ratio = current / max;
-        if (ratio < 0f) return 0f;
-        if (ratio > 1f) return 1f;
-        return ratio;
+        if (ratio < 0f) result = 0f;
+        else if (ratio > 1f) result = 1f;
+        else result = ratio;
     }
 }

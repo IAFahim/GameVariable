@@ -17,12 +17,16 @@ public static partial class ReservoirLogic
     /// <param name="current">The current volume to refill.</param>
     /// <param name="capacity">The maximum capacity.</param>
     /// <param name="reserve">The reserve to draw from.</param>
-    /// <returns>The amount actually transferred.</returns>
+    /// <param name="result">The amount actually transferred.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float Refill(ref float current, float capacity, ref float reserve)
+    public static void Refill(ref float current, float capacity, ref float reserve, out float result)
     {
         var missing = capacity - current;
-        if (missing <= MathConstants.Tolerance || reserve <= MathConstants.Tolerance) return 0f;
+        if (missing <= MathConstants.Tolerance || reserve <= MathConstants.Tolerance)
+        {
+            result = 0f;
+            return;
+        }
 
         var toRefill = reserve < missing ? reserve : missing;
         current += toRefill;
@@ -32,6 +36,6 @@ public static partial class ReservoirLogic
         if (capacity - current < MathConstants.Tolerance) current = capacity;
         if (reserve < MathConstants.Tolerance) reserve = 0f;
 
-        return toRefill;
+        result = toRefill;
     }
 }

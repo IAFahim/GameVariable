@@ -50,7 +50,7 @@ public struct Cooldown :
     public Cooldown(float duration, float current = 0f)
     {
         Duration = duration;
-        Current = TimerLogic.Clamp(current, 0f, duration);
+        TimerLogic.Clamp(current, 0f, duration, out Current);
     }
 
     /// <inheritdoc />

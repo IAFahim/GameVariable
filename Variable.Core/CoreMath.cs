@@ -10,151 +10,151 @@ public static class CoreMath
     /// <param name="value">The value to clamp.</param>
     /// <param name="min">The minimum value.</param>
     /// <param name="max">The maximum value.</param>
-    /// <returns>The clamped value.</returns>
+    /// <param name="result">The clamped value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float Clamp(float value, float min, float max)
+    public static void Clamp(float value, float min, float max, out float result)
     {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
+        if (value < min) result = min;
+        else if (value > max) result = max;
+        else result = value;
     }
 
     /// <summary>Clamps an int value between min and max.</summary>
     /// <param name="value">The value to clamp.</param>
     /// <param name="min">The minimum value.</param>
     /// <param name="max">The maximum value.</param>
-    /// <returns>The clamped value.</returns>
+    /// <param name="result">The clamped value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Clamp(int value, int min, int max)
+    public static void Clamp(int value, int min, int max, out int result)
     {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
+        if (value < min) result = min;
+        else if (value > max) result = max;
+        else result = value;
     }
 
     /// <summary>Clamps a long value between min and max.</summary>
     /// <param name="value">The value to clamp.</param>
     /// <param name="min">The minimum value.</param>
     /// <param name="max">The maximum value.</param>
-    /// <returns>The clamped value.</returns>
+    /// <param name="result">The clamped value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static long Clamp(long value, long min, long max)
+    public static void Clamp(long value, long min, long max, out long result)
     {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
+        if (value < min) result = min;
+        else if (value > max) result = max;
+        else result = value;
     }
 
     /// <summary>Clamps a byte value to a maximum.</summary>
     /// <param name="value">The value to clamp.</param>
     /// <param name="max">The maximum value.</param>
-    /// <returns>The clamped value.</returns>
+    /// <param name="result">The clamped value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static byte Clamp(byte value, byte max)
+    public static void Clamp(byte value, byte max, out byte result)
     {
-        return value > max ? max : value;
+        result = value > max ? max : value;
     }
 
     /// <summary>Clamps an int value to a byte range [0, max].</summary>
     /// <param name="value">The value to clamp.</param>
     /// <param name="max">The maximum value.</param>
-    /// <returns>The clamped byte value.</returns>
+    /// <param name="result">The clamped byte value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static byte Clamp(int value, byte max)
+    public static void Clamp(int value, byte max, out byte result)
     {
-        if (value > max) return max;
-        if (value < 0) return 0;
-        return (byte)value;
+        if (value > max) result = max;
+        else if (value < 0) result = 0;
+        else result = (byte)value;
     }
 
     /// <summary>Clamps a double value between min and max.</summary>
     /// <param name="value">The value to clamp.</param>
     /// <param name="min">The minimum value.</param>
     /// <param name="max">The maximum value.</param>
-    /// <returns>The clamped value.</returns>
+    /// <param name="result">The clamped value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double Clamp(double value, double min, double max)
+    public static void Clamp(double value, double min, double max, out double result)
     {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
+        if (value < min) result = min;
+        else if (value > max) result = max;
+        else result = value;
     }
 
     /// <summary>Returns the smaller of two float values.</summary>
     /// <param name="a">First value.</param>
     /// <param name="b">Second value.</param>
-    /// <returns>The smaller value.</returns>
+    /// <param name="result">The smaller value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float Min(float a, float b)
+    public static void Min(float a, float b, out float result)
     {
-        return a < b ? a : b;
+        result = a < b ? a : b;
     }
 
     /// <summary>Returns the smaller of two int values.</summary>
     /// <param name="a">First value.</param>
     /// <param name="b">Second value.</param>
-    /// <returns>The smaller value.</returns>
+    /// <param name="result">The smaller value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Min(int a, int b)
+    public static void Min(int a, int b, out int result)
     {
-        return a < b ? a : b;
+        result = a < b ? a : b;
     }
 
     /// <summary>Returns the smaller of two long values.</summary>
     /// <param name="a">First value.</param>
     /// <param name="b">Second value.</param>
-    /// <returns>The smaller value.</returns>
+    /// <param name="result">The smaller value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static long Min(long a, long b)
+    public static void Min(long a, long b, out long result)
     {
-        return a < b ? a : b;
+        result = a < b ? a : b;
     }
 
     /// <summary>Returns the larger of two float values.</summary>
     /// <param name="a">First value.</param>
     /// <param name="b">Second value.</param>
-    /// <returns>The larger value.</returns>
+    /// <param name="result">The larger value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float Max(float a, float b)
+    public static void Max(float a, float b, out float result)
     {
-        return a > b ? a : b;
+        result = a > b ? a : b;
     }
 
     /// <summary>Returns the larger of two int values.</summary>
     /// <param name="a">First value.</param>
     /// <param name="b">Second value.</param>
-    /// <returns>The larger value.</returns>
+    /// <param name="result">The larger value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Max(int a, int b)
+    public static void Max(int a, int b, out int result)
     {
-        return a > b ? a : b;
+        result = a > b ? a : b;
     }
 
     /// <summary>Returns the larger of two long values.</summary>
     /// <param name="a">First value.</param>
     /// <param name="b">Second value.</param>
-    /// <returns>The larger value.</returns>
+    /// <param name="result">The larger value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static long Max(long a, long b)
+    public static void Max(long a, long b, out long result)
     {
-        return a > b ? a : b;
+        result = a > b ? a : b;
     }
 
     /// <summary>Returns the absolute value of a float.</summary>
     /// <param name="value">The value.</param>
-    /// <returns>The absolute value.</returns>
+    /// <param name="result">The absolute value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float Abs(float value)
+    public static void Abs(float value, out float result)
     {
-        return value < 0 ? -value : value;
+        result = value < 0 ? -value : value;
     }
 
     /// <summary>Returns the absolute value of an int.</summary>
     /// <param name="value">The value.</param>
-    /// <returns>The absolute value.</returns>
+    /// <param name="result">The absolute value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Abs(int value)
+    public static void Abs(int value, out int result)
     {
-        return value < 0 ? -value : value;
+        result = value < 0 ? -value : value;
     }
 }

@@ -11,10 +11,10 @@ public struct RpgStatModifier
 {
     /// <summary>Which field to modify (Base, ModAdd, Max, etc.).</summary>
     public RpgStatField Field;
-    
+
     /// <summary>What operation to perform (Add, Multiply, etc.).</summary>
     public RpgStatOperation Operation;
-    
+
     /// <summary>The value for the operation.</summary>
     public float Value;
 
@@ -38,7 +38,9 @@ public struct RpgStatModifier
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static RpgStatModifier AddFlat(RpgStatField field, float value)
-        => new(field, RpgStatOperation.Add, value);
+    {
+        return new RpgStatModifier(field, RpgStatOperation.Add, value);
+    }
 
     /// <summary>
     ///     Creates a modifier that adds a multiplier.
@@ -46,7 +48,9 @@ public struct RpgStatModifier
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static RpgStatModifier AddPercent(RpgStatField field, float percent)
-        => new(field, RpgStatOperation.AddPercent, percent);
+    {
+        return new RpgStatModifier(field, RpgStatOperation.AddPercent, percent);
+    }
 
     /// <summary>
     ///     Creates a modifier that sets an absolute value.
@@ -54,7 +58,9 @@ public struct RpgStatModifier
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static RpgStatModifier SetValue(RpgStatField field, float value)
-        => new(field, RpgStatOperation.Set, value);
+    {
+        return new RpgStatModifier(field, RpgStatOperation.Set, value);
+    }
 
     /// <summary>
     ///     Returns the inverse of this modifier for easy removal.
@@ -65,8 +71,9 @@ public struct RpgStatModifier
     public RpgStatModifier GetInverse()
     {
         if (!Operation.IsInvertible())
-            throw new InvalidOperationException($"Operation {Operation} cannot be inverted. Use manual removal instead.");
-        
+            throw new InvalidOperationException(
+                $"Operation {Operation} cannot be inverted. Use manual removal instead.");
+
         return new RpgStatModifier(Field, Operation.GetInverse(), Value);
     }
 

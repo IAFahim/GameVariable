@@ -17,7 +17,7 @@ public class DamageLogicTests
 
         // 50 Dmg - 10 Armor = 40
         Assert.Equal(40f, final);
-        
+
         sheet.Dispose();
     }
 
@@ -36,7 +36,7 @@ public class DamageLogicTests
 
         // 100 Dmg * (1.0 - 0.5) = 50
         Assert.Equal(50f, final);
-        
+
         sheet.Dispose();
     }
 
@@ -56,7 +56,7 @@ public class DamageLogicTests
         var final = sheet.AsSpan().ResolveDamage(damages, new MyConfig());
 
         Assert.Equal(90f, final); // 15 + 75
-        
+
         sheet.Dispose();
     }
 
@@ -75,7 +75,7 @@ public class DamageLogicTests
 
         // 10 - 100 = -90, clamped to 0
         Assert.Equal(0f, final);
-        
+
         sheet.Dispose();
     }
 
@@ -92,7 +92,7 @@ public class DamageLogicTests
         var final = sheet.AsSpan().ResolveDamage(damages, new MyConfig());
 
         Assert.Equal(50f, final); // Full damage
-        
+
         sheet.Dispose();
     }
 
@@ -112,7 +112,7 @@ public class DamageLogicTests
 
         // 100 * (1 - (-0.5)) = 100 * 1.5 = 150
         Assert.Equal(150f, final);
-        
+
         sheet.Dispose();
     }
 
@@ -125,7 +125,7 @@ public class DamageLogicTests
         var final = sheet.AsSpan().ResolveDamage(damages, new MyConfig());
 
         Assert.Equal(0f, final);
-        
+
         sheet.Dispose();
     }
 

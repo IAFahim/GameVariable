@@ -9,11 +9,15 @@ public static partial class StatLogic
     /// <param name="target">The reference to the target value.</param>
     /// <param name="maxTarget">The maximum value of the target.</param>
     /// <param name="amount">The amount requested to transfer.</param>
-    /// <returns>The actual amount transferred.</returns>
+    /// <param name="result">The actual amount transferred.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float Transfer(ref float source, ref float target, float maxTarget, float amount)
+    public static void Transfer(ref float source, ref float target, float maxTarget, float amount, out float result)
     {
-        if (source <= MathConstants.Tolerance || amount <= MathConstants.Tolerance) return 0f;
+        if (source <= MathConstants.Tolerance || amount <= MathConstants.Tolerance)
+        {
+            result = 0f;
+            return;
+        }
 
         var availableSpace = maxTarget - target;
         var actualMove = amount < source ? amount : source;
@@ -30,6 +34,6 @@ public static partial class StatLogic
             if (maxTarget - target < MathConstants.Tolerance) target = maxTarget;
         }
 
-        return actualMove;
+        result = actualMove;
     }
 }

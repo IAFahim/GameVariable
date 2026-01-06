@@ -6,9 +6,9 @@ public static partial class StatLogic
     ///     Calculates the missing amount to reach the maximum value.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float GetMissing(float current, float max)
+    public static void GetMissing(float current, float max, out float result)
     {
         var missing = max - current;
-        return missing < 0f ? 0f : missing;
+        result = missing < 0f ? 0f : missing;
     }
 }

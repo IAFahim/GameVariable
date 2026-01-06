@@ -6,8 +6,9 @@ public static partial class StatLogic
     ///     Calculates the percentage of current value to maximum value (0.0 to 100.0).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float GetPercent(float current, float max)
+    public static void GetPercent(float current, float max, out float result)
     {
-        return GetRatio(current, max) * 100f;
+        GetRatio(current, max, out var ratio);
+        result = ratio * 100f;
     }
 }

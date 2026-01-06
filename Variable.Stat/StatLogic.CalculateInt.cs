@@ -11,11 +11,11 @@ public static partial class StatLogic
     /// <param name="flat">The sum of all flat modifiers.</param>
     /// <param name="percentAdd">The sum of all additive percentage modifiers.</param>
     /// <param name="percentMult">The product of all multiplicative percentage modifiers.</param>
-    /// <returns>The calculated final value rounded to the nearest integer.</returns>
+    /// <param name="result">The calculated final value rounded to the nearest integer.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int CalculateInt(float baseValue, float flat, float percentAdd, float percentMult)
+    public static void CalculateInt(float baseValue, float flat, float percentAdd, float percentMult, out int result)
     {
-        var result = (baseValue + flat) * (1f + percentAdd) * percentMult;
-        return (int)Math.Round(result, MidpointRounding.AwayFromZero);
+        var temp = (baseValue + flat) * (1f + percentAdd) * percentMult;
+        result = (int)Math.Round(temp, MidpointRounding.AwayFromZero);
     }
 }

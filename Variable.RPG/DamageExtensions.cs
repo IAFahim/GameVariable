@@ -40,7 +40,7 @@ public static class DamageExtensions
                 {
                     // Use RpgStatExtensions to get value (which calls Logic)
                     var mitigationValue = stats[statId].GetValue();
-                    amount = DamageLogic.ApplyMitigation(amount, mitigationValue, isFlat);
+                    DamageLogic.ApplyMitigation(amount, mitigationValue, isFlat, out amount);
                 }
 
             // 3. Aggregate

@@ -154,9 +154,9 @@ public static partial class InventoryLogic
     ///     Calculates the remaining space in the inventory.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float GetRemainingSpace(float current, float max)
+    public static void GetRemainingSpace(float current, float max, out float result)
     {
-        return current >= max ? 0f : max - current;
+        result = current >= max ? 0f : max - current;
     }
 
 
@@ -164,27 +164,27 @@ public static partial class InventoryLogic
     ///     Calculates the remaining space in the inventory.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int GetRemainingSpace(int current, int max)
+    public static void GetRemainingSpace(int current, int max, out int result)
     {
-        return current >= max ? 0 : max - current;
+        result = current >= max ? 0 : max - current;
     }
 
     /// <summary>
     ///     Calculates the remaining space in the inventory.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static long GetRemainingSpace(long current, long max)
+    public static void GetRemainingSpace(long current, long max, out long result)
     {
-        return current >= max ? 0 : max - current;
+        result = current >= max ? 0 : max - current;
     }
 
     /// <summary>
     ///     Calculates the remaining space in the inventory.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static byte GetRemainingSpace(byte current, byte max)
+    public static void GetRemainingSpace(byte current, byte max, out byte result)
     {
-        return (byte)(current >= max ? 0 : max - current);
+        result = (byte)(current >= max ? 0 : max - current);
     }
 
     /// <summary>
@@ -195,24 +195,29 @@ public static partial class InventoryLogic
     /// <param name="currentWeight">The current total weight.</param>
     /// <param name="maxWeight">The maximum weight capacity.</param>
     /// <param name="unitWeight">The weight of a single unit of the item.</param>
+    /// <param name="result">The maximum amount that can be accepted.</param>
     /// <param name="tolerance">The tolerance for floating point comparisons.</param>
-    /// <returns>The maximum amount that can be accepted.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float GetMaxAcceptable(
+    public static void GetMaxAcceptable(
         float currentQty,
         float maxQty,
         float currentWeight,
         float maxWeight,
         float unitWeight,
+        out float result,
         float tolerance = MathConstants.Tolerance)
     {
         var spaceByQty = currentQty >= maxQty ? 0f : maxQty - currentQty;
 
-        if (unitWeight <= tolerance) return spaceByQty;
+        if (unitWeight <= tolerance)
+        {
+            result = spaceByQty;
+            return;
+        }
 
         var remainingWeight = currentWeight >= maxWeight ? 0f : maxWeight - currentWeight;
         var spaceByWeight = remainingWeight / unitWeight;
 
-        return spaceByQty < spaceByWeight ? spaceByQty : spaceByWeight;
+        result = spaceByQty < spaceByWeight ? spaceByQty : spaceByWeight;
     }
 }

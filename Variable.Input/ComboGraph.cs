@@ -10,8 +10,6 @@ public unsafe struct ComboGraph
 {
     private ComboNode* _nodes;
     private ComboEdge* _edges;
-    private int _nodeCount;
-    private int _edgeCount;
 
     /// <summary>
     ///     Initializes a new instance from externally allocated memory.
@@ -24,9 +22,9 @@ public unsafe struct ComboGraph
     public ComboGraph(ComboNode* nodes, int nodeCount, ComboEdge* edges, int edgeCount)
     {
         _nodes = nodes;
-        _nodeCount = nodeCount;
+        NodeCount = nodeCount;
         _edges = edges;
-        _edgeCount = edgeCount;
+        EdgeCount = edgeCount;
     }
 
     /// <summary>
@@ -41,9 +39,9 @@ public unsafe struct ComboGraph
         fixed (ComboEdge* edgePtr = edges)
         {
             _nodes = nodePtr;
-            _nodeCount = nodes.Length;
+            NodeCount = nodes.Length;
             _edges = edgePtr;
-            _edgeCount = edges.Length;
+            EdgeCount = edges.Length;
         }
     }
 
@@ -53,7 +51,7 @@ public unsafe struct ComboGraph
     public int NodeCount
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _nodeCount;
+        get;
     }
 
     /// <summary>
@@ -62,7 +60,7 @@ public unsafe struct ComboGraph
     public int EdgeCount
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _edgeCount;
+        get;
     }
 
     /// <summary>
@@ -71,9 +69,9 @@ public unsafe struct ComboGraph
     public ReadOnlySpan<ComboNode> NodesSpan
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _nodes == null || _nodeCount == 0 
-            ? ReadOnlySpan<ComboNode>.Empty 
-            : new ReadOnlySpan<ComboNode>(_nodes, _nodeCount);
+        get => _nodes == null || NodeCount == 0
+            ? ReadOnlySpan<ComboNode>.Empty
+            : new ReadOnlySpan<ComboNode>(_nodes, NodeCount);
     }
 
     /// <summary>
@@ -82,9 +80,9 @@ public unsafe struct ComboGraph
     public ReadOnlySpan<ComboEdge> EdgesSpan
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _edges == null || _edgeCount == 0 
-            ? ReadOnlySpan<ComboEdge>.Empty 
-            : new ReadOnlySpan<ComboEdge>(_edges, _edgeCount);
+        get => _edges == null || EdgeCount == 0
+            ? ReadOnlySpan<ComboEdge>.Empty
+            : new ReadOnlySpan<ComboEdge>(_edges, EdgeCount);
     }
 
     /// <summary>
@@ -93,8 +91,8 @@ public unsafe struct ComboGraph
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ref ComboNode GetNodeRef(int index)
     {
-        if (index < 0 || index >= _nodeCount || _nodes == null)
-            throw new IndexOutOfRangeException($"Node index {index} out of range [0, {_nodeCount})");
+        if (index < 0 || index >= NodeCount || _nodes == null)
+            throw new IndexOutOfRangeException($"Node index {index} out of range [0, {NodeCount})");
         return ref _nodes[index];
     }
 
@@ -104,8 +102,8 @@ public unsafe struct ComboGraph
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ref ComboEdge GetEdgeRef(int index)
     {
-        if (index < 0 || index >= _edgeCount || _edges == null)
-            throw new IndexOutOfRangeException($"Edge index {index} out of range [0, {_edgeCount})");
+        if (index < 0 || index >= EdgeCount || _edges == null)
+            throw new IndexOutOfRangeException($"Edge index {index} out of range [0, {EdgeCount})");
         return ref _edges[index];
     }
 }

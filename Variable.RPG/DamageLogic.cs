@@ -11,7 +11,7 @@ public static class DamageLogic
     ///     Pure primitive logic.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float ApplyMitigation(float damage, float mitigationValue, bool isFlat)
+    public static void ApplyMitigation(float damage, float mitigationValue, bool isFlat, out float result)
     {
         if (isFlat)
         {
@@ -27,6 +27,6 @@ public static class DamageLogic
             damage *= 1.0f - mitigationValue;
         }
 
-        return damage;
+        result = damage;
     }
 }

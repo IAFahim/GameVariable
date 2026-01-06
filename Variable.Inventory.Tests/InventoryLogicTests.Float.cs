@@ -48,7 +48,8 @@ public partial class InventoryLogicTests
     [InlineData(11f, 10f, 0f)]
     public void GetRemainingSpace_Tests(float current, float max, float expected)
     {
-        Assert.Equal(expected, InventoryLogic.GetRemainingSpace(current, max));
+        InventoryLogic.GetRemainingSpace(current, max, out var result);
+        Assert.Equal(expected, result);
     }
 
     [Theory]
@@ -60,8 +61,8 @@ public partial class InventoryLogicTests
     public void GetMaxAcceptable_Tests(float currentQty, float maxQty, float currentWeight, float maxWeight,
         float unitWeight, float expected)
     {
-        Assert.Equal(expected,
-            InventoryLogic.GetMaxAcceptable(currentQty, maxQty, currentWeight, maxWeight, unitWeight));
+        InventoryLogic.GetMaxAcceptable(currentQty, maxQty, currentWeight, maxWeight, unitWeight, out var result);
+        Assert.Equal(expected, result);
     }
 
     [Theory]
@@ -105,7 +106,7 @@ public partial class InventoryLogicTests
         float expectedCurrent)
     {
         var current = initial;
-        var added = InventoryLogic.AddPartial(ref current, amount, max, out var overflow);
+        InventoryLogic.TryAddPartial(ref current, amount, max, out var added, out var overflow);
         Assert.Equal(expectedAdded, added);
         Assert.Equal(expectedOverflow, overflow);
         Assert.Equal(expectedCurrent, current);
@@ -130,7 +131,7 @@ public partial class InventoryLogicTests
     public void RemovePartial_Tests(float initial, float amount, float expectedRemoved, float expectedCurrent)
     {
         var current = initial;
-        var removed = InventoryLogic.RemovePartial(ref current, amount);
+        InventoryLogic.TryRemovePartial(ref current, amount, out var removed);
         Assert.Equal(expectedRemoved, removed);
         Assert.Equal(expectedCurrent, current);
     }
@@ -182,7 +183,7 @@ public partial class InventoryLogicTests
     {
         var src = srcInitial;
         var dst = dstInitial;
-        var transferred = InventoryLogic.TransferPartial(ref src, ref dst, dstMax, amount);
+        InventoryLogic.TryTransferPartial(ref src, ref dst, dstMax, amount, out var transferred);
         Assert.Equal(expectedTransferred, transferred);
         Assert.Equal(expectedSrc, src);
         Assert.Equal(expectedDst, dst);
@@ -200,9 +201,9 @@ public partial class InventoryLogicTests
         var dst = dstInitial;
         var dstWeight = dstWeightInitial;
 
-        var transferred = InventoryLogic.TransferPartialWithWeight(
+        InventoryLogic.TryTransferPartialWithWeight(
             ref src, ref dst, ref dstWeight,
-            dstMaxWeight, dstMaxQty, unitWeight, amount);
+            dstMaxWeight, dstMaxQty, unitWeight, amount, out var transferred);
 
         Assert.Equal(expectedTransferred, transferred);
         Assert.Equal(expectedSrc, src);

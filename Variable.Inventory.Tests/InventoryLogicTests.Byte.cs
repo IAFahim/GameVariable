@@ -43,7 +43,8 @@ public partial class InventoryLogicTests
     [InlineData(11, 10, 0)]
     public void GetRemainingSpace_Byte_Tests(byte current, byte max, byte expected)
     {
-        Assert.Equal(expected, InventoryLogic.GetRemainingSpace(current, max));
+        InventoryLogic.GetRemainingSpace(current, max, out var result);
+        Assert.Equal(expected, result);
     }
 
     [Theory]

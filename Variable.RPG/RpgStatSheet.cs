@@ -5,17 +5,20 @@ namespace Variable.RPG;
 ///     Supports both managed wrapper (for Unity SerializeField) and pure unsafe usage.
 /// </summary>
 /// <remarks>
-/// <para><b>CRITICAL - Memory Safety Warning:</b></para>
-/// <para>This struct allocates unmanaged memory via Marshal.AllocHGlobal.</para>
-/// <para>You MUST call Dispose() when finished, OR use a using statement.</para>
-/// <para><b>DO NOT COPY THIS STRUCT</b> after construction - copying creates a shallow copy with the same pointer,
-/// leading to use-after-free vulnerabilities if one copy is disposed.</para>
-/// <para>Recommended usage: Create once, use by reference, dispose once.</para>
+///     <para>
+///         <b>CRITICAL - Memory Safety Warning:</b>
+///     </para>
+///     <para>This struct allocates unmanaged memory via Marshal.AllocHGlobal.</para>
+///     <para>You MUST call Dispose() when finished, OR use a using statement.</para>
+///     <para>
+///         <b>DO NOT COPY THIS STRUCT</b> after construction - copying creates a shallow copy with the same pointer,
+///         leading to use-after-free vulnerabilities if one copy is disposed.
+///     </para>
+///     <para>Recommended usage: Create once, use by reference, dispose once.</para>
 /// </remarks>
 public unsafe struct RpgStatSheet
 {
     private RpgStat* _attributes;
-    private int _count;
     private bool _ownsMemory;
 
     /// <summary>
@@ -24,7 +27,8 @@ public unsafe struct RpgStatSheet
     public int Count
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _count;
+        get;
+        private set;
     }
 
     /// <summary>
@@ -35,8 +39,8 @@ public unsafe struct RpgStatSheet
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
-            if (index < 0 || index >= _count || _attributes == null)
-                throw new IndexOutOfRangeException($"Index {index} out of range [0, {_count})");
+            if (index < 0 || index >= Count || _attributes == null)
+                throw new IndexOutOfRangeException($"Index {index} out of range [0, {Count})");
             return ref _attributes[index];
         }
     }
@@ -57,7 +61,7 @@ public unsafe struct RpgStatSheet
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public RpgStatSheet(int count)
     {
-        _count = count;
+        Count = count;
         _attributes = (RpgStat*)Marshal.AllocHGlobal(count * sizeof(RpgStat));
         _ownsMemory = true;
 
@@ -74,7 +78,7 @@ public unsafe struct RpgStatSheet
     public RpgStatSheet(RpgStat* attributes, int count)
     {
         _attributes = attributes;
-        _count = count;
+        Count = count;
         _ownsMemory = false;
     }
 
@@ -88,7 +92,7 @@ public unsafe struct RpgStatSheet
         fixed (RpgStat* ptr = attributes)
         {
             _attributes = ptr;
-            _count = attributes.Length;
+            Count = attributes.Length;
             _ownsMemory = false;
         }
     }
@@ -103,7 +107,7 @@ public unsafe struct RpgStatSheet
         {
             Marshal.FreeHGlobal((IntPtr)_attributes);
             _attributes = null;
-            _count = 0;
+            Count = 0;
             _ownsMemory = false;
         }
     }
@@ -116,7 +120,7 @@ public unsafe struct RpgStatSheet
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void SetBase(int statId, float value)
     {
-        if (statId < 0 || statId >= _count || _attributes == null) return;
+        if (statId < 0 || statId >= Count || _attributes == null) return;
         _attributes[statId].Base = value;
     }
 
@@ -128,7 +132,7 @@ public unsafe struct RpgStatSheet
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public float Get(int statId)
     {
-        if (statId < 0 || statId >= _count || _attributes == null) return 0f;
+        if (statId < 0 || statId >= Count || _attributes == null) return 0f;
         return _attributes[statId].GetValue();
     }
 
@@ -138,8 +142,8 @@ public unsafe struct RpgStatSheet
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<RpgStat> AsSpan()
     {
-        if (_attributes == null || _count == 0) return Span<RpgStat>.Empty;
-        return new Span<RpgStat>(_attributes, _count);
+        if (_attributes == null || Count == 0) return Span<RpgStat>.Empty;
+        return new Span<RpgStat>(_attributes, Count);
     }
 
     /// <summary>
@@ -148,8 +152,8 @@ public unsafe struct RpgStatSheet
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ref RpgStat GetRef(int statId)
     {
-        if (statId < 0 || statId >= _count || _attributes == null)
-            throw new IndexOutOfRangeException($"Stat ID {statId} out of range [0, {_count})");
+        if (statId < 0 || statId >= Count || _attributes == null)
+            throw new IndexOutOfRangeException($"Stat ID {statId} out of range [0, {Count})");
         return ref _attributes[statId];
     }
 }

@@ -2,13 +2,15 @@
 
 ## Overview
 
-The `RpgStatField` enum provides a type-safe way to selectively read and write individual fields of an `RpgStat` struct, following the Data-Oriented Design principles.
+The `RpgStatField` enum provides a type-safe way to selectively read and write individual fields of an `RpgStat` struct,
+following the Data-Oriented Design principles.
 
 ## Architecture
 
 This implementation follows the **Data-Logic-Extension Triad**:
 
 ### 1. Data Layer (`RpgStatField` enum)
+
 ```csharp
 public enum RpgStatField
 {
@@ -23,6 +25,7 @@ public enum RpgStatField
 ```
 
 ### 2. Logic Layer (`RpgStatLogic` static class)
+
 Pure functions operating on primitives:
 
 ```csharp
@@ -39,6 +42,7 @@ public static bool TryGetField(RpgStatField field,
 ```
 
 ### 3. Extension Layer (`RpgStatExtensions`)
+
 Developer-friendly API:
 
 ```csharp
@@ -62,6 +66,7 @@ public static bool TryGetField(ref this RpgStat stat,
 ## Common Use Cases
 
 ### 1. Dynamic Max Health
+
 ```csharp
 var health = new RpgStat(100f, 0f, 100f);
 
@@ -70,6 +75,7 @@ health.TrySetField(RpgStatField.Max, 150f);
 ```
 
 ### 2. Equipment System
+
 ```csharp
 var damage = new RpgStat(10f);
 
@@ -82,6 +88,7 @@ damage.TrySetField(RpgStatField.Base, baseVal);
 ```
 
 ### 3. Level-Up System
+
 ```csharp
 for (var level = 2; level <= 5; level++)
 {
@@ -91,6 +98,7 @@ for (var level = 2; level <= 5; level++)
 ```
 
 ### 4. Temporary Buffs
+
 ```csharp
 // Store original
 stat.TryGetField(RpgStatField.Max, out var originalMax);
@@ -103,6 +111,7 @@ stat.TrySetField(RpgStatField.Max, originalMax);
 ```
 
 ### 5. Clamping After Max Reduction
+
 ```csharp
 var health = new RpgStat(200f, 0f, 200f);
 health.TrySetField(RpgStatField.Base, 200f); // Full HP
@@ -117,6 +126,7 @@ Assert.Equal(100f, health.GetValue());
 ## API Reference
 
 ### TrySetField
+
 ```csharp
 bool TrySetField(ref this RpgStat stat, 
     RpgStatField field, 
@@ -125,6 +135,7 @@ bool TrySetField(ref this RpgStat stat,
 ```
 
 **Parameters:**
+
 - `field`: Which field to modify
 - `newValue`: The value to set
 - `autoRecalculate`: If true (default), recalculates `Value` after setting
@@ -132,6 +143,7 @@ bool TrySetField(ref this RpgStat stat,
 **Returns:** `true` if field was valid, `false` otherwise
 
 **Example:**
+
 ```csharp
 var success = stat.TrySetField(RpgStatField.Max, 200f);
 if (!success)
@@ -141,6 +153,7 @@ if (!success)
 ```
 
 ### TryGetField
+
 ```csharp
 bool TryGetField(ref this RpgStat stat, 
     RpgStatField field, 
@@ -148,11 +161,13 @@ bool TryGetField(ref this RpgStat stat,
 ```
 
 **Parameters:**
+
 - `field`: Which field to read
 
 **Returns:** `true` if field was valid, `false` otherwise
 
 **Example:**
+
 ```csharp
 if (stat.TryGetField(RpgStatField.Max, out var maxValue))
 {
@@ -189,6 +204,7 @@ else
 ## Testing
 
 Comprehensive test suite with 34 tests:
+
 - ✅ Basic field get/set operations
 - ✅ Auto-recalculation behavior
 - ✅ Clamping after bound changes
@@ -196,6 +212,7 @@ Comprehensive test suite with 34 tests:
 - ✅ Real-world scenarios (leveling, equipment, buffs)
 
 Run tests:
+
 ```bash
 dotnet test Variable.RPG.Tests/Variable.RPG.Tests.csproj
 ```
@@ -248,16 +265,19 @@ stat.TryGetField(RpgStatField.Base, out var baseValue);
 ## Compliance with DOD Principles
 
 ### ✅ Data Layer (Pure Storage)
+
 - `RpgStatField` is a pure enum
 - No logic, only symbolic names
 
 ### ✅ Logic Layer (Pure Functions)
+
 - `TrySetField` and `TryGetField` take primitives only
 - No struct parameters
 - Stateless static methods
 - Early exit on invalid input
 
 ### ✅ Extension Layer (Mutation)
+
 - Only layer allowed to mutate via `ref this`
 - Decomposes struct into primitives
 - Calls Logic layer

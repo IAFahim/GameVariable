@@ -8,6 +8,7 @@ public class StatLogicTests_CalculateDouble
     [InlineData(10d, 10d, 0.5d, 2d, 60d)]
     public void Calculate_Double_Tests(double baseVal, double flat, double pctAdd, double pctMult, double expected)
     {
-        Assert.Equal(expected, StatLogic.Calculate(baseVal, flat, pctAdd, pctMult));
+        StatLogic.Calculate(baseVal, flat, pctAdd, pctMult, out var result);
+        Assert.Equal(expected, result);
     }
 }

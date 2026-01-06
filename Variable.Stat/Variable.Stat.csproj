@@ -4,7 +4,7 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <Version>1.0.8</Version>
+        <Version>1.0.10</Version>
         <Authors>Md Ishtiaq Ahamed Fahim</Authors>
         <Company>IAFahim</Company>
         <Description>High-performance, allocation-free logic for RPG statistics and modifiers.</Description>

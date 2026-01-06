@@ -9,7 +9,7 @@ public class ReservoirLogicTests_Int
     {
         var current = 5;
         var reserve = 20;
-        var refilled = ReservoirLogic.Refill(ref current, 10, ref reserve);
+        ReservoirLogic.Refill(ref current, 10, ref reserve, out var refilled);
 
         Assert.Equal(10, current);
         Assert.Equal(15, reserve);
@@ -21,7 +21,7 @@ public class ReservoirLogicTests_Int
     {
         var current = 5;
         var reserve = 3;
-        var refilled = ReservoirLogic.Refill(ref current, 10, ref reserve);
+        ReservoirLogic.Refill(ref current, 10, ref reserve, out var refilled);
 
         Assert.Equal(8, current);
         Assert.Equal(0, reserve);
@@ -33,7 +33,7 @@ public class ReservoirLogicTests_Int
     {
         var current = 10;
         var reserve = 20;
-        var refilled = ReservoirLogic.Refill(ref current, 10, ref reserve);
+        ReservoirLogic.Refill(ref current, 10, ref reserve, out var refilled);
 
         Assert.Equal(10, current);
         Assert.Equal(20, reserve);
@@ -45,7 +45,7 @@ public class ReservoirLogicTests_Int
     {
         var volume = new BoundedInt(10, 5);
         var reserve = 20;
-        var refilled = ReservoirLogic.Refill(ref volume.Current, volume.Max, ref reserve);
+        ReservoirLogic.Refill(ref volume.Current, volume.Max, ref reserve, out var refilled);
 
         Assert.Equal(10, volume.Current);
         Assert.Equal(15, reserve);

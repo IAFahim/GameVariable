@@ -35,23 +35,24 @@ stat.RemoveModifiers(mods);
 
 ## 🔄 11 Operations
 
-| Operation | Example | Invertible? |
-|-----------|---------|-------------|
-| `Add` | `+5 Strength` | ✅ |
-| `Subtract` | `-10 Health` | ✅ |
-| `Multiply` | `×2 Damage` | ✅ |
-| `Divide` | `÷2 Speed` | ✅ |
-| `AddPercent` | `+20% of Base` | ✅ |
-| `SubtractPercent` | `-30% of Base` | ✅ |
-| `AddPercentOfCurrent` | `+50% of Current` | ✅ |
-| `SubtractPercentOfCurrent` | `-25% of Current` | ✅ |
-| `Set` | `Set to 100` | ❌ |
-| `Min` | `Cap at 100` | ❌ |
-| `Max` | `At least 10` | ❌ |
+| Operation                  | Example           | Invertible? |
+|----------------------------|-------------------|-------------|
+| `Add`                      | `+5 Strength`     | ✅           |
+| `Subtract`                 | `-10 Health`      | ✅           |
+| `Multiply`                 | `×2 Damage`       | ✅           |
+| `Divide`                   | `÷2 Speed`        | ✅           |
+| `AddPercent`               | `+20% of Base`    | ✅           |
+| `SubtractPercent`          | `-30% of Base`    | ✅           |
+| `AddPercentOfCurrent`      | `+50% of Current` | ✅           |
+| `SubtractPercentOfCurrent` | `-25% of Current` | ✅           |
+| `Set`                      | `Set to 100`      | ❌           |
+| `Min`                      | `Cap at 100`      | ❌           |
+| `Max`                      | `At least 10`     | ❌           |
 
 ## 🎮 Common Patterns
 
 ### Equipment
+
 ```csharp
 // Equip
 var weapon = new[]
@@ -66,6 +67,7 @@ damage.RemoveModifiers(weapon);
 ```
 
 ### Buffs
+
 ```csharp
 var buff = RpgStatModifier.AddFlat(RpgStatField.ModMult, 0.3f);
 strength.ApplyModifier(buff);      // Apply
@@ -74,6 +76,7 @@ strength.RemoveModifier(buff);     // Expires
 ```
 
 ### Level-Up
+
 ```csharp
 health.TrySetField(RpgStatField.Max, health.Max + 20f);
 ```

@@ -10,10 +10,10 @@ public static partial class StatLogic
     /// <param name="flat">The sum of all flat modifiers (e.g., +10 Strength).</param>
     /// <param name="percentAdd">The sum of all additive percentage modifiers (e.g., +0.10 for 10% increase). 0.5 means +50%.</param>
     /// <param name="percentMult">The product of all multiplicative percentage modifiers. 1.0 is neutral. 1.5 means x1.5.</param>
-    /// <returns>The calculated final value.</returns>
+    /// <param name="result">The calculated final value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float Calculate(float baseValue, float flat, float percentAdd, float percentMult)
+    public static void Calculate(float baseValue, float flat, float percentAdd, float percentMult, out float result)
     {
-        return (baseValue + flat) * (1f + percentAdd) * percentMult;
+        result = (baseValue + flat) * (1f + percentAdd) * percentMult;
     }
 }

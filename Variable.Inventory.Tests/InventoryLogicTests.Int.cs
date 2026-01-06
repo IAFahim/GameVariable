@@ -44,7 +44,8 @@ public partial class InventoryLogicTests
     [InlineData(11, 10, 0)]
     public void GetRemainingSpace_Int_Tests(int current, int max, int expected)
     {
-        Assert.Equal(expected, InventoryLogic.GetRemainingSpace(current, max));
+        InventoryLogic.GetRemainingSpace(current, max, out var result);
+        Assert.Equal(expected, result);
     }
 
     [Theory]

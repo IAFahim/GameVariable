@@ -40,17 +40,6 @@ public static partial class InventoryLogic
     }
 
     /// <summary>
-    ///     Adds as much as possible to inventory, returning the amount added and outputting overflow.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float AddPartial(ref float current, float amount, float max, out float overflow,
-        float tolerance = MathConstants.Tolerance)
-    {
-        TryAddPartial(ref current, amount, max, out var actualAdded, out overflow, tolerance);
-        return actualAdded;
-    }
-
-    /// <summary>
     ///     Attempts to remove as much of the specified amount as possible from the inventory.
     /// </summary>
     /// <param name="current">The reference to the current quantity variable.</param>
@@ -74,16 +63,6 @@ public static partial class InventoryLogic
 
         actualRemoved = toRemove;
         return true;
-    }
-
-    /// <summary>
-    ///     Removes as much as possible from inventory, returning the amount removed.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float RemovePartial(ref float current, float amount, float tolerance = MathConstants.Tolerance)
-    {
-        TryRemovePartial(ref current, amount, out var actualRemoved, tolerance);
-        return actualRemoved;
     }
 
     /// <summary>

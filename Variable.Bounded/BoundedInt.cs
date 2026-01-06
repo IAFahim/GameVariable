@@ -81,7 +81,7 @@ public struct BoundedInt :
     {
         Max = max;
         Min = 0;
-        Current = BoundedLogic.Clamp(current, 0, max);
+        BoundedLogic.Clamp(current, 0, max, out Current);
     }
 
     /// <summary>
@@ -95,7 +95,7 @@ public struct BoundedInt :
     {
         Min = min;
         Max = max;
-        Current = BoundedLogic.Clamp(current, min, max);
+        BoundedLogic.Clamp(current, min, max, out Current);
     }
 
     /// <summary>Implicitly converts the bounded int to its current value.</summary>
@@ -133,7 +133,7 @@ public struct BoundedInt :
             if (!ratio.TryFormat(destination, out var written, "F1"))
                 return false;
             charsWritten = written;
-            
+
             if (charsWritten >= destination.Length)
                 return false;
             destination[charsWritten++] = '%';
@@ -254,7 +254,7 @@ public struct BoundedInt :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BoundedInt operator +(BoundedInt a, int b)
     {
-        var newCurrent = BoundedLogic.Add(a.Current, a.Min, a.Max, b);
+        BoundedLogic.Add(a.Current, a.Min, a.Max, b, out var newCurrent);
         return new BoundedInt(a.Max, a.Min, newCurrent);
     }
 

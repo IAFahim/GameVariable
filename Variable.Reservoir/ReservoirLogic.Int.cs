@@ -13,17 +13,21 @@ public static partial class ReservoirLogic
     /// <param name="current">Reference to current volume.</param>
     /// <param name="capacity">Maximum volume capacity.</param>
     /// <param name="reserve">Reference to reserve amount.</param>
-    /// <returns>The amount refilled.</returns>
+    /// <param name="result">The amount refilled.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Refill(ref int current, int capacity, ref int reserve)
+    public static void Refill(ref int current, int capacity, ref int reserve, out int result)
     {
         var missing = capacity - current;
-        if (missing <= 0 || reserve <= 0) return 0;
+        if (missing <= 0 || reserve <= 0)
+        {
+            result = 0;
+            return;
+        }
 
         var toRefill = reserve < missing ? reserve : missing;
         current += toRefill;
         reserve -= toRefill;
 
-        return toRefill;
+        result = toRefill;
     }
 }

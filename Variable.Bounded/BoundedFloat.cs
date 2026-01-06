@@ -79,7 +79,7 @@ public struct BoundedFloat :
     {
         Max = max;
         Min = 0f;
-        Current = BoundedLogic.Clamp(current, 0f, max);
+        BoundedLogic.Clamp(current, 0f, max, out Current);
     }
 
     /// <summary>
@@ -93,7 +93,7 @@ public struct BoundedFloat :
     {
         Min = min;
         Max = max;
-        Current = BoundedLogic.Clamp(current, min, max);
+        BoundedLogic.Clamp(current, min, max, out Current);
     }
 
     /// <summary>
@@ -167,7 +167,7 @@ public struct BoundedFloat :
             if (!ratio.TryFormat(destination, out var written, "F1"))
                 return false;
             charsWritten = written;
-            
+
             if (charsWritten >= destination.Length)
                 return false;
             destination[charsWritten++] = '%';

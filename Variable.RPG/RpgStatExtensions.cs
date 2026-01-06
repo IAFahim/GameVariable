@@ -61,19 +61,21 @@ public static class RpgStatExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float GetValue(ref this RpgStat attr)
     {
-        return RpgStatLogic.GetValueRecalculated(
+        RpgStatLogic.GetValueRecalculated(
             ref attr.Value,
             attr.Base,
             attr.ModAdd,
             attr.ModMult,
             attr.Min,
-            attr.Max
+            attr.Max,
+            out var result
         );
+        return result;
     }
 
     /// <summary>
-    /// Returns a compact equation string: "Value ◀ [Base + Add] × Mult"
-    /// Example: "165 ◀ [100 + 50] × 110%"
+    ///     Returns a compact equation string: "Value ◀ [Base + Add] × Mult"
+    ///     Example: "165 ◀ [100 + 50] × 110%"
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string ToStringCompact(ref this RpgStat s)
@@ -86,8 +88,8 @@ public static class RpgStatExtensions
     }
 
     /// <summary>
-    /// Returns a verbose string including bounds, useful for deep debugging.
-    /// Example: "165 ◀ [100 + 50] × 1.1 :: Bounds(0, 999)"
+    ///     Returns a verbose string including bounds, useful for deep debugging.
+    ///     Example: "165 ◀ [100 + 50] × 1.1 :: Bounds(0, 999)"
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string ToString(ref this RpgStat s)
@@ -104,7 +106,8 @@ public static class RpgStatExtensions
     /// <param name="autoRecalculate">If true, recalculates Value after setting (default: true).</param>
     /// <returns>True if the field was valid and set, false otherwise.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TrySetField(ref this RpgStat stat, RpgStatField field, float newValue, bool autoRecalculate = true)
+    public static bool TrySetField(ref this RpgStat stat, RpgStatField field, float newValue,
+        bool autoRecalculate = true)
     {
         var success = RpgStatLogic.TrySetField(
             field, newValue,
@@ -112,10 +115,7 @@ public static class RpgStatExtensions
             ref stat.Min, ref stat.Max, ref stat.Value
         );
 
-        if (success && autoRecalculate && field != RpgStatField.Value)
-        {
-            stat.Recalculate();
-        }
+        if (success && autoRecalculate && field != RpgStatField.Value) stat.Recalculate();
 
         return success;
     }
@@ -154,10 +154,11 @@ public static class RpgStatExtensions
             return false;
 
         // Calculate new value using operation
-        var newValue = RpgStatLogic.ApplyOperation(
+        RpgStatLogic.ApplyOperation(
             modifier.Operation,
             currentValue,
             modifier.Value,
+            out var newValue,
             stat.Base
         );
 
@@ -174,16 +175,15 @@ public static class RpgStatExtensions
     /// <param name="autoRecalculate">If true, recalculates once after all modifications.</param>
     /// <returns>Number of successfully applied modifiers.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int ApplyModifiers(ref this RpgStat stat, ReadOnlySpan<RpgStatModifier> modifiers, bool autoRecalculate = true)
+    public static int ApplyModifiers(ref this RpgStat stat, ReadOnlySpan<RpgStatModifier> modifiers,
+        bool autoRecalculate = true)
     {
         var appliedCount = 0;
 
         // Apply all modifiers without recalculation
         for (var i = 0; i < modifiers.Length; i++)
-        {
-            if (stat.ApplyModifier(modifiers[i], autoRecalculate: false))
+            if (stat.ApplyModifier(modifiers[i], false))
                 appliedCount++;
-        }
 
         // Recalculate once at the end if requested
         if (autoRecalculate && appliedCount > 0)
@@ -219,16 +219,15 @@ public static class RpgStatExtensions
     /// <param name="autoRecalculate">If true, recalculates once after all removals.</param>
     /// <returns>Number of successfully removed modifiers.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int RemoveModifiers(ref this RpgStat stat, ReadOnlySpan<RpgStatModifier> modifiers, bool autoRecalculate = true)
+    public static int RemoveModifiers(ref this RpgStat stat, ReadOnlySpan<RpgStatModifier> modifiers,
+        bool autoRecalculate = true)
     {
         var removedCount = 0;
 
         // Remove all modifiers without recalculation
         for (var i = 0; i < modifiers.Length; i++)
-        {
-            if (stat.RemoveModifier(modifiers[i], autoRecalculate: false))
+            if (stat.RemoveModifier(modifiers[i], false))
                 removedCount++;
-        }
 
         // Recalculate once at the end if requested
         if (autoRecalculate && removedCount > 0)

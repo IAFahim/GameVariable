@@ -11,11 +11,15 @@ public static partial class StatLogic
     /// <param name="current">The reference to the current value.</param>
     /// <param name="amount">The amount to add.</param>
     /// <param name="max">The maximum value.</param>
-    /// <returns>The actual amount added.</returns>
+    /// <param name="result">The actual amount added.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float Add(ref float current, float amount, float max)
+    public static void Add(ref float current, float amount, float max, out float result)
     {
-        if (amount <= MathConstants.Tolerance) return 0f;
+        if (amount <= MathConstants.Tolerance)
+        {
+            result = 0f;
+            return;
+        }
 
         var missing = max - current;
         var actual = amount > missing ? missing : amount;
@@ -23,6 +27,6 @@ public static partial class StatLogic
         current += actual;
         if (max - current < MathConstants.Tolerance) current = max;
 
-        return actual;
+        result = actual;
     }
 }

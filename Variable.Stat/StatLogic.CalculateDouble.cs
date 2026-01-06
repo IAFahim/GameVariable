@@ -7,8 +7,9 @@ public static partial class StatLogic
     ///     Formula: (baseValue + flat) * (1 + percentAdd) * percentMult
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double Calculate(double baseValue, double flat, double percentAdd, double percentMult)
+    public static void Calculate(double baseValue, double flat, double percentAdd, double percentMult,
+        out double result)
     {
-        return (baseValue + flat) * (1d + percentAdd) * percentMult;
+        result = (baseValue + flat) * (1d + percentAdd) * percentMult;
     }
 }

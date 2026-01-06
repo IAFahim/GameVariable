@@ -10,9 +10,9 @@ public static class TimerLogic
     ///     Clamps a value between min and max.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float Clamp(float value, float min, float max)
+    public static void Clamp(float value, float min, float max, out float result)
     {
-        return CoreMath.Clamp(value, min, max);
+        CoreMath.Clamp(value, min, max, out result);
     }
 
     /// <summary>
@@ -37,18 +37,18 @@ public static class TimerLogic
     ///     Calculates the ratio of current vs duration.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double GetRatio(float current, float duration)
+    public static void GetRatio(float current, float duration, out double result)
     {
-        return Math.Abs(duration) < MathConstants.Tolerance ? 0.0 : (double)current / duration;
+        result = Math.Abs(duration) < MathConstants.Tolerance ? 0.0 : (double)current / duration;
     }
 
     /// <summary>
     ///     Calculates the inverse ratio (1 - ratio).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float GetInverseRatio(float current, float duration)
+    public static void GetInverseRatio(float current, float duration, out float result)
     {
-        return Math.Abs(duration) < MathConstants.Tolerance ? 1f : 1f - Math.Max(0, current / duration);
+        result = Math.Abs(duration) < MathConstants.Tolerance ? 1f : 1f - Math.Max(0, current / duration);
     }
 
     /// <summary>
@@ -175,6 +175,6 @@ public static class TimerLogic
         float clampMax)
     {
         current = targetValue + overflow;
-        current = CoreMath.Clamp(current, clampMin, clampMax);
+        CoreMath.Clamp(current, clampMin, clampMax, out current);
     }
 }

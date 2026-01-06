@@ -6,7 +6,7 @@ public class StatLogicTests_Add
     public void Add_IncreasesValue()
     {
         var current = 10f;
-        var added = StatLogic.Add(ref current, 5f, 20f);
+        StatLogic.Add(ref current, 5f, 20f, out var added);
         Assert.Equal(15f, current);
         Assert.Equal(5f, added);
     }
@@ -15,7 +15,7 @@ public class StatLogicTests_Add
     public void Add_ClampsToMax()
     {
         var current = 18f;
-        var added = StatLogic.Add(ref current, 5f, 20f);
+        StatLogic.Add(ref current, 5f, 20f, out var added);
         Assert.Equal(20f, current);
         Assert.Equal(2f, added);
     }
@@ -24,7 +24,7 @@ public class StatLogicTests_Add
     public void Add_Zero_DoesNothing()
     {
         var current = 10f;
-        var added = StatLogic.Add(ref current, 0f, 20f);
+        StatLogic.Add(ref current, 0f, 20f, out var added);
         Assert.Equal(10f, current);
         Assert.Equal(0f, added);
     }

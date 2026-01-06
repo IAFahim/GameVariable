@@ -6,7 +6,10 @@ namespace Variable.Timer;
 /// </summary>
 /// <remarks>
 ///     <para>The timer starts at 0 and counts up to <see cref="Duration" />.</para>
-///     <para>Use <see cref="TimerExtensions.TickAndCheckComplete(ref Timer, float)" /> to advance and check completion in one call.</para>
+///     <para>
+///         Use <see cref="TimerExtensions.TickAndCheckComplete(ref Timer, float)" /> to advance and check completion in
+///         one call.
+///     </para>
 ///     <para>Check <see cref="TimerExtensions.IsFull(Timer)" /> to determine if the timer has reached the duration.</para>
 /// </remarks>
 /// <example>
@@ -47,7 +50,7 @@ public struct Timer :
     public Timer(float duration, float current = 0f)
     {
         Duration = duration;
-        Current = TimerLogic.Clamp(current, 0f, duration);
+        TimerLogic.Clamp(current, 0f, duration, out Current);
     }
 
     /// <inheritdoc />

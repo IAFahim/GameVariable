@@ -6,7 +6,6 @@ namespace Variable.Timer;
 /// </summary>
 public static class TimerExtensions
 {
-
     // Timer Extensions
 
     /// <summary>
@@ -101,7 +100,8 @@ public static class TimerExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double GetRatio(this Timer self)
     {
-        return TimerLogic.GetRatio(self.Current, self.Duration);
+        TimerLogic.GetRatio(self.Current, self.Duration, out var result);
+        return result;
     }
 
     // Cooldown Extensions
@@ -216,7 +216,8 @@ public static class TimerExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double GetRatio(this Cooldown self)
     {
-        return TimerLogic.GetRatio(self.Current, self.Duration);
+        TimerLogic.GetRatio(self.Current, self.Duration, out var result);
+        return result;
     }
 
     /// <summary>
@@ -225,6 +226,7 @@ public static class TimerExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float GetProgress(this Cooldown self)
     {
-        return TimerLogic.GetInverseRatio(self.Current, self.Duration);
+        TimerLogic.GetInverseRatio(self.Current, self.Duration, out var result);
+        return result;
     }
 }

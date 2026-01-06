@@ -48,7 +48,8 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double GetRatio(this BoundedFloat bounded)
     {
-        return BoundedLogic.GetRatio(bounded.Current, bounded.Min, bounded.Max);
+        BoundedLogic.GetRatio(bounded.Current, bounded.Min, bounded.Max, out var result);
+        return result;
     }
 
     /// <summary>
@@ -57,7 +58,8 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float GetRange(this BoundedFloat bounded)
     {
-        return BoundedLogic.GetRange(bounded.Min, bounded.Max);
+        BoundedLogic.GetRange(bounded.Min, bounded.Max, out var result);
+        return result;
     }
 
     /// <summary>
@@ -66,7 +68,8 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float GetRemaining(this BoundedFloat bounded)
     {
-        return BoundedLogic.GetRemaining(bounded.Current, bounded.Max);
+        BoundedLogic.GetRemaining(bounded.Current, bounded.Max, out var result);
+        return result;
     }
 
     /// <summary>
@@ -111,7 +114,8 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double GetRatio(this BoundedInt bounded)
     {
-        return BoundedLogic.GetRatio(bounded.Current, bounded.Min, bounded.Max);
+        BoundedLogic.GetRatio(bounded.Current, bounded.Min, bounded.Max, out var result);
+        return result;
     }
 
     /// <summary>
@@ -120,7 +124,8 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetRange(this BoundedInt bounded)
     {
-        return BoundedLogic.GetRange(bounded.Min, bounded.Max);
+        BoundedLogic.GetRange(bounded.Min, bounded.Max, out var result);
+        return result;
     }
 
     /// <summary>
@@ -129,7 +134,8 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetRemaining(this BoundedInt bounded)
     {
-        return BoundedLogic.GetRemaining(bounded.Current, bounded.Max);
+        BoundedLogic.GetRemaining(bounded.Current, bounded.Max, out var result);
+        return result;
     }
 
     /// <summary>
@@ -174,7 +180,8 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double GetRatio(this BoundedByte bounded)
     {
-        return BoundedLogic.GetRatio(bounded.Current, bounded.Max);
+        BoundedLogic.GetRatio(bounded.Current, bounded.Max, out var result);
+        return result;
     }
 
     /// <summary>
@@ -183,7 +190,8 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte GetRange(this BoundedByte bounded)
     {
-        return BoundedLogic.GetRange(bounded.Max);
+        BoundedLogic.GetRange(bounded.Max, out var result);
+        return result;
     }
 
     /// <summary>
@@ -192,7 +200,8 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte GetRemaining(this BoundedByte bounded)
     {
-        return BoundedLogic.GetRemaining(bounded.Current, bounded.Max);
+        BoundedLogic.GetRemaining(bounded.Current, bounded.Max, out var result);
+        return result;
     }
 
     /// <summary>

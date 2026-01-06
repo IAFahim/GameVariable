@@ -11,6 +11,7 @@ public class StatLogicTests_Calculate
     [InlineData(10f, 10f, -0.5f, 1f, 10f)] // (10+10) * 0.5 = 10
     public void Calculate_Float_Tests(float baseVal, float flat, float pctAdd, float pctMult, float expected)
     {
-        Assert.Equal(expected, StatLogic.Calculate(baseVal, flat, pctAdd, pctMult));
+        StatLogic.Calculate(baseVal, flat, pctAdd, pctMult, out var result);
+        Assert.Equal(expected, result);
     }
 }

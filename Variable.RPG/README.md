@@ -157,6 +157,7 @@ AttributeLogic.AddModifier(ref health, 150f, 0f);
 var val = AttributeLogic.GetValue(ref health);
 // 100 + 150 = 250, clamped to 200
 ```
+
 ### Damage Configuration
 
 ```csharp

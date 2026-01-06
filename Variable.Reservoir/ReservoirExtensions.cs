@@ -15,11 +15,13 @@ public static class ReservoirExtensions
     public static float Refill(ref this ReservoirFloat reservoir)
     {
         // Decompose struct into primitives for logic
-        return ReservoirLogic.Refill(
+        ReservoirLogic.Refill(
             ref reservoir.Volume.Current,
             reservoir.Volume.Max,
-            ref reservoir.Reserve
+            ref reservoir.Reserve,
+            out var result
         );
+        return result;
     }
 
     /// <summary>
@@ -31,10 +33,12 @@ public static class ReservoirExtensions
     public static int Refill(ref this ReservoirInt reservoir)
     {
         // Decompose struct into primitives for logic
-        return ReservoirLogic.Refill(
+        ReservoirLogic.Refill(
             ref reservoir.Volume.Current,
             reservoir.Volume.Max,
-            ref reservoir.Reserve
+            ref reservoir.Reserve,
+            out var result
         );
+        return result;
     }
 }

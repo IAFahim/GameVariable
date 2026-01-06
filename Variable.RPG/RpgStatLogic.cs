@@ -44,11 +44,11 @@ public static class RpgStatLogic
     ///     Gets the value, recalculating immediately if dirty.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float GetValueRecalculated(ref float value, float baseVal, float modAdd, float modMult, float min,
-        float max)
+    public static void GetValueRecalculated(ref float value, float baseVal, float modAdd, float modMult, float min,
+        float max, out float result)
     {
         Recalculate(baseVal, modAdd, modMult, min, max, out value);
-        return value;
+        result = value;
     }
 
     /// <summary>
@@ -56,8 +56,8 @@ public static class RpgStatLogic
     ///     Returns true if the field was valid, false otherwise.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TrySetField(RpgStatField field, float newValue, 
-        ref float baseVal, ref float modAdd, ref float modMult, 
+    public static bool TrySetField(RpgStatField field, float newValue,
+        ref float baseVal, ref float modAdd, ref float modMult,
         ref float min, ref float max, ref float value)
     {
         switch (field)
@@ -90,9 +90,9 @@ public static class RpgStatLogic
     ///     Returns true if the field was valid, false otherwise.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryGetField(RpgStatField field, 
-        float baseVal, float modAdd, float modMult, 
-        float min, float max, float value, 
+    public static bool TryGetField(RpgStatField field,
+        float baseVal, float modAdd, float modMult,
+        float min, float max, float value,
         out float result)
     {
         switch (field)
@@ -123,50 +123,68 @@ public static class RpgStatLogic
 
     /// <summary>
     ///     Applies an operation to a field value.
-    ///     Pure function - returns the new value without mutation.
+    ///     Pure function - calculates the new value without mutation.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float ApplyOperation(RpgStatOperation operation, float currentValue, float operandValue, float baseValue = 0f)
+    public static void ApplyOperation(RpgStatOperation operation, float currentValue, float operandValue,
+        out float result, float baseValue = 0f)
     {
         switch (operation)
         {
             case RpgStatOperation.Set:
-                return operandValue;
-            
+                result = operandValue;
+                return;
+
             case RpgStatOperation.Add:
-                return currentValue + operandValue;
-            
+                result = currentValue + operandValue;
+                return;
+
             case RpgStatOperation.Subtract:
-                return currentValue - operandValue;
-            
+                result = currentValue - operandValue;
+                return;
+
             case RpgStatOperation.Multiply:
-                return currentValue * operandValue;
-            
+                result = currentValue * operandValue;
+                return;
+
             case RpgStatOperation.Divide:
                 // Early exit: prevent division by zero
-                if (operandValue == 0f) return currentValue;
-                return currentValue / operandValue;
-            
+                if (operandValue == 0f)
+                {
+                    result = currentValue;
+                    return;
+                }
+
+                result = currentValue / operandValue;
+                return;
+
             case RpgStatOperation.AddPercent:
-                return currentValue + (baseValue * operandValue);
-            
+                result = currentValue + baseValue * operandValue;
+                return;
+
             case RpgStatOperation.SubtractPercent:
-                return currentValue - (baseValue * operandValue);
-            
+                result = currentValue - baseValue * operandValue;
+                return;
+
             case RpgStatOperation.AddPercentOfCurrent:
-                return currentValue + (currentValue * operandValue);
-            
+                result = currentValue + currentValue * operandValue;
+                return;
+
             case RpgStatOperation.SubtractPercentOfCurrent:
-                return currentValue - (currentValue * operandValue);
-            
+                result = currentValue - currentValue * operandValue;
+                return;
+
             case RpgStatOperation.Min:
-                return currentValue < operandValue ? currentValue : operandValue;
-            
+                result = currentValue < operandValue ? currentValue : operandValue;
+                return;
+
             case RpgStatOperation.Max:
-                return currentValue > operandValue ? currentValue : operandValue;
-            
+                result = currentValue > operandValue ? currentValue : operandValue;
+                return;
+
             default:
-                return currentValue;
+                result = currentValue;
+                return;
         }
     }
 }

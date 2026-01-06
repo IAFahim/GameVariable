@@ -7,7 +7,7 @@ public class StatLogicTests_Transfer
     {
         var source = 10f;
         var target = 5f;
-        var transferred = StatLogic.Transfer(ref source, ref target, 20f, 5f);
+        StatLogic.Transfer(ref source, ref target, 20f, 5f, out var transferred);
 
         Assert.Equal(5f, source);
         Assert.Equal(10f, target);
@@ -19,7 +19,7 @@ public class StatLogicTests_Transfer
     {
         var source = 3f;
         var target = 5f;
-        var transferred = StatLogic.Transfer(ref source, ref target, 20f, 5f);
+        StatLogic.Transfer(ref source, ref target, 20f, 5f, out var transferred);
 
         Assert.Equal(0f, source);
         Assert.Equal(8f, target);
@@ -31,7 +31,7 @@ public class StatLogicTests_Transfer
     {
         var source = 10f;
         var target = 18f;
-        var transferred = StatLogic.Transfer(ref source, ref target, 20f, 5f);
+        StatLogic.Transfer(ref source, ref target, 20f, 5f, out var transferred);
 
         Assert.Equal(8f, source);
         Assert.Equal(20f, target);

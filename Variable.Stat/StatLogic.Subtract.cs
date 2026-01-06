@@ -8,11 +8,15 @@ public static partial class StatLogic
     /// <param name="current">The reference to the current value.</param>
     /// <param name="amount">The amount to subtract.</param>
     /// <param name="min">The minimum value (default 0).</param>
-    /// <returns>The actual amount subtracted.</returns>
+    /// <param name="result">The actual amount subtracted.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float Subtract(ref float current, float amount, float min = 0f)
+    public static void Subtract(ref float current, float amount, out float result, float min = 0f)
     {
-        if (amount <= MathConstants.Tolerance) return 0f;
+        if (amount <= MathConstants.Tolerance)
+        {
+            result = 0f;
+            return;
+        }
 
         var available = current - min;
         if (available < 0f) available = 0f;
@@ -23,6 +27,6 @@ public static partial class StatLogic
         // Ensure we hit min exactly if close enough
         if (current - min < MathConstants.Tolerance) current = min;
 
-        return toSubtract;
+        result = toSubtract;
     }
 }
