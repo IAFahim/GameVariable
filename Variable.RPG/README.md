@@ -63,7 +63,6 @@ public struct Attribute {
     public float ModMult;   // Multipliers (x1.2 from buff)
     public float Min, Max;  // Bounds
     public float CachedValue;
-    public bool IsDirty;
 }
 
 // Damage instance
@@ -158,21 +157,6 @@ AttributeLogic.AddModifier(ref health, 150f, 0f);
 var val = AttributeLogic.GetValue(ref health);
 // 100 + 150 = 250, clamped to 200
 ```
-
-### Caching & Dirty Tracking
-
-```csharp
-var attr = new Attribute(10f);
-var val1 = AttributeLogic.GetValue(ref attr); // Calculates & caches
-
-// Modifiers changed
-AttributeLogic.AddModifier(ref attr, 5f, 0f);
-// attr.IsDirty == true
-
-var val2 = AttributeLogic.GetValue(ref attr); // Recalculates
-// attr.IsDirty == false
-```
-
 ### Damage Configuration
 
 ```csharp
@@ -301,8 +285,7 @@ No clamp (allows amplification)
 
 ## ✨ Features
 
-✅ **Zero Allocation** — No GC in hot paths  
-✅ **Cached Calculations** — Dirty tracking avoids redundant math  
+✅ **Zero Allocation** — No GC in hot paths   
 ✅ **Span-Based** — NativeArray, BlobArray, stackalloc compatible  
 ✅ **Framework Agnostic** — No Unity/Unreal dependencies  
 ✅ **Type-Safe Config** — Interface for game-specific rules  
@@ -316,7 +299,6 @@ No clamp (allows amplification)
 
 - ✅ Diamond pattern (Base + Flat + Mult)
 - ✅ Min/Max clamping
-- ✅ Dirty tracking & caching
 - ✅ Armor (flat mitigation)
 - ✅ Resistance (percentage mitigation)
 - ✅ Mixed damage types

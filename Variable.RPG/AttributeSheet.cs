@@ -110,7 +110,6 @@ public unsafe struct AttributeSheet
     {
         if (statId < 0 || statId >= _count || _attributes == null) return;
         _attributes[statId].Base = value;
-        _attributes[statId].IsDirty = 1;
     }
 
     /// <summary>

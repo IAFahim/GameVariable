@@ -19,8 +19,7 @@ public static class AttributeExtensions
             attr.ModMult,
             attr.Min,
             attr.Max,
-            out attr.CachedValue,
-            out attr.IsDirty
+            out attr.Value
         );
     }
 
@@ -36,7 +35,6 @@ public static class AttributeExtensions
         AttributeLogic.AddModifier(
             ref attr.ModAdd,
             ref attr.ModMult,
-            ref attr.IsDirty,
             flat,
             percent
         );
@@ -51,8 +49,7 @@ public static class AttributeExtensions
     {
         AttributeLogic.ClearModifiers(
             out attr.ModAdd,
-            out attr.ModMult,
-            out attr.IsDirty
+            out attr.ModMult
         );
     }
 
@@ -64,9 +61,8 @@ public static class AttributeExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float GetValue(ref this Attribute attr)
     {
-        return AttributeLogic.GetValue(
-            ref attr.CachedValue,
-            ref attr.IsDirty,
+        return AttributeLogic.GetValueRecalculated(
+            ref attr.Value,
             attr.Base,
             attr.ModAdd,
             attr.ModMult,

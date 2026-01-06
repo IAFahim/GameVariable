@@ -7,52 +7,47 @@ namespace Variable.RPG;
 public static class AttributeLogic
 {
     /// <summary>
-    ///     Recalculates the CachedValue if Dirty.
     ///     Formula: (Base + Add) * Mult, clamped to [Min, Max].
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Recalculate(float baseVal, float modAdd, float modMult, float min, float max,
-        out float cachedValue, out byte isDirty)
+    public static void Recalculate(float baseVal, float modAdd, float modMult, float min, float max, out float value)
     {
         var val = (baseVal + modAdd) * modMult;
 
         if (val > max) val = max;
         else if (val < min) val = min;
 
-        cachedValue = val;
-        isDirty = 0;
+        value = val;
     }
 
     /// <summary>
     ///     Adds a temporary modifier to the attribute.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void AddModifier(ref float modAdd, ref float modMult, ref byte isDirty, float flat, float percent)
+    public static void AddModifier(ref float modAdd, ref float modMult, float flat, float percent)
     {
         modAdd += flat;
         modMult += percent;
-        isDirty = 1;
     }
 
     /// <summary>
     ///     Resets modifiers to default (Add=0, Mult=1).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void ClearModifiers(out float modAdd, out float modMult, out byte isDirty)
+    public static void ClearModifiers(out float modAdd, out float modMult)
     {
         modAdd = 0f;
         modMult = 1f;
-        isDirty = 1;
     }
 
     /// <summary>
     ///     Gets the value, recalculating immediately if dirty.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float GetValue(ref float cachedValue, ref byte isDirty, float baseVal, float modAdd, float modMult,
-        float min, float max)
+    public static float GetValueRecalculated(ref float value, float baseVal, float modAdd, float modMult, float min,
+        float max)
     {
-        if (isDirty != 0) Recalculate(baseVal, modAdd, modMult, min, max, out cachedValue, out isDirty);
-        return cachedValue;
+        Recalculate(baseVal, modAdd, modMult, min, max, out value);
+        return value;
     }
 }

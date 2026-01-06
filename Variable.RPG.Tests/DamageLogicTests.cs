@@ -7,7 +7,6 @@ public class DamageLogicTests
     {
         var sheet = new AttributeSheet(5);
         sheet.SetBase(MyIds.Armor, 10f);
-        sheet[MyIds.Armor].IsDirty = 1; // 10 Armor
 
         var damages = new[]
         {
@@ -27,7 +26,6 @@ public class DamageLogicTests
     {
         var sheet = new AttributeSheet(5);
         sheet.SetBase(MyIds.FireResist, 0.5f);
-        sheet[MyIds.FireResist].IsDirty = 1; // 50% Resist
 
         var damages = new[]
         {
@@ -67,7 +65,6 @@ public class DamageLogicTests
     {
         var sheet = new AttributeSheet(5);
         sheet.SetBase(MyIds.Armor, 100f);
-        sheet[MyIds.Armor].IsDirty = 1; // Massive armor
 
         var damages = new[]
         {

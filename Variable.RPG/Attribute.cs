@@ -24,10 +24,7 @@ public struct Attribute
     public float Max;
 
     /// <summary>The cached result of the calculation.</summary>
-    public float CachedValue;
-
-    /// <summary>Flag indicating if the cached value needs recalculation (0 = clean, 1 = dirty).</summary>
-    public byte IsDirty;
+    public float Value;
 
     /// <summary>
     ///     Creates a new Attribute with default bounds.
@@ -40,7 +37,9 @@ public struct Attribute
         ModMult = 1f;
         Min = min;
         Max = max;
-        CachedValue = baseVal;
-        IsDirty = 0;
+        var val = baseVal;
+        if (val > max) val = max;
+        else if (val < min) val = min;
+        Value = val;
     }
 }
