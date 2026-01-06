@@ -70,4 +70,28 @@ public static class RpgStatExtensions
             attr.Max
         );
     }
+
+    /// <summary>
+    /// Returns a compact equation string: "Value ◀ [Base + Add] × Mult"
+    /// Example: "165 ◀ [100 + 50] × 110%"
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static string ToStringCompact(ref this RpgStat s)
+    {
+        // F1 = 1 decimal place (10.5)
+        // P0 = Percentage format (1.1 -> 110%)
+        // ◀  = Visual separator indicating "Derived from"
+
+        return $"{s.Value:F1} ◀ [{s.Base:F1} + {s.ModAdd:F1}] × {s.ModMult:P0}";
+    }
+
+    /// <summary>
+    /// Returns a verbose string including bounds, useful for deep debugging.
+    /// Example: "165 ◀ [100 + 50] × 1.1 :: Bounds(0, 999)"
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static string ToString(ref this RpgStat s)
+    {
+        return $"{s.Value:F2} ◀ [{s.Base:F2} + {s.ModAdd:F2}] × {s.ModMult:F2} :: Bounds({s.Min}, {s.Max})";
+    }
 }
