@@ -297,7 +297,7 @@
                                 <line number="86" hits="0" branch="False"/>
                             </lines>
                         </method>
-                        <method name="ToString" signature="(Variable.RPG.RpgStat&amp;)" line-rate="0" branch-rate="1"
+                        <method name="ToStringVerbose" signature="(Variable.RPG.RpgStat&amp;)" line-rate="0" branch-rate="1"
                                 complexity="1">
                             <lines>
                                 <line number="94" hits="0" branch="False"/>

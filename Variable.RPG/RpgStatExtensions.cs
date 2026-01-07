@@ -93,7 +93,7 @@ public static class RpgStatExtensions
     ///     Example: "165 ◀ [100 + 50] × 1.1 :: Bounds(0, 999)"
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string ToString(ref this RpgStat s)
+    public static string ToStringVerbose(ref this RpgStat s)
     {
         return string.Format(CultureInfo.InvariantCulture,
             "{0:F2} ◀ [{1:F2} + {2:F2}] × {3:F2} :: Bounds({4}, {5})",
