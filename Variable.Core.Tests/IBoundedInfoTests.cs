@@ -78,49 +78,49 @@ public class BoundedInfoTests
     [Fact]
     public void IsFull_ContractHonored_WhenAtMax()
     {
-        IBoundedInfo bounded = new TestBounded(0f, 100f, 100f);
+        var bounded = new TestBounded(0f, 100f, 100f);
         Assert.True(bounded.IsFull());
     }
 
     [Fact]
     public void IsFull_ContractHonored_WhenNotAtMax()
     {
-        IBoundedInfo bounded = new TestBounded(0f, 100f, 50f);
+        var bounded = new TestBounded(0f, 100f, 50f);
         Assert.False(bounded.IsFull());
     }
 
     [Fact]
     public void IsEmpty_ContractHonored_WhenAtMin()
     {
-        IBoundedInfo bounded = new TestBounded(0f, 100f, 0f);
+        var bounded = new TestBounded(0f, 100f, 0f);
         Assert.True(bounded.IsEmpty());
     }
 
     [Fact]
     public void IsEmpty_ContractHonored_WhenNotAtMin()
     {
-        IBoundedInfo bounded = new TestBounded(0f, 100f, 50f);
+        var bounded = new TestBounded(0f, 100f, 50f);
         Assert.False(bounded.IsEmpty());
     }
 
     [Fact]
     public void GetRatio_ReturnsNormalizedValue()
     {
-        IBoundedInfo bounded = new TestBounded(0f, 100f, 50f);
+        var bounded = new TestBounded(0f, 100f, 50f);
         Assert.Equal(0.5, bounded.GetRatio(), 5);
     }
 
     [Fact]
     public void GetRatio_ReturnsZero_WhenRangeIsZero()
     {
-        IBoundedInfo bounded = new TestBounded(50f, 50f, 50f);
+        var bounded = new TestBounded(50f, 50f, 50f);
         Assert.Equal(0.0, bounded.GetRatio());
     }
 
     [Fact]
     public void GetRatio_WorksWithNegativeMin()
     {
-        IBoundedInfo bounded = new TestBounded(-50f, 50f, 0f);
+        var bounded = new TestBounded(-50f, 50f, 0f);
         Assert.Equal(0.5, bounded.GetRatio(), 5);
     }
 
