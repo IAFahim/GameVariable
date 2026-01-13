@@ -6,7 +6,7 @@ namespace GameVariable.Intent.Tests
     {
         public static void Main(string[] args)
         {
-            BenchmarkRunner.Run<IntentBenc/hmarks>();
+            BenchmarkRunner.Run<IntentBenchmarks>();
         }
     }
 }
