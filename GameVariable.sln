@@ -36,6 +36,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Variable.RPG", "Variable.RP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Variable.RPG.Tests", "Variable.RPG.Tests\Variable.RPG.Tests.csproj", "{574F1002-0862-4386-B524-69147B5E9E47}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameVariable.Intent", "GameVariable.Intent\GameVariable.Intent.csproj", "{BA17AD0A-8CFA-4BE6-9F5C-47BCE67A0755}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -262,6 +264,18 @@ Global
 		{574F1002-0862-4386-B524-69147B5E9E47}.Release|x64.Build.0 = Release|Any CPU
 		{574F1002-0862-4386-B524-69147B5E9E47}.Release|x86.ActiveCfg = Release|Any CPU
 		{574F1002-0862-4386-B524-69147B5E9E47}.Release|x86.Build.0 = Release|Any CPU
+		{BA17AD0A-8CFA-4BE6-9F5C-47BCE67A0755}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA17AD0A-8CFA-4BE6-9F5C-47BCE67A0755}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA17AD0A-8CFA-4BE6-9F5C-47BCE67A0755}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BA17AD0A-8CFA-4BE6-9F5C-47BCE67A0755}.Debug|x64.Build.0 = Debug|Any CPU
+		{BA17AD0A-8CFA-4BE6-9F5C-47BCE67A0755}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BA17AD0A-8CFA-4BE6-9F5C-47BCE67A0755}.Debug|x86.Build.0 = Debug|Any CPU
+		{BA17AD0A-8CFA-4BE6-9F5C-47BCE67A0755}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA17AD0A-8CFA-4BE6-9F5C-47BCE67A0755}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA17AD0A-8CFA-4BE6-9F5C-47BCE67A0755}.Release|x64.ActiveCfg = Release|Any CPU
+		{BA17AD0A-8CFA-4BE6-9F5C-47BCE67A0755}.Release|x64.Build.0 = Release|Any CPU
+		{BA17AD0A-8CFA-4BE6-9F5C-47BCE67A0755}.Release|x86.ActiveCfg = Release|Any CPU
+		{BA17AD0A-8CFA-4BE6-9F5C-47BCE67A0755}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
