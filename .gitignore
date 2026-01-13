@@ -7,3 +7,7 @@ riderModule.iml
 *.snupkg
 TestResults/
 **/TestResults/
+*-cwd
+*.log
+*-report*
+nul
