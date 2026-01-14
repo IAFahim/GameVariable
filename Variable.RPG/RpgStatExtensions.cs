@@ -86,9 +86,10 @@ public static class RpgStatExtensions
         // P0 = Percentage format (1.1 -> 110%)
         // ◀  = Visual separator indicating "Derived from"
 
-        // Estimate length: 4 floats (say 10 chars each) + fixed chars (~11) = ~51.
-        // 128 is plenty safe.
-        Span<char> buffer = stackalloc char[128];
+        // Estimate length: 4 floats. Max length of float.MaxValue ("F1") is ~41 chars.
+        // 4 * 41 = 164 chars + ~11 fixed chars = ~175 chars.
+        // 256 is safe to avoid overflow.
+        Span<char> buffer = stackalloc char[256];
         int pos = 0;
 
         // {0:F1}
