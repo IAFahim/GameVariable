@@ -21,7 +21,7 @@ public static partial class ComboLogic
 
         buffer[tail] = inputId;
 
-        tail = (tail + 1) % InputRingBuffer.CAPACITY;
+        tail = (tail + 1) & (InputRingBuffer.CAPACITY - 1);
         count++;
         return true;
     }
@@ -42,7 +42,7 @@ public static partial class ComboLogic
 
         inputId = buffer[head];
 
-        head = (head + 1) % InputRingBuffer.CAPACITY;
+        head = (head + 1) & (InputRingBuffer.CAPACITY - 1);
         count--;
         return true;
     }
