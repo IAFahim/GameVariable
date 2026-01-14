@@ -1,3 +1,5 @@
+using System;
+
 namespace Variable.RPG;
 
 /// <summary>
@@ -84,8 +86,48 @@ public static class RpgStatExtensions
         // P0 = Percentage format (1.1 -> 110%)
         // ◀  = Visual separator indicating "Derived from"
 
-        return string.Format(CultureInfo.InvariantCulture,
-            "{0:F1} ◀ [{1:F1} + {2:F1}] × {3:P0}", s.Value, s.Base, s.ModAdd, s.ModMult);
+        // Estimate length: 4 floats (say 10 chars each) + fixed chars (~11) = ~51.
+        // 128 is plenty safe.
+        Span<char> buffer = stackalloc char[128];
+        int pos = 0;
+
+        // {0:F1}
+        if (s.Value.TryFormat(buffer.Slice(pos), out int charsWritten, "F1", CultureInfo.InvariantCulture))
+        {
+            pos += charsWritten;
+        }
+
+        // " ◀ ["
+        " ◀ [".AsSpan().CopyTo(buffer.Slice(pos));
+        pos += 4;
+
+        // {1:F1}
+        if (s.Base.TryFormat(buffer.Slice(pos), out charsWritten, "F1", CultureInfo.InvariantCulture))
+        {
+            pos += charsWritten;
+        }
+
+        // " + "
+        " + ".AsSpan().CopyTo(buffer.Slice(pos));
+        pos += 3;
+
+        // {2:F1}
+        if (s.ModAdd.TryFormat(buffer.Slice(pos), out charsWritten, "F1", CultureInfo.InvariantCulture))
+        {
+            pos += charsWritten;
+        }
+
+        // "] × "
+        "] × ".AsSpan().CopyTo(buffer.Slice(pos));
+        pos += 4;
+
+        // {3:P0}
+        if (s.ModMult.TryFormat(buffer.Slice(pos), out charsWritten, "P0", CultureInfo.InvariantCulture))
+        {
+            pos += charsWritten;
+        }
+
+        return new string(buffer.Slice(0, pos));
     }
 
     /// <summary>
