@@ -275,20 +275,22 @@ remove_beginning_slash() {
 # args:
 # root_path - $1
 # child_path - $2 - this parameter can be empty
+# ... - additional paths
 combine_paths() {
     eval $invocation
 
-    # TODO: Consider making it work with any number of paths. For now:
-    if [ ! -z "${3:-}" ]; then
-        say_err "combine_paths: Function takes two parameters."
-        return 1
-    fi
+    local path="$1"
+    shift
 
-    local root_path="$(remove_trailing_slash "$1")"
-    local child_path="$(remove_beginning_slash "${2:-}")"
-    say_verbose "combine_paths: root_path=$root_path"
-    say_verbose "combine_paths: child_path=$child_path"
-    echo "$root_path/$child_path"
+    while [ $# -gt 0 ]; do
+        local segment="${1:-}"
+        path="$(remove_trailing_slash "$path")"
+        segment="$(remove_beginning_slash "$segment")"
+        path="$path/$segment"
+        shift
+    done
+
+    echo "$path"
     return 0
 }
 
@@ -578,7 +580,7 @@ is_dotnet_package_installed() {
     local relative_path_to_package="$2"
     local specific_version="${3//[$'\t\r\n']}"
 
-    local dotnet_package_path="$(combine_paths "$(combine_paths "$install_root" "$relative_path_to_package")" "$specific_version")"
+    local dotnet_package_path="$(combine_paths "$install_root" "$relative_path_to_package" "$specific_version")"
     say_verbose "is_dotnet_package_installed: dotnet_package_path=$dotnet_package_path"
 
     if [ -d "$dotnet_package_path" ]; then
