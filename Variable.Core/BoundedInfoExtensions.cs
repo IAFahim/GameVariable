@@ -16,8 +16,12 @@ public static class BoundedInfoExtensions
     /// <returns>
     ///     <c>true</c> if the current value is equal to Max; otherwise, <c>false</c>.
     /// </returns>
+    /// <remarks>
+    ///     This method is generic to avoid boxing when called on value types.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(this IBoundedInfo bounded, float tolerance = MathConstants.DefaultTolerance)
+    public static bool IsFull<T>(this T bounded, float tolerance = MathConstants.DefaultTolerance)
+        where T : IBoundedInfo
     {
         return bounded.Current >= bounded.Max - tolerance;
     }
@@ -33,8 +37,12 @@ public static class BoundedInfoExtensions
     /// <returns>
     ///     <c>true</c> if the current value is equal to Min; otherwise, <c>false</c>.
     /// </returns>
+    /// <remarks>
+    ///     This method is generic to avoid boxing when called on value types.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(this IBoundedInfo bounded, float tolerance = MathConstants.DefaultTolerance)
+    public static bool IsEmpty<T>(this T bounded, float tolerance = MathConstants.DefaultTolerance)
+        where T : IBoundedInfo
     {
         return bounded.Current <= bounded.Min + tolerance;
     }
@@ -55,8 +63,11 @@ public static class BoundedInfoExtensions
     ///     </list>
     ///     Returns 0.0 if Max equals Min to avoid division by zero.
     /// </returns>
+    /// <remarks>
+    ///     This method is generic to avoid boxing when called on value types.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double GetRatio(this IBoundedInfo bounded)
+    public static double GetRatio<T>(this T bounded) where T : IBoundedInfo
     {
         var range = bounded.Max - bounded.Min;
         return Math.Abs(range) < MathConstants.Tolerance ? 0.0 : (bounded.Current - bounded.Min) / range;
