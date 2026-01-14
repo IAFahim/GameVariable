@@ -64,6 +64,17 @@ public struct ExperienceLong :
         return value.Current;
     }
 
+    /// <summary>
+    ///     Deconstructs the experience into its components.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly void Deconstruct(out long current, out long max, out int level)
+    {
+        current = Current;
+        max = Max;
+        level = Level;
+    }
+
     /// <inheritdoc />
     public override string ToString()
     {
