@@ -1,3 +1,5 @@
+using System.Threading;
+
 namespace Variable.RPG;
 
 /// <summary>
@@ -22,6 +24,7 @@ namespace Variable.RPG;
 /// </remarks>
 public unsafe struct RpgStatSheet
 {
+    private static int _globalAllocationCounter;
     private RpgStat* _attributes;
     private bool _ownsMemory;
     private int _allocationId; // Unique ID to detect copies
@@ -77,7 +80,7 @@ public unsafe struct RpgStatSheet
         Count = count;
         _attributes = (RpgStat*)Marshal.AllocHGlobal(count * sizeof(RpgStat));
         _ownsMemory = true;
-        _allocationId = RuntimeHelpers.GetHashCode(new object());
+        _allocationId = Interlocked.Increment(ref _globalAllocationCounter);
 
         // Initialize all attributes to default
         for (var i = 0; i < count; i++) _attributes[i] = new RpgStat(0f);
