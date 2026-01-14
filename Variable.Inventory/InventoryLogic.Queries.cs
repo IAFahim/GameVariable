@@ -10,7 +10,7 @@ public static partial class InventoryLogic
     ///     Determines whether the inventory is full based on the current quantity and maximum capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(float current, float max, float tolerance = MathConstants.DefaultTolerance)
+    public static bool IsFull(in float current, in float max, in float tolerance = MathConstants.DefaultTolerance)
     {
         return current >= max - tolerance;
     }
@@ -19,7 +19,7 @@ public static partial class InventoryLogic
     ///     Determines whether the inventory is full based on the current quantity and maximum capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(int current, int max)
+    public static bool IsFull(in int current, in int max)
     {
         return current >= max;
     }
@@ -28,7 +28,7 @@ public static partial class InventoryLogic
     ///     Determines whether the inventory is full based on the current quantity and maximum capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(long current, long max)
+    public static bool IsFull(in long current, in long max)
     {
         return current >= max;
     }
@@ -37,7 +37,7 @@ public static partial class InventoryLogic
     ///     Determines whether the inventory is full based on the current quantity and maximum capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(byte current, byte max)
+    public static bool IsFull(in byte current, in byte max)
     {
         return current >= max;
     }
@@ -46,7 +46,7 @@ public static partial class InventoryLogic
     ///     Determines whether the inventory is empty.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(float current, float tolerance = MathConstants.DefaultTolerance)
+    public static bool IsEmpty(in float current, in float tolerance = MathConstants.DefaultTolerance)
     {
         return current <= tolerance;
     }
@@ -55,7 +55,7 @@ public static partial class InventoryLogic
     ///     Determines whether the inventory is empty.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(int current)
+    public static bool IsEmpty(in int current)
     {
         return current <= 0;
     }
@@ -64,7 +64,7 @@ public static partial class InventoryLogic
     ///     Determines whether the inventory is empty.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(long current)
+    public static bool IsEmpty(in long current)
     {
         return current <= 0;
     }
@@ -73,7 +73,7 @@ public static partial class InventoryLogic
     ///     Determines whether the inventory is empty.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(byte current)
+    public static bool IsEmpty(in byte current)
     {
         return current <= 0;
     }
@@ -82,7 +82,7 @@ public static partial class InventoryLogic
     ///     Checks if the inventory has enough items to satisfy a requirement.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool HasEnough(float current, float required, float tolerance = MathConstants.DefaultTolerance)
+    public static bool HasEnough(in float current, in float required, in float tolerance = MathConstants.DefaultTolerance)
     {
         return current >= required - tolerance;
     }
@@ -91,7 +91,7 @@ public static partial class InventoryLogic
     ///     Checks if the inventory has enough items to satisfy a requirement.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool HasEnough(int current, int required)
+    public static bool HasEnough(in int current, in int required)
     {
         return current >= required;
     }
@@ -100,7 +100,7 @@ public static partial class InventoryLogic
     ///     Checks if the inventory has enough items to satisfy a requirement.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool HasEnough(long current, long required)
+    public static bool HasEnough(in long current, in long required)
     {
         return current >= required;
     }
@@ -109,7 +109,7 @@ public static partial class InventoryLogic
     ///     Checks if the inventory has enough items to satisfy a requirement.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool HasEnough(byte current, byte required)
+    public static bool HasEnough(in byte current, in byte required)
     {
         return current >= required;
     }
@@ -118,8 +118,8 @@ public static partial class InventoryLogic
     ///     Checks if the inventory can accept a specific amount of items without exceeding its capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool CanAccept(float current, float max, float amountToAdd,
-        float tolerance = MathConstants.DefaultTolerance)
+    public static bool CanAccept(in float current, in float max, in float amountToAdd,
+        in float tolerance = MathConstants.DefaultTolerance)
     {
         return current + amountToAdd <= max + tolerance;
     }
@@ -128,7 +128,7 @@ public static partial class InventoryLogic
     ///     Checks if the inventory can accept a specific amount of items without exceeding its capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool CanAccept(int current, int max, int amountToAdd)
+    public static bool CanAccept(in int current, in int max, in int amountToAdd)
     {
         return current + amountToAdd <= max;
     }
@@ -137,7 +137,7 @@ public static partial class InventoryLogic
     ///     Checks if the inventory can accept a specific amount of items without exceeding its capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool CanAccept(long current, long max, long amountToAdd)
+    public static bool CanAccept(in long current, in long max, in long amountToAdd)
     {
         return current + amountToAdd <= max;
     }
@@ -146,7 +146,7 @@ public static partial class InventoryLogic
     ///     Checks if the inventory can accept a specific amount of items without exceeding its capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool CanAccept(byte current, byte max, byte amountToAdd)
+    public static bool CanAccept(in byte current, in byte max, in byte amountToAdd)
     {
         return current + amountToAdd <= max;
     }
@@ -155,7 +155,7 @@ public static partial class InventoryLogic
     ///     Calculates the remaining space in the inventory.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetRemainingSpace(float current, float max, out float result)
+    public static void GetRemainingSpace(in float current, in float max, out float result)
     {
         result = current >= max ? 0f : max - current;
     }
@@ -165,7 +165,7 @@ public static partial class InventoryLogic
     ///     Calculates the remaining space in the inventory.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetRemainingSpace(int current, int max, out int result)
+    public static void GetRemainingSpace(in int current, in int max, out int result)
     {
         result = current >= max ? 0 : max - current;
     }
@@ -174,7 +174,7 @@ public static partial class InventoryLogic
     ///     Calculates the remaining space in the inventory.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetRemainingSpace(long current, long max, out long result)
+    public static void GetRemainingSpace(in long current, in long max, out long result)
     {
         result = current >= max ? 0 : max - current;
     }
@@ -183,7 +183,7 @@ public static partial class InventoryLogic
     ///     Calculates the remaining space in the inventory.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetRemainingSpace(byte current, byte max, out byte result)
+    public static void GetRemainingSpace(in byte current, in byte max, out byte result)
     {
         result = (byte)(current >= max ? 0 : max - current);
     }
@@ -200,13 +200,13 @@ public static partial class InventoryLogic
     /// <param name="tolerance">The tolerance for floating point comparisons.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void GetMaxAcceptable(
-        float currentQty,
-        float maxQty,
-        float currentWeight,
-        float maxWeight,
-        float unitWeight,
+        in float currentQty,
+        in float maxQty,
+        in float currentWeight,
+        in float maxWeight,
+        in float unitWeight,
         out float result,
-        float tolerance = MathConstants.DefaultTolerance)
+        in float tolerance = MathConstants.DefaultTolerance)
     {
         var spaceByQty = currentQty >= maxQty ? 0f : maxQty - currentQty;
 

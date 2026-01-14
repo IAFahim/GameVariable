@@ -16,8 +16,8 @@ public static partial class InventoryLogic
     /// <param name="actualTransferred">The actual amount transferred.</param>
     /// <param name="tolerance">The tolerance for floating point comparisons.</param>
     /// <returns>True if any amount was transferred; otherwise, false.</returns>
-    public static bool TryTransferPartial(ref float srcQty, ref float dstQty, float dstMax, float requestedAmount,
-        out float actualTransferred, float tolerance = MathConstants.DefaultTolerance)
+    public static bool TryTransferPartial(ref float srcQty, ref float dstQty, in float dstMax, in float requestedAmount,
+        out float actualTransferred, in float tolerance = MathConstants.DefaultTolerance)
     {
         if (srcQty <= tolerance || requestedAmount <= 0)
         {
@@ -66,11 +66,11 @@ public static partial class InventoryLogic
         ref float srcQty,
         ref float dstQty,
         ref float dstCurWeight,
-        float dstMaxWeight,
-        float dstMaxQty, float unitWeight,
-        float requestedAmount,
+        in float dstMaxWeight,
+        in float dstMaxQty, in float unitWeight,
+        in float requestedAmount,
         out float actualTransferred,
-        float tolerance = MathConstants.DefaultTolerance)
+        in float tolerance = MathConstants.DefaultTolerance)
     {
         if (srcQty <= tolerance || requestedAmount <= 0)
         {
@@ -125,8 +125,8 @@ public static partial class InventoryLogic
     ///     <c>true</c> if the transfer was successful; otherwise, <c>false</c> if source has insufficient items or
     ///     destination is full.
     /// </returns>
-    public static bool TryTransferExact(ref float srcQty, ref float dstQty, float dstMax, float amount,
-        float tolerance = MathConstants.DefaultTolerance)
+    public static bool TryTransferExact(ref float srcQty, ref float dstQty, in float dstMax, in float amount,
+        in float tolerance = MathConstants.DefaultTolerance)
     {
         if (amount <= tolerance) return true;
 
@@ -158,9 +158,9 @@ public static partial class InventoryLogic
         ref float srcQty,
         ref float dstQty,
         ref float dstCurWeight,
-        float dstMaxWeight,
-        float dstMaxQty, float itemUnitWeight,
-        float amount, float tolerance = MathConstants.DefaultTolerance)
+        in float dstMaxWeight,
+        in float dstMaxQty, in float itemUnitWeight,
+        in float amount, in float tolerance = MathConstants.DefaultTolerance)
     {
         if (amount <= tolerance) return true;
 

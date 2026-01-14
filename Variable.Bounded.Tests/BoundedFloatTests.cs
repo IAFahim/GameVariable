@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace Variable.Bounded.Tests;
 
 public class BoundedFloatTests
@@ -261,7 +263,7 @@ public class BoundedFloatTests
     public void ToString_WithRatioFormat_ReturnsPercentage()
     {
         var bounded = new BoundedFloat(100f, 0f, 50f);
-        var result = bounded.ToString("R", null);
+        var result = bounded.ToString("R", CultureInfo.InvariantCulture);
         Assert.Contains("50", result);
     }
 

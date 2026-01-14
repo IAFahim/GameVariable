@@ -15,7 +15,7 @@ public static partial class ReservoirLogic
     /// <param name="reserve">Reference to reserve amount.</param>
     /// <param name="result">The amount refilled.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Refill(ref int current, int capacity, ref int reserve, out int result)
+    public static void Refill(ref int current, in int capacity, ref int reserve, out int result)
     {
         var missing = capacity - current;
         if (missing <= 0 || reserve <= 0)

@@ -15,7 +15,7 @@ public static partial class ComboLogic
     /// <param name="inputId">The input ID to enqueue.</param>
     /// <returns>True if the input was successfully added; false if the buffer is full.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryEnqueueInput(ref int tail, ref int count, Span<int> buffer, int inputId)
+    public static bool TryEnqueueInput(ref int tail, ref int count, Span<int> buffer, in int inputId)
     {
         if (count >= InputRingBuffer.CAPACITY) return false;
 
@@ -56,7 +56,7 @@ public static partial class ComboLogic
     /// <param name="inputId">The peeked input ID, or InputId.None if empty.</param>
     /// <returns>True if an input was found; false if the buffer was empty.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool PeekInput(int head, int count, ReadOnlySpan<int> buffer, out int inputId)
+    public static bool PeekInput(in int head, in int count, ReadOnlySpan<int> buffer, out int inputId)
     {
         inputId = InputId.None;
         if (count == 0) return false;

@@ -11,7 +11,7 @@ public static class ExperienceLogic
     ///     Requires the caller to provide the new max experience for the next level.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryApplyLevelUp(ref int current, ref int max, ref int level, int newMax)
+    public static bool TryApplyLevelUp(ref int current, ref int max, ref int level, in int newMax)
     {
         if (current < max) return false;
 
@@ -25,7 +25,7 @@ public static class ExperienceLogic
     ///     Attempts to apply a single level up if the experience is full (Long version).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryApplyLevelUp(ref long current, ref long max, ref int level, long newMax)
+    public static bool TryApplyLevelUp(ref long current, ref long max, ref int level, in long newMax)
     {
         if (current < max) return false;
 
@@ -39,7 +39,7 @@ public static class ExperienceLogic
     ///     Adds experience. Does NOT handle leveling up.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void AddExperience(ref int current, int amount)
+    public static void AddExperience(ref int current, in int amount)
     {
         current += amount;
     }
@@ -48,7 +48,7 @@ public static class ExperienceLogic
     ///     Adds experience. Does NOT handle leveling up.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void AddExperience(ref long current, long amount)
+    public static void AddExperience(ref long current, in long amount)
     {
         current += amount;
     }

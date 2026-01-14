@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace Variable.Experience.Tests;
 
 public class ExperienceIntTests
@@ -191,14 +193,14 @@ public class ExperienceIntTests
     public void ToString_LevelFormat_ReturnsLevelOnly()
     {
         var exp = new ExperienceInt(100, 50, 5);
-        Assert.Equal("5", exp.ToString("L", null));
+        Assert.Equal("5", exp.ToString("L", CultureInfo.InvariantCulture));
     }
 
     [Fact]
     public void ToString_CurrentFormat_ReturnsXPFraction()
     {
         var exp = new ExperienceInt(100, 50, 5);
-        Assert.Equal("50/100", exp.ToString("C", null));
+        Assert.Equal("50/100", exp.ToString("C", CultureInfo.InvariantCulture));
     }
 
     #endregion

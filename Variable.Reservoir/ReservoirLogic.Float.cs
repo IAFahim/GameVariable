@@ -19,7 +19,7 @@ public static partial class ReservoirLogic
     /// <param name="reserve">The reserve to draw from.</param>
     /// <param name="result">The amount actually transferred.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Refill(ref float current, float capacity, ref float reserve, out float result)
+    public static void Refill(ref float current, in float capacity, ref float reserve, out float result)
     {
         var missing = capacity - current;
         if (missing <= MathConstants.Tolerance || reserve <= MathConstants.Tolerance)

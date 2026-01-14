@@ -7,7 +7,7 @@ public static partial class RegenLogic
     ///     Returns float.PositiveInfinity if rate is &lt;= 0.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetTimeToFull(float current, float max, float rate, out float result)
+    public static void GetTimeToFull(in float current, in float max, in float rate, out float result)
     {
         if (rate <= 0f)
         {
@@ -33,7 +33,7 @@ public static partial class RegenLogic
     ///     This method assumes 'rate' is the signed change per second.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetTimeToEmpty(float current, float rate, out float result)
+    public static void GetTimeToEmpty(in float current, in float rate, out float result)
     {
         if (rate == 0f)
         {

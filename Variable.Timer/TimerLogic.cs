@@ -10,7 +10,7 @@ public static class TimerLogic
     ///     Clamps a value between min and max.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Clamp(float value, float min, float max, out float result)
+    public static void Clamp(in float value, in float min, in float max, out float result)
     {
         CoreMath.Clamp(value, min, max, out result);
     }
@@ -19,7 +19,7 @@ public static class TimerLogic
     ///     Checks if a value is close enough to max to be considered full.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(float current, float max)
+    public static bool IsFull(in float current, in float max)
     {
         return current >= max - MathConstants.Tolerance;
     }
@@ -28,7 +28,7 @@ public static class TimerLogic
     ///     Checks if a value is close enough to min (0) to be considered empty.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(float current)
+    public static bool IsEmpty(in float current)
     {
         return current <= MathConstants.Tolerance;
     }
@@ -37,7 +37,7 @@ public static class TimerLogic
     ///     Calculates the ratio of current vs duration.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetRatio(float current, float duration, out double result)
+    public static void GetRatio(in float current, in float duration, out double result)
     {
         result = Math.Abs(duration) < MathConstants.Tolerance ? 0.0 : (double)current / duration;
     }
@@ -46,7 +46,7 @@ public static class TimerLogic
     ///     Calculates the inverse ratio (1 - ratio).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetInverseRatio(float current, float duration, out float result)
+    public static void GetInverseRatio(in float current, in float duration, out float result)
     {
         result = Math.Abs(duration) < MathConstants.Tolerance ? 1f : 1f - Math.Max(0, current / duration);
     }
@@ -59,7 +59,7 @@ public static class TimerLogic
     /// <param name="deltaTime">The time to advance.</param>
     /// <returns>True if the timer COMPLETED (reached or exceeded duration); false if still running.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TickAndCheckComplete(ref float current, float duration, float deltaTime)
+    public static bool TickAndCheckComplete(ref float current, in float duration, in float deltaTime)
     {
         if (current >= duration - MathConstants.Tolerance) return true;
 
@@ -82,7 +82,7 @@ public static class TimerLogic
     /// <param name="overflow">The amount of time that exceeded the duration.</param>
     /// <returns>True if the timer COMPLETED (reached or exceeded duration); false if still running.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TickAndCheckComplete(ref float current, float duration, float deltaTime, out float overflow)
+    public static bool TickAndCheckComplete(ref float current, in float duration, in float deltaTime, out float overflow)
     {
         if (current >= duration - MathConstants.Tolerance)
         {
@@ -109,7 +109,7 @@ public static class TimerLogic
     /// <param name="deltaTime">The time to advance.</param>
     /// <returns>True if the cooldown is READY (reached or passed zero); false if still cooling down.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TickAndCheckReady(ref float current, float deltaTime)
+    public static bool TickAndCheckReady(ref float current, in float deltaTime)
     {
         if (current <= MathConstants.Tolerance) return true;
 
@@ -131,7 +131,7 @@ public static class TimerLogic
     /// <param name="overflow">The amount of time that exceeded zero.</param>
     /// <returns>True if the cooldown is READY (reached or passed zero); false if still cooling down.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TickAndCheckReady(ref float current, float deltaTime, out float overflow)
+    public static bool TickAndCheckReady(ref float current, in float deltaTime, out float overflow)
     {
         if (current <= MathConstants.Tolerance)
         {
@@ -157,7 +157,7 @@ public static class TimerLogic
     /// <param name="current">The current value to reset.</param>
     /// <param name="targetValue">The target value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Reset(ref float current, float targetValue)
+    public static void Reset(ref float current, in float targetValue)
     {
         current = targetValue;
     }
@@ -171,8 +171,8 @@ public static class TimerLogic
     /// <param name="clampMin">Minimum clamp value.</param>
     /// <param name="clampMax">Maximum clamp value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void ResetWithOverflow(ref float current, float targetValue, float overflow, float clampMin,
-        float clampMax)
+    public static void ResetWithOverflow(ref float current, in float targetValue, in float overflow, in float clampMin,
+        in float clampMax)
     {
         current = targetValue + overflow;
         CoreMath.Clamp(current, clampMin, clampMax, out current);

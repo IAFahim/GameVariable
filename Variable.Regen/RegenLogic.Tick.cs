@@ -21,7 +21,7 @@ public static partial class RegenLogic
     /// <param name="rate">The rate of change per second.</param>
     /// <param name="deltaTime">The time elapsed since the last update.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Tick(ref float current, float min, float max, float rate, float deltaTime)
+    public static void Tick(ref float current, in float min, in float max, in float rate, in float deltaTime)
     {
         if (rate == 0f || deltaTime == 0f) return;
 
@@ -35,7 +35,7 @@ public static partial class RegenLogic
     ///     Updates a value based on a rate and time delta (assumes min = 0).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Tick(ref float current, float max, float rate, float deltaTime)
+    public static void Tick(ref float current, in float max, in float rate, in float deltaTime)
     {
         Tick(ref current, 0f, max, rate, deltaTime);
     }

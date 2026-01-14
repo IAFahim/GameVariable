@@ -16,8 +16,8 @@ public static partial class InventoryLogic
     /// <param name="overflow">The amount that could not be added.</param>
     /// <param name="tolerance">The tolerance for floating point comparisons.</param>
     /// <returns>True if any amount was added; otherwise, false.</returns>
-    public static bool TryAddPartial(ref float current, float amount, float max, out float actualAdded,
-        out float overflow, float tolerance = MathConstants.DefaultTolerance)
+    public static bool TryAddPartial(ref float current, in float amount, in float max, out float actualAdded,
+        out float overflow, in float tolerance = MathConstants.DefaultTolerance)
     {
         if (amount <= tolerance)
         {
@@ -47,8 +47,8 @@ public static partial class InventoryLogic
     /// <param name="actualRemoved">The actual amount removed from the inventory.</param>
     /// <param name="tolerance">The tolerance for floating point comparisons.</param>
     /// <returns>True if any amount was removed; otherwise, false.</returns>
-    public static bool TryRemovePartial(ref float current, float amount, out float actualRemoved,
-        float tolerance = MathConstants.DefaultTolerance)
+    public static bool TryRemovePartial(ref float current, in float amount, out float actualRemoved,
+        in float tolerance = MathConstants.DefaultTolerance)
     {
         if (amount <= tolerance || current <= tolerance)
         {
@@ -69,44 +69,48 @@ public static partial class InventoryLogic
     ///     Sets the inventory quantity to a specific value, clamping it between 0 and the maximum capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Set(ref float current, float value, float max, float tolerance = MathConstants.DefaultTolerance)
+    public static void Set(ref float current, in float value, in float max, in float tolerance = MathConstants.DefaultTolerance)
     {
-        if (max - value < tolerance) value = max;
-        else if (value < tolerance) value = 0f;
+        var val = value;
+        if (max - val < tolerance) val = max;
+        else if (val < tolerance) val = 0f;
 
-        current = value;
+        current = val;
     }
 
     /// <summary>
     ///     Sets the inventory quantity to a specific value, clamping it between 0 and the maximum capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Set(ref int current, int value, int max)
+    public static void Set(ref int current, in int value, in int max)
     {
-        if (value < 0) value = 0;
-        if (value > max) value = max;
-        current = value;
+        var val = value;
+        if (val < 0) val = 0;
+        if (val > max) val = max;
+        current = val;
     }
 
     /// <summary>
     ///     Sets the inventory quantity to a specific value, clamping it between 0 and the maximum capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Set(ref long current, long value, long max)
+    public static void Set(ref long current, in long value, in long max)
     {
-        if (value < 0) value = 0;
-        if (value > max) value = max;
-        current = value;
+        var val = value;
+        if (val < 0) val = 0;
+        if (val > max) val = max;
+        current = val;
     }
 
     /// <summary>
     ///     Sets the inventory quantity to a specific value, clamping it between 0 and the maximum capacity.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Set(ref byte current, byte value, byte max)
+    public static void Set(ref byte current, in byte value, in byte max)
     {
-        if (value > max) value = max;
-        current = value;
+        var val = value;
+        if (val > max) val = max;
+        current = val;
     }
 
     /// <summary>
@@ -154,8 +158,8 @@ public static partial class InventoryLogic
     /// <param name="tolerance">The tolerance for floating point comparisons.</param>
     /// <returns><c>true</c> if the amount was added successfully; otherwise, <c>false</c> if it would exceed capacity.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryAddExact(ref float current, float amount, float max,
-        float tolerance = MathConstants.DefaultTolerance)
+    public static bool TryAddExact(ref float current, in float amount, in float max,
+        in float tolerance = MathConstants.DefaultTolerance)
     {
         if (amount <= tolerance) return true;
         if (current + amount > max + tolerance) return false;
@@ -173,7 +177,7 @@ public static partial class InventoryLogic
     /// <param name="tolerance">The tolerance for floating point comparisons.</param>
     /// <returns><c>true</c> if the amount was removed successfully; otherwise, <c>false</c> if there were insufficient items.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryRemoveExact(ref float current, float amount, float tolerance = MathConstants.DefaultTolerance)
+    public static bool TryRemoveExact(ref float current, in float amount, in float tolerance = MathConstants.DefaultTolerance)
     {
         if (amount <= tolerance) return true;
         if (current < amount - tolerance) return false;

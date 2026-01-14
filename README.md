@@ -91,8 +91,11 @@ dotnet add package Variable.Bounded
 dotnet add package Variable.Timer
 dotnet add package Variable.Regen
 dotnet add package Variable.Experience
-dotnet add package Variable.Stat
+dotnet add package Variable.RPG
 dotnet add package Variable.Reservoir
+dotnet add package Variable.Input
+dotnet add package Variable.Inventory
+dotnet add package GameVariable.Intent
 
 # Or install just what you need
 dotnet add package Variable.Bounded
@@ -139,18 +142,21 @@ graph LR
     Regen["♻️ Variable.Regen"] --> Bounded
     Reservoir["🔋 Variable.Reservoir"] --> Bounded
     Experience["⭐ Variable.Experience"] --> Core
-    Stat["📈 Variable.Stat"]
-    Inventory["🎒 Variable.Inventory"]
+    RPG["📈 Variable.RPG"] --> Core
+    Inventory["🎒 Variable.Inventory"] --> Core
+    Input["🎮 Variable.Input"] --> Core
+    Intent["🧠 GameVariable.Intent"]
     
     style Core fill:#4a9eff,stroke:#2980b9,stroke-width:2px,color:#fff
     style Bounded fill:#2ecc71,stroke:#27ae60,color:#fff
     style Timer fill:#e74c3c,stroke:#c0392b,color:#fff
-    style Range fill:#9b59b6,stroke:#8e44ad,color:#fff
     style Regen fill:#f39c12,stroke:#d68910,color:#fff
     style Reservoir fill:#3498db,stroke:#2980b9,color:#fff
     style Experience fill:#e67e22,stroke:#d35400,color:#fff
-    style Stat fill:#1abc9c,stroke:#16a085,color:#fff
+    style RPG fill:#1abc9c,stroke:#16a085,color:#fff
     style Inventory fill:#95a5a6,stroke:#7f8c8d,color:#fff
+    style Input fill:#9b59b6,stroke:#8e44ad,color:#fff
+    style Intent fill:#34495e,stroke:#2c3e50,color:#fff
 ```
 
 | Package | Types | Use Cases |
@@ -158,12 +164,13 @@ graph LR
 | **Variable.Core** | `IBoundedInfo` | Base interface for all bounded types |
 | **Variable.Bounded** | `BoundedFloat`, `BoundedInt`, `BoundedShort`, `BoundedByte` | Health, mana, stamina, armor, shields |
 | **Variable.Timer** | `Timer`, `Cooldown` | Ability cooldowns, buffs, casting times |
-
 | **Variable.Regen** | `RegenFloat`, `RegenLogic` | Auto-regenerating resources, decay |
 | **Variable.Reservoir** | `ReservoirFloat`, `ReservoirInt` | Ammo clips + reserves, batteries |
 | **Variable.Experience** | `ExperienceInt`, `ExperienceLong` | XP, leveling, skill progression |
-| **Variable.Stat** | `StatLogic` | RPG stats with flat/% modifiers |
+| **Variable.RPG** | `RpgStat`, `DamageLogic` | RPG stats with flat/% modifiers, damage pipelines |
 | **Variable.Inventory** | `InventoryLogic` | Capacity management, transfers |
+| **Variable.Input** | `ComboGraph`, `InputRingBuffer` | Deterministic combo systems, input buffering |
+| **GameVariable.Intent** | `IntentState`, `IIntent` | Hierarchical State Machines (HSM), AI logic |
 
 ---
 

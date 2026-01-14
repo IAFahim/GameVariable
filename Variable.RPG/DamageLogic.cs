@@ -11,22 +11,25 @@ public static class DamageLogic
     ///     Pure primitive logic.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void ApplyMitigation(float damage, float mitigationValue, bool isFlat, out float result)
+    public static void ApplyMitigation(in float damage, in float mitigationValue, in bool isFlat, out float result)
     {
+        // Use a local copy since 'damage' is now read-only 'in' parameter
+        var finalDamage = damage;
+
         if (isFlat)
         {
             // Armor style: Damage - Armor
-            damage -= mitigationValue;
+            finalDamage -= mitigationValue;
             // Clamp flat mitigation to prevent negative damage
-            if (damage < 0f) damage = 0f;
+            if (finalDamage < 0f) finalDamage = 0f;
         }
         else
         {
             // Resistance style: Damage * (1 - Resist%)
             // Allows amplified damage from negative resistance
-            damage *= 1.0f - mitigationValue;
+            finalDamage *= 1.0f - mitigationValue;
         }
 
-        result = damage;
+        result = finalDamage;
     }
 }

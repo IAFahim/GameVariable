@@ -27,8 +27,8 @@ public static partial class ComboLogic
         ref int bufferHead,
         ref int bufferCount,
         Span<int> bufferInputs,
-        ReadOnlySpan<ComboNode> nodes,
-        ReadOnlySpan<ComboEdge> edges,
+        in ReadOnlySpan<ComboNode> nodes,
+        in ReadOnlySpan<ComboEdge> edges,
         out int newActionID)
     {
         newActionID = -1;
@@ -40,7 +40,7 @@ public static partial class ComboLogic
         if (isActionBusy) return false;
 
         // 2. Input Check
-        if (!PeekInput(bufferHead, bufferCount, bufferInputs, out var nextInput)) return false;
+        if (!PeekInput(in bufferHead, in bufferCount, bufferInputs, out var nextInput)) return false;
 
         // 3. Safety: Ensure current index is valid (recovery from bad state)
         if (currentNodeIndex < 0 || currentNodeIndex >= nodes.Length) currentNodeIndex = 0;

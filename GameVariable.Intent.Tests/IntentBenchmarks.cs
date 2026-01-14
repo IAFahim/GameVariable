@@ -10,11 +10,11 @@ namespace GameVariable.Intent.Tests
     {
         private IntentData _optimizedData;
         private IntentState _originalData;
-        private IntentStateFast _fastData;
-        private IntentStateUnsafe _unsafeData;
-        private IntentStateJumpTable _jumpTableData;
-        private IntentStateBitManip _bitManipData;
-        private IntentStateCompiled _compiledData;
+        // private IntentStateFast _fastData;
+        // private IntentStateUnsafe _unsafeData;
+        // private IntentStateJumpTable _jumpTableData;
+        // private IntentStateBitManip _bitManipData;
+        // private IntentStateCompiled _compiledData;
 
         [GlobalSetup]
         public void Setup()
@@ -22,16 +22,16 @@ namespace GameVariable.Intent.Tests
             _optimizedData = new IntentData(IntentLogic.CREATED);
             _originalData = new IntentState();
             _originalData.Start();
-            _fastData = new IntentStateFast();
-            _fastData.Start();
-            _unsafeData = new IntentStateUnsafe();
-            _unsafeData.Start();
-            _jumpTableData = new IntentStateJumpTable();
-            _jumpTableData.Start();
-            _bitManipData = new IntentStateBitManip();
-            _bitManipData.Start();
-            _compiledData = new IntentStateCompiled();
-            _compiledData.Start();
+            // _fastData = new IntentStateFast();
+            // _fastData.Start();
+            // _unsafeData = new IntentStateUnsafe();
+            // _unsafeData.Start();
+            // _jumpTableData = new IntentStateJumpTable();
+            // _jumpTableData.Start();
+            // _bitManipData = new IntentStateBitManip();
+            // _bitManipData.Start();
+            // _compiledData = new IntentStateCompiled();
+            // _compiledData.Start();
         }
 
         // BENCHMARK: Original Implementation (Switch-Case)
@@ -80,6 +80,7 @@ namespace GameVariable.Intent.Tests
             _optimizedData = data;
         }
 
+        /*
         // BENCHMARK: Fast - Complex Workflow (CANCELED path)
         [Benchmark]
         public void Fast_CanceledWorkflow()
@@ -150,6 +151,7 @@ namespace GameVariable.Intent.Tests
             data.Dispatch(IntentState.EventId.COMPLETED_SUCCESSFULLY);
             _compiledData = data;
         }
+        */
 
         // BENCHMARK: Original - Complete Lifecycle
         [Benchmark]

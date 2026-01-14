@@ -4,248 +4,248 @@
   -- Regular generated javascript state machine code is smaller and simpler.
   -->
 <html>
-  <head>
-    <link rel='icon' type='image/png' href='https://statesmith.github.io/favicon.png'>
-    <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined'>
-    <style>
-      body {
-        display: flex;
-        flex-direction: row;
-        margin: 0px;
-      }
+<head>
+  <link rel='icon' type='image/png' href='https://statesmith.github.io/favicon.png'>
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined'>
+  <style>
+    body {
+      display: flex;
+      flex-direction: row;
+      margin: 0px;
+    }
 
-      /* Fix for mermaid content requiring scroll bars https://github.com/StateSmith/StateSmith/issues/288 */
-      pre.mermaid {
-        margin: 0px;
-      }
+    /* Fix for mermaid content requiring scroll bars https://github.com/StateSmith/StateSmith/issues/288 */
+    pre.mermaid {
+      margin: 0px;
+    }
 
-      .wrapper {
-        height: 100vh;
-        width: 100vw;
-        display: flex;
-      }
+    .wrapper {
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+    }
 
-      .pane {
-        padding: 1em;
-        min-width: 200px;
-      }
+    .pane {
+      padding: 1em;
+      min-width: 200px;
+    }
 
-      .titlebar-icon {
-        font-family: 'Material Symbols Outlined', sans-serif;
-        font-size: 16px;
-        color: #777;
-        border-radius: 5px;
-      }
+    .titlebar-icon {
+      font-family: 'Material Symbols Outlined', sans-serif;
+      font-size: 16px;
+      color: #777;
+      border-radius: 5px;
+    }
 
-      .gutter {
-        width: 10px;
-        height: 100%;
-        background: #ccc;
-        position: absolute;
-        top: 0;
-        left: 0;
-        cursor: col-resize;
-      }
+    .gutter {
+      width: 10px;
+      height: 100%;
+      background: #ccc;
+      position: absolute;
+      top: 0;
+      left: 0;
+      cursor: col-resize;
+    }
 
-      .main {
-        flex: 1;
-        overflow: auto;
-        padding: 10px;
-      }
+    .main {
+      flex: 1;
+      overflow: auto;
+      padding: 10px;
+    }
 
-      .sidebar {
-        width: 300px;
-        padding-top: 0px;
-        position: relative;
-        background-color: #f0f0f0;
-        border-left: 1px solid #ccc;
-        display: flex;
-        flex-direction: column;
-      }
+    .sidebar {
+      width: 300px;
+      padding-top: 0px;
+      position: relative;
+      background-color: #f0f0f0;
+      border-left: 1px solid #ccc;
+      display: flex;
+      flex-direction: column;
+    }
 
-      #buttons {
-        display: flex;
-        flex-direction: column;
-      }
+    #buttons {
+      display: flex;
+      flex-direction: column;
+    }
 
-      .titlebar {
-        background-color: #ddd;
-        border-bottom: 1px solid #ccc;
-        font-weight: bold;
-        padding: 5px;
-        display: flex;
-      }
+    .titlebar {
+      background-color: #ddd;
+      border-bottom: 1px solid #ccc;
+      font-weight: bold;
+      padding: 5px;
+      display: flex;
+    }
 
-      .console {
-        border-collapse: collapse;
-        margin-top: 10px;
-        width: 100%;
-      }
+    .console {
+      border-collapse: collapse;
+      margin-top: 10px;
+      width: 100%;
+    }
 
-      table.console td.timestamp {
-        display: none;
-      }
+    table.console td.timestamp {
+      display: none;
+    }
 
-      table.console.timestamps td.timestamp {
-        display: table-cell;
-      }
+    table.console.timestamps td.timestamp {
+      display: table-cell;
+    }
 
-      table.console td {
-          color: rgba(0, 0, 0, 0.7);
-      }
+    table.console td {
+      color: rgba(0, 0, 0, 0.7);
+    }
 
-      table.console td .dispatched {
-          font-weight: bold;
-          color: rgba(0, 0, 0, 1);
-      }
+    table.console td .dispatched {
+      font-weight: bold;
+      color: rgba(0, 0, 0, 1);
+    }
 
-      table.console tr:has(+tr td .dispatched) {
-          border-bottom: 0px;
-      }
+    table.console tr:has(+tr td .dispatched) {
+      border-bottom: 0px;
+    }
 
-      table.console tr:has(+tr td .dispatched) td {
-          padding-bottom: 25px;
-      }
+    table.console tr:has(+tr td .dispatched) td {
+      padding-bottom: 25px;
+    }
 
-      .console th {
-        background-color: #f0f0f0;
-        border-bottom: 1px solid #ccc;
-        font-weight: normal;
-        padding: 5px;
-        text-align: left;
-      }
+    .console th {
+      background-color: #f0f0f0;
+      border-bottom: 1px solid #ccc;
+      font-weight: normal;
+      padding: 5px;
+      text-align: left;
+    }
 
-      .console tbody {
-        font-family: monospace;
-      }
+    .console tbody {
+      font-family: monospace;
+    }
 
-      .console tr {
-        border-bottom: 1px solid #ccc;
-      }
+    .console tr {
+      border-bottom: 1px solid #ccc;
+    }
 
-      .console td {
-        padding: 5px;
-      }
-  
-      .console td.timestamp {
-        font-size: small;
-      }
+    .console td {
+      padding: 5px;
+    }
 
-      .history {
-        margin-top: 30px;       
-        display: flex;
-        overflow: auto;    
-        flex-direction: column-reverse;
-      }
+    .console td.timestamp {
+      font-size: small;
+    }
 
-      .console tr:last-child td {
-        border-bottom: none;
-      }
+    .history {
+      margin-top: 30px;
+      display: flex;
+      overflow: auto;
+      flex-direction: column-reverse;
+    }
 
-      .dispatched {
-        font-weight: bold;
-      }
+    .console tr:last-child td {
+      border-bottom: none;
+    }
 
-      .dispatched > .trigger {
-        border: 1px solid #000;
-        border-radius: 4px;
-        padding: 2px 10px 2px 10px;
-      }
+    .dispatched {
+      font-weight: bold;
+    }
 
-      button {
-        margin: 5px;
-      }
+    .dispatched > .trigger {
+      border: 1px solid #000;
+      border-radius: 4px;
+      padding: 2px 10px 2px 10px;
+    }
 
-      button.event-button {
-        transition: opacity 0.3s ease, background-color 0.3s ease;
-        opacity: 1;
-        background-color: #007bff;
-        color: white;
-        cursor: pointer;
-      }
+    button {
+      margin: 5px;
+    }
 
-      button.event-button:disabled {
-        opacity: 0.4;
-        background-color: #f0f0f0;
-        color: #999;
-        cursor: not-allowed;
-      }
+    button.event-button {
+      transition: opacity 0.3s ease, background-color 0.3s ease;
+      opacity: 1;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
 
-      button.event-button:not(:disabled):hover {
-        background-color: #0056b3;
-      }
+    button.event-button:disabled {
+      opacity: 0.4;
+      background-color: #f0f0f0;
+      color: #999;
+      cursor: not-allowed;
+    }
 
-      /* Style for hiding irrelevant events */
-      button.event-button.hidden {
-        display: none;
-      }
+    button.event-button:not(:disabled):hover {
+      background-color: #0056b3;
+    }
 
-
-
-      /* ----------------------------- Dropdown related start ----------------------------- */
-      
-      .dropdown-button {
-        border: none;
-        cursor: pointer;
-      }
-      
-      .dropdown-button:hover, .dropdown-button:focus {
-        background-color: #f1f1f1;
-      }
-      
-      .dropdown {
-        position: relative;
-        display: inline-block;
-        margin-left: auto;
-      }
-      
-      .dropdown-content {
-        display: none;
-        position: absolute;
-        right: 0;
-        background-color: #f1f1f1;
-        min-width: 250px;
-        overflow: auto;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-        z-index: 1;
-      }
-      
-      .dropdown-content .dropdown-item {
-        display: block;
-        padding: 12px 16px;
-        font-weight: normal;
-      }
-
-      .dropdown-content .dropdown-item:hover {
-        background-color: #ddd;
-        cursor: pointer;
-      }
-
-      .show {
-        display: block;
-      }
-
-      /* ----------------------------- Dropdown related end ----------------------------- */
+    /* Style for hiding irrelevant events */
+    button.event-button.hidden {
+      display: none;
+    }
 
 
 
-      .transition.active {
-        stroke: #fff5ad !important;
-        stroke-width: 5px !important;
-        filter: drop-shadow( 3px 3px 2px rgba(0, 0, 0, .7));
-      }
+    /* ----------------------------- Dropdown related start ----------------------------- */
 
-      .statediagram-state.active > * {
-        fill: #fff5ad !important;
-        stroke-width: 2px !important;
-      }
+    .dropdown-button {
+      border: none;
+      cursor: pointer;
+    }
 
-    </style>
-  </head>
+    .dropdown-button:hover, .dropdown-button:focus {
+      background-color: #f1f1f1;
+    }
 
-  <body>
-    <div class="wrapper">
-    <div class="pane main">
+    .dropdown {
+      position: relative;
+      display: inline-block;
+      margin-left: auto;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: #f1f1f1;
+      min-width: 250px;
+      overflow: auto;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+
+    .dropdown-content .dropdown-item {
+      display: block;
+      padding: 12px 16px;
+      font-weight: normal;
+    }
+
+    .dropdown-content .dropdown-item:hover {
+      background-color: #ddd;
+      cursor: pointer;
+    }
+
+    .show {
+      display: block;
+    }
+
+    /* ----------------------------- Dropdown related end ----------------------------- */
+
+
+
+    .transition.active {
+      stroke: #fff5ad !important;
+      stroke-width: 5px !important;
+      filter: drop-shadow( 3px 3px 2px rgba(0, 0, 0, .7));
+    }
+
+    .statediagram-state.active > * {
+      fill: #fff5ad !important;
+      stroke-width: 2px !important;
+    }
+
+  </style>
+</head>
+
+<body>
+<div class="wrapper">
+  <div class="pane main">
         <pre class="mermaid">
 stateDiagram
 
@@ -257,10 +257,6 @@ CREATED
 
 CREATED : CREATED
 
-WAITING_FOR_ACTIVATION
-
-WAITING_FOR_ACTIVATION : WAITING_FOR_ACTIVATION
-
 WAITING_TO_RUN
 
 WAITING_TO_RUN : WAITING_TO_RUN
@@ -269,35 +265,39 @@ RUNNING
 
 RUNNING : RUNNING
 
-CANCELED
+RAN_TO_COMPLETION
 
-CANCELED : CANCELED
-
-WAITING_FOR_CHILDREN_TO_COMPLETE
-
-WAITING_FOR_CHILDREN_TO_COMPLETE : WAITING_FOR_CHILDREN_TO_COMPLETE
+RAN_TO_COMPLETION : RAN_TO_COMPLETION
 
 FAULTED
 
 FAULTED : FAULTED
 
-RAN_TO_COMPLETION
+WAITING_FOR_ACTIVATION
 
-RAN_TO_COMPLETION : RAN_TO_COMPLETION
+WAITING_FOR_ACTIVATION : WAITING_FOR_ACTIVATION
+
+WAITING_FOR_CHILDREN_TO_COMPLETE
+
+WAITING_FOR_CHILDREN_TO_COMPLETE : WAITING_FOR_CHILDREN_TO_COMPLETE
+
+CANCELED
+
+CANCELED : CANCELED
 
 ROOT.(InitialState) --> CREATED
 
-CREATED --> WAITING_FOR_ACTIVATION : GET_READY
-
 CREATED --> WAITING_TO_RUN : ACTIVATED
 
-WAITING_FOR_ACTIVATION --> WAITING_TO_RUN : ACTIVATED
+CREATED --> WAITING_FOR_ACTIVATION : GET_READY
 
-WAITING_FOR_ACTIVATION --> CANCELED : CANCELED_BEFORE_ACTIVATION
+CREATED --> CANCELED : CANCEL
 
 WAITING_TO_RUN --> RUNNING : START_RUNNING
 
-WAITING_TO_RUN --> CANCELED : CANCELED_BEFORE_RUN
+WAITING_TO_RUN --> CANCELED : CANCEL
+
+RUNNING --> RAN_TO_COMPLETION : COMPLETED_SUCCESSFULLY
 
 RUNNING --> WAITING_FOR_CHILDREN_TO_COMPLETE : CHILD_TASK_CREATED
 
@@ -305,1066 +305,1194 @@ RUNNING --> FAULTED : UNABLE_TO_COMPLETE
 
 RUNNING --> CANCELED : CANCEL
 
-RUNNING --> RAN_TO_COMPLETION : COMPLETED_SUCCESSFULLY
+RAN_TO_COMPLETION --> WAITING_TO_RUN : RUN_AGAIN
+
+FAULTED --> WAITING_TO_RUN : RECOVER_RETRY
+
+FAULTED --> CANCELED : UNABLE_TO_RECOVER
+
+WAITING_FOR_ACTIVATION --> WAITING_TO_RUN : ACTIVATED
+
+WAITING_FOR_ACTIVATION --> CANCELED : CANCEL
 
 WAITING_FOR_CHILDREN_TO_COMPLETE --> RUNNING : ALL_CHILDREN_COMPLETED
 
-RAN_TO_COMPLETION --> WAITING_TO_RUN : RUN_AGAIN
+WAITING_FOR_CHILDREN_TO_COMPLETE --> FAULTED : UNABLE_TO_RECOVER
+
+WAITING_FOR_CHILDREN_TO_COMPLETE --> CANCELED : CANCEL
 
 
 
         </pre>
-    </div>
+  </div>
 
-    <div class="pane sidebar">
-      <div id="buttons">
-        <div class="titlebar">Events
-          <div class='dropdown'>
-            <span id='dropdown-button' class='titlebar-icon dropdown-button'>settings</span>
-            <div id='myDropdown' class='dropdown-content'>
-              <label class='dropdown-item' for='hideIrrelevantEvents'
-                title='When enabled, event dispatching buttons will be hidden if the current active state(s) ignore the event.'>
-                <input type='checkbox' id='hideIrrelevantEvents' name='hideIrrelevantEvents'>
-                Hide ignored event buttons
-              </label>
-              <label class='dropdown-item' for='timestamps'
-                title='Controls whether timestamps are shown along side event dispatches.'>
-                <input type='checkbox' id='timestamps' name='timestamps'>
-                Timestamps
-              </label>
-            </div>
+  <div class="pane sidebar">
+    <div id="buttons">
+      <div class="titlebar">Events
+        <div class='dropdown'>
+          <span id='dropdown-button' class='titlebar-icon dropdown-button'>settings</span>
+          <div id='myDropdown' class='dropdown-content'>
+            <label class='dropdown-item' for='hideIrrelevantEvents'
+                   title='When enabled, event dispatching buttons will be hidden if the current active state(s) ignore the event.'>
+              <input type='checkbox' id='hideIrrelevantEvents' name='hideIrrelevantEvents'>
+              Hide ignored event buttons
+            </label>
+            <label class='dropdown-item' for='timestamps'
+                   title='Controls whether timestamps are shown along side event dispatches.'>
+              <input type='checkbox' id='timestamps' name='timestamps'>
+              Timestamps
+            </label>
           </div>
         </div>
       </div>
-    
-      <div class="history">
-        <table class="console">
-          <tbody>
-          </tbody>
-        </table>
-      </div>
-    
-      <div class="gutter"></div>
     </div>
+
+    <div class="history">
+      <table class="console">
+        <tbody>
+        </tbody>
+      </table>
     </div>
+
+    <div class="gutter"></div>
+  </div>
+</div>
 
 <script>
-// Autogenerated with StateSmith 0.19.0-alpha-1+5931a3a68e50c80e83349118a90569bf08270686.
-// Algorithm: Balanced2. See https://github.com/StateSmith/StateSmith/wiki/Algorithms
+  // Autogenerated with StateSmith 0.19.0-alpha-1+5931a3a68e50c80e83349118a90569bf08270686.
+  // Algorithm: Balanced2. See https://github.com/StateSmith/StateSmith/wiki/Algorithms
 
-// Generated state machine
-class IntentState
-{
+  // Generated state machine
+  class IntentState
+  {
 // Null by default.
 // May be overridden to override guard evaluation (eg. in a simulator)
-evaluateGuard = null;
-    static EventId = 
-    {
-        ACTIVATED : 0,
-        ALL_CHILDREN_COMPLETED : 1,
-        CANCEL : 2,
-        CANCELED_BEFORE_ACTIVATION : 3,
-        CANCELED_BEFORE_RUN : 4,
-        CHILD_TASK_CREATED : 5,
-        COMPLETED_SUCCESSFULLY : 6,
-        GET_READY : 7,
-        RUN_AGAIN : 8,
-        START_RUNNING : 9,
-        UNABLE_TO_COMPLETE : 10,
-    }
+    evaluateGuard = null;
+    static EventId =
+            {
+              ACTIVATED : 0,
+              ALL_CHILDREN_COMPLETED : 1,
+              CANCEL : 2,
+              CHILD_TASK_CREATED : 3,
+              COMPLETED_SUCCESSFULLY : 4,
+              GET_READY : 5,
+              RECOVER_RETRY : 6,
+              RUN_AGAIN : 7,
+              START_RUNNING : 8,
+              UNABLE_TO_COMPLETE : 9,
+              UNABLE_TO_RECOVER : 10,
+            }
     static { Object.freeze(this.EventId); }
-    
+
     static EventIdCount = 11;
     static { Object.freeze(this.EventIdCount); }
-    
-    static StateId = 
-    {
-        ROOT : 0,
-        CANCELED : 1,
-        CREATED : 2,
-        FAULTED : 3,
-        RAN_TO_COMPLETION : 4,
-        RUNNING : 5,
-        WAITING_FOR_ACTIVATION : 6,
-        WAITING_FOR_CHILDREN_TO_COMPLETE : 7,
-        WAITING_TO_RUN : 8,
-    }
+
+    static StateId =
+            {
+              ROOT : 0,
+              CANCELED : 1,
+              CREATED : 2,
+              FAULTED : 3,
+              RAN_TO_COMPLETION : 4,
+              RUNNING : 5,
+              WAITING_FOR_ACTIVATION : 6,
+              WAITING_FOR_CHILDREN_TO_COMPLETE : 7,
+              WAITING_TO_RUN : 8,
+            }
     static { Object.freeze(this.StateId); }
-    
+
     static StateIdCount = 9;
     static { Object.freeze(this.StateIdCount); }
-    
+
     // Used internally by state machine. Feel free to inspect, but don't modify.
     stateId;
-    
+
     // Starts the state machine. Must be called before dispatching events. Not thread safe.
     start()
     {
-        this.#ROOT_enter();
-        // ROOT behavior
-        // uml: TransitionTo(ROOT.<InitialState>)
+      this.#ROOT_enter();
+      // ROOT behavior
+      // uml: TransitionTo(ROOT.<InitialState>)
+      {
+        // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition). Already at LCA, no exiting required.
+
+        // Step 2: Transition action: ``.
+
+        // Step 3: Enter/move towards transition target `ROOT.<InitialState>`.
+        // ROOT.<InitialState> is a pseudo state and cannot have an `enter` trigger.
+
+        // ROOT.<InitialState> behavior
+        // uml: / { this.tracer?.edgeTransition("edge0"); } TransitionTo(CREATED)
         {
-            // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition). Already at LCA, no exiting required.
-            
-            // Step 2: Transition action: ``.
-            
-            // Step 3: Enter/move towards transition target `ROOT.<InitialState>`.
-            // ROOT.<InitialState> is a pseudo state and cannot have an `enter` trigger.
-            
-            // ROOT.<InitialState> behavior
-            // uml: / { this.tracer?.edgeTransition("edge0"); } TransitionTo(CREATED)
-            {
-                // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition). Already at LCA, no exiting required.
-                
-                // Step 2: Transition action: `this.tracer?.edgeTransition("edge0");`.
-                this.tracer?.edgeTransition("edge0");
-                
-                // Step 3: Enter/move towards transition target `CREATED`.
-                this.#CREATED_enter();
-                
-                // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
-                return;
-            } // end of behavior for ROOT.<InitialState>
-        } // end of behavior for ROOT
+          // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition). Already at LCA, no exiting required.
+
+          // Step 2: Transition action: `this.tracer?.edgeTransition("edge0");`.
+          this.tracer?.edgeTransition("edge0");
+
+          // Step 3: Enter/move towards transition target `CREATED`.
+          this.#CREATED_enter();
+
+          // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
+          return;
+        } // end of behavior for ROOT.<InitialState>
+      } // end of behavior for ROOT
     }
-    
+
     // Dispatches an event to the state machine. Not thread safe.
     // Note! This function assumes that the `eventId` parameter is valid.
     dispatchEvent(eventId)
     {
-        switch (this.stateId)
-        {
-            // STATE: IntentState
-            case IntentState.StateId.ROOT:
-                // No events handled by this state (or its ancestors).
-                break;
-            
-            // STATE: CANCELED
-            case IntentState.StateId.CANCELED:
-                // No events handled by this state (or its ancestors).
-                break;
-            
-            // STATE: CREATED
-            case IntentState.StateId.CREATED:
-                switch (eventId)
-                {
-                    case IntentState.EventId.GET_READY: this.#CREATED_get_ready(); break;
-                    case IntentState.EventId.ACTIVATED: this.#CREATED_activated(); break;
-                }
-                break;
-            
-            // STATE: FAULTED
-            case IntentState.StateId.FAULTED:
-                // No events handled by this state (or its ancestors).
-                break;
-            
-            // STATE: RAN_TO_COMPLETION
-            case IntentState.StateId.RAN_TO_COMPLETION:
-                switch (eventId)
-                {
-                    case IntentState.EventId.RUN_AGAIN: this.#RAN_TO_COMPLETION_run_again(); break;
-                }
-                break;
-            
-            // STATE: RUNNING
-            case IntentState.StateId.RUNNING:
-                switch (eventId)
-                {
-                    case IntentState.EventId.CHILD_TASK_CREATED: this.#RUNNING_child_task_created(); break;
-                    case IntentState.EventId.UNABLE_TO_COMPLETE: this.#RUNNING_unable_to_complete(); break;
-                    case IntentState.EventId.CANCEL: this.#RUNNING_cancel(); break;
-                    case IntentState.EventId.COMPLETED_SUCCESSFULLY: this.#RUNNING_completed_successfully(); break;
-                }
-                break;
-            
-            // STATE: WAITING_FOR_ACTIVATION
-            case IntentState.StateId.WAITING_FOR_ACTIVATION:
-                switch (eventId)
-                {
-                    case IntentState.EventId.ACTIVATED: this.#WAITING_FOR_ACTIVATION_activated(); break;
-                    case IntentState.EventId.CANCELED_BEFORE_ACTIVATION: this.#WAITING_FOR_ACTIVATION_canceled_before_activation(); break;
-                }
-                break;
-            
-            // STATE: WAITING_FOR_CHILDREN_TO_COMPLETE
-            case IntentState.StateId.WAITING_FOR_CHILDREN_TO_COMPLETE:
-                switch (eventId)
-                {
-                    case IntentState.EventId.ALL_CHILDREN_COMPLETED: this.#WAITING_FOR_CHILDREN_TO_COMPLETE_all_children_completed(); break;
-                }
-                break;
-            
-            // STATE: WAITING_TO_RUN
-            case IntentState.StateId.WAITING_TO_RUN:
-                switch (eventId)
-                {
-                    case IntentState.EventId.START_RUNNING: this.#WAITING_TO_RUN_start_running(); break;
-                    case IntentState.EventId.CANCELED_BEFORE_RUN: this.#WAITING_TO_RUN_canceled_before_run(); break;
-                }
-                break;
-        }
-        
+      switch (this.stateId)
+      {
+              // STATE: IntentState
+        case IntentState.StateId.ROOT:
+          // No events handled by this state (or its ancestors).
+          break;
+
+              // STATE: CANCELED
+        case IntentState.StateId.CANCELED:
+          // No events handled by this state (or its ancestors).
+          break;
+
+              // STATE: CREATED
+        case IntentState.StateId.CREATED:
+          switch (eventId)
+          {
+            case IntentState.EventId.ACTIVATED: this.#CREATED_activated(); break;
+            case IntentState.EventId.GET_READY: this.#CREATED_get_ready(); break;
+            case IntentState.EventId.CANCEL: this.#CREATED_cancel(); break;
+          }
+          break;
+
+              // STATE: FAULTED
+        case IntentState.StateId.FAULTED:
+          switch (eventId)
+          {
+            case IntentState.EventId.RECOVER_RETRY: this.#FAULTED_recover_retry(); break;
+            case IntentState.EventId.UNABLE_TO_RECOVER: this.#FAULTED_unable_to_recover(); break;
+          }
+          break;
+
+              // STATE: RAN_TO_COMPLETION
+        case IntentState.StateId.RAN_TO_COMPLETION:
+          switch (eventId)
+          {
+            case IntentState.EventId.RUN_AGAIN: this.#RAN_TO_COMPLETION_run_again(); break;
+          }
+          break;
+
+              // STATE: RUNNING
+        case IntentState.StateId.RUNNING:
+          switch (eventId)
+          {
+            case IntentState.EventId.COMPLETED_SUCCESSFULLY: this.#RUNNING_completed_successfully(); break;
+            case IntentState.EventId.CHILD_TASK_CREATED: this.#RUNNING_child_task_created(); break;
+            case IntentState.EventId.UNABLE_TO_COMPLETE: this.#RUNNING_unable_to_complete(); break;
+            case IntentState.EventId.CANCEL: this.#RUNNING_cancel(); break;
+          }
+          break;
+
+              // STATE: WAITING_FOR_ACTIVATION
+        case IntentState.StateId.WAITING_FOR_ACTIVATION:
+          switch (eventId)
+          {
+            case IntentState.EventId.ACTIVATED: this.#WAITING_FOR_ACTIVATION_activated(); break;
+            case IntentState.EventId.CANCEL: this.#WAITING_FOR_ACTIVATION_cancel(); break;
+          }
+          break;
+
+              // STATE: WAITING_FOR_CHILDREN_TO_COMPLETE
+        case IntentState.StateId.WAITING_FOR_CHILDREN_TO_COMPLETE:
+          switch (eventId)
+          {
+            case IntentState.EventId.ALL_CHILDREN_COMPLETED: this.#WAITING_FOR_CHILDREN_TO_COMPLETE_all_children_completed(); break;
+            case IntentState.EventId.UNABLE_TO_RECOVER: this.#WAITING_FOR_CHILDREN_TO_COMPLETE_unable_to_recover(); break;
+            case IntentState.EventId.CANCEL: this.#WAITING_FOR_CHILDREN_TO_COMPLETE_cancel(); break;
+          }
+          break;
+
+              // STATE: WAITING_TO_RUN
+        case IntentState.StateId.WAITING_TO_RUN:
+          switch (eventId)
+          {
+            case IntentState.EventId.START_RUNNING: this.#WAITING_TO_RUN_start_running(); break;
+            case IntentState.EventId.CANCEL: this.#WAITING_TO_RUN_cancel(); break;
+          }
+          break;
+      }
+
     }
-    
+
     // This function is used when StateSmith doesn't know what the active leaf state is at
     // compile time due to sub states or when multiple states need to be exited.
     #exitUpToStateHandler(desiredState)
     {
-        while (this.stateId != desiredState)
+      while (this.stateId != desiredState)
+      {
+        switch (this.stateId)
         {
-            switch (this.stateId)
-            {
-                case IntentState.StateId.CANCELED: this.#CANCELED_exit(); break;
-                
-                case IntentState.StateId.CREATED: this.#CREATED_exit(); break;
-                
-                case IntentState.StateId.FAULTED: this.#FAULTED_exit(); break;
-                
-                case IntentState.StateId.RAN_TO_COMPLETION: this.#RAN_TO_COMPLETION_exit(); break;
-                
-                case IntentState.StateId.RUNNING: this.#RUNNING_exit(); break;
-                
-                case IntentState.StateId.WAITING_FOR_ACTIVATION: this.#WAITING_FOR_ACTIVATION_exit(); break;
-                
-                case IntentState.StateId.WAITING_FOR_CHILDREN_TO_COMPLETE: this.#WAITING_FOR_CHILDREN_TO_COMPLETE_exit(); break;
-                
-                case IntentState.StateId.WAITING_TO_RUN: this.#WAITING_TO_RUN_exit(); break;
-                
-                default: return;  // Just to be safe. Prevents infinite loop if state ID memory is somehow corrupted.
-            }
+          case IntentState.StateId.CANCELED: this.#CANCELED_exit(); break;
+
+          case IntentState.StateId.CREATED: this.#CREATED_exit(); break;
+
+          case IntentState.StateId.FAULTED: this.#FAULTED_exit(); break;
+
+          case IntentState.StateId.RAN_TO_COMPLETION: this.#RAN_TO_COMPLETION_exit(); break;
+
+          case IntentState.StateId.RUNNING: this.#RUNNING_exit(); break;
+
+          case IntentState.StateId.WAITING_FOR_ACTIVATION: this.#WAITING_FOR_ACTIVATION_exit(); break;
+
+          case IntentState.StateId.WAITING_FOR_CHILDREN_TO_COMPLETE: this.#WAITING_FOR_CHILDREN_TO_COMPLETE_exit(); break;
+
+          case IntentState.StateId.WAITING_TO_RUN: this.#WAITING_TO_RUN_exit(); break;
+
+          default: return;  // Just to be safe. Prevents infinite loop if state ID memory is somehow corrupted.
         }
+      }
     }
-    
-    
+
+
     ////////////////////////////////////////////////////////////////////////////////
     // event handlers for state ROOT
     ////////////////////////////////////////////////////////////////////////////////
-    
+
     #ROOT_enter()
     {
-        this.stateId = IntentState.StateId.ROOT;
+      this.stateId = IntentState.StateId.ROOT;
     }
-    
-    
+
+
     ////////////////////////////////////////////////////////////////////////////////
     // event handlers for state CANCELED
     ////////////////////////////////////////////////////////////////////////////////
-    
+
     #CANCELED_enter()
     {
-        this.stateId = IntentState.StateId.CANCELED;
-        
-        // CANCELED behavior
-        // uml: enter / { this.tracer?.enterState('CANCELED'); }
-        {
-            // Step 1: execute action `this.tracer?.enterState('CANCELED');`
-            this.tracer?.enterState('CANCELED');
-        } // end of behavior for CANCELED
+      this.stateId = IntentState.StateId.CANCELED;
+
+      // CANCELED behavior
+      // uml: enter / { this.tracer?.enterState('CANCELED'); }
+      {
+        // Step 1: execute action `this.tracer?.enterState('CANCELED');`
+        this.tracer?.enterState('CANCELED');
+      } // end of behavior for CANCELED
     }
-    
+
     #CANCELED_exit()
     {
-        // CANCELED behavior
-        // uml: exit / { this.tracer?.exitState('CANCELED'); }
-        {
-            // Step 1: execute action `this.tracer?.exitState('CANCELED');`
-            this.tracer?.exitState('CANCELED');
-        } // end of behavior for CANCELED
-        
-        this.stateId = IntentState.StateId.ROOT;
+      // CANCELED behavior
+      // uml: exit / { this.tracer?.exitState('CANCELED'); }
+      {
+        // Step 1: execute action `this.tracer?.exitState('CANCELED');`
+        this.tracer?.exitState('CANCELED');
+      } // end of behavior for CANCELED
+
+      this.stateId = IntentState.StateId.ROOT;
     }
-    
-    
+
+
     ////////////////////////////////////////////////////////////////////////////////
     // event handlers for state CREATED
     ////////////////////////////////////////////////////////////////////////////////
-    
+
     #CREATED_enter()
     {
-        this.stateId = IntentState.StateId.CREATED;
-        
-        // CREATED behavior
-        // uml: enter / { this.tracer?.enterState('CREATED'); }
-        {
-            // Step 1: execute action `this.tracer?.enterState('CREATED');`
-            this.tracer?.enterState('CREATED');
-        } // end of behavior for CREATED
+      this.stateId = IntentState.StateId.CREATED;
+
+      // CREATED behavior
+      // uml: enter / { this.tracer?.enterState('CREATED'); }
+      {
+        // Step 1: execute action `this.tracer?.enterState('CREATED');`
+        this.tracer?.enterState('CREATED');
+      } // end of behavior for CREATED
     }
-    
+
     #CREATED_exit()
     {
-        // CREATED behavior
-        // uml: exit / { this.tracer?.exitState('CREATED'); }
-        {
-            // Step 1: execute action `this.tracer?.exitState('CREATED');`
-            this.tracer?.exitState('CREATED');
-        } // end of behavior for CREATED
-        
-        this.stateId = IntentState.StateId.ROOT;
+      // CREATED behavior
+      // uml: exit / { this.tracer?.exitState('CREATED'); }
+      {
+        // Step 1: execute action `this.tracer?.exitState('CREATED');`
+        this.tracer?.exitState('CREATED');
+      } // end of behavior for CREATED
+
+      this.stateId = IntentState.StateId.ROOT;
     }
-    
+
     #CREATED_activated()
     {
-        // CREATED behavior
-        // uml: ACTIVATED / { this.tracer?.edgeTransition("edge2"); } TransitionTo(WAITING_TO_RUN)
-        {
-            // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
-            this.#CREATED_exit();
-            
-            // Step 2: Transition action: `this.tracer?.edgeTransition("edge2");`.
-            this.tracer?.edgeTransition("edge2");
-            
-            // Step 3: Enter/move towards transition target `WAITING_TO_RUN`.
-            this.#WAITING_TO_RUN_enter();
-            
-            // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
-            return;
-        } // end of behavior for CREATED
-        
-        // No ancestor handles this event.
+      // CREATED behavior
+      // uml: ACTIVATED / { this.tracer?.edgeTransition("edge1"); } TransitionTo(WAITING_TO_RUN)
+      {
+        // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
+        this.#CREATED_exit();
+
+        // Step 2: Transition action: `this.tracer?.edgeTransition("edge1");`.
+        this.tracer?.edgeTransition("edge1");
+
+        // Step 3: Enter/move towards transition target `WAITING_TO_RUN`.
+        this.#WAITING_TO_RUN_enter();
+
+        // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
+        return;
+      } // end of behavior for CREATED
+
+      // No ancestor handles this event.
     }
-    
+
+    #CREATED_cancel()
+    {
+      // CREATED behavior
+      // uml: CANCEL / { this.tracer?.edgeTransition("edge3"); } TransitionTo(CANCELED)
+      {
+        // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
+        this.#CREATED_exit();
+
+        // Step 2: Transition action: `this.tracer?.edgeTransition("edge3");`.
+        this.tracer?.edgeTransition("edge3");
+
+        // Step 3: Enter/move towards transition target `CANCELED`.
+        this.#CANCELED_enter();
+
+        // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
+        return;
+      } // end of behavior for CREATED
+
+      // No ancestor handles this event.
+    }
+
     #CREATED_get_ready()
     {
-        // CREATED behavior
-        // uml: GET_READY / { this.tracer?.edgeTransition("edge1"); } TransitionTo(WAITING_FOR_ACTIVATION)
-        {
-            // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
-            this.#CREATED_exit();
-            
-            // Step 2: Transition action: `this.tracer?.edgeTransition("edge1");`.
-            this.tracer?.edgeTransition("edge1");
-            
-            // Step 3: Enter/move towards transition target `WAITING_FOR_ACTIVATION`.
-            this.#WAITING_FOR_ACTIVATION_enter();
-            
-            // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
-            return;
-        } // end of behavior for CREATED
-        
-        // No ancestor handles this event.
+      // CREATED behavior
+      // uml: GET_READY / { this.tracer?.edgeTransition("edge2"); } TransitionTo(WAITING_FOR_ACTIVATION)
+      {
+        // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
+        this.#CREATED_exit();
+
+        // Step 2: Transition action: `this.tracer?.edgeTransition("edge2");`.
+        this.tracer?.edgeTransition("edge2");
+
+        // Step 3: Enter/move towards transition target `WAITING_FOR_ACTIVATION`.
+        this.#WAITING_FOR_ACTIVATION_enter();
+
+        // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
+        return;
+      } // end of behavior for CREATED
+
+      // No ancestor handles this event.
     }
-    
-    
+
+
     ////////////////////////////////////////////////////////////////////////////////
     // event handlers for state FAULTED
     ////////////////////////////////////////////////////////////////////////////////
-    
+
     #FAULTED_enter()
     {
-        this.stateId = IntentState.StateId.FAULTED;
-        
-        // FAULTED behavior
-        // uml: enter / { this.tracer?.enterState('FAULTED'); }
-        {
-            // Step 1: execute action `this.tracer?.enterState('FAULTED');`
-            this.tracer?.enterState('FAULTED');
-        } // end of behavior for FAULTED
+      this.stateId = IntentState.StateId.FAULTED;
+
+      // FAULTED behavior
+      // uml: enter / { this.tracer?.enterState('FAULTED'); }
+      {
+        // Step 1: execute action `this.tracer?.enterState('FAULTED');`
+        this.tracer?.enterState('FAULTED');
+      } // end of behavior for FAULTED
     }
-    
+
     #FAULTED_exit()
     {
-        // FAULTED behavior
-        // uml: exit / { this.tracer?.exitState('FAULTED'); }
-        {
-            // Step 1: execute action `this.tracer?.exitState('FAULTED');`
-            this.tracer?.exitState('FAULTED');
-        } // end of behavior for FAULTED
-        
-        this.stateId = IntentState.StateId.ROOT;
+      // FAULTED behavior
+      // uml: exit / { this.tracer?.exitState('FAULTED'); }
+      {
+        // Step 1: execute action `this.tracer?.exitState('FAULTED');`
+        this.tracer?.exitState('FAULTED');
+      } // end of behavior for FAULTED
+
+      this.stateId = IntentState.StateId.ROOT;
     }
-    
-    
+
+    #FAULTED_recover_retry()
+    {
+      // FAULTED behavior
+      // uml: RECOVER_RETRY / { this.tracer?.edgeTransition("edge11"); } TransitionTo(WAITING_TO_RUN)
+      {
+        // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
+        this.#FAULTED_exit();
+
+        // Step 2: Transition action: `this.tracer?.edgeTransition("edge11");`.
+        this.tracer?.edgeTransition("edge11");
+
+        // Step 3: Enter/move towards transition target `WAITING_TO_RUN`.
+        this.#WAITING_TO_RUN_enter();
+
+        // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
+        return;
+      } // end of behavior for FAULTED
+
+      // No ancestor handles this event.
+    }
+
+    #FAULTED_unable_to_recover()
+    {
+      // FAULTED behavior
+      // uml: UNABLE_TO_RECOVER / { this.tracer?.edgeTransition("edge12"); } TransitionTo(CANCELED)
+      {
+        // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
+        this.#FAULTED_exit();
+
+        // Step 2: Transition action: `this.tracer?.edgeTransition("edge12");`.
+        this.tracer?.edgeTransition("edge12");
+
+        // Step 3: Enter/move towards transition target `CANCELED`.
+        this.#CANCELED_enter();
+
+        // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
+        return;
+      } // end of behavior for FAULTED
+
+      // No ancestor handles this event.
+    }
+
+
     ////////////////////////////////////////////////////////////////////////////////
     // event handlers for state RAN_TO_COMPLETION
     ////////////////////////////////////////////////////////////////////////////////
-    
+
     #RAN_TO_COMPLETION_enter()
     {
-        this.stateId = IntentState.StateId.RAN_TO_COMPLETION;
-        
-        // RAN_TO_COMPLETION behavior
-        // uml: enter / { this.tracer?.enterState('RAN_TO_COMPLETION'); }
-        {
-            // Step 1: execute action `this.tracer?.enterState('RAN_TO_COMPLETION');`
-            this.tracer?.enterState('RAN_TO_COMPLETION');
-        } // end of behavior for RAN_TO_COMPLETION
+      this.stateId = IntentState.StateId.RAN_TO_COMPLETION;
+
+      // RAN_TO_COMPLETION behavior
+      // uml: enter / { this.tracer?.enterState('RAN_TO_COMPLETION'); }
+      {
+        // Step 1: execute action `this.tracer?.enterState('RAN_TO_COMPLETION');`
+        this.tracer?.enterState('RAN_TO_COMPLETION');
+      } // end of behavior for RAN_TO_COMPLETION
     }
-    
+
     #RAN_TO_COMPLETION_exit()
     {
-        // RAN_TO_COMPLETION behavior
-        // uml: exit / { this.tracer?.exitState('RAN_TO_COMPLETION'); }
-        {
-            // Step 1: execute action `this.tracer?.exitState('RAN_TO_COMPLETION');`
-            this.tracer?.exitState('RAN_TO_COMPLETION');
-        } // end of behavior for RAN_TO_COMPLETION
-        
-        this.stateId = IntentState.StateId.ROOT;
+      // RAN_TO_COMPLETION behavior
+      // uml: exit / { this.tracer?.exitState('RAN_TO_COMPLETION'); }
+      {
+        // Step 1: execute action `this.tracer?.exitState('RAN_TO_COMPLETION');`
+        this.tracer?.exitState('RAN_TO_COMPLETION');
+      } // end of behavior for RAN_TO_COMPLETION
+
+      this.stateId = IntentState.StateId.ROOT;
     }
-    
+
     #RAN_TO_COMPLETION_run_again()
     {
-        // RAN_TO_COMPLETION behavior
-        // uml: RUN_AGAIN / { this.tracer?.edgeTransition("edge12"); } TransitionTo(WAITING_TO_RUN)
-        {
-            // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
-            this.#RAN_TO_COMPLETION_exit();
-            
-            // Step 2: Transition action: `this.tracer?.edgeTransition("edge12");`.
-            this.tracer?.edgeTransition("edge12");
-            
-            // Step 3: Enter/move towards transition target `WAITING_TO_RUN`.
-            this.#WAITING_TO_RUN_enter();
-            
-            // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
-            return;
-        } // end of behavior for RAN_TO_COMPLETION
-        
-        // No ancestor handles this event.
+      // RAN_TO_COMPLETION behavior
+      // uml: RUN_AGAIN / { this.tracer?.edgeTransition("edge10"); } TransitionTo(WAITING_TO_RUN)
+      {
+        // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
+        this.#RAN_TO_COMPLETION_exit();
+
+        // Step 2: Transition action: `this.tracer?.edgeTransition("edge10");`.
+        this.tracer?.edgeTransition("edge10");
+
+        // Step 3: Enter/move towards transition target `WAITING_TO_RUN`.
+        this.#WAITING_TO_RUN_enter();
+
+        // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
+        return;
+      } // end of behavior for RAN_TO_COMPLETION
+
+      // No ancestor handles this event.
     }
-    
-    
+
+
     ////////////////////////////////////////////////////////////////////////////////
     // event handlers for state RUNNING
     ////////////////////////////////////////////////////////////////////////////////
-    
+
     #RUNNING_enter()
     {
-        this.stateId = IntentState.StateId.RUNNING;
-        
-        // RUNNING behavior
-        // uml: enter / { this.tracer?.enterState('RUNNING'); }
-        {
-            // Step 1: execute action `this.tracer?.enterState('RUNNING');`
-            this.tracer?.enterState('RUNNING');
-        } // end of behavior for RUNNING
+      this.stateId = IntentState.StateId.RUNNING;
+
+      // RUNNING behavior
+      // uml: enter / { this.tracer?.enterState('RUNNING'); }
+      {
+        // Step 1: execute action `this.tracer?.enterState('RUNNING');`
+        this.tracer?.enterState('RUNNING');
+      } // end of behavior for RUNNING
     }
-    
+
     #RUNNING_exit()
     {
-        // RUNNING behavior
-        // uml: exit / { this.tracer?.exitState('RUNNING'); }
-        {
-            // Step 1: execute action `this.tracer?.exitState('RUNNING');`
-            this.tracer?.exitState('RUNNING');
-        } // end of behavior for RUNNING
-        
-        this.stateId = IntentState.StateId.ROOT;
+      // RUNNING behavior
+      // uml: exit / { this.tracer?.exitState('RUNNING'); }
+      {
+        // Step 1: execute action `this.tracer?.exitState('RUNNING');`
+        this.tracer?.exitState('RUNNING');
+      } // end of behavior for RUNNING
+
+      this.stateId = IntentState.StateId.ROOT;
     }
-    
+
     #RUNNING_cancel()
     {
-        // RUNNING behavior
-        // uml: CANCEL / { this.tracer?.edgeTransition("edge9"); } TransitionTo(CANCELED)
-        {
-            // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
-            this.#RUNNING_exit();
-            
-            // Step 2: Transition action: `this.tracer?.edgeTransition("edge9");`.
-            this.tracer?.edgeTransition("edge9");
-            
-            // Step 3: Enter/move towards transition target `CANCELED`.
-            this.#CANCELED_enter();
-            
-            // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
-            return;
-        } // end of behavior for RUNNING
-        
-        // No ancestor handles this event.
+      // RUNNING behavior
+      // uml: CANCEL / { this.tracer?.edgeTransition("edge9"); } TransitionTo(CANCELED)
+      {
+        // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
+        this.#RUNNING_exit();
+
+        // Step 2: Transition action: `this.tracer?.edgeTransition("edge9");`.
+        this.tracer?.edgeTransition("edge9");
+
+        // Step 3: Enter/move towards transition target `CANCELED`.
+        this.#CANCELED_enter();
+
+        // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
+        return;
+      } // end of behavior for RUNNING
+
+      // No ancestor handles this event.
     }
-    
+
     #RUNNING_child_task_created()
     {
-        // RUNNING behavior
-        // uml: CHILD_TASK_CREATED / { this.tracer?.edgeTransition("edge7"); } TransitionTo(WAITING_FOR_CHILDREN_TO_COMPLETE)
-        {
-            // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
-            this.#RUNNING_exit();
-            
-            // Step 2: Transition action: `this.tracer?.edgeTransition("edge7");`.
-            this.tracer?.edgeTransition("edge7");
-            
-            // Step 3: Enter/move towards transition target `WAITING_FOR_CHILDREN_TO_COMPLETE`.
-            this.#WAITING_FOR_CHILDREN_TO_COMPLETE_enter();
-            
-            // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
-            return;
-        } // end of behavior for RUNNING
-        
-        // No ancestor handles this event.
+      // RUNNING behavior
+      // uml: CHILD_TASK_CREATED / { this.tracer?.edgeTransition("edge7"); } TransitionTo(WAITING_FOR_CHILDREN_TO_COMPLETE)
+      {
+        // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
+        this.#RUNNING_exit();
+
+        // Step 2: Transition action: `this.tracer?.edgeTransition("edge7");`.
+        this.tracer?.edgeTransition("edge7");
+
+        // Step 3: Enter/move towards transition target `WAITING_FOR_CHILDREN_TO_COMPLETE`.
+        this.#WAITING_FOR_CHILDREN_TO_COMPLETE_enter();
+
+        // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
+        return;
+      } // end of behavior for RUNNING
+
+      // No ancestor handles this event.
     }
-    
+
     #RUNNING_completed_successfully()
     {
-        // RUNNING behavior
-        // uml: COMPLETED_SUCCESSFULLY / { this.tracer?.edgeTransition("edge10"); } TransitionTo(RAN_TO_COMPLETION)
-        {
-            // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
-            this.#RUNNING_exit();
-            
-            // Step 2: Transition action: `this.tracer?.edgeTransition("edge10");`.
-            this.tracer?.edgeTransition("edge10");
-            
-            // Step 3: Enter/move towards transition target `RAN_TO_COMPLETION`.
-            this.#RAN_TO_COMPLETION_enter();
-            
-            // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
-            return;
-        } // end of behavior for RUNNING
-        
-        // No ancestor handles this event.
+      // RUNNING behavior
+      // uml: COMPLETED_SUCCESSFULLY / { this.tracer?.edgeTransition("edge6"); } TransitionTo(RAN_TO_COMPLETION)
+      {
+        // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
+        this.#RUNNING_exit();
+
+        // Step 2: Transition action: `this.tracer?.edgeTransition("edge6");`.
+        this.tracer?.edgeTransition("edge6");
+
+        // Step 3: Enter/move towards transition target `RAN_TO_COMPLETION`.
+        this.#RAN_TO_COMPLETION_enter();
+
+        // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
+        return;
+      } // end of behavior for RUNNING
+
+      // No ancestor handles this event.
     }
-    
+
     #RUNNING_unable_to_complete()
     {
-        // RUNNING behavior
-        // uml: UNABLE_TO_COMPLETE / { this.tracer?.edgeTransition("edge8"); } TransitionTo(FAULTED)
-        {
-            // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
-            this.#RUNNING_exit();
-            
-            // Step 2: Transition action: `this.tracer?.edgeTransition("edge8");`.
-            this.tracer?.edgeTransition("edge8");
-            
-            // Step 3: Enter/move towards transition target `FAULTED`.
-            this.#FAULTED_enter();
-            
-            // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
-            return;
-        } // end of behavior for RUNNING
-        
-        // No ancestor handles this event.
+      // RUNNING behavior
+      // uml: UNABLE_TO_COMPLETE / { this.tracer?.edgeTransition("edge8"); } TransitionTo(FAULTED)
+      {
+        // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
+        this.#RUNNING_exit();
+
+        // Step 2: Transition action: `this.tracer?.edgeTransition("edge8");`.
+        this.tracer?.edgeTransition("edge8");
+
+        // Step 3: Enter/move towards transition target `FAULTED`.
+        this.#FAULTED_enter();
+
+        // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
+        return;
+      } // end of behavior for RUNNING
+
+      // No ancestor handles this event.
     }
-    
-    
+
+
     ////////////////////////////////////////////////////////////////////////////////
     // event handlers for state WAITING_FOR_ACTIVATION
     ////////////////////////////////////////////////////////////////////////////////
-    
+
     #WAITING_FOR_ACTIVATION_enter()
     {
-        this.stateId = IntentState.StateId.WAITING_FOR_ACTIVATION;
-        
-        // WAITING_FOR_ACTIVATION behavior
-        // uml: enter / { this.tracer?.enterState('WAITING_FOR_ACTIVATION'); }
-        {
-            // Step 1: execute action `this.tracer?.enterState('WAITING_FOR_ACTIVATION');`
-            this.tracer?.enterState('WAITING_FOR_ACTIVATION');
-        } // end of behavior for WAITING_FOR_ACTIVATION
+      this.stateId = IntentState.StateId.WAITING_FOR_ACTIVATION;
+
+      // WAITING_FOR_ACTIVATION behavior
+      // uml: enter / { this.tracer?.enterState('WAITING_FOR_ACTIVATION'); }
+      {
+        // Step 1: execute action `this.tracer?.enterState('WAITING_FOR_ACTIVATION');`
+        this.tracer?.enterState('WAITING_FOR_ACTIVATION');
+      } // end of behavior for WAITING_FOR_ACTIVATION
     }
-    
+
     #WAITING_FOR_ACTIVATION_exit()
     {
-        // WAITING_FOR_ACTIVATION behavior
-        // uml: exit / { this.tracer?.exitState('WAITING_FOR_ACTIVATION'); }
-        {
-            // Step 1: execute action `this.tracer?.exitState('WAITING_FOR_ACTIVATION');`
-            this.tracer?.exitState('WAITING_FOR_ACTIVATION');
-        } // end of behavior for WAITING_FOR_ACTIVATION
-        
-        this.stateId = IntentState.StateId.ROOT;
+      // WAITING_FOR_ACTIVATION behavior
+      // uml: exit / { this.tracer?.exitState('WAITING_FOR_ACTIVATION'); }
+      {
+        // Step 1: execute action `this.tracer?.exitState('WAITING_FOR_ACTIVATION');`
+        this.tracer?.exitState('WAITING_FOR_ACTIVATION');
+      } // end of behavior for WAITING_FOR_ACTIVATION
+
+      this.stateId = IntentState.StateId.ROOT;
     }
-    
+
     #WAITING_FOR_ACTIVATION_activated()
     {
-        // WAITING_FOR_ACTIVATION behavior
-        // uml: ACTIVATED / { this.tracer?.edgeTransition("edge3"); } TransitionTo(WAITING_TO_RUN)
-        {
-            // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
-            this.#WAITING_FOR_ACTIVATION_exit();
-            
-            // Step 2: Transition action: `this.tracer?.edgeTransition("edge3");`.
-            this.tracer?.edgeTransition("edge3");
-            
-            // Step 3: Enter/move towards transition target `WAITING_TO_RUN`.
-            this.#WAITING_TO_RUN_enter();
-            
-            // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
-            return;
-        } // end of behavior for WAITING_FOR_ACTIVATION
-        
-        // No ancestor handles this event.
+      // WAITING_FOR_ACTIVATION behavior
+      // uml: ACTIVATED / { this.tracer?.edgeTransition("edge13"); } TransitionTo(WAITING_TO_RUN)
+      {
+        // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
+        this.#WAITING_FOR_ACTIVATION_exit();
+
+        // Step 2: Transition action: `this.tracer?.edgeTransition("edge13");`.
+        this.tracer?.edgeTransition("edge13");
+
+        // Step 3: Enter/move towards transition target `WAITING_TO_RUN`.
+        this.#WAITING_TO_RUN_enter();
+
+        // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
+        return;
+      } // end of behavior for WAITING_FOR_ACTIVATION
+
+      // No ancestor handles this event.
     }
-    
-    #WAITING_FOR_ACTIVATION_canceled_before_activation()
+
+    #WAITING_FOR_ACTIVATION_cancel()
     {
-        // WAITING_FOR_ACTIVATION behavior
-        // uml: CANCELED_BEFORE_ACTIVATION / { this.tracer?.edgeTransition("edge4"); } TransitionTo(CANCELED)
-        {
-            // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
-            this.#WAITING_FOR_ACTIVATION_exit();
-            
-            // Step 2: Transition action: `this.tracer?.edgeTransition("edge4");`.
-            this.tracer?.edgeTransition("edge4");
-            
-            // Step 3: Enter/move towards transition target `CANCELED`.
-            this.#CANCELED_enter();
-            
-            // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
-            return;
-        } // end of behavior for WAITING_FOR_ACTIVATION
-        
-        // No ancestor handles this event.
+      // WAITING_FOR_ACTIVATION behavior
+      // uml: CANCEL / { this.tracer?.edgeTransition("edge14"); } TransitionTo(CANCELED)
+      {
+        // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
+        this.#WAITING_FOR_ACTIVATION_exit();
+
+        // Step 2: Transition action: `this.tracer?.edgeTransition("edge14");`.
+        this.tracer?.edgeTransition("edge14");
+
+        // Step 3: Enter/move towards transition target `CANCELED`.
+        this.#CANCELED_enter();
+
+        // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
+        return;
+      } // end of behavior for WAITING_FOR_ACTIVATION
+
+      // No ancestor handles this event.
     }
-    
-    
+
+
     ////////////////////////////////////////////////////////////////////////////////
     // event handlers for state WAITING_FOR_CHILDREN_TO_COMPLETE
     ////////////////////////////////////////////////////////////////////////////////
-    
+
     #WAITING_FOR_CHILDREN_TO_COMPLETE_enter()
     {
-        this.stateId = IntentState.StateId.WAITING_FOR_CHILDREN_TO_COMPLETE;
-        
-        // WAITING_FOR_CHILDREN_TO_COMPLETE behavior
-        // uml: enter / { this.tracer?.enterState('WAITING_FOR_CHILDREN_TO_COMPLETE'); }
-        {
-            // Step 1: execute action `this.tracer?.enterState('WAITING_FOR_CHILDREN_TO_COMPLETE');`
-            this.tracer?.enterState('WAITING_FOR_CHILDREN_TO_COMPLETE');
-        } // end of behavior for WAITING_FOR_CHILDREN_TO_COMPLETE
+      this.stateId = IntentState.StateId.WAITING_FOR_CHILDREN_TO_COMPLETE;
+
+      // WAITING_FOR_CHILDREN_TO_COMPLETE behavior
+      // uml: enter / { this.tracer?.enterState('WAITING_FOR_CHILDREN_TO_COMPLETE'); }
+      {
+        // Step 1: execute action `this.tracer?.enterState('WAITING_FOR_CHILDREN_TO_COMPLETE');`
+        this.tracer?.enterState('WAITING_FOR_CHILDREN_TO_COMPLETE');
+      } // end of behavior for WAITING_FOR_CHILDREN_TO_COMPLETE
     }
-    
+
     #WAITING_FOR_CHILDREN_TO_COMPLETE_exit()
     {
-        // WAITING_FOR_CHILDREN_TO_COMPLETE behavior
-        // uml: exit / { this.tracer?.exitState('WAITING_FOR_CHILDREN_TO_COMPLETE'); }
-        {
-            // Step 1: execute action `this.tracer?.exitState('WAITING_FOR_CHILDREN_TO_COMPLETE');`
-            this.tracer?.exitState('WAITING_FOR_CHILDREN_TO_COMPLETE');
-        } // end of behavior for WAITING_FOR_CHILDREN_TO_COMPLETE
-        
-        this.stateId = IntentState.StateId.ROOT;
+      // WAITING_FOR_CHILDREN_TO_COMPLETE behavior
+      // uml: exit / { this.tracer?.exitState('WAITING_FOR_CHILDREN_TO_COMPLETE'); }
+      {
+        // Step 1: execute action `this.tracer?.exitState('WAITING_FOR_CHILDREN_TO_COMPLETE');`
+        this.tracer?.exitState('WAITING_FOR_CHILDREN_TO_COMPLETE');
+      } // end of behavior for WAITING_FOR_CHILDREN_TO_COMPLETE
+
+      this.stateId = IntentState.StateId.ROOT;
     }
-    
+
     #WAITING_FOR_CHILDREN_TO_COMPLETE_all_children_completed()
     {
-        // WAITING_FOR_CHILDREN_TO_COMPLETE behavior
-        // uml: ALL_CHILDREN_COMPLETED / { this.tracer?.edgeTransition("edge11"); } TransitionTo(RUNNING)
-        {
-            // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
-            this.#WAITING_FOR_CHILDREN_TO_COMPLETE_exit();
-            
-            // Step 2: Transition action: `this.tracer?.edgeTransition("edge11");`.
-            this.tracer?.edgeTransition("edge11");
-            
-            // Step 3: Enter/move towards transition target `RUNNING`.
-            this.#RUNNING_enter();
-            
-            // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
-            return;
-        } // end of behavior for WAITING_FOR_CHILDREN_TO_COMPLETE
-        
-        // No ancestor handles this event.
+      // WAITING_FOR_CHILDREN_TO_COMPLETE behavior
+      // uml: ALL_CHILDREN_COMPLETED / { this.tracer?.edgeTransition("edge15"); } TransitionTo(RUNNING)
+      {
+        // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
+        this.#WAITING_FOR_CHILDREN_TO_COMPLETE_exit();
+
+        // Step 2: Transition action: `this.tracer?.edgeTransition("edge15");`.
+        this.tracer?.edgeTransition("edge15");
+
+        // Step 3: Enter/move towards transition target `RUNNING`.
+        this.#RUNNING_enter();
+
+        // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
+        return;
+      } // end of behavior for WAITING_FOR_CHILDREN_TO_COMPLETE
+
+      // No ancestor handles this event.
     }
-    
-    
+
+    #WAITING_FOR_CHILDREN_TO_COMPLETE_cancel()
+    {
+      // WAITING_FOR_CHILDREN_TO_COMPLETE behavior
+      // uml: CANCEL / { this.tracer?.edgeTransition("edge17"); } TransitionTo(CANCELED)
+      {
+        // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
+        this.#WAITING_FOR_CHILDREN_TO_COMPLETE_exit();
+
+        // Step 2: Transition action: `this.tracer?.edgeTransition("edge17");`.
+        this.tracer?.edgeTransition("edge17");
+
+        // Step 3: Enter/move towards transition target `CANCELED`.
+        this.#CANCELED_enter();
+
+        // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
+        return;
+      } // end of behavior for WAITING_FOR_CHILDREN_TO_COMPLETE
+
+      // No ancestor handles this event.
+    }
+
+    #WAITING_FOR_CHILDREN_TO_COMPLETE_unable_to_recover()
+    {
+      // WAITING_FOR_CHILDREN_TO_COMPLETE behavior
+      // uml: UNABLE_TO_RECOVER / { this.tracer?.edgeTransition("edge16"); } TransitionTo(FAULTED)
+      {
+        // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
+        this.#WAITING_FOR_CHILDREN_TO_COMPLETE_exit();
+
+        // Step 2: Transition action: `this.tracer?.edgeTransition("edge16");`.
+        this.tracer?.edgeTransition("edge16");
+
+        // Step 3: Enter/move towards transition target `FAULTED`.
+        this.#FAULTED_enter();
+
+        // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
+        return;
+      } // end of behavior for WAITING_FOR_CHILDREN_TO_COMPLETE
+
+      // No ancestor handles this event.
+    }
+
+
     ////////////////////////////////////////////////////////////////////////////////
     // event handlers for state WAITING_TO_RUN
     ////////////////////////////////////////////////////////////////////////////////
-    
+
     #WAITING_TO_RUN_enter()
     {
-        this.stateId = IntentState.StateId.WAITING_TO_RUN;
-        
-        // WAITING_TO_RUN behavior
-        // uml: enter / { this.tracer?.enterState('WAITING_TO_RUN'); }
-        {
-            // Step 1: execute action `this.tracer?.enterState('WAITING_TO_RUN');`
-            this.tracer?.enterState('WAITING_TO_RUN');
-        } // end of behavior for WAITING_TO_RUN
+      this.stateId = IntentState.StateId.WAITING_TO_RUN;
+
+      // WAITING_TO_RUN behavior
+      // uml: enter / { this.tracer?.enterState('WAITING_TO_RUN'); }
+      {
+        // Step 1: execute action `this.tracer?.enterState('WAITING_TO_RUN');`
+        this.tracer?.enterState('WAITING_TO_RUN');
+      } // end of behavior for WAITING_TO_RUN
     }
-    
+
     #WAITING_TO_RUN_exit()
     {
-        // WAITING_TO_RUN behavior
-        // uml: exit / { this.tracer?.exitState('WAITING_TO_RUN'); }
-        {
-            // Step 1: execute action `this.tracer?.exitState('WAITING_TO_RUN');`
-            this.tracer?.exitState('WAITING_TO_RUN');
-        } // end of behavior for WAITING_TO_RUN
-        
-        this.stateId = IntentState.StateId.ROOT;
+      // WAITING_TO_RUN behavior
+      // uml: exit / { this.tracer?.exitState('WAITING_TO_RUN'); }
+      {
+        // Step 1: execute action `this.tracer?.exitState('WAITING_TO_RUN');`
+        this.tracer?.exitState('WAITING_TO_RUN');
+      } // end of behavior for WAITING_TO_RUN
+
+      this.stateId = IntentState.StateId.ROOT;
     }
-    
-    #WAITING_TO_RUN_canceled_before_run()
+
+    #WAITING_TO_RUN_cancel()
     {
-        // WAITING_TO_RUN behavior
-        // uml: CANCELED_BEFORE_RUN / { this.tracer?.edgeTransition("edge6"); } TransitionTo(CANCELED)
-        {
-            // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
-            this.#WAITING_TO_RUN_exit();
-            
-            // Step 2: Transition action: `this.tracer?.edgeTransition("edge6");`.
-            this.tracer?.edgeTransition("edge6");
-            
-            // Step 3: Enter/move towards transition target `CANCELED`.
-            this.#CANCELED_enter();
-            
-            // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
-            return;
-        } // end of behavior for WAITING_TO_RUN
-        
-        // No ancestor handles this event.
+      // WAITING_TO_RUN behavior
+      // uml: CANCEL / { this.tracer?.edgeTransition("edge5"); } TransitionTo(CANCELED)
+      {
+        // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
+        this.#WAITING_TO_RUN_exit();
+
+        // Step 2: Transition action: `this.tracer?.edgeTransition("edge5");`.
+        this.tracer?.edgeTransition("edge5");
+
+        // Step 3: Enter/move towards transition target `CANCELED`.
+        this.#CANCELED_enter();
+
+        // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
+        return;
+      } // end of behavior for WAITING_TO_RUN
+
+      // No ancestor handles this event.
     }
-    
+
     #WAITING_TO_RUN_start_running()
     {
-        // WAITING_TO_RUN behavior
-        // uml: START_RUNNING / { this.tracer?.edgeTransition("edge5"); } TransitionTo(RUNNING)
-        {
-            // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
-            this.#WAITING_TO_RUN_exit();
-            
-            // Step 2: Transition action: `this.tracer?.edgeTransition("edge5");`.
-            this.tracer?.edgeTransition("edge5");
-            
-            // Step 3: Enter/move towards transition target `RUNNING`.
-            this.#RUNNING_enter();
-            
-            // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
-            return;
-        } // end of behavior for WAITING_TO_RUN
-        
-        // No ancestor handles this event.
+      // WAITING_TO_RUN behavior
+      // uml: START_RUNNING / { this.tracer?.edgeTransition("edge4"); } TransitionTo(RUNNING)
+      {
+        // Step 1: Exit states until we reach `ROOT` state (Least Common Ancestor for transition).
+        this.#WAITING_TO_RUN_exit();
+
+        // Step 2: Transition action: `this.tracer?.edgeTransition("edge4");`.
+        this.tracer?.edgeTransition("edge4");
+
+        // Step 3: Enter/move towards transition target `RUNNING`.
+        this.#RUNNING_enter();
+
+        // Step 4: complete transition. Ends event dispatch. No other behaviors are checked.
+        return;
+      } // end of behavior for WAITING_TO_RUN
+
+      // No ancestor handles this event.
     }
-    
+
     // Thread safe.
     static stateIdToString(id)
     {
-        switch (id)
-        {
-            case IntentState.StateId.ROOT: return "ROOT";
-            case IntentState.StateId.CANCELED: return "CANCELED";
-            case IntentState.StateId.CREATED: return "CREATED";
-            case IntentState.StateId.FAULTED: return "FAULTED";
-            case IntentState.StateId.RAN_TO_COMPLETION: return "RAN_TO_COMPLETION";
-            case IntentState.StateId.RUNNING: return "RUNNING";
-            case IntentState.StateId.WAITING_FOR_ACTIVATION: return "WAITING_FOR_ACTIVATION";
-            case IntentState.StateId.WAITING_FOR_CHILDREN_TO_COMPLETE: return "WAITING_FOR_CHILDREN_TO_COMPLETE";
-            case IntentState.StateId.WAITING_TO_RUN: return "WAITING_TO_RUN";
-            default: return "?";
-        }
+      switch (id)
+      {
+        case IntentState.StateId.ROOT: return "ROOT";
+        case IntentState.StateId.CANCELED: return "CANCELED";
+        case IntentState.StateId.CREATED: return "CREATED";
+        case IntentState.StateId.FAULTED: return "FAULTED";
+        case IntentState.StateId.RAN_TO_COMPLETION: return "RAN_TO_COMPLETION";
+        case IntentState.StateId.RUNNING: return "RUNNING";
+        case IntentState.StateId.WAITING_FOR_ACTIVATION: return "WAITING_FOR_ACTIVATION";
+        case IntentState.StateId.WAITING_FOR_CHILDREN_TO_COMPLETE: return "WAITING_FOR_CHILDREN_TO_COMPLETE";
+        case IntentState.StateId.WAITING_TO_RUN: return "WAITING_TO_RUN";
+        default: return "?";
+      }
     }
-    
+
     // Thread safe.
     static eventIdToString(id)
     {
-        switch (id)
-        {
-            case IntentState.EventId.ACTIVATED: return "ACTIVATED";
-            case IntentState.EventId.ALL_CHILDREN_COMPLETED: return "ALL_CHILDREN_COMPLETED";
-            case IntentState.EventId.CANCEL: return "CANCEL";
-            case IntentState.EventId.CANCELED_BEFORE_ACTIVATION: return "CANCELED_BEFORE_ACTIVATION";
-            case IntentState.EventId.CANCELED_BEFORE_RUN: return "CANCELED_BEFORE_RUN";
-            case IntentState.EventId.CHILD_TASK_CREATED: return "CHILD_TASK_CREATED";
-            case IntentState.EventId.COMPLETED_SUCCESSFULLY: return "COMPLETED_SUCCESSFULLY";
-            case IntentState.EventId.GET_READY: return "GET_READY";
-            case IntentState.EventId.RUN_AGAIN: return "RUN_AGAIN";
-            case IntentState.EventId.START_RUNNING: return "START_RUNNING";
-            case IntentState.EventId.UNABLE_TO_COMPLETE: return "UNABLE_TO_COMPLETE";
-            default: return "?";
-        }
+      switch (id)
+      {
+        case IntentState.EventId.ACTIVATED: return "ACTIVATED";
+        case IntentState.EventId.ALL_CHILDREN_COMPLETED: return "ALL_CHILDREN_COMPLETED";
+        case IntentState.EventId.CANCEL: return "CANCEL";
+        case IntentState.EventId.CHILD_TASK_CREATED: return "CHILD_TASK_CREATED";
+        case IntentState.EventId.COMPLETED_SUCCESSFULLY: return "COMPLETED_SUCCESSFULLY";
+        case IntentState.EventId.GET_READY: return "GET_READY";
+        case IntentState.EventId.RECOVER_RETRY: return "RECOVER_RETRY";
+        case IntentState.EventId.RUN_AGAIN: return "RUN_AGAIN";
+        case IntentState.EventId.START_RUNNING: return "START_RUNNING";
+        case IntentState.EventId.UNABLE_TO_COMPLETE: return "UNABLE_TO_COMPLETE";
+        case IntentState.EventId.UNABLE_TO_RECOVER: return "UNABLE_TO_RECOVER";
+        default: return "?";
+      }
     }
-}
+  }
 
 </script>
 
-    <script type="module">
-        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-        import svgPanZoom from 'https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/+esm' ;
-        mermaid.initialize({ startOnLoad: false });
-        await mermaid.run();
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  import svgPanZoom from 'https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/+esm' ;
+  mermaid.initialize({ startOnLoad: false });
+  await mermaid.run();
 
-        // svg-pan-zoom doesn't like the mermaid viewbox
-        document.querySelector('svg').removeAttribute('viewBox');
-        document.querySelector('svg').setAttribute('width', '100%');
-        document.querySelector('svg').setAttribute('height', '100%');
-        document.querySelector('svg').style["max-width"] = '';
+  // svg-pan-zoom doesn't like the mermaid viewbox
+  document.querySelector('svg').removeAttribute('viewBox');
+  document.querySelector('svg').setAttribute('width', '100%');
+  document.querySelector('svg').setAttribute('height', '100%');
+  document.querySelector('svg').style["max-width"] = '';
 
-        // don't scale the arrow when we scale the transition edge
-        document.querySelectorAll('g defs marker[id$=barbEnd]').forEach(marker => {
-            marker.setAttribute('markerUnits', 'userSpaceOnUse');
-        });
+  // don't scale the arrow when we scale the transition edge
+  document.querySelectorAll('g defs marker[id$=barbEnd]').forEach(marker => {
+    marker.setAttribute('markerUnits', 'userSpaceOnUse');
+  });
 
-        // https://github.com/StateSmith/StateSmith/issues/404
-        // https://github.com/StateSmith/StateSmith/issues/294
-        // rewrite $initial_state to a black circle
-        document.querySelectorAll('g[data-id*="(InitialState)"]').forEach(g=> {
-          g.innerHTML = '<circle transform="translate(0,3)" height="14" width="14" r="14" class="state - start"></circle>';
-        })
+  // https://github.com/StateSmith/StateSmith/issues/404
+  // https://github.com/StateSmith/StateSmith/issues/294
+  // rewrite $initial_state to a black circle
+  document.querySelectorAll('g[data-id*="(InitialState)"]').forEach(g=> {
+    g.innerHTML = '<circle transform="translate(0,3)" height="14" width="14" r="14" class="state - start"></circle>';
+  })
 
-        var panZoom = window.panZoom = svgPanZoom(document.querySelector('svg'), {
-            zoomEnabled: true,
-            controlIconsEnabled: true,
-            fit: true,
-            center: true
-        });
+  var panZoom = window.panZoom = svgPanZoom(document.querySelector('svg'), {
+    zoomEnabled: true,
+    controlIconsEnabled: true,
+    fit: true,
+    center: true
+  });
 
-        const diagramEventNamesArray = ['ACTIVATED', 'ALL_CHILDREN_COMPLETED', 'CANCEL', 'CANCELED_BEFORE_ACTIVATION', 'CANCELED_BEFORE_RUN', 'CHILD_TASK_CREATED', 'COMPLETED_SUCCESSFULLY', 'GET_READY', 'RUN_AGAIN', 'START_RUNNING', 'UNABLE_TO_COMPLETE', ];
+  const diagramEventNamesArray = ['ACTIVATED', 'ALL_CHILDREN_COMPLETED', 'CANCEL', 'CHILD_TASK_CREATED', 'COMPLETED_SUCCESSFULLY', 'GET_READY', 'RECOVER_RETRY', 'RUN_AGAIN', 'START_RUNNING', 'UNABLE_TO_COMPLETE', 'UNABLE_TO_RECOVER', ];
 
-        // Mapping from state to available events
-        const stateEventsMapping = {
-  "CREATED": [
-    "ACTIVATED",
-    "GET_READY"
-  ],
-  "WAITING_FOR_ACTIVATION": [
-    "ACTIVATED",
-    "CANCELED_BEFORE_ACTIVATION"
-  ],
-  "WAITING_TO_RUN": [
-    "CANCELED_BEFORE_RUN",
-    "START_RUNNING"
-  ],
-  "RUNNING": [
-    "CANCEL",
-    "CHILD_TASK_CREATED",
-    "COMPLETED_SUCCESSFULLY",
-    "UNABLE_TO_COMPLETE"
-  ],
-  "CANCELED": [],
-  "WAITING_FOR_CHILDREN_TO_COMPLETE": [
-    "ALL_CHILDREN_COMPLETED"
-  ],
-  "FAULTED": [],
-  "RAN_TO_COMPLETION": [
-    "RUN_AGAIN"
-  ]
-};
+  // Mapping from state to available events
+  const stateEventsMapping = {
+    "CREATED": [
+      "ACTIVATED",
+      "CANCEL",
+      "GET_READY"
+    ],
+    "WAITING_TO_RUN": [
+      "CANCEL",
+      "START_RUNNING"
+    ],
+    "RUNNING": [
+      "CANCEL",
+      "CHILD_TASK_CREATED",
+      "COMPLETED_SUCCESSFULLY",
+      "UNABLE_TO_COMPLETE"
+    ],
+    "RAN_TO_COMPLETION": [
+      "RUN_AGAIN"
+    ],
+    "FAULTED": [
+      "RECOVER_RETRY",
+      "UNABLE_TO_RECOVER"
+    ],
+    "WAITING_FOR_ACTIVATION": [
+      "ACTIVATED",
+      "CANCEL"
+    ],
+    "WAITING_FOR_CHILDREN_TO_COMPLETE": [
+      "ALL_CHILDREN_COMPLETED",
+      "CANCEL",
+      "UNABLE_TO_RECOVER"
+    ],
+    "CANCELED": []
+  };
 
-        // Get page element references
-        const leftPane = document.querySelector(".main");
-        const rightPane = document.querySelector(".sidebar");
-        const gutter = document.querySelector(".gutter");
+  // Get page element references
+  const leftPane = document.querySelector(".main");
+  const rightPane = document.querySelector(".sidebar");
+  const gutter = document.querySelector(".gutter");
 
-        // Function to resize panes
-        function resizer(e) {          
-          window.addEventListener('mousemove', mousemove);
-          window.addEventListener('mouseup', mouseup);          
-          let prevX = e.x;
-          const rightPanel = rightPane.getBoundingClientRect();
-                    
-          function mousemove(e) {
-            let newX = prevX - e.x;
-            rightPane.style.width = rightPanel.width + newX + 'px';
-            window.panZoom.resize();
-            window.panZoom.fit();
-            window.panZoom.center();
-          }
-          
-          function mouseup() {
-            window.removeEventListener('mousemove', mousemove);
-            window.removeEventListener('mouseup', mouseup);
-          }                  
-        }
+  // Function to resize panes
+  function resizer(e) {
+    window.addEventListener('mousemove', mousemove);
+    window.addEventListener('mouseup', mouseup);
+    let prevX = e.x;
+    const rightPanel = rightPane.getBoundingClientRect();
 
-        // Add mouse down event listener for the resizer
-        gutter.addEventListener('mousedown', resizer);
+    function mousemove(e) {
+      let newX = prevX - e.x;
+      rightPane.style.width = rightPanel.width + newX + 'px';
+      window.panZoom.resize();
+      window.panZoom.fit();
+      window.panZoom.center();
+    }
 
+    function mouseup() {
+      window.removeEventListener('mousemove', mousemove);
+      window.removeEventListener('mouseup', mouseup);
+    }
+  }
 
-
-        //------------------- drop down functionality start -------------------
-        const dropdownButton = document.getElementById('dropdown-button');
-        const dropdownDiv = document.getElementById('myDropdown');
-
-        dropdownButton.addEventListener('click', toggleDropdown);
-
-        /* When the user clicks on the button, 
-        toggle between hiding and showing the dropdown content */
-        function toggleDropdown(event) {
-          dropdownDiv.classList.toggle('show');
-          event.stopPropagation(); // Prevent click from causing the window click handler to close the dropdown
-        }
-
-        // Close the dropdown if the user clicks outside of it
-        window.onclick = function(event) {
-          const isClickedOutsideDropdownDiv = !dropdownDiv.contains(event.target);
-
-          if (isClickedOutsideDropdownDiv) {
-            dropdownDiv.classList.remove('show');
-          }
-        }
-
-        // Close the dropdown if the user presses Escape
-        document.addEventListener('keydown', function(event) {
-          if (event.key === 'Escape') {
-            dropdownDiv.classList.remove('show');
-          }
-        });
-
-        // Set the state of the timestamp checkbox
-        document.getElementById('timestamps').checked = document.querySelector('table.console').classList.contains('timestamps');
-        document.getElementById('timestamps').addEventListener('change', function() {
-          if(this.checked) {
-            document.querySelector('table.console').classList.add('timestamps');
-          } else {
-            document.querySelector('table.console').classList.remove('timestamps');
-          }
-        });
-
-        // Set up hide irrelevant events checkbox state and event listener
-        document.getElementById('hideIrrelevantEvents').addEventListener('change', function() {
-          // When checkbox state changes, only update button visibility, not availability
-          updateButtonVisibility();
-        });
-
-        //------------------- drop down functionality end -------------------
+  // Add mouse down event listener for the resizer
+  gutter.addEventListener('mousedown', resizer);
 
 
 
-        // Convert a date to a string in the format HH:MM:SS.sss
-        function formatTime(date) {
-            return date.getHours().toString().padStart(2, '0') + ':' +
-                date.getMinutes().toString().padStart(2, '0') + ':' +
-                date.getSeconds().toString().padStart(2, '0') + '.' +
-                date.getMilliseconds().toString().padStart(3, '0');
-        }
+  //------------------- drop down functionality start -------------------
+  const dropdownButton = document.getElementById('dropdown-button');
+  const dropdownDiv = document.getElementById('myDropdown');
 
-        // Add a row to the history table.
-        function addHistoryRow(time, event, html = false) {
-            var row = document.createElement('tr');
-            var timeCell = document.createElement('td');
-            timeCell.innerText = formatTime(time);
-            timeCell.classList.add('timestamp');
-            var eventCell = document.createElement('td');
+  dropdownButton.addEventListener('click', toggleDropdown);
 
-            if(html) {
-              eventCell.innerHTML = event;
-            } else {
-              eventCell.innerText = event;
-            }
+  /* When the user clicks on the button, 
+  toggle between hiding and showing the dropdown content */
+  function toggleDropdown(event) {
+    dropdownDiv.classList.toggle('show');
+    event.stopPropagation(); // Prevent click from causing the window click handler to close the dropdown
+  }
 
-            row.appendChild(timeCell);
-            row.appendChild(eventCell);
-            document.querySelector('tbody').appendChild(row);
-        }
+  // Close the dropdown if the user clicks outside of it
+  window.onclick = function(event) {
+    const isClickedOutsideDropdownDiv = !dropdownDiv.contains(event.target);
 
-        var sm = new IntentState();
+    if (isClickedOutsideDropdownDiv) {
+      dropdownDiv.classList.remove('show');
+    }
+  }
 
-        // prompt the user to evaluate guards manually
-        sm.evaluateGuard = (vertexName, behaviorUml) => {
-            return confirm(`Evaluate guard for\n${vertexName} behavior:\n${behaviorUml}.\n\nPress 'OK' to evaluate guard as true and 'Cancel' to evaluate it as false.`);
-        }; 
+  // Close the dropdown if the user presses Escape
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      dropdownDiv.classList.remove('show');
+    }
+  });
 
-        const highlightedEdges = new Set();
-        function highlightEdge(edgeId) {
-            var edge = document.getElementById(edgeId);
-            if (edge) {
-              edge.classList.add('active');
-              highlightedEdges.add(edge);
-            }
-        }
+  // Set the state of the timestamp checkbox
+  document.getElementById('timestamps').checked = document.querySelector('table.console').classList.contains('timestamps');
+  document.getElementById('timestamps').addEventListener('change', function() {
+    if(this.checked) {
+      document.querySelector('table.console').classList.add('timestamps');
+    } else {
+      document.querySelector('table.console').classList.remove('timestamps');
+    }
+  });
 
-        function clearHighlightedEdges() {
-            for (const edge of highlightedEdges) {
-              edge.classList.remove('active');
-              const showOldTraversal = false;
-              if (showOldTraversal) {
-                  // shows that the edge was traversed. Optional, but kinda nice.
-                  edge.style.stroke = 'green';
-              }
-            }
-            highlightedEdges.clear();
-        }
+  // Set up hide irrelevant events checkbox state and event listener
+  document.getElementById('hideIrrelevantEvents').addEventListener('change', function() {
+    // When checkbox state changes, only update button visibility, not availability
+    updateButtonVisibility();
+  });
 
-        // Function to update event button states (availability and visibility)
-        function updateEventButtonStates(currentStateName) {
-            const availableEvents = stateEventsMapping[currentStateName] || [];
-            
-            diagramEventNamesArray.forEach(eventName => {
-                const button = document.getElementById('button_' + eventName);
-                if (button) {
-                    const isAvailable = availableEvents.includes(eventName);
-                    
-                    // Only set disabled property, CSS :disabled pseudo-class handles styling
-                    button.disabled = !isAvailable;
-                }
-            });
-            
-            // Update visibility based on checkbox state
-            updateButtonVisibility();
-        }
-
-        // Function to update button visibility based on Hide Unused checkbox
-        function updateButtonVisibility() {
-            const hideIrrelevantEvents = document.getElementById('hideIrrelevantEvents').checked;
-            
-            diagramEventNamesArray.forEach(eventName => {
-                const button = document.getElementById('button_' + eventName);
-                if (button) {
-                    // Toggle hidden class based on checkbox state and button disabled state
-                    button.classList.toggle('hidden', hideIrrelevantEvents && button.disabled);
-                }
-            });
-        }
-
-        // The simulator uses a tracer callback to perform operations such as 
-        // state highlighting and logging. You do not need this functionality
-        // when using IntentState.js in your own applications, although you may
-        // choose to implement a tracer for debugging purposes.
-        sm.tracer = {
-            enterState: (mermaidName) => {
-                var e = document.querySelector('g[data-id=' + mermaidName + ']');
-                if(e) {
-                  e.classList.add('active');
-                  panOnScreen(e);
-                }
-                sm.tracer.log('➡️ Entered ' + mermaidName);
-                
-                // Update event button states
-                updateEventButtonStates(mermaidName);
-            },
-            exitState: (mermaidName) => {
-                document.querySelector('g[data-id=' + mermaidName + ']')?.classList.remove('active');
-            },
-            edgeTransition: (edgeId) => {
-                highlightEdge(edgeId);
-            },
-            log: (message, html=false) => {
-                addHistoryRow(new Date(), message, html);
-            }
-        };
-
-        // Wire up the buttons that dispatch events for the state machine.
-        diagramEventNamesArray.forEach(diagramEventName => {
-            var button = document.createElement('button');
-            button.id = 'button_' + diagramEventName;
-            button.className = 'event-button';
-            button.innerText = diagramEventName;
-            button.addEventListener('click', () => {
-                // Only handle click events when button is enabled
-                if (!button.disabled) {
-                    clearHighlightedEdges();
-                    sm.tracer?.log('<span class="dispatched"><span class="trigger">' + diagramEventName + '</span> DISPATCHED</span>', true);
-                    const fsmEventName = diagramEventName.toUpperCase();
-                    sm.dispatchEvent(IntentState.EventId[fsmEventName]); 
-                }
-            });
-            document.getElementById('buttons').appendChild(button);
-        });
-
-        sm.tracer?.log('<span class="dispatched">START</span>', true);
-        sm.start(); // This will cause `updateEventButtonStates()` to be called.
-
-        function panOnScreen(element) {
-          if(!element) return;
-
-          var bounds = element.getBoundingClientRect();
-          if(bounds.x<0 || bounds.y<0) {
-              var x = Math.max(0, -bounds.x + 20);
-              var y = Math.max(0, -bounds.y + 20);
-              window.panZoom.panBy({x: x, y: y});
-          }
-          var panebounds = document.querySelector('svg').getBoundingClientRect();
-          if(bounds.x>panebounds.width || bounds.y>panebounds.height) {
-              var x = Math.min(0, panebounds.width - bounds.x - bounds.width - 20);
-              var y = Math.min(0, panebounds.height - bounds.y - bounds.height - 20);
-              window.panZoom.panBy({x: x, y: y});
-          }
-        }
-    </script>
+  //------------------- drop down functionality end -------------------
 
 
-  </body>
+
+  // Convert a date to a string in the format HH:MM:SS.sss
+  function formatTime(date) {
+    return date.getHours().toString().padStart(2, '0') + ':' +
+            date.getMinutes().toString().padStart(2, '0') + ':' +
+            date.getSeconds().toString().padStart(2, '0') + '.' +
+            date.getMilliseconds().toString().padStart(3, '0');
+  }
+
+  // Add a row to the history table.
+  function addHistoryRow(time, event, html = false) {
+    var row = document.createElement('tr');
+    var timeCell = document.createElement('td');
+    timeCell.innerText = formatTime(time);
+    timeCell.classList.add('timestamp');
+    var eventCell = document.createElement('td');
+
+    if(html) {
+      eventCell.innerHTML = event;
+    } else {
+      eventCell.innerText = event;
+    }
+
+    row.appendChild(timeCell);
+    row.appendChild(eventCell);
+    document.querySelector('tbody').appendChild(row);
+  }
+
+  var sm = new IntentState();
+
+  // prompt the user to evaluate guards manually
+  sm.evaluateGuard = (vertexName, behaviorUml) => {
+    return confirm(`Evaluate guard for\n${vertexName} behavior:\n${behaviorUml}.\n\nPress 'OK' to evaluate guard as true and 'Cancel' to evaluate it as false.`);
+  };
+
+  const highlightedEdges = new Set();
+  function highlightEdge(edgeId) {
+    var edge = document.getElementById(edgeId);
+    if (edge) {
+      edge.classList.add('active');
+      highlightedEdges.add(edge);
+    }
+  }
+
+  function clearHighlightedEdges() {
+    for (const edge of highlightedEdges) {
+      edge.classList.remove('active');
+      const showOldTraversal = false;
+      if (showOldTraversal) {
+        // shows that the edge was traversed. Optional, but kinda nice.
+        edge.style.stroke = 'green';
+      }
+    }
+    highlightedEdges.clear();
+  }
+
+  // Function to update event button states (availability and visibility)
+  function updateEventButtonStates(currentStateName) {
+    const availableEvents = stateEventsMapping[currentStateName] || [];
+
+    diagramEventNamesArray.forEach(eventName => {
+      const button = document.getElementById('button_' + eventName);
+      if (button) {
+        const isAvailable = availableEvents.includes(eventName);
+
+        // Only set disabled property, CSS :disabled pseudo-class handles styling
+        button.disabled = !isAvailable;
+      }
+    });
+
+    // Update visibility based on checkbox state
+    updateButtonVisibility();
+  }
+
+  // Function to update button visibility based on Hide Unused checkbox
+  function updateButtonVisibility() {
+    const hideIrrelevantEvents = document.getElementById('hideIrrelevantEvents').checked;
+
+    diagramEventNamesArray.forEach(eventName => {
+      const button = document.getElementById('button_' + eventName);
+      if (button) {
+        // Toggle hidden class based on checkbox state and button disabled state
+        button.classList.toggle('hidden', hideIrrelevantEvents && button.disabled);
+      }
+    });
+  }
+
+  // The simulator uses a tracer callback to perform operations such as 
+  // state highlighting and logging. You do not need this functionality
+  // when using IntentState.js in your own applications, although you may
+  // choose to implement a tracer for debugging purposes.
+  sm.tracer = {
+    enterState: (mermaidName) => {
+      var e = document.querySelector('g[data-id=' + mermaidName + ']');
+      if(e) {
+        e.classList.add('active');
+        panOnScreen(e);
+      }
+      sm.tracer.log('➡️ Entered ' + mermaidName);
+
+      // Update event button states
+      updateEventButtonStates(mermaidName);
+    },
+    exitState: (mermaidName) => {
+      document.querySelector('g[data-id=' + mermaidName + ']')?.classList.remove('active');
+    },
+    edgeTransition: (edgeId) => {
+      highlightEdge(edgeId);
+    },
+    log: (message, html=false) => {
+      addHistoryRow(new Date(), message, html);
+    }
+  };
+
+  // Wire up the buttons that dispatch events for the state machine.
+  diagramEventNamesArray.forEach(diagramEventName => {
+    var button = document.createElement('button');
+    button.id = 'button_' + diagramEventName;
+    button.className = 'event-button';
+    button.innerText = diagramEventName;
+    button.addEventListener('click', () => {
+      // Only handle click events when button is enabled
+      if (!button.disabled) {
+        clearHighlightedEdges();
+        sm.tracer?.log('<span class="dispatched"><span class="trigger">' + diagramEventName + '</span> DISPATCHED</span>', true);
+        const fsmEventName = diagramEventName.toUpperCase();
+        sm.dispatchEvent(IntentState.EventId[fsmEventName]);
+      }
+    });
+    document.getElementById('buttons').appendChild(button);
+  });
+
+  sm.tracer?.log('<span class="dispatched">START</span>', true);
+  sm.start(); // This will cause `updateEventButtonStates()` to be called.
+
+  function panOnScreen(element) {
+    if(!element) return;
+
+    var bounds = element.getBoundingClientRect();
+    if(bounds.x<0 || bounds.y<0) {
+      var x = Math.max(0, -bounds.x + 20);
+      var y = Math.max(0, -bounds.y + 20);
+      window.panZoom.panBy({x: x, y: y});
+    }
+    var panebounds = document.querySelector('svg').getBoundingClientRect();
+    if(bounds.x>panebounds.width || bounds.y>panebounds.height) {
+      var x = Math.min(0, panebounds.width - bounds.x - bounds.width - 20);
+      var y = Math.min(0, panebounds.height - bounds.y - bounds.height - 20);
+      window.panZoom.panBy({x: x, y: y});
+    }
+  }
+</script>
+
+
+</body>
 </html>

@@ -10,7 +10,7 @@ public static class RpgStatLogic
     ///     Formula: (Base + Add) * Mult, clamped to [Min, Max].
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Recalculate(float baseVal, float modAdd, float modMult, float min, float max, out float value)
+    public static void Recalculate(in float baseVal, in float modAdd, in float modMult, in float min, in float max, out float value)
     {
         var val = (baseVal + modAdd) * modMult;
 
@@ -24,7 +24,7 @@ public static class RpgStatLogic
     ///     Adds a temporary modifier to the attribute.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void AddModifier(ref float modAdd, ref float modMult, float flat, float percent)
+    public static void AddModifier(ref float modAdd, ref float modMult, in float flat, in float percent)
     {
         modAdd += flat;
         modMult += percent;
@@ -44,10 +44,10 @@ public static class RpgStatLogic
     ///     Gets the value, recalculating immediately if dirty.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetValueRecalculated(ref float value, float baseVal, float modAdd, float modMult, float min,
-        float max, out float result)
+    public static void GetValueRecalculated(ref float value, in float baseVal, in float modAdd, in float modMult, in float min,
+        in float max, out float result)
     {
-        Recalculate(baseVal, modAdd, modMult, min, max, out value);
+        Recalculate(in baseVal, in modAdd, in modMult, in min, in max, out value);
         result = value;
     }
 
@@ -56,7 +56,7 @@ public static class RpgStatLogic
     ///     Returns true if the field was valid, false otherwise.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TrySetField(RpgStatField field, float newValue,
+    public static bool TrySetField(in RpgStatField field, in float newValue,
         ref float baseVal, ref float modAdd, ref float modMult,
         ref float min, ref float max, ref float value)
     {
@@ -90,9 +90,9 @@ public static class RpgStatLogic
     ///     Returns true if the field was valid, false otherwise.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryGetField(RpgStatField field,
-        float baseVal, float modAdd, float modMult,
-        float min, float max, float value,
+    public static bool TryGetField(in RpgStatField field,
+        in float baseVal, in float modAdd, in float modMult,
+        in float min, in float max, in float value,
         out float result)
     {
         switch (field)
@@ -126,8 +126,8 @@ public static class RpgStatLogic
     ///     Pure function - calculates the new value without mutation.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void ApplyOperation(RpgStatOperation operation, float currentValue, float operandValue,
-        out float result, float baseValue = 0f)
+    public static void ApplyOperation(in RpgStatOperation operation, in float currentValue, in float operandValue,
+        out float result, in float baseValue = 0f)
     {
         switch (operation)
         {
