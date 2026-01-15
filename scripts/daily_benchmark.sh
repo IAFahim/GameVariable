@@ -2,8 +2,10 @@
 set -e
 
 # Self-preservation: Copy script to /tmp and run from there if we are inside the repo
-SCRIPT_PATH=$(readlink -f "$0")
+# Using portable method to find script path
 SCRIPT_NAME=$(basename "$0")
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+SCRIPT_PATH="$SCRIPT_DIR/$SCRIPT_NAME"
 TMP_SCRIPT="/tmp/$SCRIPT_NAME"
 
 if [ "$0" != "$TMP_SCRIPT" ]; then
@@ -109,9 +111,22 @@ run_benchmarks_to_dir() {
     local rpg_project="Variable.RPG.Tests/Variable.RPG.Tests.csproj"
     if [ -f "$rpg_project" ]; then
         echo "  Running RpgStatBenchmark..."
-        if dotnet test -c Release "$rpg_project" --filter "FullyQualifiedName=Variable.RPG.Tests.Performance.RpgStatBenchmark.BenchmarkToStringCompact" --logger "console;verbosity=detailed" > "$output_dir/rpg_run.log" 2>&1; then
-             if grep -q "Standard Output Messages:" "$output_dir/rpg_run.log"; then
-                 grep -A 10 "Standard Output Messages:" "$output_dir/rpg_run.log" | sed 's/  Standard Output Messages://' | grep -v "Test Run Successful" | grep -v "Total tests" > "$output_dir/rpg_stats.txt"
+        if dotnet test -c Release "$rpg_project" \
+            --filter "FullyQualifiedName=Variable.RPG.Tests.Performance.RpgStatBenchmark.BenchmarkToStringCompact" \
+            --logger "console;verbosity=detailed" \
+            > "$output_dir/rpg_run.log" 2>&1; then
+
+             # Extract stats using a more robust approach
+             local context_lines=10
+             local standard_output_block
+             standard_output_block=$(grep -A "$context_lines" "Standard Output Messages:" "$output_dir/rpg_run.log" || true)
+
+             if [ -n "$standard_output_block" ]; then
+                 printf '%s\n' "$standard_output_block" \
+                    | sed 's/  Standard Output Messages://' \
+                    | grep -v "Test Run Successful" \
+                    | grep -v "Total tests" \
+                    > "$output_dir/rpg_stats.txt"
              else
                  tail -n 20 "$output_dir/rpg_run.log" > "$output_dir/rpg_stats.txt"
              fi
@@ -174,7 +189,7 @@ run_benchmarks_to_dir "bench_current" "Current Commit"
 # 2. Run on Previous Commit
 echo "Step 2: Benchmarking Previous Commit..."
 if [ -n "$PREVIOUS_COMMIT" ]; then
-    if [ -n "$(git status --porcelain)" ]; then
+    if ! git diff-index --quiet HEAD --; then
         echo "Stashing changes..."
         git stash push -m "benchmark_temp_stash"
         STASHED=1
@@ -193,8 +208,8 @@ fi
 
 # 3. Generate Comparison Report
 echo "Step 3: Generating Report..."
-generate_report_section "bench_previous" "Previous Day ($PREVIOUS_COMMIT)"
 generate_report_section "bench_current" "Current Day ($CURRENT_COMMIT)"
+generate_report_section "bench_previous" "Previous Day ($PREVIOUS_COMMIT)"
 
 echo "Detailed report saved to $REPORT_FILE"
 cat "$REPORT_FILE"
