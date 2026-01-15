@@ -1,0 +1,123 @@
+name: Benchmarks
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '9.0.x'
+
+jobs:
+  benchmark:
+    name: Run Benchmarks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Build Benchmark Project
+        run: dotnet build GameVariable.Benchmarks/GameVariable.Benchmarks.csproj --configuration Release
+
+      - name: Run Benchmarks
+        run: |
+          cd GameVariable.Benchmarks
+          dotnet run -c Release -- --filter "*" --exporters GitHub
+
+      - name: Upload Benchmark Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BenchmarkResults-${{ github.run_number }}
+          path: |
+            GameVariable.Benchmarks/BenchmarkDotNet.Artifacts/results/*
+            GameVariable.Benchmarks/*.md
+          retention-days: 30
+
+      - name: Generate Benchmark Report
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          cd GameVariable.Benchmarks
+          # Find the latest result markdown
+          RESULT_FILE=$(find BenchmarkDotNet.Artifacts -name "*.md" -type f | head -n 1)
+          if [ -f "$RESULT_FILE" ]; then
+            cp "$RESULT_FILE" BENCHMARK_REPORT.md
+            echo "Benchmark report generated at BENCHMARK_REPORT.md"
+          else
+            echo "No benchmark report found"
+          fi
+
+      - name: Upload Benchmark Report
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: BenchmarkReport
+          path: GameVariable.Benchmarks/BENCHMARK_REPORT.md
+          retention-days: 90
+
+  # Compare benchmarks on PRs
+  benchmark-compare:
+    name: Compare Benchmarks
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Build Benchmark Project
+        run: dotnet build GameVariable.Benchmarks/GameVariable.Benchmarks.csproj --configuration Release
+
+      - name: Run Benchmarks (PR Branch)
+        run: |
+          cd GameVariable.Benchmarks
+          dotnet run -c Release -- --filter "*" --exporters JSON
+        env:
+          BRANCH: pr
+
+      - name: Checkout Base Branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.base_ref }}
+          fetch-depth: 0
+
+      - name: Restore Base Dependencies
+        run: dotnet restore
+
+      - name: Build Base Benchmark Project
+        run: dotnet build GameVariable.Benchmarks/GameVariable.Benchmarks.csproj --configuration Release
+
+      - name: Run Benchmarks (Base Branch)
+        run: |
+          cd GameVariable.Benchmarks
+          dotnet run -c Release -- --filter "*" --exporters JSON
+        env:
+          BRANCH: base
+
+      - name: Generate Comparison
+        run: |
+          echo "Benchmark comparison between ${{ github.base_ref }} and PR"
+          echo "Results available in artifacts"
