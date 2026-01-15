@@ -23,4 +23,8 @@
         <ProjectReference Include="..\Variable.RPG\Variable.RPG.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Performance\" />
+    </ItemGroup>
+
 </Project>
