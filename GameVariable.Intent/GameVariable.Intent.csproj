@@ -1,9 +1,19 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Version>1.0.11</Version>
+        <Authors>Md Ishtiaq Ahamed Fahim</Authors>
+        <Company>IAFahim</Company>
+        <Description>High-performance, zero-allocation Hierarchical State Machine (HSM) for AI and game logic.</Description>
+        <PackageTags>game;variable;intent;hsm;statemachine;ai;gamedev</PackageTags>
+        <PackageProjectUrl>https://github.com/iafahim/GameVariable</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/iafahim/GameVariable</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
 </Project>
