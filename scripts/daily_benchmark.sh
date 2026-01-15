@@ -89,14 +89,12 @@ run_benchmarks_to_dir() {
     local intent_project="GameVariable.Intent.Tests/GameVariable.Intent.Tests.csproj"
     if [ -f "$intent_project" ]; then
         echo "  Running IntentBenchmarks..."
-        rm -rf BenchmarkDotNet.Artifacts
-        if dotnet run -c Release --project "$intent_project" -- --filter "*" > "$output_dir/intent_run.log" 2>&1; then
-            local report_md=$(find BenchmarkDotNet.Artifacts/results -name "*-report-github.md" | head -n 1)
-            if [ -f "$report_md" ]; then
-                cp "$report_md" "$output_dir/intent_report.md"
-            else
-                echo "Report not found" > "$output_dir/intent_report.md"
-            fi
+        if dotnet test -c Release "$intent_project" --filter "FullyQualifiedName~GameVariable.Intent.Tests.IntentBenchmarks" --logger "console;verbosity=detailed" > "$output_dir/intent_run.log" 2>&1; then
+             if grep -q "Standard Output Messages:" "$output_dir/intent_run.log"; then
+                 grep -A 20 "Standard Output Messages:" "$output_dir/intent_run.log" | sed 's/  Standard Output Messages://' | grep -v "Test Run Successful" | grep -v "Total tests" > "$output_dir/intent_stats.txt"
+             else
+                 tail -n 30 "$output_dir/intent_run.log" > "$output_dir/intent_stats.txt"
+             fi
         else
             echo "Build/Run Failed" > "$output_dir/intent_error.log"
             cat "$output_dir/intent_run.log" >> "$output_dir/intent_error.log"
@@ -132,8 +130,10 @@ generate_report_section() {
     echo "## $title" >> "$REPORT_FILE"
 
     echo "### GameVariable.Intent.Tests" >> "$REPORT_FILE"
-    if [ -f "$dir/intent_report.md" ]; then
-        cat "$dir/intent_report.md" >> "$REPORT_FILE"
+    if [ -f "$dir/intent_stats.txt" ]; then
+        echo '```' >> "$REPORT_FILE"
+        cat "$dir/intent_stats.txt" >> "$REPORT_FILE"
+        echo '```' >> "$REPORT_FILE"
     elif [ -f "$dir/intent_error.log" ]; then
         echo "FAILED" >> "$REPORT_FILE"
         echo '```' >> "$REPORT_FILE"
