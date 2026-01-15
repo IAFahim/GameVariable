@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Variable.Core\Variable.Core.csproj" />
+    <ProjectReference Include="..\Variable.Bounded\Variable.Bounded.csproj" />
+    <ProjectReference Include="..\Variable.Regen\Variable.Regen.csproj" />
+    <ProjectReference Include="..\Variable.Timer\Variable.Timer.csproj" />
+    <ProjectReference Include="..\Variable.Input\Variable.Input.csproj" />
+    <ProjectReference Include="..\Variable.RPG\Variable.RPG.csproj" />
+    <ProjectReference Include="..\GameVariable.Intent\GameVariable.Intent.csproj" />
+    <ProjectReference Include="..\Variable.Experience\Variable.Experience.csproj" />
+    <ProjectReference Include="..\Variable.Reservoir\Variable.Reservoir.csproj" />
+    <ProjectReference Include="..\Variable.Inventory\Variable.Inventory.csproj" />
+  </ItemGroup>
+
+</Project>
