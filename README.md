@@ -161,16 +161,16 @@ graph LR
 
 | Package | Types | Use Cases |
 |---------|-------|-----------|
-| **Variable.Core** | `IBoundedInfo` | Base interface for all bounded types |
-| **Variable.Bounded** | `BoundedFloat`, `BoundedInt`, `BoundedShort`, `BoundedByte` | Health, mana, stamina, armor, shields |
-| **Variable.Timer** | `Timer`, `Cooldown` | Ability cooldowns, buffs, casting times |
-| **Variable.Regen** | `RegenFloat`, `RegenLogic` | Auto-regenerating resources, decay |
-| **Variable.Reservoir** | `ReservoirFloat`, `ReservoirInt` | Ammo clips + reserves, batteries |
-| **Variable.Experience** | `ExperienceInt`, `ExperienceLong` | XP, leveling, skill progression |
-| **Variable.RPG** | `RpgStat`, `DamageLogic` | RPG stats with flat/% modifiers, damage pipelines |
-| **Variable.Inventory** | `InventoryLogic` | Capacity management, transfers |
-| **Variable.Input** | `ComboGraph`, `InputRingBuffer` | Deterministic combo systems, input buffering |
-| **GameVariable.Intent** | `IntentState`, `IIntent` | Hierarchical State Machines (HSM), AI logic |
+| [**Variable.Core**](./Variable.Core) | `IBoundedInfo` | Base interface for all bounded types |
+| [**Variable.Bounded**](./Variable.Bounded) | `BoundedFloat`, `BoundedInt`, `BoundedShort`, `BoundedByte` | Health, mana, stamina, armor, shields |
+| [**Variable.Timer**](./Variable.Timer) | `Timer`, `Cooldown` | Ability cooldowns, buffs, casting times |
+| [**Variable.Regen**](./Variable.Regen) | `RegenFloat`, `RegenLogic` | Auto-regenerating resources, decay |
+| [**Variable.Reservoir**](./Variable.Reservoir) | `ReservoirFloat`, `ReservoirInt` | Ammo clips + reserves, batteries |
+| [**Variable.Experience**](./Variable.Experience) | `ExperienceInt`, `ExperienceLong` | XP, leveling, skill progression |
+| [**Variable.RPG**](./Variable.RPG) | `RpgStat`, `DamageLogic` | RPG stats with flat/% modifiers, damage pipelines |
+| [**Variable.Inventory**](./Variable.Inventory) | `InventoryLogic` | Capacity management, transfers |
+| [**Variable.Input**](./Variable.Input) | `ComboGraph`, `InputRingBuffer` | Deterministic combo systems, input buffering |
+| [**GameVariable.Intent**](./GameVariable.Intent) | `IntentState`, `IIntent` | Hierarchical State Machines (HSM), AI logic |
 
 ---
 
