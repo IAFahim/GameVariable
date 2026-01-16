@@ -1,42 +1,109 @@
-# Variable.Experience
+# ⭐ Variable.Experience
 
-**Variable.Experience** handles the logic for leveling systems, including experience accumulation, level caps, and
-overflow handling.
+**Level Up Your Leveling System.** 🆙
 
-## Installation
+**Variable.Experience** handles the core loop of RPG progression: Gaining XP, checking for level-ups, and handling the "overflow" (e.g., getting enough XP to jump 2 levels at once).
+
+---
+
+## 📦 Installation
 
 ```bash
 dotnet add package Variable.Experience
 ```
 
-## Features
+---
 
-* **ExperienceInt**: Manages Level, Current XP, and Target XP.
-* **Level Up Logic**: Automatically handles multiple level-ups if huge XP is gained.
-* **Custom Curves**: You define the "Target XP" for next level.
+## 🚀 Features
 
-## Usage
+* **📈 Smart Overflow:** If you gain 1,000,000 XP at level 1, it correctly calculates how many levels you gain.
+* **🔧 Flexible Curves:** It doesn't force a formula on you. You decide what "Max XP" is for each level.
+* **⚡ Zero Allocation:** Pure structs.
 
-### RPG Leveling
+---
+
+## 🎮 Usage Guide
+
+### 1. Basic Setup
 
 ```csharp
 using Variable.Experience;
 
-// Level 1, 0 XP, Need 100 for Level 2
-ExperienceInt playerXp = new ExperienceInt(1, 0, 100);
+// Level 1, 0 XP, Need 100 to level up
+var xp = new ExperienceInt(100, 0, 1);
 
-public void OnKillMonster()
+public void OnKillSlime()
 {
-    // Add 150 XP. Returns true if leveled up.
-    // Logic handles overflow: 150 XP -> Level 2 (uses 100), 50 XP remaining.
-    if (playerXp.Add(150)) {
-        // Update target for next level (e.g., linear growth)
-        playerXp.TargetForNextLevel = playerXp.Level * 100;
-        PlayLevelUpEffect();
+    // Add 50 XP
+    // The operator+ creates a new struct with updated values
+    xp += 50;
+
+    // Check if we leveled up
+    if (xp.IsFull())
+    {
+        LevelUp();
     }
 }
 ```
 
+### 2. Handling Level Ups (The Smart Way)
+
+Real games have overflow. If I need 10 XP and I gain 500 XP, I should level up multiple times!
+
+```csharp
+public void AddExperience(int amount)
+{
+    // Add the XP
+    xp += amount;
+
+    // Loop until we stop leveling up
+    while (xp.IsFull())
+    {
+        // 1. Calculate surplus XP (Current - Max)
+        int overflow = xp.Current - xp.Max;
+
+        // 2. Increase Level
+        int newLevel = xp.Level + 1;
+
+        // 3. Calculate new Max XP (Your custom formula!)
+        // Example: Level * 1000 (1000, 2000, 3000...)
+        int newMax = newLevel * 1000;
+
+        // 4. Create new state
+        xp = new ExperienceInt(newMax, overflow, newLevel);
+
+        PlayLevelUpSound();
+    }
+}
+```
+
+### 3. Long XP (MMOs)
+
+Building an MMO where players have billions of XP? Use `ExperienceLong`.
+
+```csharp
+var xp = new ExperienceLong(1_000_000_000, 0, 1);
+```
+
 ---
-**Author:** Md Ishtiaq Ahamed Fahim  
-**GitHub:** [iafahim/GameVariable](https://github.com/iafahim/GameVariable)
+
+## 🔧 API Reference
+
+### `ExperienceInt` / `ExperienceLong`
+- `Current`: Current XP.
+- `Max`: XP required for *next* level.
+- `Level`: Current level.
+
+### Logic
+- `IsFull()`: Ready to level up?
+- `GetRatio()`: Progress bar (0.0 to 1.0).
+- `GetRemaining()`: XP needed for next level.
+
+---
+
+<div align="center">
+
+**Part of the [GameVariable](https://github.com/iafahim/GameVariable) Ecosystem**
+*Made with ❤️ for game developers*
+
+</div>

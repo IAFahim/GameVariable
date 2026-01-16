@@ -1,62 +1,106 @@
-# Variable.Core
+# 🔷 Variable.Core
 
-**Variable.Core** provides the fundamental interfaces and types for the **GameVariable** ecosystem. It defines the
-contract that other variable types follow, ensuring consistency across your game's data structures.
+**The Foundation of GameVariable.** 🧱
 
-## Installation
+**Variable.Core** isn't just a package; it's the *blueprint* for the entire GameVariable ecosystem. It defines the shared DNA that makes `Health`, `Mana`, `Cooldowns`, and `Experience` all speak the same language.
+
+---
+
+## 📦 Installation
 
 ```bash
 dotnet add package Variable.Core
 ```
 
-## Features
+---
 
-* **IBoundedInfo**: The base interface for all variable types that have min/max bounds.
-* **ICompletable**: The interface for time-based types that track completion state.
-* **Common Extensions**: Shared utility methods like `IsFull()`, `IsEmpty()`, `GetRatio()`.
+## 🧠 Why Does This Exist?
 
-## Interfaces
+Imagine writing a UI Health Bar script.
 
-### IBoundedInfo
+**Without Core:**
+You write one script for `PlayerHealth`, another for `EnemyHealth`, another for `Mana`, another for `Stamina`... because they are all different classes. 😫
 
-Represents any value constrained by a minimum and maximum range (health, mana, stamina, etc.).
-
-### ICompletable
-
-Represents time-based values that progress toward completion (timers, cooldowns).
-
-## Usage
-
-While rarely used directly in game logic, this package is essential if you are building custom variable types that
-integrate with the ecosystem.
-
+**With Core:**
+You write **ONE** script that takes `IBoundedInfo`.
 ```csharp
-using Variable.Core;
-
-// Bounded value example
-public struct MyCustomHealth : IBoundedInfo
+public void UpdateBar(IBoundedInfo resource)
 {
-    public float Current;
-    public float Max;
-    
-    float IBoundedInfo.Min => 0f;
-    float IBoundedInfo.Current => Current;
-    float IBoundedInfo.Max => Max;
-}
-
-// Completable example
-public struct MyCustomCast : ICompletable, IBoundedInfo
-{
-    public float Progress;
-    public float Duration;
-    
-    bool ICompletable.IsComplete => Progress >= Duration;
-    float IBoundedInfo.Current => Progress;
-    float IBoundedInfo.Max => Duration;
-    float IBoundedInfo.Min => 0f;
+    fillImage.fillAmount = (float)resource.GetRatio(); // Works for EVERYTHING!
 }
 ```
 
 ---
-**Author:** Md Ishtiaq Ahamed Fahim  
-**GitHub:** [iafahim/GameVariable](https://github.com/iafahim/GameVariable)
+
+## 🔑 Key Interfaces
+
+### `IBoundedInfo`
+**"I have limits!"** 🛑
+
+Anything that has a `Min`, `Max`, and `Current` value.
+- **Health:** 0 to 100
+- **Ammo:** 0 to 30
+- **Temperature:** -50 to +50
+
+**Properties:**
+- `float Min`
+- `float Max`
+- `float Current`
+
+### `ICompletable`
+**"Are we there yet?"** ⏱️
+
+Anything that finishes over time.
+- **Timer:** Counts UP to duration.
+- **Cooldown:** Counts DOWN to zero.
+
+**Properties:**
+- `bool IsComplete`
+
+---
+
+## 🛠️ Extensions (The Magic ✨)
+
+Importing `Variable.Core` gives you superpowers on *any* `IBoundedInfo`:
+
+| Method | What it does | Example |
+|--------|--------------|---------|
+| `IsFull()` | `Current >= Max` | Is mana full? |
+| `IsEmpty()` | `Current <= Min` | Is health zero? |
+| `GetRatio()` | `(Current-Min) / Range` | Health bar % (0.0 to 1.0) |
+| `GetRange()` | `Max - Min` | Total capacity |
+| `GetRemaining()` | `Max - Current` | How much more XP needed? |
+
+---
+
+## 🏗️ For Plugin Creators
+
+Building your own variable type? Implement `IBoundedInfo` to instantly gain compatibility with the entire ecosystem (UI tools, save systems, etc.).
+
+```csharp
+using Variable.Core;
+
+public struct Shield : IBoundedInfo
+{
+    public float Integrity;
+    public float MaxIntegrity;
+    
+    // Explicit implementation keeps your public API clean!
+    float IBoundedInfo.Min => 0f;
+    float IBoundedInfo.Max => MaxIntegrity;
+    float IBoundedInfo.Current => Integrity;
+}
+
+// Now you can do:
+var shield = new Shield { ... };
+if (shield.IsFull()) PlayShieldSound();
+```
+
+---
+
+<div align="center">
+
+**Part of the [GameVariable](https://github.com/iafahim/GameVariable) Ecosystem**
+*Made with ❤️ for game developers*
+
+</div>
