@@ -12,30 +12,9 @@ public static class BoundedLogic
     /// <param name="max">The maximum value.</param>
     /// <param name="result">The clamped value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Clamp(in float value, in float min, in float max, out float result)
+    public static void Clamp(float value, float min, float max, out float result)
     {
         CoreMath.Clamp(value, min, max, out result);
-    }
-
-    /// <summary>Sets a value within bounds.</summary>
-    /// <param name="current">Reference to the current value.</param>
-    /// <param name="min">The minimum value.</param>
-    /// <param name="max">The maximum value.</param>
-    /// <param name="value">The new value to set.</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Set(ref float current, in float min, in float max, in float value)
-    {
-        CoreMath.Clamp(value, min, max, out current);
-    }
-
-    /// <summary>Normalizes the current value to be within bounds.</summary>
-    /// <param name="current">Reference to the current value.</param>
-    /// <param name="min">The minimum value.</param>
-    /// <param name="max">The maximum value.</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Normalize(ref float current, in float min, in float max)
-    {
-        CoreMath.Clamp(current, min, max, out current);
     }
 
     /// <summary>Checks if the value is full (at max) within a tolerance.</summary>
@@ -44,7 +23,7 @@ public static class BoundedLogic
     /// <param name="tolerance">The tolerance for floating point comparison.</param>
     /// <returns>True if full; otherwise, false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(in float current, in float max, in float tolerance)
+    public static bool IsFull(float current, float max, float tolerance)
     {
         return current >= max - tolerance;
     }
@@ -55,7 +34,7 @@ public static class BoundedLogic
     /// <param name="tolerance">The tolerance for floating point comparison.</param>
     /// <returns>True if empty; otherwise, false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(in float current, in float min, in float tolerance)
+    public static bool IsEmpty(float current, float min, float tolerance)
     {
         return current <= min + tolerance;
     }
@@ -66,7 +45,7 @@ public static class BoundedLogic
     /// <param name="max">The maximum value.</param>
     /// <param name="result">The ratio between 0.0 and 1.0.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetRatio(in float current, in float min, in float max, out double result)
+    public static void GetRatio(float current, float min, float max, out double result)
     {
         var range = max - min;
         result = Math.Abs(range) < MathConstants.Tolerance ? 0.0 : (current - min) / range;
@@ -77,7 +56,7 @@ public static class BoundedLogic
     /// <param name="max">The maximum value.</param>
     /// <param name="result">The range.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetRange(in float min, in float max, out float result)
+    public static void GetRange(float min, float max, out float result)
     {
         result = max - min;
     }
@@ -87,7 +66,7 @@ public static class BoundedLogic
     /// <param name="max">The maximum value.</param>
     /// <param name="result">The remaining amount.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetRemaining(in float current, in float max, out float result)
+    public static void GetRemaining(float current, float max, out float result)
     {
         result = max - current;
     }
@@ -98,30 +77,9 @@ public static class BoundedLogic
     /// <param name="max">The maximum value.</param>
     /// <param name="result">The clamped value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Clamp(in int value, in int min, in int max, out int result)
+    public static void Clamp(int value, int min, int max, out int result)
     {
         CoreMath.Clamp(value, min, max, out result);
-    }
-
-    /// <summary>Sets an int value within bounds.</summary>
-    /// <param name="current">Reference to the current value.</param>
-    /// <param name="min">The minimum value.</param>
-    /// <param name="max">The maximum value.</param>
-    /// <param name="value">The new value to set.</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Set(ref int current, in int min, in int max, in int value)
-    {
-        CoreMath.Clamp(value, min, max, out current);
-    }
-
-    /// <summary>Normalizes the current int value to be within bounds.</summary>
-    /// <param name="current">Reference to the current value.</param>
-    /// <param name="min">The minimum value.</param>
-    /// <param name="max">The maximum value.</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Normalize(ref int current, in int min, in int max)
-    {
-        CoreMath.Clamp(current, min, max, out current);
     }
 
     /// <summary>Checks if the int value is full (at max).</summary>
@@ -129,7 +87,7 @@ public static class BoundedLogic
     /// <param name="max">The maximum value.</param>
     /// <returns>True if full; otherwise, false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(in int current, in int max)
+    public static bool IsFull(int current, int max)
     {
         return current == max;
     }
@@ -139,7 +97,7 @@ public static class BoundedLogic
     /// <param name="min">The minimum value.</param>
     /// <returns>True if empty; otherwise, false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(in int current, in int min)
+    public static bool IsEmpty(int current, int min)
     {
         return current == min;
     }
@@ -150,7 +108,7 @@ public static class BoundedLogic
     /// <param name="max">The maximum value.</param>
     /// <param name="result">The ratio between 0.0 and 1.0.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetRatio(in int current, in int min, in int max, out double result)
+    public static void GetRatio(int current, int min, int max, out double result)
     {
         var range = max - min;
         result = range == 0 ? 0.0 : (double)(current - min) / range;
@@ -161,7 +119,7 @@ public static class BoundedLogic
     /// <param name="max">The maximum value.</param>
     /// <param name="result">The range.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetRange(in int min, in int max, out int result)
+    public static void GetRange(int min, int max, out int result)
     {
         result = max - min;
     }
@@ -171,7 +129,7 @@ public static class BoundedLogic
     /// <param name="max">The maximum value.</param>
     /// <param name="result">The remaining amount.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetRemaining(in int current, in int max, out int result)
+    public static void GetRemaining(int current, int max, out int result)
     {
         result = max - current;
     }
@@ -181,7 +139,7 @@ public static class BoundedLogic
     /// <param name="max">The maximum value.</param>
     /// <param name="result">The clamped value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Clamp(in byte value, in byte max, out byte result)
+    public static void Clamp(byte value, byte max, out byte result)
     {
         CoreMath.Clamp(value, max, out result);
     }
@@ -191,28 +149,9 @@ public static class BoundedLogic
     /// <param name="max">The maximum value.</param>
     /// <param name="result">The clamped byte value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Clamp(in int value, in byte max, out byte result)
+    public static void Clamp(int value, byte max, out byte result)
     {
         CoreMath.Clamp(value, max, out result);
-    }
-
-    /// <summary>Sets a byte value within bounds.</summary>
-    /// <param name="current">Reference to the current value.</param>
-    /// <param name="max">The maximum value.</param>
-    /// <param name="value">The new value to set.</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Set(ref byte current, in byte max, in byte value)
-    {
-        CoreMath.Clamp(value, max, out current);
-    }
-
-    /// <summary>Normalizes the current byte value to be within bounds.</summary>
-    /// <param name="current">Reference to the current value.</param>
-    /// <param name="max">The maximum value.</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Normalize(ref byte current, in byte max)
-    {
-        CoreMath.Clamp(current, max, out current);
     }
 
     /// <summary>Checks if the byte value is full (at max).</summary>
@@ -220,7 +159,7 @@ public static class BoundedLogic
     /// <param name="max">The maximum value.</param>
     /// <returns>True if full; otherwise, false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsFull(in byte current, in byte max)
+    public static bool IsFull(byte current, byte max)
     {
         return current == max;
     }
@@ -229,7 +168,7 @@ public static class BoundedLogic
     /// <param name="current">The current value.</param>
     /// <returns>True if empty; otherwise, false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(in byte current)
+    public static bool IsEmpty(byte current)
     {
         return current == 0;
     }
@@ -239,7 +178,7 @@ public static class BoundedLogic
     /// <param name="max">The maximum value.</param>
     /// <param name="result">The ratio between 0.0 and 1.0.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetRatio(in byte current, in byte max, out double result)
+    public static void GetRatio(byte current, byte max, out double result)
     {
         result = max == 0 ? 0.0 : (double)current / max;
     }
@@ -248,7 +187,7 @@ public static class BoundedLogic
     /// <param name="max">The maximum value.</param>
     /// <param name="result">The range.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetRange(in byte max, out byte result)
+    public static void GetRange(byte max, out byte result)
     {
         result = max;
     }
@@ -258,7 +197,7 @@ public static class BoundedLogic
     /// <param name="max">The maximum value.</param>
     /// <param name="result">The remaining amount.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetRemaining(in byte current, in byte max, out byte result)
+    public static void GetRemaining(byte current, byte max, out byte result)
     {
         result = (byte)(max - current);
     }
@@ -270,7 +209,7 @@ public static class BoundedLogic
     /// <param name="amount">The amount to add.</param>
     /// <param name="result">The new clamped value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Add(in int current, in int min, in int max, in int amount, out int result)
+    public static void Add(int current, int min, int max, int amount, out int result)
     {
         var temp = (long)current + amount;
         if (temp > max) temp = max;
