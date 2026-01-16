@@ -145,6 +145,7 @@ graph LR
     RPG["📈 Variable.RPG"] --> Core
     Inventory["🎒 Variable.Inventory"] --> Core
     Input["🎮 Variable.Input"] --> Core
+    Tween["📉 Variable.Tween"] --> Core
     Intent["🧠 GameVariable.Intent"]
     
     style Core fill:#4a9eff,stroke:#2980b9,stroke-width:2px,color:#fff
@@ -156,6 +157,7 @@ graph LR
     style RPG fill:#1abc9c,stroke:#16a085,color:#fff
     style Inventory fill:#95a5a6,stroke:#7f8c8d,color:#fff
     style Input fill:#9b59b6,stroke:#8e44ad,color:#fff
+    style Tween fill:#8e44ad,stroke:#6c3483,color:#fff
     style Intent fill:#34495e,stroke:#2c3e50,color:#fff
 ```
 
@@ -170,6 +172,7 @@ graph LR
 | [**Variable.RPG**](./Variable.RPG) | `RpgStat`, `DamageLogic` | RPG stats with flat/% modifiers, damage pipelines |
 | [**Variable.Inventory**](./Variable.Inventory) | `InventoryLogic` | Capacity management, transfers |
 | [**Variable.Input**](./Variable.Input) | `ComboGraph`, `InputRingBuffer` | Deterministic combo systems, input buffering |
+| [**Variable.Tween**](./Variable.Tween) | `TweenFloat` | Zero-alloc tweening, easing functions |
 | [**GameVariable.Intent**](./GameVariable.Intent) | `IntentState`, `IIntent` | Hierarchical State Machines (HSM), AI logic |
 
 ---
