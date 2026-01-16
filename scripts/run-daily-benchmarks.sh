@@ -17,7 +17,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 BENCHMARK_PROJECT="$PROJECT_ROOT/GameVariable.Benchmarks"
 REPORT_FILE="$PROJECT_ROOT/scripts/BENCHMARK_REPORT.md"
+HISTORY_DIR="$PROJECT_ROOT/scripts/benchmark_history/latest"
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+mkdir -p "$HISTORY_DIR"
 
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}  GameVariable Benchmark Runner${NC}"
@@ -54,8 +57,8 @@ echo ""
 
 cd "$BENCHMARK_PROJECT"
 
-# Run with GitHub exporter for nice markdown output
-dotnet run -c Release -- --filter "*" --exporters GitHub --iterationTime 500
+# Run with GitHub exporter for nice markdown output and Json for data processing
+dotnet run -c Release -- --filter "*" --exporters GitHub Json --iterationTime 500
 
 echo ""
 echo -e "${GREEN}✓ Benchmarks complete${NC}"
@@ -74,13 +77,46 @@ cat > "$REPORT_FILE" << EOF
 
 ---
 
-## Summary
-
-This report contains performance benchmarks for all GameVariable packages.
-
----
-
 EOF
+
+# Section: Comparison
+echo "## Benchmark Comparisons" >> "$REPORT_FILE"
+echo "" >> "$REPORT_FILE"
+
+CHANGES_DETECTED=false
+
+if [ -d "BenchmarkDotNet.Artifacts/results" ]; then
+    # Process JSON files for comparison
+    find BenchmarkDotNet.Artifacts/results -name "*.json" -type f | while read -r current_file; do
+        filename=$(basename "$current_file")
+        previous_file="$HISTORY_DIR/$filename"
+
+        if [ -f "$previous_file" ]; then
+            CHANGES_DETECTED=true
+            echo "Processing comparison for $filename..."
+            python3 "$PROJECT_ROOT/scripts/compare_benchmarks.py" "$previous_file" "$current_file" "temp_diff.md"
+            cat "temp_diff.md" >> "$REPORT_FILE"
+            echo "" >> "$REPORT_FILE"
+            rm "temp_diff.md"
+        else
+            echo "No previous history for $filename"
+        fi
+
+        # Update history
+        cp "$current_file" "$previous_file"
+    done
+fi
+
+if [ "$CHANGES_DETECTED" = false ]; then
+    echo "No previous benchmark data found for comparison." >> "$REPORT_FILE"
+fi
+
+echo "" >> "$REPORT_FILE"
+echo "---" >> "$REPORT_FILE"
+
+# Section: Full Results
+echo "## Full Benchmark Results" >> "$REPORT_FILE"
+echo "" >> "$REPORT_FILE"
 
 # Append benchmark results if available
 if [ -d "BenchmarkDotNet.Artifacts/results" ]; then
