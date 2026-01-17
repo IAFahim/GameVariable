@@ -41,7 +41,7 @@ public class ExperienceIntBenchmarks
     }
 
     [Benchmark]
-    public string ToString()
+    public override string ToString()
     {
         return _xp.ToString();
     }
@@ -85,7 +85,7 @@ public class ExperienceLongBenchmarks
     }
 
     [Benchmark]
-    public string ToString()
+    public override string ToString()
     {
         return _xp.ToString();
     }

@@ -1,57 +1,103 @@
-# Variable.Reservoir
+# 🔋 Variable.Reservoir
 
-**Variable.Reservoir** models composite resources that have an active "clip" or "tank" and a larger "reserve". This is
-the standard model for Ammo, Batteries, and Fuel.
+**Magazines, Tanks, and Batteries.** 🔫
 
-## Installation
+**Variable.Reservoir** manages the classic "Active + Reserve" pattern found in almost every game.
+- **Active (Volume):** What's in the clip/tank right now.
+- **Reserve:** What's in your backpack/stockpile.
+
+---
+
+## 📦 Installation
 
 ```bash
 dotnet add package Variable.Reservoir
 ```
 
-## Features
+---
 
-* **ReservoirInt / ReservoirFloat**: Structs for Clip + Reserve.
-* **Refill()**: Logic to move resources from Reserve to Clip/Volume.
-* **Implicit Conversion**: Treats the struct as the current clip value for easy comparisons.
+## 🚀 Features
 
-## Usage
+* **🔫 Reload Logic:** Built-in `Refill()` handles the math of moving from Reserve to Volume.
+* **🔢 Int & Float:** `ReservoirInt` (Ammo) and `ReservoirFloat` (Fuel/Energy).
+* **🛡️ Safe Limits:** Can't reload more than capacity, can't take more than you have.
 
-### Gun Ammo
+---
+
+## 🎮 Usage Guide
+
+### 1. Weapon Ammo (Integers)
 
 ```csharp
 using Variable.Reservoir;
 
-// Clip Size 30, Current 30, Reserve 90
-ReservoirInt ammo = new ReservoirInt(30, 30, 90);
+public class Gun
+{
+    // Clip: 30, Current: 30, Backpack: 120
+    public ReservoirInt Ammo = new ReservoirInt(30, 30, 120);
 
-public void Shoot() {
-    if (ammo > 0) {
-        ammo.Volume--;
-        FireBullet();
-    } else {
-        Reload();
+    public void Fire()
+    {
+        if (Ammo > 0) // Implicit conversion to current volume!
+        {
+            Ammo.Volume--;
+            SpawnBullet();
+        }
+        else
+        {
+            Reload();
+        }
     }
-}
 
-public void Reload() {
-    // Moves up to 30 from reserve to clip
-    int amountReloaded = ammo.Refill(); 
-    PlayReloadAnimation();
+    public void Reload()
+    {
+        // Moves ammo from Reserve to Volume
+        // Returns amount actually moved (e.g. 5 bullets)
+        int reloaded = Ammo.Refill();
+
+        if (reloaded > 0) PlayReloadSound();
+        else PlayClickSound(); // No ammo left!
+    }
 }
 ```
 
-### Flashlight Battery
+### 2. Jetpack Fuel (Floats)
 
 ```csharp
-// Capacity 100%, Current 50%, Reserve 200% (2 batteries)
-ReservoirFloat battery = new ReservoirFloat(100f, 50f, 200f);
+// Tank: 50.0, Current: 50.0, Reserve Tank: 200.0
+public ReservoirFloat Fuel = new ReservoirFloat(50f, 50f, 200f);
 
-public void SwapBattery() {
-    battery.Refill(); // Fills current to 100%, reduces reserve
+public void Fly(float dt)
+{
+    if (Fuel.Volume.TryConsume(10f * dt))
+    {
+        ApplyThrust();
+    }
+    else
+    {
+        // Auto-refill from reserve tank?
+        Fuel.Refill();
+    }
 }
 ```
 
 ---
-**Author:** Md Ishtiaq Ahamed Fahim  
-**GitHub:** [iafahim/GameVariable](https://github.com/iafahim/GameVariable)
+
+## 🔧 API Reference
+
+### `ReservoirInt` / `ReservoirFloat`
+- `Volume`: The active `Bounded` value (Clip/Tank).
+- `Reserve`: The available backup supply.
+
+### Extensions
+- `Refill()`: Fills `Volume` to Max using `Reserve`. Decreases Reserve. Returns amount moved.
+- `Refill(amount)`: Tries to move specific `amount` from Reserve to Volume.
+
+---
+
+<div align="center">
+
+**Part of the [GameVariable](https://github.com/iafahim/GameVariable) Ecosystem**
+*Made with ❤️ for game developers*
+
+</div>

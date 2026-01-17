@@ -1,64 +1,114 @@
-# Variable.Timer
+# ⏱️ Variable.Timer
 
-**Variable.Timer** provides robust structs for handling time-based mechanics like cooldowns, countdowns, and
-stopwatches. It simplifies `Time.deltaTime` management.
+**Time management for games, solved.** ⌛
 
-## Installation
+**Variable.Timer** gives you `Timer` (count up) and `Cooldown` (count down) structs that just work. No more spaghetti `float timer = 0f;` and `timer += Time.deltaTime;` checks scattered everywhere.
+
+---
+
+## 📦 Installation
 
 ```bash
 dotnet add package Variable.Timer
 ```
 
-## Features
+---
 
-* **Timer**: A simple countdown timer.
-* **Cooldown**: A specialized timer for ability availability.
-* **State Queries**: `IsReady`, `IsFinished`, `TimeRemaining`, `Progress` (0-1).
+## 🚀 Features
 
-## Usage
+* **🔥 Cooldowns:** Manage ability availability effortlessly.
+* **⏳ Timers:** Track durations (casting, loading, buffs).
+* **🧠 Logic Separation:** Tick logic is separated from state.
+* **⚡ Zero Allocation:** Pure structs, Burst compatible.
 
-### Ability Cooldown
+---
+
+## 🎮 Usage Guide
+
+### 1. Cooldowns (The "Can I do this yet?" Pattern)
 
 ```csharp
 using Variable.Timer;
 
-public class Ability
+public class Hero
 {
-    public Cooldown DashCooldown = new Cooldown(5f); // 5 seconds
+    // 3 second cooldown, starts READY
+    public Cooldown DashCd = new Cooldown(3f);
 
-    public void Update(float deltaTime)
+    public void Update(float dt)
     {
-        // TickAndCheckReady returns true when cooldown hits zero
-        if (DashCooldown.TickAndCheckReady(deltaTime) && Input.GetKey(KeyCode.Space))
+        // 1. Tick the cooldown
+        // TickAndCheckReady returns true if it hits 0 THIS FRAME
+        if (DashCd.TickAndCheckReady(dt))
         {
-            Cast();
-            DashCooldown.Reset(); // Start cooldown again
+            PlayReadySound();
         }
-    }
 
-    private void Cast()
-    {
-        // Perform ability
-        Debug.Log("Ability Cast!");
+        // 2. Use Ability
+        if (Input.GetButton("Dash") && DashCd.IsReady())
+        {
+            DoDash();
+            DashCd.Reset(); // Sets value to 3.0
+        }
     }
 }
 ```
 
-### Match Timer
+### 2. Timers (The "Are we there yet?" Pattern)
 
 ```csharp
-Timer matchTime = new Timer(300f); // 5 minutes
+// 5 second cast time
+public Timer CastTimer = new Timer(5f);
 
-void Update(float dt) {
-    // TickAndCheckComplete returns true when timer finishes
-    if (matchTime.TickAndCheckComplete(dt)) {
-        EndMatch();
+public void Update(float dt)
+{
+    // TickAndCheckComplete returns true if it hits Duration THIS FRAME
+    if (CastTimer.TickAndCheckComplete(dt))
+    {
+        SpawnFireball();
+        CastTimer.Reset(); // Sets value to 0.0
     }
-    
-    Console.WriteLine($"Time Left: {matchTime.Duration - matchTime.Current}");
 }
+```
+
+### 3. Progress Bars (UI)
+
+Since `Timer` and `Cooldown` implement `IBoundedInfo`, they work with standard UI code!
+
+```csharp
+// 0.0 to 1.0
+float progress = (float)CastTimer.GetRatio();
+
+// 1.0 to 0.0 (inverse for cooldowns usually)
+float cdProgress = (float)DashCd.GetProgress();
 ```
 
 ---
-**Author:** Md Ishtiaq Ahamed Fahim  
-**GitHub:** [iafahim/GameVariable](https://github.com/iafahim/GameVariable)
+
+## 🔧 API Reference
+
+### `Cooldown` (Counts DOWN 📉)
+- `Reset()`: Sets current time to Duration.
+- `Finish()`: Sets current time to 0 (Ready).
+- `IsReady()`: True if time <= 0.
+- `TickAndCheckReady(dt)`: Advances time, returns true if it *just* became ready.
+
+### `Timer` (Counts UP 📈)
+- `Reset()`: Sets current time to 0.
+- `Finish()`: Sets current time to Duration.
+- `IsFull()`: True if time >= Duration.
+- `TickAndCheckComplete(dt)`: Advances time, returns true if it *just* finished.
+
+### Common
+- `Current`: The raw time value.
+- `Duration`: The target time.
+- `GetRatio()`: Normalized progress.
+
+---
+
+<div align="center">
+
+**Part of the [GameVariable](https://github.com/iafahim/GameVariable) Ecosystem**
+*Made with ❤️ for game developers*
+
+</div>
