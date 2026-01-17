@@ -1,10 +1,10 @@
 # 🎒 Variable.Inventory
 
-**Math, not Arrays.** A pure logic library for inventory calculations.
+**The Math of Stuff.** 🍎
 
-`Variable.Inventory` is **not** a list of items. It is a set of static algorithms (`InventoryLogic`) to calculate transfers, check capacities, and handle stack sizes. It assumes *you* manage the storage (array, list, whatever) and helps you do the math correctly.
+**Variable.Inventory** is a pure logic library for handling inventory mathematics. It doesn't tell you *how* to store your items (List, Array, Dictionary) — it just handles the "Can I fit this?" and "Move this there" logic.
 
-[![NuGet](https://img.shields.io/nuget/v/Variable.Inventory?color=blue&label=NuGet)](https://www.nuget.org/packages/Variable.Inventory)
+---
 
 ## 📦 Installation
 
@@ -12,77 +12,106 @@
 dotnet add package Variable.Inventory
 ```
 
-## 🔥 Features
+---
 
-* **🧮 Pure Math**: Calculates "How much can I fit?" without mutating anything unless you ask.
-* **📦 Stack Logic**: Handles max stack sizes and partial transfers.
-* **⚡ Zero Allocation**: Just integers and structs. No garbage.
-* **🔄 Stateless**: Safe to use from any thread or job.
+## 🚀 Features
 
-## 🛠️ Usage Guide
+* **🧠 Pure Logic:** Static methods that work on `float`, `int`, `byte`.
+* **⚖️ Weight Support:** Logic for transferring items with weight limits.
+* **🌊 Partial vs Exact:** "Fill it as much as possible" vs "Only if it fits".
+* **⚡ Burst Compatible:** All methods are `[AggressiveInlining]`.
 
-### 1. Can I Add This?
-Check if an item fits before trying to add it.
+---
+
+## 🎮 Usage Guide
+
+### 1. Looting (Partial Add)
+
+You found 100 Gold, but can only carry 50 more.
 
 ```csharp
 using Variable.Inventory;
 
-int currentAmount = 5;
-int maxStack = 10;
-int amountToAdd = 8;
+float goldInBag = 950f;
+float maxGold = 1000f;
+float goldOnGround = 100f;
 
-// Calculate how much fits
-int added = InventoryLogic.CalculateAddAmount(currentAmount, maxStack, amountToAdd);
-
-Console.WriteLine($"Can add: {added}"); // 5 (because 5+5=10)
-Console.WriteLine($"Leftover: {amountToAdd - added}"); // 3
-```
-
-### 2. Transferring Items
-Moving items between slots or containers.
-
-```csharp
-int source = 10;
-int destination = 2;
-int maxStack = 10;
-
-// Calculate transfer
-InventoryLogic.Transfer(
-    ref source,      // 10 -> 2
-    ref destination, // 2 -> 10
-    maxStack
+// Try to add as much as possible
+bool addedAny = InventoryLogic.TryAddPartial(
+    ref goldInBag,
+    goldOnGround,
+    maxGold,
+    out float addedAmount,
+    out float overflow
 );
+
+// Result:
+// goldInBag = 1000
+// addedAmount = 50
+// overflow = 50 (remains on ground)
 ```
 
-### 3. Managing Capacity
-If you have a weight limit or volume limit.
+### 2. Crafting (Exact Remove)
+
+You need exactly 5 Wood to build a chair.
 
 ```csharp
-int currentWeight = 90;
-int maxWeight = 100;
-int itemWeight = 5;
-int quantity = 3; // Total weight = 15
+float wood = 3f;
+float cost = 5f;
 
-bool fits = InventoryLogic.CanFit(currentWeight, maxWeight, itemWeight * quantity);
-// False (90 + 15 > 100)
+// Try to remove EXACTLY 5.
+// Returns false if you have less (and removes nothing).
+if (InventoryLogic.TryRemoveExact(ref wood, cost))
+{
+    BuildChair();
+}
+else
+{
+    Console.WriteLine("Not enough wood!");
+}
 ```
 
-## ❓ Why no `List<Item>`?
-Because every game is different.
-* Minecraft needs a grid.
-* Diablo needs Tetris-packing.
-* Final Fantasy needs a linear list.
+### 3. Transferring Items (Chest to Player)
 
-`Variable.Inventory` provides the **mathematical truths** common to all of them (e.g., you can't have more than MaxStack), leaving the data structure up to you. This makes it compatible with Unity ECS, standard OOP, or even database backends.
+Move items from Container A to Container B.
 
-## 🤝 Contributing
-Found a bug? PRs are welcome!
-See the [Contributing Guide](../CONTRIBUTING.md) for details.
+```csharp
+float chestCount = 100;
+float bagCount = 10;
+float bagMax = 50;
+
+InventoryLogic.TryTransferPartial(
+    ref chestCount,  // Source (decreases)
+    ref bagCount,    // Destination (increases)
+    bagMax,          // Dest Capacity
+    1000,            // Try to move everything
+    out float moved
+);
+
+// Result:
+// chestCount = 60 (100 - 40)
+// bagCount = 50 (Full)
+// moved = 40
+```
 
 ---
+
+## 🔧 API Reference
+
+### `InventoryLogic`
+- `TryAddPartial`: Fills up to max. Returns overflow.
+- `TryAddExact`: Adds only if total <= max.
+- `TryRemovePartial`: Removes up to amount (empties it).
+- `TryRemoveExact`: Removes only if current >= amount.
+- `TryTransferPartial`: Moves items between variables.
+- `CanAccept`: Checks if `current + amount <= max`.
+- `HasEnough`: Checks if `current >= required`.
+
+---
+
 <div align="center">
 
 **Part of the [GameVariable](https://github.com/iafahim/GameVariable) Ecosystem**
-*Zero-allocation, high-performance game logic.*
+*Made with ❤️ for game developers*
 
 </div>

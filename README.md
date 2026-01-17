@@ -9,13 +9,13 @@
 [![.NET](https://img.shields.io/badge/.NET-Standard%202.1+-purple.svg)](https://dotnet.microsoft.com/)
 [![Unity](https://img.shields.io/badge/Unity-ECS%20Compatible-black.svg)](https://unity.com/)
 
-**Zero-allocation structs for health bars, cooldowns, experience systems, and more.**
-*Stop writing `if (health < 0) health = 0` forever.*
+**The "Standard Library" for Game Mechanics.** 🛠️
+Stop writing `if (health < 0) health = 0;` for the 1,000th time.
 
 [Quick Start](#-quick-start) •
 [Packages](#-packages) •
+[Guide](#-which-package-do-i-need) •
 [Examples](#-examples) •
-[API Reference](#-api-reference) •
 [Contributing](#-contributing)
 
 </div>
@@ -24,35 +24,36 @@
 
 ## ✨ Why GameVariable?
 
-Building game systems means managing **bounded values** everywhere—health that can't go negative, cooldowns that tick down, experience that overflows into levels. GameVariable provides battle-tested primitives that handle all the edge cases, so you can focus on gameplay.
+Every game needs Health, Mana, Cooldowns, and XP.
+Most developers write ad-hoc, buggy classes for each one.
+**GameVariable** gives you **battle-tested, zero-allocation primitives** that handle the math for you.
 
 <table>
 <tr>
 <td width="50%">
 
-### ❌ Without GameVariable
+### ❌ The Old Way
 ```csharp
-// Manual clamping everywhere
+// Manual clamping... everywhere
 health -= damage;
 if (health < 0) health = 0;
 if (health > maxHealth) health = maxHealth;
 
-// Manual timer logic
+// Manual timer spaghetti
 cooldown -= deltaTime;
 if (cooldown < 0) cooldown = 0;
 bool canUse = cooldown <= 0;
 
-// Manual regen with edge cases
-mana += regenRate * deltaTime;
-if (mana > maxMana) mana = maxMana;
+// Forgot to handle overflow?
+xp += 5000; // Now level 1 has 5000/100 XP 😱
 ```
 
 </td>
 <td width="50%">
 
-### ✅ With GameVariable
+### ✅ The GameVariable Way
 ```csharp
-// Auto-clamped, natural syntax
+// Auto-clamped. Always safe.
 health -= damage;
 if (health.IsEmpty()) Die();
 
@@ -60,24 +61,62 @@ if (health.IsEmpty()) Die();
 cooldown.Tick(deltaTime);
 if (cooldown.IsFull()) UseAbility();
 
-// One-liner regeneration
-mana.Tick(deltaTime); // Automatic!
+// Handles massive level-ups automatically
+experience.Add(5000);
+// Result: Level 50! 🚀
 ```
 
 </td>
 </tr>
 </table>
 
-### 🎯 Key Features
+---
 
-| Feature | Description |
-|---------|-------------|
-| **🚀 Zero Allocation** | Pure `struct` types—no heap, no GC pressure. |
-| **⚡ Burst Compatible** | Works with Unity's Burst compiler & DOTS/ECS. |
-| **🔧 Operator Overloads** | Natural syntax: `hp -= 10`, `timer++`, `ammo--`. |
-| **📊 Built-in Ratios** | `GetRatio()` for health bars (0.0 to 1.0). |
-| **🎨 Serializable** | `[Serializable]` for Unity Inspector & save systems. |
-| **🌐 Network Ready** | Blittable structs for easy network serialization. |
+## 📦 Packages
+
+**Choose your weapon!** ⚔️
+
+```mermaid
+graph LR
+    subgraph Core["🔷 Variable.Core"]
+        IBoundedInfo["IBoundedInfo"]
+    end
+    
+    Bounded["📊 Variable.Bounded"] --> Core
+    Timer["⏱️ Variable.Timer"] --> Core
+    Regen["♻️ Variable.Regen"] --> Bounded
+    Reservoir["🔋 Variable.Reservoir"] --> Bounded
+    Experience["⭐ Variable.Experience"] --> Core
+    RPG["📈 Variable.RPG"] --> Core
+    Inventory["🎒 Variable.Inventory"] --> Core
+    Input["🎮 Variable.Input"] --> Core
+    Intent["🧠 GameVariable.Intent"]
+    
+    style Core fill:#4a9eff,stroke:#2980b9,stroke-width:2px,color:#fff
+    style Bounded fill:#2ecc71,stroke:#27ae60,color:#fff
+    style Timer fill:#e74c3c,stroke:#c0392b,color:#fff
+    style Regen fill:#f39c12,stroke:#d68910,color:#fff
+    style Reservoir fill:#3498db,stroke:#2980b9,color:#fff
+    style Experience fill:#e67e22,stroke:#d35400,color:#fff
+    style RPG fill:#1abc9c,stroke:#16a085,color:#fff
+    style Inventory fill:#95a5a6,stroke:#7f8c8d,color:#fff
+    style Input fill:#9b59b6,stroke:#8e44ad,color:#fff
+    style Intent fill:#34495e,stroke:#2c3e50,color:#fff
+```
+
+### 🧐 Which package do I need?
+
+| If you need to build... | Use this package |
+|-------------------------|------------------|
+| **Health, Mana, Stamina** | [**Variable.Bounded**](./Variable.Bounded) |
+| **Cooldowns, Casting Bars** | [**Variable.Timer**](./Variable.Timer) |
+| **Regenerating Shields** | [**Variable.Regen**](./Variable.Regen) |
+| **Ammo, Batteries, Fuel** | [**Variable.Reservoir**](./Variable.Reservoir) |
+| **Leveling, Skills, XP** | [**Variable.Experience**](./Variable.Experience) |
+| **Combos, Input Buffers** | [**Variable.Input**](./Variable.Input) |
+| **Complex Stats (Armor/Resist)** | [**Variable.RPG**](./Variable.RPG) |
+| **Inventory Limits** | [**Variable.Inventory**](./Variable.Inventory) |
+| **AI State Machines** | [**GameVariable.Intent**](./GameVariable.Intent) |
 
 ---
 
@@ -86,169 +125,59 @@ mana.Tick(deltaTime); // Automatic!
 ### Installation
 
 ```bash
-# Install all packages (if you're hardcore)
-dotnet add package Variable.Core
+# Install the basics
 dotnet add package Variable.Bounded
 dotnet add package Variable.Timer
-dotnet add package Variable.Regen
-dotnet add package Variable.Experience
-dotnet add package Variable.RPG
-dotnet add package Variable.Reservoir
-dotnet add package Variable.Input
-dotnet add package Variable.Inventory
-dotnet add package GameVariable.Intent
-
-# Or just grab what you need (Recommended)
-dotnet add package Variable.Bounded
 ```
 
-### Basic Usage
+### 1. The "Ultimate Character" Example
+
+Let's build a character using multiple packages!
 
 ```csharp
 using Variable.Bounded;
 using Variable.Timer;
 using Variable.Regen;
+using Variable.Experience;
 
-// Health: auto-clamped between 0 and 100
-var health = new BoundedFloat(100f);
-health -= 25f;                    // Take damage
-Console.WriteLine(health);        // "75/100"
-Console.WriteLine(health.GetRatio()); // 0.75
-
-// Cooldown: 3 second ability
-var fireball = new Cooldown(3f);
-fireball.Tick(deltaTime);         // Count down
-if (fireball.IsFull()) {          // Ready when 0
-    CastFireball();
-    fireball.Reset();             // Start cooldown
-}
-
-// Mana: regenerates 10/sec
-var mana = new RegenFloat(100f, 50f, 10f);
-mana.Tick(deltaTime);             // Auto-regenerate
-```
-
----
-
-## 📦 Packages
-
-Each package is a specialist. Choose your weapons.
-
-| Package | Purpose | Use Cases |
-|---------|---------|-----------|
-| [**Variable.Core**](./Variable.Core) | 🔷 **Foundation** | The shared interfaces `IBoundedInfo` and `ICompletable`. |
-| [**Variable.Bounded**](./Variable.Bounded) | 📊 **Limits** | `BoundedFloat`, `BoundedInt`. Health, stamina, resources. |
-| [**Variable.Timer**](./Variable.Timer) | ⏱️ **Time** | `Timer` (up), `Cooldown` (down). Spells, casting, delays. |
-| [**Variable.Regen**](./Variable.Regen) | ♻️ **Growth** | `RegenFloat`. Mana regeneration, radiation decay. |
-| [**Variable.Reservoir**](./Variable.Reservoir) | 🔋 **Capacity** | `ReservoirInt`. Ammo clips + reserves, battery packs. |
-| [**Variable.Experience**](./Variable.Experience) | ⭐ **Progression** | `ExperienceInt`. Leveling up, XP curves, overflow. |
-| [**Variable.RPG**](./Variable.RPG) | 📈 **Stats** | `RpgStatSheet`. Attributes (STR/DEX), modifiers, damage math. |
-| [**Variable.Inventory**](./Variable.Inventory) | 🎒 **Logistics** | `InventoryLogic`. Calculating stack limits and transfers. |
-| [**Variable.Input**](./Variable.Input) | 🎮 **Controls** | `ComboGraph`. Input buffering, fighting game combos. |
-| [**GameVariable.Intent**](./GameVariable.Intent) | 🧠 **Brain** | `IntentState`. Hierarchical State Machine for AI. |
-
----
-
-## 💡 Examples
-
-### 🏥 Health System
-```csharp
-public struct Player
+public struct Hero
 {
+    // 1. Health (0-100)
     public BoundedFloat Health;
-    public BoundedFloat Shield;
     
-    public void TakeDamage(float damage)
+    // 2. Mana that regens (+5/sec)
+    public RegenFloat Mana;
+
+    // 3. Ability Cooldown (3 sec)
+    public Cooldown FireballCd;
+    
+    // 4. Leveling System
+    public ExperienceInt XP;
+
+    public Hero(float maxHp)
     {
-        // Damage shields first
-        if (Shield > 0)
+        Health = new BoundedFloat(maxHp);
+        Mana = new RegenFloat(100f, 100f, 5f); // Starts full
+        FireballCd = new Cooldown(3f);         // Starts ready
+        XP = new ExperienceInt(1000);          // Need 1000 for lvl 2
+    }
+
+    public void Update(float dt)
+    {
+        // Auto-regen mana
+        Mana.Tick(dt);
+        
+        // Tick cooldown
+        FireballCd.Tick(dt);
+    }
+    
+    public void CastFireball()
+    {
+        if (FireballCd.IsReady() && Mana.Value >= 20f)
         {
-            float absorbed = Math.Min(Shield, damage);
-            Shield -= absorbed;
-            damage -= absorbed;
-        }
-        
-        // Remaining damage hits health
-        Health -= damage;
-        
-        if (Health.IsEmpty())
-            Die();
-    }
-}
-```
-
-### ⚔️ Ability Cooldown
-```csharp
-public struct Ability
-{
-    public Cooldown Cooldown;
-    public float ManaCost;
-    
-    public bool TryUse(ref BoundedFloat mana)
-    {
-        if (!Cooldown.IsReady()) return false; // On cooldown
-        if (mana < ManaCost) return false;     // Not enough mana
-        
-        mana -= ManaCost;
-        Cooldown.Reset();  // Start cooldown
-        return true;
-    }
-    
-    public void Update(float deltaTime)
-    {
-        Cooldown.Tick(deltaTime);
-    }
-}
-```
-
-### 🔫 Ammo & Reloading
-```csharp
-public struct Weapon
-{
-    public ReservoirInt Ammo;
-    
-    public bool TryFire()
-    {
-        if (Ammo.Volume.IsEmpty()) return false;
-        Ammo.Volume--;
-        return true;
-    }
-    
-    public void Reload()
-    {
-        Ammo.Refill();  // Transfer from reserve to magazine automatically
-    }
-}
-```
-
----
-
-## 🎮 Unity Integration
-
-These structs are **Unity ECS / DOTS** ready. They are blittable and contain no managed references.
-
-```csharp
-using Unity.Entities;
-using Unity.Burst;
-using Variable.Bounded;
-
-public struct HealthComponent : IComponentData
-{
-    public BoundedFloat Value;
-}
-
-[BurstCompile]
-public partial struct HealthSystem : ISystem
-{
-    public void OnUpdate(ref SystemState state)
-    {
-        // Blazing fast parallel processing
-        foreach (var health in SystemAPI.Query<RefRW<HealthComponent>>())
-        {
-            if (health.ValueRO.Value.IsEmpty())
-            {
-                // Handle death
-            }
+            Mana.Value -= 20f;
+            FireballCd.Reset();
+            Console.WriteLine("KA-BOOM! 🔥");
         }
     }
 }
@@ -256,21 +185,47 @@ public partial struct HealthSystem : ISystem
 
 ---
 
-## 📝 Contributing
+## 💡 Cool Tricks
 
-Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting PRs.
+### Temperature System (Negative Ranges) ❄️🔥
+`BoundedFloat` isn't just for 0-100. It handles negative ranges perfectly.
 
-### Development Setup
-1. Clone the repo.
-2. Run `dotnet restore`.
-3. Run `dotnet test` to make sure everything is green.
-4. Hack away!
+```csharp
+// Range: -50°C to +50°C. Starts at 20°C.
+var temp = new BoundedFloat(50f, -50f, 20f);
+
+temp -= 100f; // Clamped to -50f (Absolute Zero-ish)
+
+if (temp.IsEmpty()) ApplyFrostbite();
+```
+
+### Progress Bars in UI 📊
+All bounded types implement `IBoundedInfo`. You can write **one** UI script for everything!
+
+```csharp
+public void UpdateBar(IBoundedInfo info)
+{
+    // Works for Health, Mana, Timer, XP... anything!
+    barImage.fillAmount = (float)info.GetRatio();
+}
+```
 
 ---
 
-## 📄 License
+## 🏗️ Architecture & Philosophy
 
-MIT License - see [LICENSE](LICENSE) for details.
+1.  **Zero Allocation:** Everything is a `struct`. No `new` keywords in your update loop. No Garbage Collection spikes.
+2.  **Burst Compatible:** Optimized for Unity's DOTS/ECS and Burst Compiler.
+3.  **Fail-Safe:** Math is clamped. State is consistent. No `NaN` or `Infinity` surprises.
+
+---
+
+## 🤝 Contributing
+
+We love PRs! Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
+
+*   **Found a bug?** Open an issue.
+*   **Have an idea?** Start a discussion.
 
 ---
 

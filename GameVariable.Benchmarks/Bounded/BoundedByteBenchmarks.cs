@@ -45,7 +45,7 @@ public class BoundedByteBenchmarks
     }
 
     [Benchmark]
-    public string ToString()
+    public override string ToString()
     {
         return _value.ToString();
     }

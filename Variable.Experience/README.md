@@ -1,10 +1,10 @@
 # ⭐ Variable.Experience
 
-**Ding! Level Up!** The definitive system for XP, Levels, and Progression.
+**Level Up Your Leveling System.** 🆙
 
-`Variable.Experience` handles the tricky math of adding experience, detecting level-ups, and carrying over excess XP to the next level. It supports both `int` (for standard games) and `long` (for idle games with massive numbers).
+**Variable.Experience** handles the core loop of RPG progression: Gaining XP, checking for level-ups, and handling the "overflow" (e.g., getting enough XP to jump 2 levels at once).
 
-[![NuGet](https://img.shields.io/nuget/v/Variable.Experience?color=blue&label=NuGet)](https://www.nuget.org/packages/Variable.Experience)
+---
 
 ## 📦 Installation
 
@@ -12,51 +12,67 @@
 dotnet add package Variable.Experience
 ```
 
-## 🔥 Features
+---
 
-* **🆙 Automatic Leveling**: Detects when XP > Max and helps you process level-ups.
-* **🌊 Overflow Handling**: Excess XP automatically spills over to the next level. No wasted grind.
-* **🔢 Int & Long Support**: Whether you need 1,000 XP or 1,000,000,000,000 XP.
-* **📐 Custom Formulas**: Plug in your own math for how XP requirements scale.
+## 🚀 Features
 
-## 🛠️ Usage Guide
+* **📈 Smart Overflow:** If you gain 1,000,000 XP at level 1, it correctly calculates how many levels you gain.
+* **🔧 Flexible Curves:** It doesn't force a formula on you. You decide what "Max XP" is for each level.
+* **⚡ Zero Allocation:** Pure structs.
 
-### 1. The Basics
+---
+
+## 🎮 Usage Guide
+
+### 1. Basic Setup
 
 ```csharp
 using Variable.Experience;
 
-// Create XP: Max=1000, Current=0, Level=1
-var xp = new ExperienceInt(1000, 0, 1);
+// Level 1, 0 XP, Need 100 to level up
+var xp = new ExperienceInt(100, 0, 1);
 
-// Add XP
-xp += 500; // 500/1000
-xp += 600; // 1100/1000 -> Level Up ready!
-
-// Check and process level up
-if (xp.IsFull())
+public void OnKillSlime()
 {
-    // Calculate overflow (100 xp extra)
-    int overflow = xp.Current - xp.Max;
+    // Add 50 XP
+    // The operator+ creates a new struct with updated values
+    xp += 50;
 
-    // Create next level state (Next level needs 2000 XP)
-    xp = new ExperienceInt(2000, overflow, xp.Level + 1);
-
-    Console.WriteLine($"Ding! Level {xp.Level}!");
+    // Check if we leveled up
+    if (xp.IsFull())
+    {
+        LevelUp();
+    }
 }
 ```
 
-### 2. Handling Multiple Level Ups
-If the player gets a huge XP drop, they might level up multiple times at once.
+### 2. Handling Level Ups (The Smart Way)
+
+Real games have overflow. If I need 10 XP and I gain 500 XP, I should level up multiple times!
 
 ```csharp
-void AddXp(int amount)
+public void AddExperience(int amount)
 {
+    // Add the XP
     xp += amount;
 
+    // Loop until we stop leveling up
     while (xp.IsFull())
     {
-        LevelUp();
+        // 1. Calculate surplus XP (Current - Max)
+        int overflow = xp.Current - xp.Max;
+
+        // 2. Increase Level
+        int newLevel = xp.Level + 1;
+
+        // 3. Calculate new Max XP (Your custom formula!)
+        // Example: Level * 1000 (1000, 2000, 3000...)
+        int newMax = newLevel * 1000;
+
+        // 4. Create new state
+        xp = new ExperienceInt(newMax, overflow, newLevel);
+
+        PlayLevelUpSound();
     }
 }
 
@@ -70,39 +86,33 @@ void LevelUp()
 }
 ```
 
-### 3. Idle Games (Big Numbers)
-Use `ExperienceLong` for massive values.
+### 3. Long XP (MMOs)
+
+Building an MMO where players have billions of XP? Use `ExperienceLong`.
 
 ```csharp
-var idleXp = new ExperienceLong(1_000_000_000L);
-idleXp += 500_000L;
+var xp = new ExperienceLong(1_000_000_000, 0, 1);
 ```
-
-### 4. Custom Scaling Formulas
-You can implement `INextMaxFormula` to define your curve, or just calculate it yourself like in the examples above.
-
-```csharp
-public struct LinearGrowth : INextMaxFormula
-{
-    public int BaseXp;
-
-    public int GetFor(int level) => BaseXp * level;
-}
-```
-
-## 🧩 Integration Tips
-
-* **Save Systems**: Just save `Current`, `Max`, and `Level`.
-* **UI**: `xp.GetRatio()` works perfectly for XP bars!
-
-## 🤝 Contributing
-Found a bug? PRs are welcome!
-See the [Contributing Guide](../CONTRIBUTING.md) for details.
 
 ---
+
+## 🔧 API Reference
+
+### `ExperienceInt` / `ExperienceLong`
+- `Current`: Current XP.
+- `Max`: XP required for *next* level.
+- `Level`: Current level.
+
+### Logic
+- `IsFull()`: Ready to level up?
+- `GetRatio()`: Progress bar (0.0 to 1.0).
+- `GetRemaining()`: XP needed for next level.
+
+---
+
 <div align="center">
 
 **Part of the [GameVariable](https://github.com/iafahim/GameVariable) Ecosystem**
-*Zero-allocation, high-performance game logic.*
+*Made with ❤️ for game developers*
 
 </div>

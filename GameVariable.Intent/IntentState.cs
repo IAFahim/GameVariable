@@ -9,50 +9,46 @@ namespace GameVariable.Intent;
 /// </summary>
 public partial struct IntentState : IIntent<IntentState.StateId, IntentState.EventId>
 {
-    /// <summary>
-    /// Events that can be dispatched to the state machine.
-    /// </summary>
+    /// <summary>Events that trigger transitions in the state machine.</summary>
     public enum EventId : byte
     {
         /// <summary>The intent has been activated.</summary>
         ACTIVATED = 0,
         /// <summary>All child tasks have completed.</summary>
         ALL_CHILDREN_COMPLETED = 1,
-        /// <summary>Cancel the intent.</summary>
+        /// <summary>Cancel the current intent.</summary>
         CANCEL = 2,
         /// <summary>A child task has been created.</summary>
         CHILD_TASK_CREATED = 3,
         /// <summary>The intent completed successfully.</summary>
         COMPLETED_SUCCESSFULLY = 4,
-        /// <summary>Prepare the intent.</summary>
+        /// <summary>Prepare the intent for execution.</summary>
         GET_READY = 5,
-        /// <summary>Retry recovery.</summary>
+        /// <summary>Retry recovery after a fault.</summary>
         RECOVER_RETRY = 6,
         /// <summary>Run the intent again.</summary>
         RUN_AGAIN = 7,
         /// <summary>Start running the intent.</summary>
         START_RUNNING = 8,
-        /// <summary>The intent was unable to complete.</summary>
+        /// <summary>The intent failed to complete.</summary>
         UNABLE_TO_COMPLETE = 9,
-        /// <summary>The intent was unable to recover from a fault.</summary>
+        /// <summary>The intent failed to recover from a fault.</summary>
         UNABLE_TO_RECOVER = 10,
     }
 
-    /// <summary>The number of defined events.</summary>
+    /// <summary>The total number of events.</summary>
     public const int EventIdCount = 11;
 
-    /// <summary>
-    /// States within the state machine.
-    /// </summary>
+    /// <summary>The possible states of the intent.</summary>
     public enum StateId : byte
     {
         /// <summary>The root state.</summary>
         ROOT = 0,
-        /// <summary>The intent is canceled.</summary>
+        /// <summary>The intent has been canceled.</summary>
         CANCELED = 1,
-        /// <summary>The intent is created.</summary>
+        /// <summary>The intent has been created.</summary>
         CREATED = 2,
-        /// <summary>The intent is faulted.</summary>
+        /// <summary>The intent has faulted.</summary>
         FAULTED = 3,
         /// <summary>The intent ran to completion.</summary>
         RAN_TO_COMPLETION = 4,
@@ -60,30 +56,27 @@ public partial struct IntentState : IIntent<IntentState.StateId, IntentState.Eve
         RUNNING = 5,
         /// <summary>Waiting for activation.</summary>
         WAITING_FOR_ACTIVATION = 6,
-        /// <summary>Waiting for children to complete.</summary>
+        /// <summary>Waiting for child tasks to complete.</summary>
         WAITING_FOR_CHILDREN_TO_COMPLETE = 7,
         /// <summary>Waiting to run.</summary>
         WAITING_TO_RUN = 8,
     }
 
-    /// <summary>The number of defined states.</summary>
+    /// <summary>The total number of states.</summary>
     public const int StateIdCount = 9;
 
-    /// <summary>
-    /// Used internally by state machine. Feel free to inspect, but don't modify.
-    /// </summary>
+    // Used internally by state machine. Feel free to inspect, but don't modify.
+    /// <summary>The current state ID.</summary>
     public StateId stateId;
 
-    /// <summary>
-    /// State machine constructor. Must be called before start or dispatch event functions. Not thread safe.
-    /// </summary>
+    // State machine constructor. Must be called before start or dispatch event functions. Not thread safe.
+    /// <summary>Initializes a new instance of the <see cref="IntentState"/> struct.</summary>
     public IntentState()
     {
     }
 
-    /// <summary>
-    /// Starts the state machine. Must be called before dispatching events. Not thread safe.
-    /// </summary>
+    // Starts the state machine. Must be called before dispatching events. Not thread safe.
+    /// <summary>Starts the state machine. Must be called before dispatching events.</summary>
     public void Start()
     {
         ROOT_enter();
@@ -113,10 +106,9 @@ public partial struct IntentState : IIntent<IntentState.StateId, IntentState.Eve
         } // end of behavior for ROOT
     }
 
-    /// <summary>
-    /// Dispatches an event to the state machine. Not thread safe.
-    /// Note! This function assumes that the `eventId` parameter is valid.
-    /// </summary>
+    // Dispatches an event to the state machine. Not thread safe.
+    // Note! This function assumes that the `eventId` parameter is valid.
+    /// <summary>Dispatches an event to the state machine.</summary>
     /// <param name="eventId">The event to dispatch.</param>
     public void DispatchEvent(EventId eventId)
     {
@@ -707,11 +699,8 @@ public partial struct IntentState : IIntent<IntentState.StateId, IntentState.Eve
         // No ancestor handles this event.
     }
 
-    /// <summary>
-    /// Converts a StateId to its string representation. Thread safe.
-    /// </summary>
-    /// <param name="id">The state ID.</param>
-    /// <returns>The string name of the state.</returns>
+    // Thread safe.
+    /// <summary>Converts a state ID to its string representation.</summary>
     public string StateIdToString(StateId id)
     {
         switch (id)
@@ -729,11 +718,8 @@ public partial struct IntentState : IIntent<IntentState.StateId, IntentState.Eve
         }
     }
 
-    /// <summary>
-    /// Converts an EventId to its string representation. Thread safe.
-    /// </summary>
-    /// <param name="id">The event ID.</param>
-    /// <returns>The string name of the event.</returns>
+    // Thread safe.
+    /// <summary>Converts an event ID to its string representation.</summary>
     public string EventIdToString(EventId id)
     {
         switch (id)

@@ -59,7 +59,7 @@ public class BoundedFloatBenchmarks
     }
 
     [Benchmark]
-    public string ToString()
+    public override string ToString()
     {
         return _value.ToString();
     }

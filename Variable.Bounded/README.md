@@ -1,10 +1,10 @@
 # 📊 Variable.Bounded
 
-**The star of the show.** Unbreakable numbers that never go out of bounds.
+**Health bars, Ammo, Stamina, Mana... Solved.** ✅
 
-`Variable.Bounded` provides high-performance structs (`BoundedFloat`, `BoundedInt`, `BoundedByte`) that automatically clamp their values between a `Min` and `Max`. No more `if (health < 0) health = 0`. It just works.
+**Variable.Bounded** gives you zero-allocation structs that *know their limits*. No more manually checking `if (health < 0) health = 0;` spread across 50 different scripts.
 
-[![NuGet](https://img.shields.io/nuget/v/Variable.Bounded?color=blue&label=NuGet)](https://www.nuget.org/packages/Variable.Bounded)
+---
 
 ## 📦 Installation
 
@@ -12,108 +12,111 @@
 dotnet add package Variable.Bounded
 ```
 
-## 🔥 Features
+---
 
-* **🛡️ Bulletproof Clamping**: Set it and forget it. Values *cannot* escape their bounds.
-* **🚀 Zero Allocation**: Pure `struct` types. No garbage collection. Fast enough for Update loops.
-* **➕ Natural Math**: Use `+`, `-`, `*`, `/`, `++`, `--` just like normal numbers.
-* **📏 Standardized**: Implements `IBoundedInfo` for easy UI integration.
+## 🚀 Features
 
-## 🛠️ Usage Guide
+* **🛡️ Bulletproof Clamping:** Values *cannot* escape their bounds.
+* **⚡ Zero Allocation:** Pure `struct` design. No GC pressure. Burst compatible.
+* **➕ Natural Math:** Use `+`, `-`, `++`, `--` just like normal numbers.
+* **📏 Standardized:** Implements `IBoundedInfo` for easy UI integration.
 
-### 1. The Basics
-Health bars, mana pools, stamina, shield capacity... anything that fills up and empties out.
+---
+
+## 📚 Types Available
+
+| Type | Use Case | Size |
+|------|----------|------|
+| `BoundedFloat` | Health, Mana, Stamina, Temperature | 12 bytes |
+| `BoundedInt` | Ammo count, Inventory slots, Skill points | 12 bytes |
+| `BoundedByte` | Small counts (0-255), Grid coordinates | 2 bytes |
+
+---
+
+## 🎮 Usage Guide
+
+### 1. The Basics (Health System)
 
 ```csharp
 using Variable.Bounded;
 
-// Create a health bar with Max=100, Min=0 (default), Current=100
+// Create health: 0 to 100
 var health = new BoundedFloat(100f);
 
 // Take damage
-health -= 45f;
-Console.WriteLine(health); // "55/100"
+health -= 25f;  // Automatically clamps! No if-checks needed.
 
-// Heal up
-health += 200f;
-Console.WriteLine(health); // "100/100" (Clamped!)
+// Check status
+if (health.IsEmpty())
+{
+    Die();
+}
 
-// Check states
-if (health.IsFull()) Console.WriteLine("Ready to fight!");
-if (health.IsEmpty()) Console.WriteLine("You died.");
+// Heal
+health += 50f;  // Clamps to 100. Can't over-heal.
+
+// UI
+float fillAmount = (float)health.GetRatio(); // 0.0 to 1.0
 ```
 
-### 2. Constructors for Every Occasion
+### 2. Advanced Ranges (Temperature)
+
+Not everything starts at 0!
 
 ```csharp
-// 1. Just Max (starts full, min is 0)
-var stamina = new BoundedFloat(100f);
+// Range: -50 to +50. Starting at 20.
+var temperature = new BoundedFloat(50f, -50f, 20f);
 
-// 2. Max and Current (starts with specific value, min is 0)
-var mana = new BoundedFloat(100f, 50f); // 50/100
-
-// 3. Full Custom Range (Min, Max, Current)
-// Great for temperature, reputation, or alignment systems (-100 to 100)
-var reputation = new BoundedFloat(100f, -100f, 0f);
+temperature -= 100f; // Clamps to -50f (Min)
 ```
 
-### 3. Implicit Magic
-You can treat these structs like regular numbers for reading values.
+### 3. Ammo Clips (Integers)
 
 ```csharp
-BoundedFloat speed = new BoundedFloat(100f);
+var ammo = new BoundedInt(12); // Max 12, Current 12
 
-// Implicit conversion to float
-float mySpeed = speed;
-
-// Compare directly
-if (speed > 50f)
-    RunFast();
+// Fire!
+if (!ammo.IsEmpty())
+{
+    ammo--;
+    FireBullet();
+}
 ```
 
-### 4. Advanced Tricks
+### 4. Tiny Values (Bytes)
 
-#### Percentage/Ratio
-Perfect for UI sliders.
-```csharp
-float fillAmount = health.GetRatio(); // Returns 0.0 to 1.0
-image.fillAmount = fillAmount;
-```
+Perfect for tile grids or small inventory stacks.
 
 #### Direct Modification
 Sometimes you need to set values directly (e.g., from a save file).
 ```csharp
-// Warning: Direct field access bypasses clamping!
-health.Current = 9999f;
-
-// Fix it with Normalize()
-health.Normalize();
-// health.Current is now clamped back to Max
+// Max 10 items
+var stack = new BoundedByte(10);
+stack += 5; // Clamped to 10
 ```
 
-#### BoundedInt and BoundedByte
-Need discrete values? We got you.
+---
+
+## ⚠️ Important: The "Public Field" Trap
+
+For maximum performance (Unity ECS/Burst), we expose public fields. This is great for speed, but requires care.
+
+### ❌ The Wrong Way
 ```csharp
-var ammo = new BoundedInt(30);
-ammo--;
-// ammo is 29/30
+health.Current = 9999f; // 😱 OH NO!
+// You just bypassed the limits! The struct doesn't know you changed this.
 ```
 
-## 🧩 Integration
-
-### Unity Inspector
-Since these are serializable structs, they show up beautifully in the Unity Inspector.
-
+### ✅ The Right Way (Extension Methods)
 ```csharp
-public class Player : MonoBehaviour
-{
-    public BoundedFloat Health; // Shows up as fields!
+health.Set(9999f); // Correct! Will clamp to Max.
+```
 
-    void Start()
-    {
-        Health.Normalize(); // Good practice to ensure bounds on start
-    }
-}
+### ✅ The "I Know What I'm Doing" Way
+If you *must* modify fields directly (e.g. inside a Job), you **must** normalize afterwards:
+```csharp
+health.Current += calculation;
+health.Normalize(); // Snaps value back to bounds
 ```
 
 ### Network Serialization
@@ -124,9 +127,31 @@ Found a bug? Want to add `BoundedLong`? PRs are welcome!
 See the [Contributing Guide](../CONTRIBUTING.md) for details.
 
 ---
+
+## 🔧 API Reference
+
+### Properties
+- `Current`: The raw value.
+- `Min`: The floor (0 for Byte).
+- `Max`: The ceiling.
+
+### Operations
+- `+`, `-`, `*`, `/`: Standard math (result is always clamped).
+- `++`, `--`: Increment/Decrement by 1.
+- `implicit operator`: Treat `BoundedFloat` as `float` for comparisons (`if (hp > 50)`).
+
+### Extensions
+- `IsFull()`: Is `Current == Max`?
+- `IsEmpty()`: Is `Current == Min`?
+- `GetRatio()`: Percentage (0.0 to 1.0).
+- `GetRange()`: Size of the range (`Max - Min`).
+- `TryConsume(amount)`: Tries to subtract. Returns `false` if not enough.
+
+---
+
 <div align="center">
 
 **Part of the [GameVariable](https://github.com/iafahim/GameVariable) Ecosystem**
-*Zero-allocation, high-performance game logic.*
+*Made with ❤️ for game developers*
 
 </div>

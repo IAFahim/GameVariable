@@ -1,10 +1,10 @@
 # ♻️ Variable.Regen
 
-**Grow it back.** Automatic regeneration (or decay) for your game values.
+**Automatic Resource Regeneration & Decay.** 🌱
 
-`Variable.Regen` adds a time component to `BoundedFloat`. It's perfect for mana that recharges over time, stamina that recovers when you stop running, or radiation poisoning that slowly decays.
+**Variable.Regen** wraps a bounded value with a `Rate` of change per second. It handles the math of "X per second" so you don't have to.
 
-[![NuGet](https://img.shields.io/nuget/v/Variable.Regen?color=blue&label=NuGet)](https://www.nuget.org/packages/Variable.Regen)
+---
 
 ## 📦 Installation
 
@@ -12,96 +12,71 @@
 dotnet add package Variable.Regen
 ```
 
-## 🔥 Features
+---
 
-* **⏳ Automatic Logic**: Just call `.Tick(deltaTime)` and let the math happen.
-* **📈 Positive or Negative**: Supports both regeneration (Mana +5/sec) and decay (Poison -2/sec).
-* **🎯 Precision**: Uses `BoundedFloat` under the hood, so it never overflows.
-* **⚡ Zero Allocation**: Still a struct. Still fast.
+## 🚀 Features
 
-## 🛠️ Usage Guide
+* **⚡ Auto-Tick:** Just call `.Tick(deltaTime)` and it handles the rest.
+* **🧪 Decay:** Negative rates work perfectly for poison, radiation, or hunger.
+* **🛡️ Clamped:** Respects Min/Max bounds automatically.
+* **🏗️ Zero Allocation:** Pure structs, Burst compatible.
 
-### 1. The Basics
+---
+
+## 🎮 Usage Guide
+
+### 1. Mana Regeneration (Positive Rate)
 
 ```csharp
 using Variable.Regen;
 
-// Create mana: Max=100, Current=0, RegenRate=10 per second
+// Max 100, Current 0, +10 per second
 var mana = new RegenFloat(100f, 0f, 10f);
 
-// In your Update loop:
-mana.Tick(Time.deltaTime);
-
-// Check value (accessed via .Value property)
-Console.WriteLine(mana.Value.Current);
-```
-
-### 2. Accessing the Data
-`RegenFloat` is a wrapper around `BoundedFloat`.
-
-```csharp
-// Get the underlying bounded value
-float current = mana.Value.Current;
-float max = mana.Value.Max;
-
-// Implicit conversion works too!
-float val = mana; // Returns Current
-```
-
-### 3. Decay (Negative Regen)
-Great for temporary shields, radiation, or drunk effects.
-
-```csharp
-// Shield: Starts at 100, decays by 5 per second
-var shield = new RegenFloat(100f, 100f, -5f);
-
-shield.Tick(1f); // shield is 95
-shield.Tick(1f); // shield is 90
-```
-
-### 4. Modifying Rate or Value
-
-```csharp
-// Changing the regeneration rate
-mana.Rate = 20f; // Turbo mode!
-
-// Consuming resource (e.g., casting a spell)
-// You modify the inner .Value
-mana.Value -= 50f;
-```
-
-### 5. Advanced: Custom Logic with `RegenLogic`
-If you want to keep your data pure and logic separate (Data-Oriented Design), you can use the static logic class directly.
-
-```csharp
-BoundedFloat myData = new BoundedFloat(100f);
-float myRate = 5f;
-
-// Apply regeneration step manually
-RegenLogic.Tick(ref myData, myRate, Time.deltaTime);
-```
-
-## 🧩 Common Patterns
-
-### Stamina System
-```csharp
-public struct StaminaSystem
+void Update()
 {
-    public RegenFloat Stamina;
+    // Automatically adds 10 * deltaTime
+    // Clamps to 100
+    mana.Tick(Time.deltaTime);
+}
+```
 
-    public void Update(float dt, bool isSprinting)
+### 2. Hunger/Decay (Negative Rate)
+
+```csharp
+// Max 100, Current 100, -5 per second
+var hunger = new RegenFloat(100f, 100f, -5f);
+
+void Update()
+{
+    // Automatically subtracts 5 * deltaTime
+    // Clamps to 0
+    hunger.Tick(Time.deltaTime);
+
+    if (hunger.IsEmpty())
     {
-        if (isSprinting)
-        {
-            // Drain while sprinting (negative regen effectively)
-            Stamina.Value -= 10f * dt;
-        }
-        else
-        {
-            // Regenerate when resting
-            Stamina.Tick(dt);
-        }
+        TakeStarvationDamage();
     }
+}
+```
+
+### 3. Modifying Values
+
+Since `RegenFloat` wraps a `BoundedFloat`, you can modify it directly or via extensions.
+
+```csharp
+// Consume mana (spell cast)
+// 'Value' gives access to the underlying BoundedFloat
+if (mana.Value.Current >= 20f)
+{
+    mana.Value.Current -= 20f;
+}
+
+// Or use Bounded extensions directly on the wrapper (implicit conversion often handles this,
+// but accessing .Value is clearer)
+if (mana.Value.TryConsume(20f))
+{
+    CastSpell();
 }
 ```
 
@@ -110,9 +85,23 @@ Found a bug? PRs are welcome!
 See the [Contributing Guide](../CONTRIBUTING.md) for details.
 
 ---
+
+## 🔧 API Reference
+
+### `RegenFloat`
+- `Value`: The underlying `BoundedFloat` (Current, Min, Max).
+- `Rate`: Units per second.
+
+### Extensions
+- `Tick(deltaTime)`: Applies `Rate * deltaTime` to `Value`.
+- `IsFull()`: Is it at max capacity?
+- `IsEmpty()`: Is it at min capacity?
+
+---
+
 <div align="center">
 
 **Part of the [GameVariable](https://github.com/iafahim/GameVariable) Ecosystem**
-*Zero-allocation, high-performance game logic.*
+*Made with ❤️ for game developers*
 
 </div>

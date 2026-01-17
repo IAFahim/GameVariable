@@ -1,10 +1,10 @@
 # ⏱️ Variable.Timer
 
-**Tick Tock.** Countdowns, Cooldowns, and Stopwatches.
+**Time management for games, solved.** ⌛
 
-`Variable.Timer` provides two essential structs: `Timer` (counts UP from 0) and `Cooldown` (counts DOWN from Duration). They replace messy float variables (`float timer = 0f;`) with a robust, semantic API that handles completion states, looping, and resetting.
+**Variable.Timer** gives you `Timer` (count up) and `Cooldown` (count down) structs that just work. No more spaghetti `float timer = 0f;` and `timer += Time.deltaTime;` checks scattered everywhere.
 
-[![NuGet](https://img.shields.io/nuget/v/Variable.Timer?color=blue&label=NuGet)](https://www.nuget.org/packages/Variable.Timer)
+---
 
 ## 📦 Installation
 
@@ -12,31 +12,45 @@
 dotnet add package Variable.Timer
 ```
 
-## 🔥 Features
+---
 
-* **⏳ Semantic**: `timer.IsFull()` is clearer than `timer >= duration`.
-* **🔄 Cooldowns**: Specialized struct for abilities that need to recharge.
-* **🛡️ Safe**: Auto-clamps values. No negative time.
-* **⚡ Zero Allocation**: Lightweight structs.
+## 🚀 Features
 
-## 🛠️ Usage Guide
+* **🔥 Cooldowns:** Manage ability availability effortlessly.
+* **⏳ Timers:** Track durations (casting, loading, buffs).
+* **🧠 Logic Separation:** Tick logic is separated from state.
+* **⚡ Zero Allocation:** Pure structs, Burst compatible.
 
-### 1. `Timer` (Counts UP 📈)
-Use this for duration-based events, like "Cast time" or "Fuse length".
+---
+
+## 🎮 Usage Guide
+
+### 1. Cooldowns (The "Can I do this yet?" Pattern)
 
 ```csharp
 using Variable.Timer;
 
-// Create a 5-second timer
-var bombFuse = new Timer(5f);
-
-// In Update:
-bombFuse.Tick(Time.deltaTime);
-
-// Check status
-if (bombFuse.IsFull())
+public class Hero
 {
-    Explode();
+    // 3 second cooldown, starts READY
+    public Cooldown DashCd = new Cooldown(3f);
+
+    public void Update(float dt)
+    {
+        // 1. Tick the cooldown
+        // TickAndCheckReady returns true if it hits 0 THIS FRAME
+        if (DashCd.TickAndCheckReady(dt))
+        {
+            PlayReadySound();
+        }
+
+        // 2. Use Ability
+        if (Input.GetButton("Dash") && DashCd.IsReady())
+        {
+            DoDash();
+            DashCd.Reset(); // Sets value to 3.0
+        }
+    }
 }
 
 // Get progress (0.0 to 1.0)
@@ -63,50 +77,61 @@ if (dashCd.IsReady()) // Checks if Current <= 0
 dashCd.Tick(Time.deltaTime); // Reduces Current by deltaTime
 ```
 
-### 3. Looping Timers
-Great for spawners.
+### 2. Timers (The "Are we there yet?" Pattern)
 
 ```csharp
-var spawner = new Timer(3f);
+// 5 second cast time
+public Timer CastTimer = new Timer(5f);
 
-spawner.Tick(dt);
-
-if (spawner.IsFull())
+public void Update(float dt)
 {
-    SpawnEnemy();
-    spawner.Reset(); // Back to 0
+    // TickAndCheckComplete returns true if it hits Duration THIS FRAME
+    if (CastTimer.TickAndCheckComplete(dt))
+    {
+        SpawnFireball();
+        CastTimer.Reset(); // Sets value to 0.0
+    }
 }
 ```
 
-### 4. Advanced: Modifying Time
-You can add or subtract time directly.
+### 3. Progress Bars (UI)
+
+Since `Timer` and `Cooldown` implement `IBoundedInfo`, they work with standard UI code!
 
 ```csharp
-// "Time Extension" powerup
-timer += 5f;
+// 0.0 to 1.0
+float progress = (float)CastTimer.GetRatio();
 
-// "Cooldown Reduction" buff
-cooldown -= 1f;
+// 1.0 to 0.0 (inverse for cooldowns usually)
+float cdProgress = (float)DashCd.GetProgress();
 ```
 
-## ❓ Timer vs Cooldown?
+---
 
-| Feature | `Timer` | `Cooldown` |
-|---------|---------|------------|
-| Direction | Counts **UP** (0 → Max) | Counts **DOWN** (Max → 0) |
-| Ready Condition | `IsFull()` | `IsReady()` / `IsEmpty()` |
-| Start Value | Usually 0 | Usually 0 (Ready) |
-| Reset Action | Sets to 0 | Sets to Max |
-| Use Case | Cast bars, Fuses, Durations | Spells, Dashes, Reloads |
+## 🔧 API Reference
 
-## 🤝 Contributing
-Found a bug? PRs are welcome!
-See the [Contributing Guide](../CONTRIBUTING.md) for details.
+### `Cooldown` (Counts DOWN 📉)
+- `Reset()`: Sets current time to Duration.
+- `Finish()`: Sets current time to 0 (Ready).
+- `IsReady()`: True if time <= 0.
+- `TickAndCheckReady(dt)`: Advances time, returns true if it *just* became ready.
+
+### `Timer` (Counts UP 📈)
+- `Reset()`: Sets current time to 0.
+- `Finish()`: Sets current time to Duration.
+- `IsFull()`: True if time >= Duration.
+- `TickAndCheckComplete(dt)`: Advances time, returns true if it *just* finished.
+
+### Common
+- `Current`: The raw time value.
+- `Duration`: The target time.
+- `GetRatio()`: Normalized progress.
 
 ---
+
 <div align="center">
 
 **Part of the [GameVariable](https://github.com/iafahim/GameVariable) Ecosystem**
-*Zero-allocation, high-performance game logic.*
+*Made with ❤️ for game developers*
 
 </div>
