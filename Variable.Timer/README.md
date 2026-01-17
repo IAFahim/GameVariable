@@ -1,64 +1,112 @@
-# Variable.Timer
+# ⏱️ Variable.Timer
 
-**Variable.Timer** provides robust structs for handling time-based mechanics like cooldowns, countdowns, and
-stopwatches. It simplifies `Time.deltaTime` management.
+**Tick Tock.** Countdowns, Cooldowns, and Stopwatches.
 
-## Installation
+`Variable.Timer` provides two essential structs: `Timer` (counts UP from 0) and `Cooldown` (counts DOWN from Duration). They replace messy float variables (`float timer = 0f;`) with a robust, semantic API that handles completion states, looping, and resetting.
+
+[![NuGet](https://img.shields.io/nuget/v/Variable.Timer?color=blue&label=NuGet)](https://www.nuget.org/packages/Variable.Timer)
+
+## 📦 Installation
 
 ```bash
 dotnet add package Variable.Timer
 ```
 
-## Features
+## 🔥 Features
 
-* **Timer**: A simple countdown timer.
-* **Cooldown**: A specialized timer for ability availability.
-* **State Queries**: `IsReady`, `IsFinished`, `TimeRemaining`, `Progress` (0-1).
+* **⏳ Semantic**: `timer.IsFull()` is clearer than `timer >= duration`.
+* **🔄 Cooldowns**: Specialized struct for abilities that need to recharge.
+* **🛡️ Safe**: Auto-clamps values. No negative time.
+* **⚡ Zero Allocation**: Lightweight structs.
 
-## Usage
+## 🛠️ Usage Guide
 
-### Ability Cooldown
+### 1. `Timer` (Counts UP 📈)
+Use this for duration-based events, like "Cast time" or "Fuse length".
 
 ```csharp
 using Variable.Timer;
 
-public class Ability
+// Create a 5-second timer
+var bombFuse = new Timer(5f);
+
+// In Update:
+bombFuse.Tick(Time.deltaTime);
+
+// Check status
+if (bombFuse.IsFull())
 {
-    public Cooldown DashCooldown = new Cooldown(5f); // 5 seconds
-
-    public void Update(float deltaTime)
-    {
-        // TickAndCheckReady returns true when cooldown hits zero
-        if (DashCooldown.TickAndCheckReady(deltaTime) && Input.GetKey(KeyCode.Space))
-        {
-            Cast();
-            DashCooldown.Reset(); // Start cooldown again
-        }
-    }
-
-    private void Cast()
-    {
-        // Perform ability
-        Debug.Log("Ability Cast!");
-    }
+    Explode();
 }
+
+// Get progress (0.0 to 1.0)
+uiSlider.value = bombFuse.GetRatio();
 ```
 
-### Match Timer
+### 2. `Cooldown` (Counts DOWN 📉)
+Use this for abilities, dashes, or weapon fire rates. It starts "Empty" (0) meaning "Ready".
 
 ```csharp
-Timer matchTime = new Timer(300f); // 5 minutes
+// Create a 2-second cooldown
+// Note: Cooldown logic is inverted.
+// 0 = Ready. Duration = On Cooldown.
+var dashCd = new Cooldown(2f);
 
-void Update(float dt) {
-    // TickAndCheckComplete returns true when timer finishes
-    if (matchTime.TickAndCheckComplete(dt)) {
-        EndMatch();
-    }
-    
-    Console.WriteLine($"Time Left: {matchTime.Duration - matchTime.Current}");
+// Try to dash
+if (dashCd.IsReady()) // Checks if Current <= 0
+{
+    Dash();
+    dashCd.Reset(); // Sets Current = Duration (2s)
+}
+
+// In Update:
+dashCd.Tick(Time.deltaTime); // Reduces Current by deltaTime
+```
+
+### 3. Looping Timers
+Great for spawners.
+
+```csharp
+var spawner = new Timer(3f);
+
+spawner.Tick(dt);
+
+if (spawner.IsFull())
+{
+    SpawnEnemy();
+    spawner.Reset(); // Back to 0
 }
 ```
 
+### 4. Advanced: Modifying Time
+You can add or subtract time directly.
+
+```csharp
+// "Time Extension" powerup
+timer += 5f;
+
+// "Cooldown Reduction" buff
+cooldown -= 1f;
+```
+
+## ❓ Timer vs Cooldown?
+
+| Feature | `Timer` | `Cooldown` |
+|---------|---------|------------|
+| Direction | Counts **UP** (0 → Max) | Counts **DOWN** (Max → 0) |
+| Ready Condition | `IsFull()` | `IsReady()` / `IsEmpty()` |
+| Start Value | Usually 0 | Usually 0 (Ready) |
+| Reset Action | Sets to 0 | Sets to Max |
+| Use Case | Cast bars, Fuses, Durations | Spells, Dashes, Reloads |
+
+## 🤝 Contributing
+Found a bug? PRs are welcome!
+See the [Contributing Guide](../CONTRIBUTING.md) for details.
+
 ---
-**Author:** Md Ishtiaq Ahamed Fahim  
-**GitHub:** [iafahim/GameVariable](https://github.com/iafahim/GameVariable)
+<div align="center">
+
+**Part of the [GameVariable](https://github.com/iafahim/GameVariable) Ecosystem**
+*Zero-allocation, high-performance game logic.*
+
+</div>
