@@ -96,6 +96,10 @@ var shield = new Shield { ... };
 if (shield.IsFull()) PlayShieldSound();
 ```
 
+## 🤝 Contributing
+Found a bug? Want to add a feature? PRs are welcome!
+See the [Contributing Guide](../CONTRIBUTING.md) for details.
+
 ---
 
 <div align="center">

@@ -52,6 +52,29 @@ public class Hero
         }
     }
 }
+
+// Get progress (0.0 to 1.0)
+uiSlider.value = bombFuse.GetRatio();
+```
+
+### 2. `Cooldown` (Counts DOWN 📉)
+Use this for abilities, dashes, or weapon fire rates. It starts "Empty" (0) meaning "Ready".
+
+```csharp
+// Create a 2-second cooldown
+// Note: Cooldown logic is inverted.
+// 0 = Ready. Duration = On Cooldown.
+var dashCd = new Cooldown(2f);
+
+// Try to dash
+if (dashCd.IsReady()) // Checks if Current <= 0
+{
+    Dash();
+    dashCd.Reset(); // Sets Current = Duration (2s)
+}
+
+// In Update:
+dashCd.Tick(Time.deltaTime); // Reduces Current by deltaTime
 ```
 
 ### 2. Timers (The "Are we there yet?" Pattern)

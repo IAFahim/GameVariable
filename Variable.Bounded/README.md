@@ -87,6 +87,8 @@ if (!ammo.IsEmpty())
 
 Perfect for tile grids or small inventory stacks.
 
+#### Direct Modification
+Sometimes you need to set values directly (e.g., from a save file).
 ```csharp
 // Max 10 items
 var stack = new BoundedByte(10);
@@ -116,6 +118,13 @@ If you *must* modify fields directly (e.g. inside a Job), you **must** normalize
 health.Current += calculation;
 health.Normalize(); // Snaps value back to bounds
 ```
+
+### Network Serialization
+These structs are "blittable" (except for reference types, which we don't use). You can memcpy them or send them over the network easily.
+
+## 🤝 Contributing
+Found a bug? Want to add `BoundedLong`? PRs are welcome!
+See the [Contributing Guide](../CONTRIBUTING.md) for details.
 
 ---
 

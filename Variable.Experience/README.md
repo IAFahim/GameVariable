@@ -75,6 +75,15 @@ public void AddExperience(int amount)
         PlayLevelUpSound();
     }
 }
+
+void LevelUp()
+{
+    int overflow = xp.GetOverflow();
+    int nextLevel = xp.Level + 1;
+    int nextMax = GetXpRequiredForLevel(nextLevel);
+
+    xp = new ExperienceInt(nextMax, overflow, nextLevel);
+}
 ```
 
 ### 3. Long XP (MMOs)
