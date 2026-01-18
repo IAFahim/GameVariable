@@ -14,8 +14,12 @@
         <RepositoryType>git</RepositoryType>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Variable.Core\Variable.Core.csproj"/>
