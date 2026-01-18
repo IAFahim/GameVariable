@@ -81,6 +81,21 @@ public void Fly(float dt)
 }
 ```
 
+## 🧩 Common Patterns
+
+### "Infinite" Ammo
+Just set the Reserve to a huge number, or handle the logic by only checking `Volume`.
+
+### Consumables
+Use `ReservoirInt` for potions.
+* Volume: 1 (Potion in hand)
+* Reserve: 99 (Potions in bag)
+* On Drink: `Volume--`, then `Refill()` to grab another.
+
+## 🤝 Contributing
+Found a bug? PRs are welcome!
+See the [Contributing Guide](../CONTRIBUTING.md) for details.
+
 ---
 
 ## 🔧 API Reference

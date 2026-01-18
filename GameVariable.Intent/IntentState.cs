@@ -4,6 +4,9 @@
 
 namespace GameVariable.Intent;
 
+/// <summary>
+/// Represents the state machine for an Intent.
+/// </summary>
 public partial struct IntentState : IIntent<IntentState.StateId, IntentState.EventId>
 {
     /// <summary>Events that trigger transitions in the state machine.</summary>

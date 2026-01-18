@@ -80,6 +80,10 @@ if (mana.Value.TryConsume(20f))
 }
 ```
 
+## 🤝 Contributing
+Found a bug? PRs are welcome!
+See the [Contributing Guide](../CONTRIBUTING.md) for details.
+
 ---
 
 ## 🔧 API Reference
