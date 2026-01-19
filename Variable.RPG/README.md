@@ -1,352 +1,176 @@
-﻿# Variable.RPG
+# 📈 Variable.RPG
 
-**Diamond Architecture for RPG Attributes and Damage Pipelines** — AAA-grade, zero-allocation, framework-agnostic.
+**Complex Stats made Simple.** ⚔️
 
----
+**Variable.RPG** is a high-performance system for handling RPG attributes (Strength, Agility) and complex damage calculations (Armor, Resistances, Elemental Damage).
 
-## 🎯 What Is This?
-
-A complete RPG stat system implementing the **Diamond Architecture** pattern:
-
-- **Aggregation**: Multiple damage sources → single result
-- **Pipeline**: Damage → Mitigation → Final Value
-- **Span-Based**: Works with arrays, NativeArray, BlobArray
-- **Pure Logic**: No framework dependencies
+It implements the **Diamond Architecture** pattern to ensure AAA-grade performance with zero garbage collection.
 
 ---
 
-## ⚡ Quick Example
+## 📦 Installation
+
+```bash
+dotnet add package Variable.RPG
+```
+
+---
+
+## 👶 ELI5: How does it work?
+
+Imagine you are building an RPG.
+
+1.  **Attributes:** Your player has `Strength: 10`. You find a ring that gives `+5 Strength`. You cast a buff that gives `+20% Strength`.
+    *   **Variable.RPG** calculates: `(10 + 5) * 1.20 = 18`. It handles all the math automatically.
+
+2.  **Damage:** An enemy hits you with a **Fireball** (100 Fire Damage) and a **Physical Punch** (50 Damage) *at the same time*.
+    *   You have **50% Fire Resistance**.
+    *   You have **10 Armor**.
+    *   **Variable.RPG** calculates:
+        *   Fire: `100 * 0.5 = 50` damage.
+        *   Physical: `50 - 10 = 40` damage.
+        *   **Total:** `90` damage.
+
+It does all this in **one fast step** without creating any temporary objects (garbage).
+
+---
+
+## 💎 The Diamond Architecture
+
+Why "Diamond"? Because of how damage flows.
+
+```mermaid
+graph LR
+    Source1[🔥 Fire Dmg] --> Aggregator
+    Source2[🗡️ Phys Dmg] --> Aggregator
+    Source3[⚡ Shock Dmg] --> Aggregator
+
+    Aggregator[💎 The Funnel] --> Pipeline
+
+    Pipeline[⚙️ Processing] --> Result
+
+    Pipeline --> |Apply Armor| Mitigation1
+    Pipeline --> |Apply Resist| Mitigation2
+
+    Result[💥 Final Damage]
+```
+
+1.  **Multiple Sources:** A grenade explodes (Fire + Physical + Shock).
+2.  **Aggregation:** All damage types are collected into a lightweight buffer.
+3.  **Pipeline:** The system looks up your stats (Armor, Resist) for each type.
+4.  **Single Result:** One final float value comes out.
+
+---
+
+## ⚡ Quick Start
 
 ```csharp
-// 1. Define your game's stats
+using Variable.RPG;
+
+// 1. Define your Stat IDs (Integers)
 public static class Stats {
     public const int Health = 0;
     public const int Armor = 1;
     public const int FireResist = 2;
 }
 
-// 2. Create attribute sheet
-var sheet = new AttributeSheet(10); // 10 stats
+// 2. Create your Character's Sheet
+var sheet = new AttributeSheet(10); // Capacity for 10 different stats
+
+// Set Base Values
 sheet.SetBase(Stats.Health, 100f);
-sheet.SetBase(Stats.Armor, 10f);
-sheet.SetBase(Stats.FireResist, 0.5f); // 50% resist
+sheet.SetBase(Stats.Armor, 10f);       // Blocks 10 flat damage
+sheet.SetBase(Stats.FireResist, 0.5f); // Blocks 50% fire damage
 
-// 3. Apply modifiers
+// 3. Add Modifiers (Buffs/Items)
+// "Add 5 flat, and boost by 20%"
 AttributeLogic.AddModifier(ref sheet.Attributes[Stats.Armor], 5f, 0.2f); 
-// +5 flat, +20% mult → (10+5)*1.2 = 18 armor
+// Armor is now: (10 + 5) * 1.2 = 18
 
-// 4. Take damage
-var damages = new[] {
-    new DamagePacket { ElementId = DmgTypes.Physical, Amount = 50f },
-    new DamagePacket { ElementId = DmgTypes.Fire, Amount = 100f }
+// 4. Take Complex Damage
+var incomingDamage = new[] {
+    new DamagePacket { ElementId = DmgTypes.Physical, Amount = 50f }, // Punch
+    new DamagePacket { ElementId = DmgTypes.Fire, Amount = 100f }     // Fireball
 };
 
+// 5. Calculate Final Damage
+// You need a "Config" that tells the system which Stat reduces which Element
 var finalDamage = DamageLogic.ResolveDamage(
     sheet.AsSpan(), 
-    damages, 
-    new MyConfig());
+    incomingDamage,
+    new MyGameConfig());
 
-// Result: (50-18) + (100*0.5) = 32 + 50 = 82 damage
+// Result Calculation:
+// Physical: 50 - 18 (Armor) = 32
+// Fire: 100 * (1 - 0.5) = 50
+// Total: 82 Damage
 ```
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ Technical Details
 
 ### Data Layer (Structs)
 
 ```csharp
-// Complex stat with modifiers
+// 1. Attribute: A single stat with modifiers
 public struct Attribute {
     public float Base;      // Base value (10 Strength)
     public float ModAdd;    // Flat bonuses (+5 from ring)
     public float ModMult;   // Multipliers (x1.2 from buff)
-    public float Min, Max;  // Bounds
-    public float CachedValue;
+    public float Min, Max;  // Clamping bounds
+    public float CachedValue; // The final calculated value
 }
 
-// Damage instance
+// 2. DamagePacket: A single instance of damage
 public struct DamagePacket {
     public int ElementId;   // Fire, Physical, etc.
-    public float Amount;
-    public int Flags;       // Critical, etc.
-}
-
-// Attribute container
-public struct AttributeSheet {
-    public Attribute[] Attributes;
+    public float Amount;    // 100.0
+    public int Flags;       // Critical, Backstab, etc.
 }
 ```
 
-### Logic Layer (Static Methods)
+### Configuration (Your Rules)
+
+You implement `IDamageConfig` to define the rules of your world.
 
 ```csharp
-// Attribute calculations
-public static class AttributeLogic {
-    void Recalculate(ref Attribute attr)
-    void AddModifier(ref Attribute attr, float flat, float percent)
-    void ClearModifiers(ref Attribute attr)
-    float GetValue(ref Attribute attr)
-}
-
-// Damage pipeline
-public static class DamageLogic {
-    float ResolveDamage(
-        Span<Attribute> stats,
-        ReadOnlySpan<DamagePacket> damages,
-        IDamageConfig config)
-}
-```
-
-### Configuration Layer (Interface)
-
-```csharp
-public interface IDamageConfig {
-    bool TryGetMitigationStat(
-        int elementId, 
-        out int statId, 
-        out bool isFlat)
-}
-```
-
----
-
-## 💎 Diamond Architecture
-
-The damage pipeline follows the Diamond pattern:
-
-```
-Multiple Sources         Aggregation         Single Result
-    ┌─────┐
-    │Fire │────┐
-    └─────┘    │
-    ┌─────┐    ├──→ [Pipeline] ──→  Total Damage
-    │Phys │────┤
-    └─────┘    │
-    ┌─────┐    │
-    │Shock│────┘
-    └─────┘
-```
-
-**Pipeline Steps**:
-
-1. **Lookup**: Map ElementID → MitigationStatID
-2. **Calculate**: Apply Armor (flat) or Resist (%)
-3. **Aggregate**: Sum all mitigated damages
-
----
-
-## 🎮 Usage Patterns
-
-### Basic Attributes
-
-```csharp
-var attr = new Attribute(10f); // Base 10
-AttributeLogic.AddModifier(ref attr, 5f, 0.5f); // +5 flat, +50% mult
-
-var value = AttributeLogic.GetValue(ref attr);
-// (10 + 5) * 1.5 = 22.5
-```
-
-### Bounded Attributes
-
-```csharp
-var health = new Attribute(100f, 0f, 200f); // Min 0, Max 200
-AttributeLogic.AddModifier(ref health, 150f, 0f);
-
-var val = AttributeLogic.GetValue(ref health);
-// 100 + 150 = 250, clamped to 200
-```
-
-### Damage Configuration
-
-```csharp
-public struct MyConfig : IDamageConfig {
-    public bool TryGetMitigationStat(
-        int elementId, 
-        out int statId, 
-        out bool isFlat)
+public struct MyGameConfig : IDamageConfig {
+    public bool TryGetMitigationStat(int elementId, out int statId, out bool isFlat)
     {
-        switch (elementId) {
-            case DmgTypes.Physical:
-                statId = Stats.Armor;
-                isFlat = true;  // Flat reduction
-                return true;
-            
-            case DmgTypes.Fire:
-                statId = Stats.FireResist;
-                isFlat = false; // Percentage
-                return true;
-            
-            default:
-                statId = -1;
-                isFlat = false;
-                return false; // No mitigation
+        // "Physical damage is blocked by Armor (Flat)"
+        if (elementId == DmgTypes.Physical) {
+            statId = Stats.Armor;
+            isFlat = true;
+            return true;
         }
+
+        // "Fire damage is resisted by FireResist (Percentage)"
+        if (elementId == DmgTypes.Fire) {
+            statId = Stats.FireResist;
+            isFlat = false;
+            return true;
+        }
+
+        return false; // No defense against this!
     }
 }
-```
-
-### Damage Resolution
-
-```csharp
-// Multi-hit attack (grenade)
-var damages = new[] {
-    new DamagePacket { ElementId = DmgTypes.Fire, Amount = 80f },
-    new DamagePacket { ElementId = DmgTypes.Physical, Amount = 20f },
-    new DamagePacket { ElementId = DmgTypes.Shock, Amount = 10f }
-};
-
-var totalDamage = DamageLogic.ResolveDamage(
-    defender.Attributes.AsSpan(),
-    damages,
-    gameConfig);
-
-// Apply to health
-defender.Attributes[Stats.Health].Base -= totalDamage;
 ```
 
 ---
 
 ## 🚀 Advanced Features
 
-### Span-Based (Zero Copy)
-
-```csharp
-// Works with managed arrays
-Attribute[] stats = new Attribute[10];
-DamageLogic.ResolveDamage(stats.AsSpan(), damages, config);
-
-// Works with NativeArray (Unity Jobs)
-NativeArray<Attribute> stats = ...;
-DamageLogic.ResolveDamage(stats, damages, config);
-
-// Works with stackalloc (zero allocation)
-Span<Attribute> stats = stackalloc Attribute[5];
-DamageLogic.ResolveDamage(stats, damages, config);
-```
-
-### Amplified Damage (Negative Resistance)
-
-```csharp
-// -50% fire resist = +50% damage taken
-var attr = new Attribute(-0.5f, -1f, 1f); // Allow negative
-
-var dmg = new DamagePacket { ElementId = DmgTypes.Fire, Amount = 100f };
-// 100 * (1 - (-0.5)) = 150 damage
-```
-
-### Over-Armor (Damage Reduction to 0)
-
-```csharp
-sheet.SetBase(Stats.Armor, 100f);
-
-var dmg = new DamagePacket { ElementId = DmgTypes.Physical, Amount = 10f };
-// 10 - 100 = -90, clamped to 0
-```
+*   **Zero Allocation:** Designed for Unity's **Burst Compiler** and high-performance servers.
+*   **Span-Based:** APIs use `Span<T>`, so they work with arrays, `List<T>`, `NativeArray<T>`, or `stackalloc`.
+*   **Negative Resistance:** If resistance is negative (e.g. `-0.5`), damage is amplified (150% damage taken).
+*   **Over-Armor:** If Armor is higher than damage, damage is clamped to 0 (no healing from attacks).
 
 ---
 
-## 📊 Formula Reference
+<div align="center">
 
-### Attribute Calculation
+**Part of the [GameVariable](https://github.com/iafahim/GameVariable) Ecosystem**
+*Made with ❤️ for game developers*
 
-```
-Value = (Base + ModAdd) * ModMult
-Clamped to [Min, Max]
-```
-
-**Example**:
-
-```
-Base = 10
-ModAdd = +5 (from items)
-ModMult = 1.2 (1.0 + 0.2 from buffs)
-
-Value = (10 + 5) * 1.2 = 18
-```
-
-### Damage Mitigation
-
-**Flat (Armor)**:
-
-```
-FinalDamage = IncomingDamage - Armor
-Clamped to >= 0
-```
-
-**Percentage (Resistance)**:
-
-```
-FinalDamage = IncomingDamage * (1 - Resistance)
-No clamp (allows amplification)
-```
-
----
-
-## ✨ Features
-
-✅ **Zero Allocation** — No GC in hot paths   
-✅ **Span-Based** — NativeArray, BlobArray, stackalloc compatible  
-✅ **Framework Agnostic** — No Unity/Unreal dependencies  
-✅ **Type-Safe Config** — Interface for game-specific rules  
-✅ **Aggregation** — Multiple damage sources in one call  
-✅ **Bounded** — Min/Max enforcement  
-✅ **Tested** — 14 unit tests covering edge cases
-
----
-
-## 🧪 Test Coverage
-
-- ✅ Diamond pattern (Base + Flat + Mult)
-- ✅ Min/Max clamping
-- ✅ Armor (flat mitigation)
-- ✅ Resistance (percentage mitigation)
-- ✅ Mixed damage types
-- ✅ Negative damage (over-armor)
-- ✅ Amplified damage (negative resist)
-- ✅ Unmapped elements (full damage)
-- ✅ Empty damage arrays
-
----
-
-## 🎯 Use Cases
-
-### Action RPG
-
-```csharp
-// Player takes multi-element hit
-var damages = new[] {
-    new DamagePacket { ElementId = Fire, Amount = 100 },
-    new DamagePacket { ElementId = Physical, Amount = 50 }
-};
-```
-
-### Turn-Based RPG
-
-```csharp
-// Calculate damage before animation
-var preview = DamageLogic.ResolveDamage(target.Stats.AsSpan(), spell.Damages, config);
-// Show preview, then apply
-```
-
-### MMO
-
-```csharp
-// Server authoritative damage
-for (var i = 0; i < targets.Length; i++) {
-    var dmg = DamageLogic.ResolveDamage(targets[i].Stats, aoe.Damages, rules);
-    ApplyDamage(targets[i], dmg);
-}
-```
-
----
-
-## 📚 Documentation
-
-- **This README** — API reference & examples
-- **Tests** — Variable.RPG.Tests (14 tests, 100% coverage)
-
----
-
-**Diamond Architecture. Zero Allocation. AAA-Grade.** 💎
+</div>

@@ -120,6 +120,61 @@ graph LR
 
 ---
 
+## 📜 Mega Cheat Sheet
+
+Copy-paste ready one-liners for every situation.
+
+### 📊 Variable.Bounded
+```csharp
+var hp = new BoundedFloat(100f);        // 0 to 100
+var ammo = new BoundedInt(30);          // 0 to 30
+var temp = new BoundedFloat(50f, -50f, 20f); // -50 to +50
+if (hp.IsEmpty()) Die();
+if (hp.IsFull()) StopHealing();
+float pct = (float)hp.GetRatio();       // 0.0 to 1.0
+```
+
+### ⏱️ Variable.Timer
+```csharp
+var cooldown = new Cooldown(3f);        // Count DOWN (3 -> 0)
+var castTime = new Timer(5f);           // Count UP (0 -> 5)
+cooldown.Tick(Time.deltaTime);          // Update it
+if (cooldown.IsReady()) Cast();         // Check it
+cooldown.Reset();                       // Restart it
+```
+
+### ♻️ Variable.Regen
+```csharp
+// Max 100, Current 0, +5 per second
+var mana = new RegenFloat(100f, 0f, 5f);
+mana.Tick(Time.deltaTime);              // Auto-adds 5 * dt
+```
+
+### 🔋 Variable.Reservoir
+```csharp
+// Clip: 30, Backpack: 120
+var weapon = new ReservoirInt(30, 30, 120);
+weapon.Refill(); // Moves ammo from Backpack to Clip
+```
+
+### ⭐ Variable.Experience
+```csharp
+// Need 1000 XP to level up
+var xp = new ExperienceInt(1000);
+xp.Add(1500); // Auto-levels up! Handles overflow.
+Console.WriteLine($"Level: {xp.Level}");
+```
+
+### 🎒 Variable.Inventory
+```csharp
+// Try to add gold, respect max capacity
+InventoryLogic.TryAddPartial(ref gold, 100, maxGold, out _, out float overflow);
+// Try to craft (remove exact amount)
+if (InventoryLogic.TryRemoveExact(ref wood, 5)) Craft();
+```
+
+---
+
 ## 🚀 Quick Start
 
 ### Installation
@@ -180,33 +235,6 @@ public struct Hero
             Console.WriteLine("KA-BOOM! 🔥");
         }
     }
-}
-```
-
----
-
-## 💡 Cool Tricks
-
-### Temperature System (Negative Ranges) ❄️🔥
-`BoundedFloat` isn't just for 0-100. It handles negative ranges perfectly.
-
-```csharp
-// Range: -50°C to +50°C. Starts at 20°C.
-var temp = new BoundedFloat(50f, -50f, 20f);
-
-temp -= 100f; // Clamped to -50f (Absolute Zero-ish)
-
-if (temp.IsEmpty()) ApplyFrostbite();
-```
-
-### Progress Bars in UI 📊
-All bounded types implement `IBoundedInfo`. You can write **one** UI script for everything!
-
-```csharp
-public void UpdateBar(IBoundedInfo info)
-{
-    // Works for Health, Mana, Timer, XP... anything!
-    barImage.fillAmount = (float)info.GetRatio();
 }
 ```
 
