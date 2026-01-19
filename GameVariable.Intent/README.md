@@ -1,23 +1,48 @@
-# GameVariable.Intent
+# 🧠 GameVariable.Intent
 
-**GameVariable.Intent** provides a high-performance, zero-allocation Hierarchical State Machine (HSM) implementation. It is designed for AI decision-making, character logic, and complex state management in games.
+**The Brains of the Operation.** 🤖
 
-## Installation
+**GameVariable.Intent** is a high-performance, zero-allocation Hierarchical State Machine (HSM). It's designed to manage complex AI states, ability lifecycles, and mission logic without the spaghetti code of nested boolean flags.
+
+---
+
+## 📦 Installation
 
 ```bash
 dotnet add package GameVariable.Intent
 ```
 
-## Features
+---
 
-* **IntentState**: A struct-based state machine optimized for performance.
-* **Zero Allocation**: No garbage collection overhead during state transitions.
-* **Event-Driven**: Dispatch events to trigger transitions.
-* **IIntent Interface**: Standard interface for integration.
+## ❓ Why do I need this?
 
-## State Machine Diagram
+You might be using `enum` or `bool` flags to manage state:
 
-The `IntentState` implements the following flow:
+```csharp
+// ❌ The Spaghetti Way
+if (isAttacking) {
+    if (!isStunned && !isDead) {
+         // ...
+    }
+} else if (isWalking) {
+    // ...
+}
+```
+
+**GameVariable.Intent** gives you a formal, rigorous State Machine that enforces valid transitions.
+*   You cannot "Start Running" if you are "Canceled".
+*   You cannot "Complete" if you haven't "Started".
+
+It's perfect for:
+*   **AI Behaviors:** (Idle -> Chase -> Attack -> Flee)
+*   **Ability Logic:** (Charging -> Casting -> Channeling -> Cooldown)
+*   **Mission Objectives:** (Locked -> Active -> Completed)
+
+---
+
+## 📊 The Lifecycle Diagram
+
+This isn't just a random graph. It's the lifecycle of *getting things done*.
 
 ```mermaid
 stateDiagram-v2
@@ -69,7 +94,9 @@ stateDiagram-v2
     FAULTED --> CANCELED : UNABLE_TO_RECOVER
 ```
 
-## Usage
+---
+
+## 🎮 Usage Guide
 
 ### 1. Basic State Machine
 
@@ -80,20 +107,22 @@ using GameVariable.Intent;
 var intent = new IntentState();
 intent.Start(); // Enters initial state (CREATED)
 
-// Dispatch events to transition
+// "I'm ready, but not activated yet."
 intent.DispatchEvent(IntentState.EventId.GET_READY);
 // State: WAITING_FOR_ACTIVATION
 
+// "Go!"
 intent.DispatchEvent(IntentState.EventId.ACTIVATED);
 // State: WAITING_TO_RUN
 
+// "Action!"
 intent.DispatchEvent(IntentState.EventId.START_RUNNING);
 // State: RUNNING
 ```
 
 ### 2. Handling Logic Updates
 
-In your game loop, check the state and execute logic:
+In your game loop, check `stateId` to decide what to do.
 
 ```csharp
 public void Update()
@@ -101,41 +130,63 @@ public void Update()
     switch (intent.stateId)
     {
         case IntentState.StateId.RUNNING:
-            ExecuteTask();
-            if (TaskIsComplete())
+            // Do the actual work here
+            MoveTowardsPlayer();
+
+            if (ReachedPlayer())
                 intent.DispatchEvent(IntentState.EventId.COMPLETED_SUCCESSFULLY);
             break;
 
         case IntentState.StateId.FAULTED:
-            Debug.LogError("Task failed!");
+            // Handle errors
+            Debug.LogError("Task failed! Retrying...");
             intent.DispatchEvent(IntentState.EventId.RECOVER_RETRY);
             break;
     }
 }
 ```
 
-### 3. Hierarchical Tasks
+### 3. Hierarchical Tasks (Sub-Tasks)
 
-You can use the `CHILD_TASK_CREATED` event to suspend the current task while a sub-task completes.
+The killer feature: **Sub-Tasks**.
+If an AI needs to "Open Door" before it can "Enter Room", you can pause the main task.
 
 ```csharp
-// In RUNNING state
-if (NeedsSubTask())
+// In RUNNING state...
+if (DoorIsClosed())
 {
-    SpawnChildTask();
+    // 1. Pause this task
     intent.DispatchEvent(IntentState.EventId.CHILD_TASK_CREATED);
-    // State: WAITING_FOR_CHILDREN_TO_COMPLETE
+    // State is now: WAITING_FOR_CHILDREN_TO_COMPLETE
+
+    // 2. Start the child task
+    doorOpeningTask.Start();
 }
 
-// ... later when child completes ...
-intent.DispatchEvent(IntentState.EventId.ALL_CHILDREN_COMPLETED);
-// State: RUNNING (resumes)
+// ... later ...
+
+if (doorOpeningTask.IsComplete)
+{
+    // 3. Resume main task
+    intent.DispatchEvent(IntentState.EventId.ALL_CHILDREN_COMPLETED);
+    // State is back to: RUNNING
+}
 ```
 
-## Architecture
+---
 
-This package uses code generation (StateSmith) to produce highly optimized, flat switch-case state machines. The `IntentState` struct encapsulates the entire state machine logic, ensuring cache coherency and eliminating heap allocations.
+## 🏗️ Architecture
+
+This package is powered by a **StateSmith** generated state machine. It is a single `struct` containing a flat `switch` statement, ensuring:
+*   **Zero Allocation:** No `new State()` classes.
+*   **Cache Locality:** Everything is in one struct.
+*   **Predictability:** No dynamic dispatch or v-tables.
 
 ---
-**Author:** Md Ishtiaq Ahamed Fahim  
-**GitHub:** [iafahim/GameVariable](https://github.com/iafahim/GameVariable)
+
+<div align="center">
+
+**Part of the [GameVariable](https://github.com/iafahim/GameVariable) Ecosystem**
+*Made with ❤️ for game developers*
+
+</div>
