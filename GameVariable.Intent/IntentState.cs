@@ -4,6 +4,10 @@
 
 namespace GameVariable.Intent;
 
+/// <summary>
+///     The main struct definition for the IntentState state machine.
+///     For full documentation, see IntentState.Docs.cs.
+/// </summary>
 public partial struct IntentState : IIntent<IntentState.StateId, IntentState.EventId>
 {
     /// <summary>Events that trigger transitions in the state machine.</summary>

@@ -220,6 +220,75 @@ public void UpdateBar(IBoundedInfo info)
 
 ---
 
+## 📚 Unified API Reference
+
+A cheat sheet for the most common operations across the ecosystem.
+
+### `Variable.Bounded`
+*Health, Mana, Stamina*
+| API | Description |
+|-----|-------------|
+| `new BoundedFloat(max)` | Creates a value clamped between 0 and `max`. |
+| `val += amount` | Adds `amount` and automatically clamps to `Max`. |
+| `val -= amount` | Subtracts `amount` and automatically clamps to `Min`. |
+| `val.Set(amount)` | Sets the value (clamped). |
+| `val.IsFull()` | Returns `true` if `Current == Max`. |
+| `val.IsEmpty()` | Returns `true` if `Current == Min`. |
+| `val.GetRatio()` | Returns progress (0.0 to 1.0). |
+
+### `Variable.Timer`
+*Cooldowns, Timers*
+| API | Description |
+|-----|-------------|
+| `new Cooldown(duration)` | Counts **DOWN** from `Duration` to 0. |
+| `new Timer(duration)` | Counts **UP** from 0 to `Duration`. |
+| `t.Tick(dt)` | Advances time by `dt`. |
+| `t.Reset()` | Restarts the timer/cooldown. |
+| `t.IsReady()` | Returns `true` if Cooldown <= 0. |
+| `t.IsFinished()` | Returns `true` if Timer >= Duration. |
+
+### `Variable.Regen`
+*Shields, Energy, Hunger*
+| API | Description |
+|-----|-------------|
+| `new RegenFloat(max, min, rate)` | Wraps a value that changes by `rate` per second. |
+| `r.Tick(dt)` | Applies `rate * dt` to the value. |
+| `r.Value` | Access the underlying `BoundedFloat`. |
+
+### `Variable.Reservoir`
+*Ammo, Batteries*
+| API | Description |
+|-----|-------------|
+| `new ReservoirInt(capacity, initial)` | Manage a reserve (total) and a volume (current clip). |
+| `r.Reload()` | Moves logic from Reserve to Volume to fill it. |
+| `r.TryConsume(1)` | Tries to use 1 from Volume. Returns success bool. |
+
+### `Variable.Experience`
+*Leveling Up*
+| API | Description |
+|-----|-------------|
+| `new ExperienceInt(table)` | Creates XP manager using a level curve table. |
+| `xp.Add(amount)` | Adds XP, automatically leveling up if needed. |
+| `xp.Level` | The current level. |
+| `xp.GetRatio()` | % progress towards the *next* level. |
+
+### `Variable.Input`
+*Combos, Buffering*
+| API | Description |
+|-----|-------------|
+| `buffer.RegisterInput(id)` | Stores an input press in the ring buffer. |
+| `state.TryUpdate(...)` | Checks if current inputs trigger a combo transition. |
+
+### `GameVariable.Intent`
+*State Machines*
+| API | Description |
+|-----|-------------|
+| `intent.Start()` | Enters the initial state. |
+| `intent.DispatchEvent(id)` | Triggers a state transition based on the event. |
+| `intent.stateId` | The current active state enum. |
+
+---
+
 ## 🤝 Contributing
 
 We love PRs! Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
