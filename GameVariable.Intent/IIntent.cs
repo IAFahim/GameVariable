@@ -18,18 +18,4 @@ public interface IIntent<in TState, in TEvent>
     /// </summary>
     /// <param name="eventId">The event to dispatch.</param>
     public void DispatchEvent(TEvent eventId);
-
-    /// <summary>
-    ///     Converts an event ID to its string representation.
-    /// </summary>
-    /// <param name="eventId">The event ID.</param>
-    /// <returns>The string representation of the event.</returns>
-    public string EventIdToString(TEvent eventId);
-
-    /// <summary>
-    ///     Converts a state ID to its string representation.
-    /// </summary>
-    /// <param name="id">The state ID.</param>
-    /// <returns>The string representation of the state.</returns>
-    public string StateIdToString(TState id);
 }

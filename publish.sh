@@ -127,8 +127,13 @@ for PROJ_PATH in "${SELECTED_PROJECTS[@]}"; do
     echo -e "   📦 Packing..."
     dotnet pack "$PROJ_PATH" --configuration Release --output "$OUTPUT_DIR" /p:ContinuousIntegrationBuild=true > /dev/null
 
-    # Find the package we just created
-    PACKAGE_NAME=$(basename "$PROJ_PATH" .csproj)
+    # Find the package we just created (read PackageId from csproj, fallback to filename)
+    PACKAGE_ID=$(grep -oP '(?<=<PackageId>).*?(?=</PackageId>)' "$PROJ_PATH" || true)
+    if [ -z "$PACKAGE_ID" ]; then
+        PACKAGE_NAME=$(basename "$PROJ_PATH" .csproj)
+    else
+        PACKAGE_NAME="$PACKAGE_ID"
+    fi
     NUPKG="$OUTPUT_DIR/$PACKAGE_NAME.$NEW_VERSION.nupkg"
 
     if [ ! -f "$NUPKG" ]; then

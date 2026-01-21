@@ -5,7 +5,7 @@
 ## Installation
 
 ```bash
-dotnet add package GameVariable.Intent
+dotnet add package Variable.Intent
 ```
 
 ## Features

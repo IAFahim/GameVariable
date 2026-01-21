@@ -1,3 +1,5 @@
+using System;
+
 namespace GameVariable.Intent;
 
 /// <summary>
@@ -16,6 +18,7 @@ namespace GameVariable.Intent;
 ///         <see cref="StateId.RAN_TO_COMPLETION" />.
 ///     </para>
 /// </remarks>
+[Serializable]
 public partial struct IntentState
 {
 }

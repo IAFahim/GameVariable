@@ -4,7 +4,8 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Version>1.0.12</Version>
+        <Version>1.0.18</Version>
+        <PackageId>Variable.Intent</PackageId>
         <Authors>Md Ishtiaq Ahamed Fahim</Authors>
         <Company>IAFahim</Company>
         <Description>High-performance, zero-allocation Hierarchical State Machine (HSM) for AI and game logic.</Description>
@@ -14,6 +15,11 @@
         <RepositoryType>git</RepositoryType>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
 
 </Project>
