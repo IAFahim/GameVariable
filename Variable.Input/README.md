@@ -177,7 +177,7 @@ public class VisualComboController : MonoBehaviour
         _state.SignalActionFinished();
         
         // Check if there's a buffered input waiting
-        if (_state.TryUpdate(ref _buffer, _graph, out int nextAction))
+        if (_state.TryUpdate(ref _buffer, new ComboGraph(_nodes, _edges), out int nextAction))
         {
             ExecuteMove(nextAction);
         }
@@ -294,24 +294,6 @@ public class ComboAsset : ScriptableObject
         
         return (nodes, edges);
     }
-    
-    #if UNITY_EDITOR
-    [ContextMenu("Validate")]
-    void Validate()
-    {
-        for (int i = 0; i < Moves.Count; i++)
-        {
-            foreach (var t in Moves[i].Transitions)
-            {
-                if (t.GoToMoveIndex < 0 || t.GoToMoveIndex >= Moves.Count)
-                {
-                    Debug.LogError($"Move '{Moves[i].Name}' has invalid target index: {t.GoToMoveIndex}");
-                }
-            }
-        }
-        Debug.Log("<color=green>Validation passed!</color>");
-    }
-    #endif
 }
 ```
 
@@ -525,53 +507,6 @@ graph LR
     style E1 fill:#1a1a1a,stroke:#666,stroke-width:1px,color:#fff
 ```
 
-### ECS/Jobs Usage
-
-```csharp
-// For Unity DOTS - works with NativeArray and BlobAssets
-using Unity.Collections;
-using Unity.Jobs;
-using Variable.Input;
-
-public struct ProcessComboJob : IJobParallelFor
-{
-    [ReadOnly] public NativeArray<ComboNode> Nodes;
-    [ReadOnly] public NativeArray<ComboEdge> Edges;
-    public NativeArray<ComboState> States;
-    public NativeArray<InputRingBuffer> Buffers;
-    public NativeArray<int> ResultActions;
-    
-    public void Execute(int index)
-    {
-        var state = States[index];
-        var buffer = Buffers[index];
-        
-        // Create span for inputs
-        var inputs = MemoryMarshal.CreateSpan(ref buffer.Input0, 8);
-        
-        if (ComboLogic.TryAdvanceState(
-            ref state.CurrentNodeIndex,
-            ref state.IsActionBusy,
-            ref buffer.Head,
-            ref buffer.Count,
-            inputs,
-            Nodes,
-            Edges,
-            out int action))
-        {
-            ResultActions[index] = action;
-        }
-        else
-        {
-            ResultActions[index] = -1;
-        }
-        
-        States[index] = state;
-        Buffers[index] = buffer;
-    }
-}
-```
-
 ---
 
 ## 🔧 API Quick Reference
@@ -622,16 +557,6 @@ buffer.Clear();
 | `InputRingBuffer.cs` | Stores buffered button presses           |
 | `ComboLogic.*.cs`    | Core traversal logic (stateless)         |
 | `*Extensions.cs`     | Convenience methods                      |
-
----
-
-## 🎯 Best Practices
-
-1. **Index 0 is always "Idle"** - The starting/reset point
-2. **Use meaningful ActionIDs** - e.g., `100-199` for light attacks, `200-299` for heavy
-3. **Call `SignalActionFinished()`** from Animation Events for precise timing
-4. **Buffer inputs generously** - Players appreciate responsive input
-5. **Validate graphs in Editor** - Check for invalid indices before shipping
 
 ---
 

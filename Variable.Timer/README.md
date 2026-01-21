@@ -14,6 +14,13 @@ dotnet add package Variable.Timer
 
 ---
 
+## 🧠 Mental Model
+
+- **Cooldown**: Think of an **Hourglass**. You flip it (`Reset`), sand runs down. When empty (`IsReady`), you can flip it again.
+- **Timer**: Think of a **Stopwatch**. You start at 0 (`Reset`), it counts up. When it hits the target (`Duration`), it's done (`IsFull`).
+
+---
+
 ## 🚀 Features
 
 * **🔥 Cooldowns:** Manage ability availability effortlessly.
