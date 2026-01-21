@@ -210,6 +210,56 @@ defender.Attributes[Stats.Health].Base -= totalDamage;
 
 ## 🚀 Advanced Features
 
+### Condition System
+
+Query stats with zero-allocation conditions:
+
+```csharp
+// "Is Health < 20% of Max?"
+var lowHp = RpgStatCondition.PercentOfMax(StatComparisonOp.LessThan, 0.2f);
+
+if (health.Satisfies(lowHp)) {
+    // Trigger emergency healing
+}
+
+// "Is Strength >= 50?" (Equipment requirement)
+var canEquip = RpgStatCondition.Absolute(StatComparisonOp.GreaterOrEqual, 50f);
+
+// "Is Multiplier > 5x?" (Buff stacking check)
+var hugeBuff = RpgStatCondition.FieldCheck(
+    RpgStatField.ModMult,
+    StatComparisonOp.GreaterThan,
+    5.0f
+);
+
+// Multiple conditions (AND logic)
+var requirements = new[] {
+    RpgStatCondition.Absolute(StatComparisonOp.GreaterOrEqual, 50f),
+    RpgStatCondition.PercentOfMax(StatComparisonOp.GreaterThan, 0.5f)
+};
+
+if (strength.SatisfiesAll(requirements)) {
+    // All requirements met
+}
+
+// Count satisfied conditions (progression system)
+var count = stat.CountSatisfied(milestones);
+if (stat.SatisfiesAtLeast(milestones, 3)) {
+    // At least 3 of 5 requirements passed
+}
+```
+
+**Supported Operations**:
+- `Equal`, `NotEqual`
+- `GreaterThan`, `GreaterOrEqual`
+- `LessThan`, `LessOrEqual`
+
+**Reference Sources**:
+- `FixedValue` — Raw numbers (e.g., 50)
+- `Max` — Percentage of max (e.g., 20% of Max)
+- `Base` — Percentage of base (e.g., 150% of Base)
+- `Value` — Percentage of current (e.g., 80% of Current)
+
 ### Span-Based (Zero Copy)
 
 ```csharp
@@ -286,13 +336,14 @@ No clamp (allows amplification)
 
 ## ✨ Features
 
-✅ **Zero Allocation** — No GC in hot paths   
-✅ **Span-Based** — NativeArray, BlobArray, stackalloc compatible  
-✅ **Framework Agnostic** — No Unity/Unreal dependencies  
-✅ **Type-Safe Config** — Interface for game-specific rules  
-✅ **Aggregation** — Multiple damage sources in one call  
-✅ **Bounded** — Min/Max enforcement  
-✅ **Tested** — 14 unit tests covering edge cases
+✅ **Zero Allocation** — No GC in hot paths
+✅ **Span-Based** — NativeArray, BlobArray, stackalloc compatible
+✅ **Framework Agnostic** — No Unity/Unreal dependencies
+✅ **Type-Safe Config** — Interface for game-specific rules
+✅ **Aggregation** — Multiple damage sources in one call
+✅ **Bounded** — Min/Max enforcement
+✅ **Condition System** — Query stats with zero-allocation conditions
+✅ **Tested** — Comprehensive unit tests covering edge cases
 
 ---
 
@@ -345,7 +396,8 @@ for (var i = 0; i < targets.Length; i++) {
 ## 📚 Documentation
 
 - **This README** — API reference & examples
-- **Tests** — Variable.RPG.Tests (14 tests, 100% coverage)
+- **RpgStatCondition_GUIDE.md** — Complete condition system guide with Unity examples
+- **Tests** — Variable.RPG.Tests (comprehensive unit tests)
 
 ---
 
