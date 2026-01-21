@@ -1,53 +1,117 @@
-# Variable.Inventory
+# 🎒 Variable.Inventory
 
-**Variable.Inventory** encapsulates the logic for managing quantities, capacities, and transfers between containers. It
-abstracts the math of "Do I have enough?" and "Can I fit this?" into simple, reliable methods.
+**The Math of Stuff.** 🍎
 
-## Installation
+**Variable.Inventory** is a pure logic library for handling inventory mathematics. It doesn't tell you *how* to store your items (List, Array, Dictionary) — it just handles the "Can I fit this?" and "Move this there" logic.
+
+---
+
+## 📦 Installation
 
 ```bash
 dotnet add package Variable.Inventory
 ```
 
-## Features
+---
 
-* **InventoryLogic**: Static methods for inventory operations.
-* **Partial & Exact Transfers**: Support for "Move all you can" vs "Move only if all fits".
-* **Capacity Checks**: `CanAccept`, `GetRemainingSpace`.
+## 🚀 Features
 
-## Usage
+* **🧠 Pure Logic:** Static methods that work on `float`, `int`, `byte`.
+* **⚖️ Weight Support:** Logic for transferring items with weight limits.
+* **🌊 Partial vs Exact:** "Fill it as much as possible" vs "Only if it fits".
+* **⚡ Burst Compatible:** All methods are `[AggressiveInlining]`.
 
-### Looting Items
+---
+
+## 🎮 Usage Guide
+
+### 1. Looting (Partial Add)
+
+You found 100 Gold, but can only carry 50 more.
 
 ```csharp
 using Variable.Inventory;
 
-float backpackCurrent = 10f;
-float backpackMax = 50f;
-float lootAmount = 5f;
-float overflow;
+float goldInBag = 950f;
+float maxGold = 1000f;
+float goldOnGround = 100f;
 
-// Adds loot to backpack, returns amount actually added
-float added = InventoryLogic.AddPartial(ref backpackCurrent, lootAmount, backpackMax, out overflow);
+// Try to add as much as possible
+bool addedAny = InventoryLogic.TryAddPartial(
+    ref goldInBag,
+    goldOnGround,
+    maxGold,
+    out float addedAmount,
+    out float overflow
+);
 
-if (overflow > 0) {
-    Console.WriteLine($"Could not fit {overflow} items!");
-}
+// Result:
+// goldInBag = 1000
+// addedAmount = 50
+// overflow = 50 (remains on ground)
 ```
 
-### Crafting (Consume Materials)
+### 2. Crafting (Exact Remove)
+
+You need exactly 5 Wood to build a chair.
 
 ```csharp
-float wood = 20f;
+float wood = 3f;
 float cost = 5f;
 
-if (InventoryLogic.TryRemoveExact(ref wood, cost)) {
-    CraftItem();
-} else {
+// Try to remove EXACTLY 5.
+// Returns false if you have less (and removes nothing).
+if (InventoryLogic.TryRemoveExact(ref wood, cost))
+{
+    BuildChair();
+}
+else
+{
     Console.WriteLine("Not enough wood!");
 }
 ```
 
+### 3. Transferring Items (Chest to Player)
+
+Move items from Container A to Container B.
+
+```csharp
+float chestCount = 100;
+float bagCount = 10;
+float bagMax = 50;
+
+InventoryLogic.TryTransferPartial(
+    ref chestCount,  // Source (decreases)
+    ref bagCount,    // Destination (increases)
+    bagMax,          // Dest Capacity
+    1000,            // Try to move everything
+    out float moved
+);
+
+// Result:
+// chestCount = 60 (100 - 40)
+// bagCount = 50 (Full)
+// moved = 40
+```
+
 ---
-**Author:** Md Ishtiaq Ahamed Fahim  
-**GitHub:** [iafahim/GameVariable](https://github.com/iafahim/GameVariable)
+
+## 🔧 API Reference
+
+### `InventoryLogic`
+- `TryAddPartial`: Fills up to max. Returns overflow.
+- `TryAddExact`: Adds only if total <= max.
+- `TryRemovePartial`: Removes up to amount (empties it).
+- `TryRemoveExact`: Removes only if current >= amount.
+- `TryTransferPartial`: Moves items between variables.
+- `CanAccept`: Checks if `current + amount <= max`.
+- `HasEnough`: Checks if `current >= required`.
+
+---
+
+<div align="center">
+
+**Part of the [GameVariable](https://github.com/iafahim/GameVariable) Ecosystem**
+*Made with ❤️ for game developers*
+
+</div>

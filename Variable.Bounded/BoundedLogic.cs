@@ -272,9 +272,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Add(in int current, in int min, in int max, in int amount, out int result)
     {
-        var temp = (long)current + amount;
-        if (temp > max) temp = max;
-        else if (temp < min) temp = min;
+        CoreMath.Clamp((long)current + amount, min, max, out var temp);
         result = (int)temp;
     }
 }

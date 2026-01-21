@@ -1,47 +1,103 @@
-# Variable.Regen
+# ♻️ Variable.Regen
 
-**Variable.Regen** adds time-based regeneration and decay mechanics to your variables. It wraps a bounded value with a
-rate of change per second.
+**Automatic Resource Regeneration & Decay.** 🌱
 
-## Installation
+**Variable.Regen** wraps a bounded value with a `Rate` of change per second. It handles the math of "X per second" so you don't have to.
+
+---
+
+## 📦 Installation
 
 ```bash
 dotnet add package Variable.Regen
 ```
 
-## Features
+---
 
-* **RegenFloat**: A `BoundedFloat` + `Rate`.
-* **Tick(deltaTime)**: Automatically updates the value based on the rate.
-* **Decay Support**: Negative rates handle decay (poison, hunger).
+## 🚀 Features
 
-## Usage
+* **⚡ Auto-Tick:** Just call `.Tick(deltaTime)` and it handles the rest.
+* **🧪 Decay:** Negative rates work perfectly for poison, radiation, or hunger.
+* **🛡️ Clamped:** Respects Min/Max bounds automatically.
+* **🏗️ Zero Allocation:** Pure structs, Burst compatible.
 
-### Mana Regeneration
+---
+
+## 🎮 Usage Guide
+
+### 1. Mana Regeneration (Positive Rate)
 
 ```csharp
 using Variable.Regen;
 
-// Max 100, Current 0, Regens 5 per second
-RegenFloat mana = new RegenFloat(100f, 0f, 5f);
+// Max 100, Current 0, +10 per second
+var mana = new RegenFloat(100f, 0f, 10f);
 
-void Update(float dt) {
-    mana.Tick(dt);
+void Update()
+{
+    // Automatically adds 10 * deltaTime
+    // Clamps to 100
+    mana.Tick(Time.deltaTime);
 }
 ```
 
-### Hunger Decay
+### 2. Hunger/Decay (Negative Rate)
 
 ```csharp
-// Max 100, Current 100, Decays 1 per second
-RegenFloat hunger = new RegenFloat(100f, 100f, -1f);
+// Max 100, Current 100, -5 per second
+var hunger = new RegenFloat(100f, 100f, -5f);
 
-void Update(float dt) {
-    hunger.Tick(dt);
-    if (hunger.Value.IsEmpty) Starve();
+void Update()
+{
+    // Automatically subtracts 5 * deltaTime
+    // Clamps to 0
+    hunger.Tick(Time.deltaTime);
+
+    if (hunger.IsEmpty())
+    {
+        TakeStarvationDamage();
+    }
+}
+```
+
+### 3. Modifying Values
+
+Since `RegenFloat` wraps a `BoundedFloat`, you can modify it directly or via extensions.
+
+```csharp
+// Consume mana (spell cast)
+// 'Value' gives access to the underlying BoundedFloat
+if (mana.Value.Current >= 20f)
+{
+    mana.Value.Current -= 20f;
+}
+
+// Or use Bounded extensions directly on the wrapper (implicit conversion often handles this,
+// but accessing .Value is clearer)
+if (mana.Value.TryConsume(20f))
+{
+    CastSpell();
 }
 ```
 
 ---
-**Author:** Md Ishtiaq Ahamed Fahim  
-**GitHub:** [iafahim/GameVariable](https://github.com/iafahim/GameVariable)
+
+## 🔧 API Reference
+
+### `RegenFloat`
+- `Value`: The underlying `BoundedFloat` (Current, Min, Max).
+- `Rate`: Units per second.
+
+### Extensions
+- `Tick(deltaTime)`: Applies `Rate * deltaTime` to `Value`.
+- `IsFull()`: Is it at max capacity?
+- `IsEmpty()`: Is it at min capacity?
+
+---
+
+<div align="center">
+
+**Part of the [GameVariable](https://github.com/iafahim/GameVariable) Ecosystem**
+*Made with ❤️ for game developers*
+
+</div>
