@@ -12,7 +12,7 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Set(ref this BoundedFloat b, float value)
     {
-        BoundedLogic.Set(ref b.Current, b.Min, b.Max, value);
+        BoundedLogic.Clamp(value, b.Min, b.Max, out b.Current);
     }
 
     /// <summary>
@@ -21,7 +21,7 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Normalize(ref this BoundedFloat b)
     {
-        BoundedLogic.Normalize(ref b.Current, b.Min, b.Max);
+        BoundedLogic.Clamp(b.Current, b.Min, b.Max, out b.Current);
     }
 
     /// <summary>
@@ -78,7 +78,7 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Set(ref this BoundedInt b, int value)
     {
-        BoundedLogic.Set(ref b.Current, b.Min, b.Max, value);
+        BoundedLogic.Clamp(value, b.Min, b.Max, out b.Current);
     }
 
     /// <summary>
@@ -87,7 +87,7 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Normalize(ref this BoundedInt b)
     {
-        BoundedLogic.Normalize(ref b.Current, b.Min, b.Max);
+        BoundedLogic.Clamp(b.Current, b.Min, b.Max, out b.Current);
     }
 
     /// <summary>
@@ -144,7 +144,7 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Set(ref this BoundedByte b, byte value)
     {
-        BoundedLogic.Set(ref b.Current, b.Max, value);
+        BoundedLogic.Clamp(value, b.Max, out b.Current);
     }
 
     /// <summary>
@@ -153,7 +153,7 @@ public static class BoundedExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Normalize(ref this BoundedByte b)
     {
-        BoundedLogic.Normalize(ref b.Current, b.Max);
+        BoundedLogic.Clamp(b.Current, b.Max, out b.Current);
     }
 
     /// <summary>
