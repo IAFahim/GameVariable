@@ -73,6 +73,24 @@ Importing `Variable.Core` gives you superpowers on *any* `IBoundedInfo`:
 
 ---
 
+## 🧰 Utilities
+
+### `CoreMath`
+**"Burst-Friendly Math!"** 💥
+
+Provides zero-allocation, aggressive inlined math operations.
+- **Why?** It avoids `struct` copies and hidden allocations in high-performance paths (like Unity DOTS/Burst).
+- **Includes:** `Clamp`, `Min`, `Max`, `Abs` for various primitives (`float`, `int`, `long`, `byte`, `double`).
+
+### `MathConstants`
+**"The Source of Truth!"** 📐
+
+Shared constants to keep calculations consistent across the entire ecosystem.
+- `DefaultTolerance` (0.001f): The standard for floating-point comparisons.
+- `Tolerance`: A runtime-mutable version if your game needs different precision.
+
+---
+
 ## 🏗️ For Plugin Creators
 
 Building your own variable type? Implement `IBoundedInfo` to instantly gain compatibility with the entire ecosystem (UI tools, save systems, etc.).

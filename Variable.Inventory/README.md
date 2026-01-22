@@ -14,6 +14,18 @@ dotnet add package Variable.Inventory
 
 ---
 
+## 🧠 Mental Model
+
+This library solves the **"Bucket Problem"**:
+- You have a bucket with `Current` water and `Max` capacity.
+- You want to pour water IN (Add).
+- You want to scoop water OUT (Remove).
+- You want to pour from one bucket to another (Transfer).
+
+It does **not** manage the list of buckets (slots). It manages the *contents* of a single bucket.
+
+---
+
 ## 🚀 Features
 
 * **🧠 Pure Logic:** Static methods that work on `float`, `int`, `byte`.

@@ -1,4 +1,4 @@
-﻿# Variable.RPG
+# Variable.RPG
 
 **Diamond Architecture for RPG Attributes and Damage Pipelines** — AAA-grade, zero-allocation, framework-agnostic.
 
@@ -26,16 +26,20 @@ public static class Stats {
 }
 
 // 2. Create attribute sheet
-var sheet = new AttributeSheet(10); // 10 stats
+// Allocates unmanaged memory - Must be disposed!
+using var sheet = new RpgStatSheet(10); // 10 stats
+
+// 3. Set Base Values
 sheet.SetBase(Stats.Health, 100f);
 sheet.SetBase(Stats.Armor, 10f);
 sheet.SetBase(Stats.FireResist, 0.5f); // 50% resist
 
-// 3. Apply modifiers
-AttributeLogic.AddModifier(ref sheet.Attributes[Stats.Armor], 5f, 0.2f); 
+// 4. Apply modifiers
 // +5 flat, +20% mult → (10+5)*1.2 = 18 armor
+ref var armorStat = ref sheet.GetRef(Stats.Armor);
+RpgStatLogic.AddModifier(ref armorStat, 5f, 0.2f);
 
-// 4. Take damage
+// 5. Take damage
 var damages = new[] {
     new DamagePacket { ElementId = DmgTypes.Physical, Amount = 50f },
     new DamagePacket { ElementId = DmgTypes.Fire, Amount = 100f }
@@ -57,12 +61,12 @@ var finalDamage = DamageLogic.ResolveDamage(
 
 ```csharp
 // Complex stat with modifiers
-public struct Attribute {
+public struct RpgStat {
     public float Base;      // Base value (10 Strength)
     public float ModAdd;    // Flat bonuses (+5 from ring)
     public float ModMult;   // Multipliers (x1.2 from buff)
     public float Min, Max;  // Bounds
-    public float CachedValue;
+    public float Value;     // Cached result
 }
 
 // Damage instance
@@ -73,8 +77,9 @@ public struct DamagePacket {
 }
 
 // Attribute container
-public struct AttributeSheet {
-    public Attribute[] Attributes;
+public unsafe struct RpgStatSheet {
+    // Manages a pointer to unmanaged memory (RpgStat*)
+    // Provides safe Span<RpgStat> views
 }
 ```
 
@@ -82,17 +87,17 @@ public struct AttributeSheet {
 
 ```csharp
 // Attribute calculations
-public static class AttributeLogic {
-    void Recalculate(ref Attribute attr)
-    void AddModifier(ref Attribute attr, float flat, float percent)
-    void ClearModifiers(ref Attribute attr)
-    float GetValue(ref Attribute attr)
+public static class RpgStatLogic {
+    void Recalculate(ref RpgStat stat)
+    void AddModifier(ref RpgStat stat, float flat, float percent)
+    void ClearModifiers(ref RpgStat stat)
+    float GetValue(ref RpgStat stat)
 }
 
 // Damage pipeline
 public static class DamageLogic {
     float ResolveDamage(
-        Span<Attribute> stats,
+        Span<RpgStat> stats,
         ReadOnlySpan<DamagePacket> damages,
         IDamageConfig config)
 }
@@ -141,20 +146,20 @@ Multiple Sources         Aggregation         Single Result
 ### Basic Attributes
 
 ```csharp
-var attr = new Attribute(10f); // Base 10
-AttributeLogic.AddModifier(ref attr, 5f, 0.5f); // +5 flat, +50% mult
+var stat = new RpgStat(10f, 0f, 1000f);
+RpgStatLogic.AddModifier(ref stat, 5f, 0.5f); // +5 flat, +50% mult
 
-var value = AttributeLogic.GetValue(ref attr);
+var value = RpgStatLogic.GetValue(ref stat);
 // (10 + 5) * 1.5 = 22.5
 ```
 
 ### Bounded Attributes
 
 ```csharp
-var health = new Attribute(100f, 0f, 200f); // Min 0, Max 200
-AttributeLogic.AddModifier(ref health, 150f, 0f);
+var health = new RpgStat(100f, 0f, 200f);
+RpgStatLogic.AddModifier(ref health, 150f, 0f);
 
-var val = AttributeLogic.GetValue(ref health);
+var val = RpgStatLogic.GetValue(ref health);
 // 100 + 150 = 250, clamped to 200
 ```
 
@@ -198,12 +203,9 @@ var damages = new[] {
 };
 
 var totalDamage = DamageLogic.ResolveDamage(
-    defender.Attributes.AsSpan(),
+    defender.Stats.AsSpan(),
     damages,
     gameConfig);
-
-// Apply to health
-defender.Attributes[Stats.Health].Base -= totalDamage;
 ```
 
 ---
@@ -264,15 +266,15 @@ if (stat.SatisfiesAtLeast(milestones, 3)) {
 
 ```csharp
 // Works with managed arrays
-Attribute[] stats = new Attribute[10];
+RpgStat[] stats = new RpgStat[10];
 DamageLogic.ResolveDamage(stats.AsSpan(), damages, config);
 
 // Works with NativeArray (Unity Jobs)
-NativeArray<Attribute> stats = ...;
+NativeArray<RpgStat> stats = ...;
 DamageLogic.ResolveDamage(stats, damages, config);
 
 // Works with stackalloc (zero allocation)
-Span<Attribute> stats = stackalloc Attribute[5];
+Span<RpgStat> stats = stackalloc RpgStat[5];
 DamageLogic.ResolveDamage(stats, damages, config);
 ```
 
@@ -280,7 +282,7 @@ DamageLogic.ResolveDamage(stats, damages, config);
 
 ```csharp
 // -50% fire resist = +50% damage taken
-var attr = new Attribute(-0.5f, -1f, 1f); // Allow negative
+var stat = new RpgStat(-0.5f, -1f, 1f);
 
 var dmg = new DamagePacket { ElementId = DmgTypes.Fire, Amount = 100f };
 // 100 * (1 - (-0.5)) = 150 damage
@@ -289,7 +291,8 @@ var dmg = new DamagePacket { ElementId = DmgTypes.Fire, Amount = 100f };
 ### Over-Armor (Damage Reduction to 0)
 
 ```csharp
-sheet.SetBase(Stats.Armor, 100f);
+ref var armor = ref sheet.GetRef(Stats.Armor);
+armor.Base = 100f;
 
 var dmg = new DamagePacket { ElementId = DmgTypes.Physical, Amount = 10f };
 // 10 - 100 = -90, clamped to 0

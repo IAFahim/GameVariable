@@ -14,6 +14,15 @@ dotnet add package Variable.Regen
 
 ---
 
+## 🧠 Mental Model
+
+It's a **Leaky Bucket** (or a filling one).
+- You have a bucket (`BoundedFloat`).
+- You have a faucet/hole (`Rate`).
+- Each frame, you let time pass (`Tick`), and the water level changes automatically.
+
+---
+
 ## 🚀 Features
 
 * **⚡ Auto-Tick:** Just call `.Tick(deltaTime)` and it handles the rest.

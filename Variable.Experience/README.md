@@ -14,6 +14,17 @@ dotnet add package Variable.Experience
 
 ---
 
+## 🧠 Mental Model
+
+Think of Experience as a **Bucket**.
+- The `Level` is how many buckets you've filled.
+- The `Current` is how much water is in the current bucket.
+- The `Max` is the size of the current bucket.
+
+When the bucket overflows (`Current >= Max`), you pour the extra water into a *new, potentially bigger* bucket (Level + 1).
+
+---
+
 ## 🚀 Features
 
 * **📈 Smart Overflow:** If you gain 1,000,000 XP at level 1, it correctly calculates how many levels you gain.

@@ -16,6 +16,16 @@ dotnet add package Variable.Reservoir
 
 ---
 
+## 🧠 Mental Model
+
+Think of a **Squirt Gun**.
+- **Volume**: The water inside the gun itself (Ready to fire).
+- **Reserve**: The big water bottle you carry to refill the gun.
+
+You fire from Volume. You refill Volume from Reserve.
+
+---
+
 ## 🚀 Features
 
 * **🔫 Reload Logic:** Built-in `Refill()` handles the math of moving from Reserve to Volume.
@@ -38,7 +48,7 @@ public class Gun
 
     public void Fire()
     {
-        if (Ammo > 0) // Implicit conversion to current volume!
+        if (Ammo.Volume.Current > 0)
         {
             Ammo.Volume--;
             SpawnBullet();
