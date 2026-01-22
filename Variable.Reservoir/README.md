@@ -1,10 +1,33 @@
 # 🔋 Variable.Reservoir
 
-**Magazines, Tanks, and Batteries.** 🔫
+**The "Reload" Mechanic.** 🔫
 
-**Variable.Reservoir** manages the classic "Active + Reserve" pattern found in almost every game.
-- **Active (Volume):** What's in the clip/tank right now.
-- **Reserve:** What's in your backpack/stockpile.
+**Variable.Reservoir** solves the **Clip + Backpack** problem. It manages two numbers: what you have *ready* (Volume) and what you have *stored* (Reserve).
+
+---
+
+## 🧠 Mental Model
+
+Think of a **Gun Magazine** or a **Fuel Tank**. ⛽
+- **Volume:** The bullets in the gun (Bounded: Min 0, Max 30).
+- **Reserve:** The bullets in your backpack (Simple Integer).
+- **Reloading:** Moving numbers from Reserve to Volume.
+
+Use this for **Ammo**, **Battery Power**, **Potion Stacks** (Belt vs Inventory), or **Rocket Fuel**.
+
+---
+
+## 👶 ELI5 (Explain Like I'm 5)
+
+Without Variable.Reservoir:
+> **You:** "Reload!"
+> **You:** `clip += 30;`
+> **You:** `reserve -= 30;`
+> **Bug:** "Wait, I only had 5 bullets in reserve! Now reserve is -25!" 😱
+
+With Variable.Reservoir:
+> **You:** `ammo.Refill();`
+> **Computer:** "I took 5 from reserve because that's all you had. Clip is now 5. Reserve is 0."
 
 ---
 
@@ -16,67 +39,56 @@ dotnet add package Variable.Reservoir
 
 ---
 
-## 🚀 Features
-
-* **🔫 Reload Logic:** Built-in `Refill()` handles the math of moving from Reserve to Volume.
-* **🔢 Int & Float:** `ReservoirInt` (Ammo) and `ReservoirFloat` (Fuel/Energy).
-* **🛡️ Safe Limits:** Can't reload more than capacity, can't take more than you have.
-
----
-
 ## 🎮 Usage Guide
 
-### 1. Weapon Ammo (Integers)
+### 1. The Shooter (Integers) 🔫
 
 ```csharp
 using Variable.Reservoir;
 
-public class Gun
+// Clip Size: 30
+// Current Clip: 30
+// Backpack Ammo: 120
+var ammo = new ReservoirInt(30, 30, 120);
+
+// Shooting
+if (ammo.Volume > 0)
 {
-    // Clip: 30, Current: 30, Backpack: 120
-    public ReservoirInt Ammo = new ReservoirInt(30, 30, 120);
+    ammo.Volume--;
+    FireBullet();
+}
 
-    public void Fire()
-    {
-        if (Ammo > 0) // Implicit conversion to current volume!
-        {
-            Ammo.Volume--;
-            SpawnBullet();
-        }
-        else
-        {
-            Reload();
-        }
-    }
+// Reloading
+if (Input.GetButtonDown("Reload"))
+{
+    // Moves as much as possible from Reserve to Volume
+    int reloadedAmount = ammo.Refill();
 
-    public void Reload()
-    {
-        // Moves ammo from Reserve to Volume
-        // Returns amount actually moved (e.g. 5 bullets)
-        int reloaded = Ammo.Refill();
-
-        if (reloaded > 0) PlayReloadSound();
-        else PlayClickSound(); // No ammo left!
-    }
+    if (reloadedAmount > 0) PlayReloadSound();
+    else ShowMessage("NO AMMO!");
 }
 ```
 
-### 2. Jetpack Fuel (Floats)
+### 2. The Jetpack (Floats) 🚀
 
 ```csharp
-// Tank: 50.0, Current: 50.0, Reserve Tank: 200.0
-public ReservoirFloat Fuel = new ReservoirFloat(50f, 50f, 200f);
+// Tank Capacity: 100.0
+// Current Fuel: 100.0
+// Reserve Fuel: 500.0
+var jetpack = new ReservoirFloat(100f, 100f, 500f);
 
-public void Fly(float dt)
+void Update()
 {
-    if (Fuel.Volume.TryConsume(10f * dt))
+    // Flying consumes Active Volume
+    if (Input.GetKey(KeyCode.Space) && jetpack.Volume.TryConsume(10f * Time.deltaTime))
     {
         ApplyThrust();
     }
-    else
+
+    // Auto-refill from reserve when grounded?
+    if (IsGrounded)
     {
-        // Auto-refill from reserve tank?
-        Fuel.Refill();
+        jetpack.Refill();
     }
 }
 ```
@@ -85,13 +97,18 @@ public void Fly(float dt)
 
 ## 🔧 API Reference
 
-### `ReservoirInt` / `ReservoirFloat`
-- `Volume`: The active `Bounded` value (Clip/Tank).
-- `Reserve`: The available backup supply.
+### Types
+- `ReservoirInt`: For countable things (Bullets, Arrows).
+- `ReservoirFloat`: For liquid things (Fuel, Energy).
+
+### Properties
+- `Volume` (`Bounded`): The active container. Has `.Current`, `.Max`.
+- `Reserve`: The raw backup amount.
 
 ### Extensions
-- `Refill()`: Fills `Volume` to Max using `Reserve`. Decreases Reserve. Returns amount moved.
-- `Refill(amount)`: Tries to move specific `amount` from Reserve to Volume.
+- `Refill()`: Fills Volume to Max using Reserve. Returns amount moved.
+- `Refill(amount)`: Tries to move specific amount.
+- `AddReserve(amount)`: Picking up an ammo box? Use this.
 
 ---
 

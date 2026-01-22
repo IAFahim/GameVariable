@@ -1,8 +1,38 @@
 # ⏱️ Variable.Timer
 
-**Time management for games, solved.** ⌛
+**The "Egg Timer" of your game.** 🥚⏰
 
-**Variable.Timer** gives you `Timer` (count up) and `Cooldown` (count down) structs that just work. No more spaghetti `float timer = 0f;` and `timer += Time.deltaTime;` checks scattered everywhere.
+**Variable.Timer** solves the "Wait for X seconds" problem forever. It gives you two perfect structs: `Cooldown` (counts down) and `Timer` (counts up).
+
+---
+
+## 🧠 Mental Model
+
+### 1. `Cooldown` (The Microwave) 📉
+- You set it for 30 seconds.
+- It counts **DOWN** to 0.
+- When it hits 0, it goes "DING!" (Ready).
+- **Use for:** Spells, dashes, gun reloads.
+
+### 2. `Timer` (The Stopwatch) 📈
+- You start at 0.
+- It counts **UP** to a target.
+- When it hits the target, it stops.
+- **Use for:** Casting bars, holding a button, bomb fuses.
+
+---
+
+## 👶 ELI5 (Explain Like I'm 5)
+
+Without Variable.Timer:
+> **You:** `timer -= Time.deltaTime;`
+> **You:** "Wait, did I reset it? Is it less than 0? Or less than or equal to 0?"
+> **You:** *Writes the same bug for the 50th time.*
+
+With Variable.Timer:
+> **You:** `cooldown.Tick(dt);`
+> **You:** `if (cooldown.IsReady()) Attack();`
+> **Computer:** "I got you."
 
 ---
 
@@ -14,95 +44,87 @@ dotnet add package Variable.Timer
 
 ---
 
-## 🚀 Features
-
-* **🔥 Cooldowns:** Manage ability availability effortlessly.
-* **⏳ Timers:** Track durations (casting, loading, buffs).
-* **🧠 Logic Separation:** Tick logic is separated from state.
-* **⚡ Zero Allocation:** Pure structs, Burst compatible.
-
----
-
 ## 🎮 Usage Guide
 
-### 1. Cooldowns (The "Can I do this yet?" Pattern)
+### 1. The Cooldown (Counts DOWN)
 
 ```csharp
 using Variable.Timer;
 
 public class Hero
 {
-    // 3 second cooldown, starts READY
+    // 3 second cooldown. Starts READY.
     public Cooldown DashCd = new Cooldown(3f);
 
     public void Update(float dt)
     {
-        // 1. Tick the cooldown
-        // TickAndCheckReady returns true if it hits 0 THIS FRAME
-        if (DashCd.TickAndCheckReady(dt))
-        {
-            PlayReadySound();
-        }
+        // 1. Tick it every frame
+        DashCd.Tick(dt);
 
-        // 2. Use Ability
+        // 2. Check it
         if (Input.GetButton("Dash") && DashCd.IsReady())
         {
             DoDash();
-            DashCd.Reset(); // Sets value to 3.0
+
+            // 3. Reset it (Start waiting again)
+            DashCd.Reset();
         }
     }
 }
 ```
 
-### 2. Timers (The "Are we there yet?" Pattern)
+### 2. The Cast Timer (Counts UP)
 
 ```csharp
-// 5 second cast time
-public Timer CastTimer = new Timer(5f);
+// 2 second cast time. Starts at 0.
+public Timer FireballCast = new Timer(2f);
 
 public void Update(float dt)
 {
-    // TickAndCheckComplete returns true if it hits Duration THIS FRAME
-    if (CastTimer.TickAndCheckComplete(dt))
+    if (Input.GetButton("Fire"))
     {
-        SpawnFireball();
-        CastTimer.Reset(); // Sets value to 0.0
+        // Tick and check completion in one line!
+        // Returns true ONLY on the frame it finishes.
+        if (FireballCast.TickAndCheckComplete(dt))
+        {
+            SpawnFireball();
+            FireballCast.Reset();
+        }
+    }
+    else
+    {
+        // Cancel cast if button released
+        FireballCast.Reset();
     }
 }
 ```
 
-### 3. Progress Bars (UI)
+### 3. UI Progress Bars
 
-Since `Timer` and `Cooldown` implement `IBoundedInfo`, they work with standard UI code!
+Both types implement `IBoundedInfo`, so they work with your generic UI bars!
 
 ```csharp
-// 0.0 to 1.0
-float progress = (float)CastTimer.GetRatio();
+// 0.0 to 1.0 (Empty to Full)
+float castProgress = (float)FireballCast.GetRatio();
 
-// 1.0 to 0.0 (inverse for cooldowns usually)
-float cdProgress = (float)DashCd.GetProgress();
+// 1.0 to 0.0 (Full to Empty)
+float cooldownProgress = (float)DashCd.GetRatio();
 ```
 
 ---
 
-## 🔧 API Reference
+## ⚡ Performance Secrets
 
-### `Cooldown` (Counts DOWN 📉)
-- `Reset()`: Sets current time to Duration.
-- `Finish()`: Sets current time to 0 (Ready).
-- `IsReady()`: True if time <= 0.
-- `TickAndCheckReady(dt)`: Advances time, returns true if it *just* became ready.
+### `TickAndCheck` Optimization
+Checking `if (timer >= duration)` every frame is fine. But often you want to do something **only once** when it finishes.
 
-### `Timer` (Counts UP 📈)
-- `Reset()`: Sets current time to 0.
-- `Finish()`: Sets current time to Duration.
-- `IsFull()`: True if time >= Duration.
-- `TickAndCheckComplete(dt)`: Advances time, returns true if it *just* finished.
+`TickAndCheckComplete(dt)` does this efficiently:
+1. Adds time.
+2. Checks if it *crossed the finish line* this specific frame.
+3. Returns `true` only once per cycle.
 
-### Common
-- `Current`: The raw time value.
-- `Duration`: The target time.
-- `GetRatio()`: Normalized progress.
+### Zero Allocation
+These are pure structs. Thousands of bullets can have their own timers with zero GC pressure.
 
 ---
 

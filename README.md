@@ -10,7 +10,8 @@
 [![Unity](https://img.shields.io/badge/Unity-ECS%20Compatible-black.svg)](https://unity.com/)
 
 **The "Standard Library" for Game Mechanics.** 🛠️
-Stop writing `if (health < 0) health = 0;` for the 1,000th time.
+
+*Stop writing `if (health < 0) health = 0;` for the 1,000th time.*
 
 [Quick Start](#-quick-start) •
 [Packages](#-packages) •
@@ -106,17 +107,17 @@ graph LR
 
 ### 🧐 Which package do I need?
 
-| If you need to build... | Use this package |
-|-------------------------|------------------|
-| **Health, Mana, Stamina** | [**Variable.Bounded**](./Variable.Bounded) |
-| **Cooldowns, Casting Bars** | [**Variable.Timer**](./Variable.Timer) |
-| **Regenerating Shields** | [**Variable.Regen**](./Variable.Regen) |
-| **Ammo, Batteries, Fuel** | [**Variable.Reservoir**](./Variable.Reservoir) |
-| **Leveling, Skills, XP** | [**Variable.Experience**](./Variable.Experience) |
-| **Combos, Input Buffers** | [**Variable.Input**](./Variable.Input) |
-| **Complex Stats (Armor/Resist)** | [**Variable.RPG**](./Variable.RPG) |
-| **Inventory Limits** | [**Variable.Inventory**](./Variable.Inventory) |
-| **AI State Machines** | [**GameVariable.Intent**](./GameVariable.Intent) |
+| Use This Package... | If You Need To Build... | Mental Model |
+|---------------------|-------------------------|--------------|
+| [**Variable.Bounded**](./Variable.Bounded) | **Health, Mana, Stamina** | "The Cup" 🥤 (Min, Max, Current) |
+| [**Variable.Timer**](./Variable.Timer) | **Cooldowns, Casting Bars** | "The Egg Timer" ⏰ (Tick Tock) |
+| [**Variable.Regen**](./Variable.Regen) | **Regenerating Shields** | "The Leaking Bucket" 💧 (Rate over time) |
+| [**Variable.Reservoir**](./Variable.Reservoir) | **Ammo, Batteries, Fuel** | "The Clip & Backpack" 🎒 (Active + Stored) |
+| [**Variable.Experience**](./Variable.Experience) | **Leveling, Skills, XP** | "The Stack of Buckets" 🪣 (Overflow logic) |
+| [**Variable.Input**](./Variable.Input) | **Combos, Input Buffers** | "The Street Fighter Tree" 🥊 (Button sequences) |
+| [**Variable.RPG**](./Variable.RPG) | **Complex Stats, Damage** | "The Diamond" 💎 (Base + Add * Mult) |
+| [**Variable.Inventory**](./Variable.Inventory) | **Inventory Limits** | "Tetris Math" 🧩 (Does it fit?) |
+| [**GameVariable.Intent**](./GameVariable.Intent) | **AI State Machines** | "The Brain" 🧠 (Life Cycle of a Task) |
 
 ---
 
