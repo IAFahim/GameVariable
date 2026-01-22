@@ -1,0 +1,5 @@
+## 2024-07-25 - Refactoring is Not Optimization
+
+**Learning:** The code review on my `Tick` method change was a critical wake-up call. I replaced a direct operation (`value + delta`) followed by a simple method call (`Normalize()`) with a new static method (`BoundedLogic.Add`). While I thought I was reducing overhead, the JIT compiler was likely already inlining the original `Normalize` call, making my change functionally identical in terms of performance. The reviewer correctly identified this as a mere refactoring that offered no measurable speed-up and even slightly harmed readability.
+
+**Action:** I must strictly adhere to my principle: "Measure first, optimize second." A change is not a performance optimization unless it can be logically reasoned about or, ideally, measured to be faster. I will no longer propose changes that just move code around without fundamentally changing the work being done (e.g., reducing algorithmic complexity, eliminating allocations, or avoiding redundant computations).

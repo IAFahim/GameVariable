@@ -121,6 +121,18 @@ public struct BoundedFloat :
     /// <inheritdoc />
     public readonly override string ToString()
     {
+        // Use a stack-allocated buffer for common cases to avoid heap allocation.
+        // 32 chars should be enough for most float representations.
+        Span<char> buffer = stackalloc char[32];
+
+        // Use the struct's own TryFormat, which is allocation-free.
+        if (TryFormat(buffer, out var charsWritten))
+        {
+            return new string(buffer.Slice(0, charsWritten));
+        }
+
+        // If the buffer was too small (unlikely), fall back to the safe,
+        // albeit allocating, culture-invariant original implementation.
         return string.Format(CultureInfo.InvariantCulture, "{0}/{1}", Current, Max);
     }
 
