@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Version>0.0.1</Version>
+        <Authors>Md Ishtiaq Ahamed Fahim</Authors>
+        <Company>IAFahim</Company>
+        <Description>Synergy library demonstrating integration between GameVariable modules.</Description>
+        <PackageTags>game;variable;synergy;gamedev;unity</PackageTags>
+        <PackageProjectUrl>https://github.com/iafahim/GameVariable</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/iafahim/GameVariable</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Variable.Bounded\Variable.Bounded.csproj" />
+        <ProjectReference Include="..\Variable.Core\Variable.Core.csproj" />
+        <ProjectReference Include="..\Variable.Experience\Variable.Experience.csproj" />
+        <ProjectReference Include="..\Variable.Input\Variable.Input.csproj" />
+        <ProjectReference Include="..\Variable.Inventory\Variable.Inventory.csproj" />
+        <ProjectReference Include="..\Variable.RPG\Variable.RPG.csproj" />
+        <ProjectReference Include="..\Variable.Regen\Variable.Regen.csproj" />
+        <ProjectReference Include="..\Variable.Reservoir\Variable.Reservoir.csproj" />
+        <ProjectReference Include="..\Variable.Timer\Variable.Timer.csproj" />
+        <ProjectReference Include="..\GameVariable.Intent\GameVariable.Intent.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>
