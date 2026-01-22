@@ -1,8 +1,34 @@
 # 🔷 Variable.Core
 
-**The Foundation of GameVariable.** 🧱
+**The "Common Tongue" of GameVariable.** 🗣️
 
-**Variable.Core** isn't just a package; it's the *blueprint* for the entire GameVariable ecosystem. It defines the shared DNA that makes `Health`, `Mana`, `Cooldowns`, and `Experience` all speak the same language.
+**Variable.Core** defines the interfaces that allow Health, Mana, XP, and Timers to all play nicely together. It's the "USB Type-C" of this ecosystem—universal, essential, and just makes things work.
+
+---
+
+## 🧠 Mental Model
+
+Think of `Variable.Core` as the **Contract**. 📜
+
+If you have a `Health` struct and a `Mana` struct, they are totally different types. But if they both sign the `IBoundedInfo` contract, they promise to have:
+1.  A Minimum (`Min`)
+2.  A Maximum (`Max`)
+3.  A Current Value (`Current`)
+
+This means your UI code doesn't need to know *what* it is displaying. It just asks: "What's your percentage?" And the contract guarantees an answer.
+
+---
+
+## 👶 ELI5 (Explain Like I'm 5)
+
+Imagine you have a **Health Bar** and a **Mana Bar** in your game.
+Normally, you'd have to write code like:
+> "If it's Health, look at `hp.Value`. If it's Mana, look at `mana.Amount`."
+
+With **Variable.Core**, you just say:
+> "Hey you! How full are you?"
+
+And both the Health Bar and Mana Bar understand you! 🤝
 
 ---
 
@@ -14,87 +40,76 @@ dotnet add package Variable.Core
 
 ---
 
-## 🧠 Why Does This Exist?
+## 🔑 The Contracts (Interfaces)
 
-Imagine writing a UI Health Bar script.
+### 1. `IBoundedInfo`
+**"I have limits!"** 🛑
 
-**Without Core:**
-You write one script for `PlayerHealth`, another for `EnemyHealth`, another for `Mana`, another for `Stamina`... because they are all different classes. 😫
+Used for anything that has a range.
+- **Health:** 0 to 100
+- **Ammo:** 0 to 30
+- **Thermostat:** -50 to +50
 
-**With Core:**
-You write **ONE** script that takes `IBoundedInfo`.
 ```csharp
-public void UpdateBar(IBoundedInfo resource)
+public interface IBoundedInfo
 {
-    fillImage.fillAmount = (float)resource.GetRatio(); // Works for EVERYTHING!
+    float Min { get; }
+    float Max { get; }
+    float Current { get; }
+}
+```
+
+### 2. `ICompletable`
+**"Are we there yet?"** ⏱️
+
+Used for anything that finishes over time.
+- **Cooldowns:** "Is the spell ready?"
+- **Timers:** "Is the bomb exploded?"
+- **Quests:** "Is the objective done?"
+
+```csharp
+public interface ICompletable
+{
+    bool IsComplete { get; }
 }
 ```
 
 ---
 
-## 🔑 Key Interfaces
+## ⚡ The Superpowers (Extensions)
 
-### `IBoundedInfo`
-**"I have limits!"** 🛑
+Because of these contracts, `Variable.Core` gives you magical extension methods that work on **everything**.
 
-Anything that has a `Min`, `Max`, and `Current` value.
-- **Health:** 0 to 100
-- **Ammo:** 0 to 30
-- **Temperature:** -50 to +50
-
-**Properties:**
-- `float Min`
-- `float Max`
-- `float Current`
-
-### `ICompletable`
-**"Are we there yet?"** ⏱️
-
-Anything that finishes over time.
-- **Timer:** Counts UP to duration.
-- **Cooldown:** Counts DOWN to zero.
-
-**Properties:**
-- `bool IsComplete`
-
----
-
-## 🛠️ Extensions (The Magic ✨)
-
-Importing `Variable.Core` gives you superpowers on *any* `IBoundedInfo`:
-
-| Method | What it does | Example |
-|--------|--------------|---------|
-| `IsFull()` | `Current >= Max` | Is mana full? |
-| `IsEmpty()` | `Current <= Min` | Is health zero? |
-| `GetRatio()` | `(Current-Min) / Range` | Health bar % (0.0 to 1.0) |
-| `GetRange()` | `Max - Min` | Total capacity |
-| `GetRemaining()` | `Max - Current` | How much more XP needed? |
+| You write... | It does... | Works on... |
+|--------------|------------|-------------|
+| `.IsFull()` | `Current >= Max` | Health, Mana, XP, Ammo... |
+| `.IsEmpty()` | `Current <= Min` | Health, Mana, XP, Ammo... |
+| `.GetRatio()` | `(Current - Min) / Range` | Anything! Returns 0.0 to 1.0 |
+| `.GetRange()` | `Max - Min` | Anything! |
+| `.GetRemaining()` | `Max - Current` | XP to next level, Ammo needed... |
 
 ---
 
 ## 🏗️ For Plugin Creators
 
-Building your own variable type? Implement `IBoundedInfo` to instantly gain compatibility with the entire ecosystem (UI tools, save systems, etc.).
+Want to make your own custom stat? Maybe a `Shield` that has specialized logic? Just implement `IBoundedInfo`!
 
 ```csharp
 using Variable.Core;
 
-public struct Shield : IBoundedInfo
+public struct EnergyShield : IBoundedInfo
 {
-    public float Integrity;
-    public float MaxIntegrity;
-    
-    // Explicit implementation keeps your public API clean!
-    float IBoundedInfo.Min => 0f;
-    float IBoundedInfo.Max => MaxIntegrity;
-    float IBoundedInfo.Current => Integrity;
-}
+    public float Charge;
+    public float MaxCharge;
 
-// Now you can do:
-var shield = new Shield { ... };
-if (shield.IsFull()) PlayShieldSound();
+    // The Contract
+    float IBoundedInfo.Min => 0f;
+    float IBoundedInfo.Max => MaxCharge;
+    float IBoundedInfo.Current => Charge;
+}
 ```
+
+Now your `EnergyShield` automatically works with all `GameVariable` UI tools! 🎉
 
 ---
 

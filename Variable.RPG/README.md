@@ -1,404 +1,156 @@
-﻿# Variable.RPG
+# ⚔️ Variable.RPG
 
-**Diamond Architecture for RPG Attributes and Damage Pipelines** — AAA-grade, zero-allocation, framework-agnostic.
+**Diamond Architecture for Stats.** 💎
 
----
-
-## 🎯 What Is This?
-
-A complete RPG stat system implementing the **Diamond Architecture** pattern:
-
-- **Aggregation**: Multiple damage sources → single result
-- **Pipeline**: Damage → Mitigation → Final Value
-- **Span-Based**: Works with arrays, NativeArray, BlobArray
-- **Pure Logic**: No framework dependencies
+**Variable.RPG** is a high-performance system for handling complex RPG attributes (Strength, Agility, Armor) and the damage pipeline (Mitigation, Resistance, Vulnerability).
 
 ---
 
-## ⚡ Quick Example
+## 🧠 Mental Model
+
+### The Diamond Pattern 🔷
+Stats are not just a number. They are a calculation:
+1.  **Base:** The raw value (Strength: 10).
+2.  **Add:** Bonuses (Ring: +5).
+3.  **Mult:** Multipliers (Potion: x1.5).
+4.  **Result:** `(Base + Add) * Mult` = `(10 + 5) * 1.5` = **22.5**.
+
+### The Damage Pipeline 🛡️
+Damage flows like water through filters:
+1.  **Incoming:** 100 Fire Damage.
+2.  **Lookup:** "Do I have Fire Resistance?"
+3.  **Mitigation:** Apply Armor (Flat) or Resistance (Percent).
+4.  **Aggregation:** Sum up all damages (Fire + Phys + Ice).
+5.  **Result:** Final HP loss.
+
+---
+
+## 👶 ELI5 (Explain Like I'm 5)
+
+Without Variable.RPG:
+> **You:** "Attack for 10 damage!"
+> **You:** "Wait, he has armor. Subtract 2. So 8."
+> **You:** "Wait, he is weak to fire! Multiply by 2. So 16."
+> **You:** *Writes 50 nested if-statements.*
+
+With Variable.RPG:
+> **You:** `DamageLogic.ResolveDamage(stats, damage, config);`
+> **Computer:** "I calculated Armor, Fire Resistance, Buffs, and Debuffs. He takes 14.5 damage."
+
+---
+
+## 📦 Installation
+
+```bash
+dotnet add package Variable.RPG
+```
+
+---
+
+## 🎮 Usage Guide
+
+### 1. Defining Stats
+You define which numbers mean what.
 
 ```csharp
-// 1. Define your game's stats
-public static class Stats {
+public static class StatIds
+{
     public const int Health = 0;
     public const int Armor = 1;
     public const int FireResist = 2;
+    public const int Strength = 3;
 }
+```
 
-// 2. Create attribute sheet
-var sheet = new AttributeSheet(10); // 10 stats
-sheet.SetBase(Stats.Health, 100f);
-sheet.SetBase(Stats.Armor, 10f);
-sheet.SetBase(Stats.FireResist, 0.5f); // 50% resist
+### 2. The Stat Sheet
+Create a sheet of stats.
 
-// 3. Apply modifiers
-AttributeLogic.AddModifier(ref sheet.Attributes[Stats.Armor], 5f, 0.2f); 
-// +5 flat, +20% mult → (10+5)*1.2 = 18 armor
+```csharp
+using Variable.RPG;
 
-// 4. Take damage
+// Create a sheet with 10 slots
+var sheet = new RpgStatSheet(10);
+
+// Setup initial values
+sheet.SetBase(StatIds.Health, 100f);      // 100 HP
+sheet.SetBase(StatIds.Armor, 10f);        // 10 Armor
+sheet.SetBase(StatIds.FireResist, 0.5f);  // 50% Resist
+sheet.SetBase(StatIds.Strength, 10f);     // 10 Str
+```
+
+### 3. Modifiers (Buffs/Gear)
+Equip a "Ring of Strength".
+
+```csharp
+// Get reference to Strength
+ref var str = ref sheet.GetStat(StatIds.Strength);
+
+// Add Modifier: +5 Flat, +0% Mult
+AttributeLogic.AddModifier(ref str, 5f, 0f);
+
+// Result: (10 + 5) * 1.0 = 15 Strength
+```
+
+### 4. Taking Damage
+Calculate damage using the pipeline.
+
+```csharp
+// 1. Define the attack
 var damages = new[] {
-    new DamagePacket { ElementId = DmgTypes.Physical, Amount = 50f },
-    new DamagePacket { ElementId = DmgTypes.Fire, Amount = 100f }
+    new DamagePacket { ElementId = ElementIds.Physical, Amount = 50f },
+    new DamagePacket { ElementId = ElementIds.Fire, Amount = 100f }
 };
 
-var finalDamage = DamageLogic.ResolveDamage(
-    sheet.AsSpan(), 
-    damages, 
-    new MyConfig());
-
-// Result: (50-18) + (100*0.5) = 32 + 50 = 82 damage
-```
-
----
-
-## 🏗️ Architecture
-
-### Data Layer (Structs)
-
-```csharp
-// Complex stat with modifiers
-public struct Attribute {
-    public float Base;      // Base value (10 Strength)
-    public float ModAdd;    // Flat bonuses (+5 from ring)
-    public float ModMult;   // Multipliers (x1.2 from buff)
-    public float Min, Max;  // Bounds
-    public float CachedValue;
-}
-
-// Damage instance
-public struct DamagePacket {
-    public int ElementId;   // Fire, Physical, etc.
-    public float Amount;
-    public int Flags;       // Critical, etc.
-}
-
-// Attribute container
-public struct AttributeSheet {
-    public Attribute[] Attributes;
-}
-```
-
-### Logic Layer (Static Methods)
-
-```csharp
-// Attribute calculations
-public static class AttributeLogic {
-    void Recalculate(ref Attribute attr)
-    void AddModifier(ref Attribute attr, float flat, float percent)
-    void ClearModifiers(ref Attribute attr)
-    float GetValue(ref Attribute attr)
-}
-
-// Damage pipeline
-public static class DamageLogic {
-    float ResolveDamage(
-        Span<Attribute> stats,
-        ReadOnlySpan<DamagePacket> damages,
-        IDamageConfig config)
-}
-```
-
-### Configuration Layer (Interface)
-
-```csharp
-public interface IDamageConfig {
-    bool TryGetMitigationStat(
-        int elementId, 
-        out int statId, 
-        out bool isFlat)
-}
-```
-
----
-
-## 💎 Diamond Architecture
-
-The damage pipeline follows the Diamond pattern:
-
-```
-Multiple Sources         Aggregation         Single Result
-    ┌─────┐
-    │Fire │────┐
-    └─────┘    │
-    ┌─────┐    ├──→ [Pipeline] ──→  Total Damage
-    │Phys │────┤
-    └─────┘    │
-    ┌─────┐    │
-    │Shock│────┘
-    └─────┘
-```
-
-**Pipeline Steps**:
-
-1. **Lookup**: Map ElementID → MitigationStatID
-2. **Calculate**: Apply Armor (flat) or Resist (%)
-3. **Aggregate**: Sum all mitigated damages
-
----
-
-## 🎮 Usage Patterns
-
-### Basic Attributes
-
-```csharp
-var attr = new Attribute(10f); // Base 10
-AttributeLogic.AddModifier(ref attr, 5f, 0.5f); // +5 flat, +50% mult
-
-var value = AttributeLogic.GetValue(ref attr);
-// (10 + 5) * 1.5 = 22.5
-```
-
-### Bounded Attributes
-
-```csharp
-var health = new Attribute(100f, 0f, 200f); // Min 0, Max 200
-AttributeLogic.AddModifier(ref health, 150f, 0f);
-
-var val = AttributeLogic.GetValue(ref health);
-// 100 + 150 = 250, clamped to 200
-```
-
-### Damage Configuration
-
-```csharp
-public struct MyConfig : IDamageConfig {
-    public bool TryGetMitigationStat(
-        int elementId, 
-        out int statId, 
-        out bool isFlat)
-    {
-        switch (elementId) {
-            case DmgTypes.Physical:
-                statId = Stats.Armor;
-                isFlat = true;  // Flat reduction
-                return true;
-            
-            case DmgTypes.Fire:
-                statId = Stats.FireResist;
-                isFlat = false; // Percentage
-                return true;
-            
-            default:
-                statId = -1;
-                isFlat = false;
-                return false; // No mitigation
-        }
-    }
-}
-```
-
-### Damage Resolution
-
-```csharp
-// Multi-hit attack (grenade)
-var damages = new[] {
-    new DamagePacket { ElementId = DmgTypes.Fire, Amount = 80f },
-    new DamagePacket { ElementId = DmgTypes.Physical, Amount = 20f },
-    new DamagePacket { ElementId = DmgTypes.Shock, Amount = 10f }
-};
-
-var totalDamage = DamageLogic.ResolveDamage(
-    defender.Attributes.AsSpan(),
+// 2. Resolve it
+// (You need to implement IDamageConfig to tell it which stat resists which element)
+float finalDmg = DamageLogic.ResolveDamage(
+    sheet.AsSpan(),
     damages,
-    gameConfig);
-
-// Apply to health
-defender.Attributes[Stats.Health].Base -= totalDamage;
-```
-
----
-
-## 🚀 Advanced Features
-
-### Condition System
-
-Query stats with zero-allocation conditions:
-
-```csharp
-// "Is Health < 20% of Max?"
-var lowHp = RpgStatCondition.PercentOfMax(StatComparisonOp.LessThan, 0.2f);
-
-if (health.Satisfies(lowHp)) {
-    // Trigger emergency healing
-}
-
-// "Is Strength >= 50?" (Equipment requirement)
-var canEquip = RpgStatCondition.Absolute(StatComparisonOp.GreaterOrEqual, 50f);
-
-// "Is Multiplier > 5x?" (Buff stacking check)
-var hugeBuff = RpgStatCondition.FieldCheck(
-    RpgStatField.ModMult,
-    StatComparisonOp.GreaterThan,
-    5.0f
+    MyGameConfig.Instance
 );
 
-// Multiple conditions (AND logic)
-var requirements = new[] {
-    RpgStatCondition.Absolute(StatComparisonOp.GreaterOrEqual, 50f),
-    RpgStatCondition.PercentOfMax(StatComparisonOp.GreaterThan, 0.5f)
-};
-
-if (strength.SatisfiesAll(requirements)) {
-    // All requirements met
-}
-
-// Count satisfied conditions (progression system)
-var count = stat.CountSatisfied(milestones);
-if (stat.SatisfiesAtLeast(milestones, 3)) {
-    // At least 3 of 5 requirements passed
-}
-```
-
-**Supported Operations**:
-- `Equal`, `NotEqual`
-- `GreaterThan`, `GreaterOrEqual`
-- `LessThan`, `LessOrEqual`
-
-**Reference Sources**:
-- `FixedValue` — Raw numbers (e.g., 50)
-- `Max` — Percentage of max (e.g., 20% of Max)
-- `Base` — Percentage of base (e.g., 150% of Base)
-- `Value` — Percentage of current (e.g., 80% of Current)
-
-### Span-Based (Zero Copy)
-
-```csharp
-// Works with managed arrays
-Attribute[] stats = new Attribute[10];
-DamageLogic.ResolveDamage(stats.AsSpan(), damages, config);
-
-// Works with NativeArray (Unity Jobs)
-NativeArray<Attribute> stats = ...;
-DamageLogic.ResolveDamage(stats, damages, config);
-
-// Works with stackalloc (zero allocation)
-Span<Attribute> stats = stackalloc Attribute[5];
-DamageLogic.ResolveDamage(stats, damages, config);
-```
-
-### Amplified Damage (Negative Resistance)
-
-```csharp
-// -50% fire resist = +50% damage taken
-var attr = new Attribute(-0.5f, -1f, 1f); // Allow negative
-
-var dmg = new DamagePacket { ElementId = DmgTypes.Fire, Amount = 100f };
-// 100 * (1 - (-0.5)) = 150 damage
-```
-
-### Over-Armor (Damage Reduction to 0)
-
-```csharp
-sheet.SetBase(Stats.Armor, 100f);
-
-var dmg = new DamagePacket { ElementId = DmgTypes.Physical, Amount = 10f };
-// 10 - 100 = -90, clamped to 0
+// 3. Apply it
+sheet.GetStat(StatIds.Health).Base -= finalDmg;
 ```
 
 ---
 
-## 📊 Formula Reference
+## 🚀 Advanced: The Condition System
 
-### Attribute Calculation
-
-```
-Value = (Base + ModAdd) * ModMult
-Clamped to [Min, Max]
-```
-
-**Example**:
-
-```
-Base = 10
-ModAdd = +5 (from items)
-ModMult = 1.2 (1.0 + 0.2 from buffs)
-
-Value = (10 + 5) * 1.2 = 18
-```
-
-### Damage Mitigation
-
-**Flat (Armor)**:
-
-```
-FinalDamage = IncomingDamage - Armor
-Clamped to >= 0
-```
-
-**Percentage (Resistance)**:
-
-```
-FinalDamage = IncomingDamage * (1 - Resistance)
-No clamp (allows amplification)
-```
-
----
-
-## ✨ Features
-
-✅ **Zero Allocation** — No GC in hot paths
-✅ **Span-Based** — NativeArray, BlobArray, stackalloc compatible
-✅ **Framework Agnostic** — No Unity/Unreal dependencies
-✅ **Type-Safe Config** — Interface for game-specific rules
-✅ **Aggregation** — Multiple damage sources in one call
-✅ **Bounded** — Min/Max enforcement
-✅ **Condition System** — Query stats with zero-allocation conditions
-✅ **Tested** — Comprehensive unit tests covering edge cases
-
----
-
-## 🧪 Test Coverage
-
-- ✅ Diamond pattern (Base + Flat + Mult)
-- ✅ Min/Max clamping
-- ✅ Armor (flat mitigation)
-- ✅ Resistance (percentage mitigation)
-- ✅ Mixed damage types
-- ✅ Negative damage (over-armor)
-- ✅ Amplified damage (negative resist)
-- ✅ Unmapped elements (full damage)
-- ✅ Empty damage arrays
-
----
-
-## 🎯 Use Cases
-
-### Action RPG
+Want to check requirements like "Strength > 50" or "Health < 20%" without allocating memory?
 
 ```csharp
-// Player takes multi-element hit
-var damages = new[] {
-    new DamagePacket { ElementId = Fire, Amount = 100 },
-    new DamagePacket { ElementId = Physical, Amount = 50 }
-};
-```
+// Create a reusable condition
+var lowHealth = RpgStatCondition.PercentOfMax(StatComparisonOp.LessThan, 0.2f);
 
-### Turn-Based RPG
-
-```csharp
-// Calculate damage before animation
-var preview = DamageLogic.ResolveDamage(target.Stats.AsSpan(), spell.Damages, config);
-// Show preview, then apply
-```
-
-### MMO
-
-```csharp
-// Server authoritative damage
-for (var i = 0; i < targets.Length; i++) {
-    var dmg = DamageLogic.ResolveDamage(targets[i].Stats, aoe.Damages, rules);
-    ApplyDamage(targets[i], dmg);
+// Check it
+if (sheet.GetStat(StatIds.Health).Satisfies(lowHealth))
+{
+    ActivateBerserkMode();
 }
 ```
 
 ---
 
-## 📚 Documentation
+## 🔧 API Reference
 
-- **This README** — API reference & examples
-- **RpgStatCondition_GUIDE.md** — Complete condition system guide with Unity examples
-- **Tests** — Variable.RPG.Tests (comprehensive unit tests)
+### `RpgStat` (The Struct)
+- `Base`: Raw value.
+- `ModAdd`: Sum of flat bonuses.
+- `ModMult`: Sum of multipliers (starts at 1.0).
+- `Value`: The calculated result.
+
+### `DamageLogic`
+- `ResolveDamage(...)`: The heavy lifter. Takes stats, damage packets, and config. Returns total damage.
+
+### `IDamageConfig`
+- `TryGetMitigationStat(...)`: Maps `Fire` -> `FireResist`. You implement this!
 
 ---
 
-**Diamond Architecture. Zero Allocation. AAA-Grade.** 💎
+<div align="center">
+
+**Part of the [GameVariable](https://github.com/iafahim/GameVariable) Ecosystem**
+*Made with ❤️ for game developers*
+
+</div>
