@@ -1,5 +1,8 @@
 namespace Variable.Regen;
 
+/// <summary>
+///     Contains time-related calculations for regeneration logic (Time to Full/Empty).
+/// </summary>
 public static partial class RegenLogic
 {
     /// <summary>
