@@ -80,7 +80,7 @@ public static class RpgStatExtensions
     ///     Example: "165 ◀ [100 + 50] × 110%"
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string ToStringCompact(ref this RpgStat s)
+    public static string ToStringCompact(ref this RpgStat stat)
     {
         // F1 = 1 decimal place (10.5)
         // P0 = Percentage format (1.1 -> 110%)
@@ -92,7 +92,7 @@ public static class RpgStatExtensions
         int pos = 0;
 
         // {0:F1}
-        if (s.Value.TryFormat(buffer.Slice(pos), out int charsWritten, "F1", CultureInfo.InvariantCulture))
+        if (stat.Value.TryFormat(buffer.Slice(pos), out int charsWritten, "F1", CultureInfo.InvariantCulture))
         {
             pos += charsWritten;
         }
@@ -102,7 +102,7 @@ public static class RpgStatExtensions
         pos += 4;
 
         // {1:F1}
-        if (s.Base.TryFormat(buffer.Slice(pos), out charsWritten, "F1", CultureInfo.InvariantCulture))
+        if (stat.Base.TryFormat(buffer.Slice(pos), out charsWritten, "F1", CultureInfo.InvariantCulture))
         {
             pos += charsWritten;
         }
@@ -112,7 +112,7 @@ public static class RpgStatExtensions
         pos += 3;
 
         // {2:F1}
-        if (s.ModAdd.TryFormat(buffer.Slice(pos), out charsWritten, "F1", CultureInfo.InvariantCulture))
+        if (stat.ModAdd.TryFormat(buffer.Slice(pos), out charsWritten, "F1", CultureInfo.InvariantCulture))
         {
             pos += charsWritten;
         }
@@ -122,7 +122,7 @@ public static class RpgStatExtensions
         pos += 4;
 
         // {3:P0}
-        if (s.ModMult.TryFormat(buffer.Slice(pos), out charsWritten, "P0", CultureInfo.InvariantCulture))
+        if (stat.ModMult.TryFormat(buffer.Slice(pos), out charsWritten, "P0", CultureInfo.InvariantCulture))
         {
             pos += charsWritten;
         }
@@ -135,11 +135,11 @@ public static class RpgStatExtensions
     ///     Example: "165 ◀ [100 + 50] × 1.1 :: Bounds(0, 999)"
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string ToStringVerbose(ref this RpgStat s)
+    public static string ToStringVerbose(ref this RpgStat stat)
     {
         return string.Format(CultureInfo.InvariantCulture,
             "{0:F2} ◀ [{1:F2} + {2:F2}] × {3:F2} :: Bounds({4}, {5})",
-            s.Value, s.Base, s.ModAdd, s.ModMult, s.Min, s.Max);
+            stat.Value, stat.Base, stat.ModAdd, stat.ModMult, stat.Min, stat.Max);
     }
 
     /// <summary>
