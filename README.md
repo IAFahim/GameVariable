@@ -116,7 +116,8 @@ graph LR
 | **Combos, Input Buffers** | [**Variable.Input**](./Variable.Input) |
 | **Complex Stats (Armor/Resist)** | [**Variable.RPG**](./Variable.RPG) |
 | **Inventory Limits** | [**Variable.Inventory**](./Variable.Inventory) |
-| **AI State Machines** | [**GameVariable.Intent**](./GameVariable.Intent) |
+| **AI Task Lifecycle** | [**GameVariable.Intent**](./GameVariable.Intent) |
+| **Performance Tests** | [**GameVariable.Benchmarks**](./GameVariable.Benchmarks) |
 
 ---
 
