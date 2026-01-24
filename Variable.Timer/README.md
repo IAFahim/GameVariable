@@ -77,7 +77,7 @@ Since `Timer` and `Cooldown` implement `IBoundedInfo`, they work with standard U
 
 ```csharp
 // 0.0 to 1.0
-float progress = (float)CastTimer.GetRatio();
+float progress = CastTimer.GetRatio();
 
 // 1.0 to 0.0 (inverse for cooldowns usually)
 float cdProgress = (float)DashCd.GetProgress();

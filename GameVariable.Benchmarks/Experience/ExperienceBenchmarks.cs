@@ -35,7 +35,7 @@ public class ExperienceIntBenchmarks
     }
 
     [Benchmark]
-    public double GetRatio()
+    public float GetRatio()
     {
         return _xp.GetRatio();
     }
@@ -79,7 +79,7 @@ public class ExperienceLongBenchmarks
     }
 
     [Benchmark]
-    public double GetRatio()
+    public float GetRatio()
     {
         return _xp.GetRatio();
     }

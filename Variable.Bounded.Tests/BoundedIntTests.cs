@@ -105,21 +105,21 @@ public class BoundedIntTests
     public void GetRatio_ReturnsCorrectRatio()
     {
         var bounded = new BoundedInt(100, 0, 50);
-        Assert.Equal(0.5, bounded.GetRatio(), 5);
+        Assert.Equal(0.5f, bounded.GetRatio(), 5);
     }
 
     [Fact]
     public void GetRatio_ReturnsZero_WhenRangeIsZero()
     {
         var bounded = new BoundedInt(0, 0, 0);
-        Assert.Equal(0.0, bounded.GetRatio());
+        Assert.Equal(0.0f, bounded.GetRatio());
     }
 
     [Fact]
     public void GetRatio_WorksWithNegativeMin()
     {
         var bounded = new BoundedInt(50, -50, 0);
-        Assert.Equal(0.5, bounded.GetRatio(), 5); // 0 is 50% between -50 and 50
+        Assert.Equal(0.5f, bounded.GetRatio(), 5); // 0 is 50% between -50 and 50
     }
 
     #endregion

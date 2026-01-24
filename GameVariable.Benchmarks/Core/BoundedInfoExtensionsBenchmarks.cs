@@ -27,7 +27,7 @@ public class BoundedInfoExtensionsBenchmarks
     }
 
     [Benchmark]
-    public double GetRatio_Half()
+    public float GetRatio_Half()
     {
         return _halfValue.GetRatio();
     }

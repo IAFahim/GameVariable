@@ -52,7 +52,7 @@ public class RegenFloatBenchmarks
     }
 
     [Benchmark]
-    public double GetRatio()
+    public float GetRatio()
     {
         return _positiveRegen.GetRatio();
     }
