@@ -14,6 +14,17 @@ dotnet add package Variable.Timer
 
 ---
 
+## 🤯 Mental Model
+
+### Stopwatch vs Egg Timer 🍳
+
+*   **`Timer` is a Stopwatch:** It starts at `0.0` and counts **UP** to a limit.
+    *   *Use for: Channeling a spell, holding a button, survival time.*
+*   **`Cooldown` is an Egg Timer:** It starts at `Duration` (e.g. 10.0) and counts **DOWN** to `0.0`.
+    *   *Use for: Ability reloads, invulnerability frames, shield regen delay.*
+
+---
+
 ## 🚀 Features
 
 * **🔥 Cooldowns:** Manage ability availability effortlessly.

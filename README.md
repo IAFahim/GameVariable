@@ -118,6 +118,19 @@ graph LR
 | **Inventory Limits** | [**Variable.Inventory**](./Variable.Inventory) |
 | **AI State Machines** | [**GameVariable.Intent**](./GameVariable.Intent) |
 
+### ⚡ One-Liner Cheat Sheet
+
+| Variable | Think of it as... | Use it for... |
+| :--- | :--- | :--- |
+| `BoundedInt` | **A Cup 🥤** | Health, Stamina, Gold. |
+| `BoundedFloat` | **A Gauge 🌡️** | Temperature, Pressure, Speed. |
+| `Timer` | **Stopwatch ⏱️** | Cast times, "Hold Button to..." |
+| `Cooldown` | **Egg Timer ⏲️** | Spell reload, Dash reset. |
+| `RegenFloat` | **Rechargeable Battery 🔋** | Halo Shields, Mana, Energy. |
+| `ReservoirInt` | **Gun Clip 🔫** | Ammo (Clip + Backpack). |
+| `ExperienceInt` | **XP Bar ⭐** | Leveling systems. |
+| `IntentState` | **Traffic Light 🚦** | AI Brain, Character States. |
+
 ---
 
 ## 🚀 Quick Start
