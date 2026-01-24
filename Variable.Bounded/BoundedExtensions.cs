@@ -46,7 +46,7 @@ public static class BoundedExtensions
     ///     Gets the normalized ratio of the current value within the bounded range.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double GetRatio(this BoundedFloat bounded)
+    public static float GetRatio(this BoundedFloat bounded)
     {
         BoundedLogic.GetRatio(bounded.Current, bounded.Min, bounded.Max, out var result);
         return result;
@@ -112,7 +112,7 @@ public static class BoundedExtensions
     ///     Gets the normalized ratio of the current value within the bounded range.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double GetRatio(this BoundedInt bounded)
+    public static float GetRatio(this BoundedInt bounded)
     {
         BoundedLogic.GetRatio(bounded.Current, bounded.Min, bounded.Max, out var result);
         return result;
@@ -178,7 +178,7 @@ public static class BoundedExtensions
     ///     Gets the normalized ratio of the current value within the bounded range.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double GetRatio(this BoundedByte bounded)
+    public static float GetRatio(this BoundedByte bounded)
     {
         BoundedLogic.GetRatio(bounded.Current, bounded.Max, out var result);
         return result;

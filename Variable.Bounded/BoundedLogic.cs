@@ -66,10 +66,10 @@ public static class BoundedLogic
     /// <param name="max">The maximum value.</param>
     /// <param name="result">The ratio between 0.0 and 1.0.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetRatio(in float current, in float min, in float max, out double result)
+    public static void GetRatio(in float current, in float min, in float max, out float result)
     {
         var range = max - min;
-        result = Math.Abs(range) < MathConstants.Tolerance ? 0.0 : (current - min) / range;
+        result = Math.Abs(range) < MathConstants.Tolerance ? 0.0f : (current - min) / range;
     }
 
     /// <summary>Calculates the range (max - min).</summary>
@@ -150,10 +150,10 @@ public static class BoundedLogic
     /// <param name="max">The maximum value.</param>
     /// <param name="result">The ratio between 0.0 and 1.0.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetRatio(in int current, in int min, in int max, out double result)
+    public static void GetRatio(in int current, in int min, in int max, out float result)
     {
         var range = max - min;
-        result = range == 0 ? 0.0 : (double)(current - min) / range;
+        result = range == 0 ? 0.0f : (float)(current - min) / range;
     }
 
     /// <summary>Calculates the range (max - min) for int values.</summary>
@@ -239,9 +239,9 @@ public static class BoundedLogic
     /// <param name="max">The maximum value.</param>
     /// <param name="result">The ratio between 0.0 and 1.0.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetRatio(in byte current, in byte max, out double result)
+    public static void GetRatio(in byte current, in byte max, out float result)
     {
-        result = max == 0 ? 0.0 : (double)current / max;
+        result = max == 0 ? 0.0f : (float)current / max;
     }
 
     /// <summary>Returns the range for byte values (max).</summary>

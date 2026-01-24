@@ -26,7 +26,7 @@ You write **ONE** script that takes `IBoundedInfo`.
 ```csharp
 public void UpdateBar(IBoundedInfo resource)
 {
-    fillImage.fillAmount = (float)resource.GetRatio(); // Works for EVERYTHING!
+    fillImage.fillAmount = resource.GetRatio(); // Works for EVERYTHING!
 }
 ```
 

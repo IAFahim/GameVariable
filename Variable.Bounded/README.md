@@ -56,7 +56,7 @@ if (health.IsEmpty())
 health += 50f;  // Clamps to 100. Can't over-heal.
 
 // UI
-float fillAmount = (float)health.GetRatio(); // 0.0 to 1.0
+float fillAmount = health.GetRatio(); // 0.0f to 1.0f
 ```
 
 ### 2. Advanced Ranges (Temperature)

@@ -99,7 +99,7 @@ public class ExperienceLongTests
     public void GetRatio_ReturnsCorrectValue()
     {
         var exp = new ExperienceLong(100, 50);
-        Assert.Equal(0.5, exp.GetRatio(), 5);
+        Assert.Equal(0.5f, exp.GetRatio(), 5);
     }
 
     [Fact]
@@ -108,7 +108,7 @@ public class ExperienceLongTests
         // This case is actually hard to reach via constructor due to clamping, but logic handles it
         var exp = new ExperienceLong(1);
         exp.Max = 0; // Force set
-        Assert.Equal(0.0, exp.GetRatio());
+        Assert.Equal(0.0f, exp.GetRatio());
     }
 
     #endregion

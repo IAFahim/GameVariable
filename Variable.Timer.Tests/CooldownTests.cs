@@ -207,7 +207,7 @@ public class CooldownTests
     public void GetRatio_ReturnsCorrectValue()
     {
         var cooldown = new Cooldown(10f, 5f);
-        Assert.Equal(0.5, cooldown.GetRatio(), 5);
+        Assert.Equal(0.5f, cooldown.GetRatio(), 5);
     }
 
     [Fact]
