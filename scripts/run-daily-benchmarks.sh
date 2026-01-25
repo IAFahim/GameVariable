@@ -13,6 +13,22 @@ ARTIFACTS_DIR="$REPO_ROOT/BenchmarkDotNet.Artifacts/results"
 
 mkdir -p "$HISTORY_DIR"
 
+# Check for changes
+LAST_COMMIT_FILE="$SCRIPT_DIR/last_run_commit"
+CURRENT_COMMIT=$(git rev-parse HEAD)
+
+if [ -f "$LAST_COMMIT_FILE" ]; then
+    LAST_COMMIT=$(cat "$LAST_COMMIT_FILE")
+    if git diff --quiet "$LAST_COMMIT" HEAD; then
+        echo "No changes since last run (Commit: $LAST_COMMIT). Exiting."
+        exit 0
+    else
+        echo "Changes detected since commit $LAST_COMMIT. Proceeding with benchmarks."
+    fi
+else
+    echo "No last run commit found. Proceeding with benchmarks."
+fi
+
 # Ensure .NET is in PATH (in case it wasn't added permanently or we are in a new shell without source)
 export PATH="$HOME/.dotnet:$PATH"
 
@@ -62,3 +78,6 @@ if [ -n "$PREV_HISTORY_FILE" ]; then
 else
     echo "No previous history to compare with. This is likely the first run."
 fi
+
+# Update last commit
+echo "$CURRENT_COMMIT" > "$LAST_COMMIT_FILE"
