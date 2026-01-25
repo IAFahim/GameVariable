@@ -121,6 +121,13 @@ public struct BoundedFloat :
     /// <inheritdoc />
     public readonly override string ToString()
     {
+        Span<char> buffer = stackalloc char[32];
+        if (TryFormat(buffer, out var charsWritten))
+        {
+            return new string(buffer[..charsWritten]);
+        }
+
+        // Fallback for safety, though 32 chars should be enough for most floats.
         return string.Format(CultureInfo.InvariantCulture, "{0}/{1}", Current, Max);
     }
 
