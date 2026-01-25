@@ -117,6 +117,7 @@ graph LR
 | **Complex Stats (Armor/Resist)** | [**Variable.RPG**](./Variable.RPG) |
 | **Inventory Limits** | [**Variable.Inventory**](./Variable.Inventory) |
 | **AI State Machines** | [**GameVariable.Intent**](./GameVariable.Intent) |
+| **Performance Tests** | [**GameVariable.Benchmarks**](./GameVariable.Benchmarks) |
 
 ---
 
@@ -209,6 +210,17 @@ public void UpdateBar(IBoundedInfo info)
     barImage.fillAmount = (float)info.GetRatio();
 }
 ```
+
+---
+
+## 🏎️ Performance
+
+We take performance seriously. All packages are tested against raw C# operations to ensure minimal overhead.
+
+*   **Zero GC:** We measure allocations per frame.
+*   **Nanosecond Precision:** We track execution time down to the nanosecond.
+
+[**View Benchmarks & Reports ➡️**](./GameVariable.Benchmarks)
 
 ---
 
