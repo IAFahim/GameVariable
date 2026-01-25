@@ -90,6 +90,7 @@ graph LR
     RPG["📈 Variable.RPG"] --> Core
     Inventory["🎒 Variable.Inventory"] --> Core
     Input["🎮 Variable.Input"] --> Core
+    Grid["🏁 Variable.Grid"] --> Core
     Intent["🧠 GameVariable.Intent"]
     
     style Core fill:#4a9eff,stroke:#2980b9,stroke-width:2px,color:#fff
@@ -101,6 +102,7 @@ graph LR
     style RPG fill:#1abc9c,stroke:#16a085,color:#fff
     style Inventory fill:#95a5a6,stroke:#7f8c8d,color:#fff
     style Input fill:#9b59b6,stroke:#8e44ad,color:#fff
+    style Grid fill:#f1c40f,stroke:#f39c12,color:#fff
     style Intent fill:#34495e,stroke:#2c3e50,color:#fff
 ```
 
@@ -116,6 +118,7 @@ graph LR
 | **Combos, Input Buffers** | [**Variable.Input**](./Variable.Input) |
 | **Complex Stats (Armor/Resist)** | [**Variable.RPG**](./Variable.RPG) |
 | **Inventory Limits** | [**Variable.Inventory**](./Variable.Inventory) |
+| **Maps, Spatial Logic** | [**Variable.Grid**](./Variable.Grid) |
 | **AI State Machines** | [**GameVariable.Intent**](./GameVariable.Intent) |
 
 ---
