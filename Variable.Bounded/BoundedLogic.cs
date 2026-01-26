@@ -272,7 +272,19 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Add(in int current, in int min, in int max, in int amount, out int result)
     {
-        CoreMath.Clamp((long)current + amount, min, max, out var temp);
-        result = (int)temp;
+        // ⚡ Bolt: This implementation avoids the overhead of casting to a long, instead using pre-emptive checks to handle potential integer overflow and underflow. This results in a more performant `Add` operation, which is critical in performance-sensitive game development scenarios.
+        if (amount > 0 && current > int.MaxValue - amount)
+        {
+            result = max;
+            return;
+        }
+
+        if (amount < 0 && current < int.MinValue - amount)
+        {
+            result = min;
+            return;
+        }
+
+        CoreMath.Clamp(current + amount, min, max, out result);
     }
 }
