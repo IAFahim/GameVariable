@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <Nullable>enable</Nullable>
+        <Version>1.0.0</Version>
+        <Authors>Md Ishtiaq Ahamed Fahim</Authors>
+        <Company>IAFahim</Company>
+        <Description>Zero-allocation, struct-based easing functions and curves for the GameVariable ecosystem.</Description>
+        <PackageTags>game;variable;curve;easing;tween;gamedev;unity</PackageTags>
+        <PackageProjectUrl>https://github.com/iafahim/GameVariable</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/iafahim/GameVariable</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Variable.Core\Variable.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>
