@@ -217,6 +217,7 @@ public void UpdateBar(IBoundedInfo info)
 1.  **Zero Allocation:** Everything is a `struct`. No `new` keywords in your update loop. No Garbage Collection spikes.
 2.  **Burst Compatible:** Optimized for Unity's DOTS/ECS and Burst Compiler.
 3.  **Fail-Safe:** Math is clamped. State is consistent. No `NaN` or `Infinity` surprises.
+4.  **Proven Performance:** We don't just guess. Check out [**GameVariable.Benchmarks**](./GameVariable.Benchmarks) to see the wind tunnel tests yourself.
 
 ---
 
