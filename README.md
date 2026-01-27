@@ -91,6 +91,8 @@ graph LR
     Inventory["🎒 Variable.Inventory"] --> Core
     Input["🎮 Variable.Input"] --> Core
     Intent["🧠 GameVariable.Intent"]
+    Synergy["🎼 GameVariable.Synergy"] --> Bounded
+    Synergy --> RPG
     
     style Core fill:#4a9eff,stroke:#2980b9,stroke-width:2px,color:#fff
     style Bounded fill:#2ecc71,stroke:#27ae60,color:#fff
@@ -102,6 +104,7 @@ graph LR
     style Inventory fill:#95a5a6,stroke:#7f8c8d,color:#fff
     style Input fill:#9b59b6,stroke:#8e44ad,color:#fff
     style Intent fill:#34495e,stroke:#2c3e50,color:#fff
+    style Synergy fill:#2c3e50,stroke:#f1c40f,color:#fff
 ```
 
 ### 🧐 Which package do I need?
@@ -117,6 +120,7 @@ graph LR
 | **Complex Stats (Armor/Resist)** | [**Variable.RPG**](./Variable.RPG) |
 | **Inventory Limits** | [**Variable.Inventory**](./Variable.Inventory) |
 | **AI State Machines** | [**GameVariable.Intent**](./GameVariable.Intent) |
+| **Everything Integrated** | [**GameVariable.Synergy**](./GameVariable.Synergy) |
 
 ---
 
