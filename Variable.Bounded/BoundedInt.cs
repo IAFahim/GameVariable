@@ -108,7 +108,10 @@ public struct BoundedInt :
     /// <inheritdoc />
     public readonly override string ToString()
     {
-        return string.Format(CultureInfo.InvariantCulture, "{0}/{1}", Current, Max);
+        Span<char> buffer = stackalloc char[32];
+        return TryFormat(buffer, out var charsWritten)
+            ? new string(buffer.Slice(0, charsWritten))
+            : string.Format(CultureInfo.InvariantCulture, "{0}/{1}", Current, Max);
     }
 
     /// <summary>
