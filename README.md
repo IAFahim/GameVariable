@@ -214,6 +214,28 @@ public void UpdateBar(IBoundedInfo info)
 
 ## 🏗️ Architecture & Philosophy
 
+### 🧠 The Mega Cheat Sheet (Mental Models)
+
+| Package | Metaphor | What it is |
+|---------|----------|------------|
+| `Variable.Bounded` | **The Cup** ☕ | A value with a hard limit. |
+| `Variable.Timer` | **The Stopwatch** ⏱️ | Counts up (Timer) or down (Cooldown). |
+| `Variable.Regen` | **The Faucet** 🚰 | A Cup that fills/drains over time. |
+| `Variable.Reservoir` | **The Backpack** 🎒 | Active clip + Reserve ammo. |
+| `Variable.Experience` | **The Bucket Chain** 🪣 | Leveling up creates a bigger bucket. |
+| `Variable.RPG` | **The Diamond** 💎 | Damage converges through filters (Armor). |
+| `Variable.Inventory` | **The Accountant** 🧮 | Logic for "Can I fit this?". |
+| `Variable.Input` | **The Move Tree** 🌳 | Combo system. |
+| `GameVariable.Intent` | **The Traffic Light** 🚦 | Strict Task Lifecycle. |
+| [**GameVariable.Benchmarks**](./GameVariable.Benchmarks) | **The Wind Tunnel** 🌬️ | Proof of performance. |
+
+### 🔮 Coming Soon
+*   `Variable.Curve`: **The Rollercoaster** 🎢 (Easing functions).
+*   `Variable.Grid`: **The Tactic Board** ♟️ (2D/3D Grid logic).
+*   `GameVariable.Synergy`: **The Conductor** 🎻 (Integration layer).
+
+### 📐 Principles
+
 1.  **Zero Allocation:** Everything is a `struct`. No `new` keywords in your update loop. No Garbage Collection spikes.
 2.  **Burst Compatible:** Optimized for Unity's DOTS/ECS and Burst Compiler.
 3.  **Fail-Safe:** Math is clamped. State is consistent. No `NaN` or `Infinity` surprises.

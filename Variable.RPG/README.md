@@ -4,14 +4,23 @@
 
 ---
 
-## 🎯 What Is This?
+## 🧠 The Mental Model
 
-A complete RPG stat system implementing the **Diamond Architecture** pattern:
+**The Diamond Architecture.** 💎
 
-- **Aggregation**: Multiple damage sources → single result
-- **Pipeline**: Damage → Mitigation → Final Value
-- **Span-Based**: Works with arrays, NativeArray, BlobArray
-- **Pure Logic**: No framework dependencies
+The damage pipeline follows a diamond shape:
+1.  **Diverge:** Start with multiple incoming damage types (Fire + Physical + Poison).
+2.  **Process:** Each type goes through its own "Mitigation Pipe" (Armor for Physical, Resist for Fire).
+3.  **Converge:** Everything sums up into a single `FinalDamage` number.
+
+## 👶 ELI5
+
+**"The Funnel."** 🌪️
+
+Imagine pouring different colored sand (Fire damage, Ice damage) into a big funnel.
+*   Inside the funnel, there are mesh filters (Armor, Resistance).
+*   Some sand gets stuck in the filters (Mitigated).
+*   The rest falls out the bottom into one big pile (Total Damage).
 
 ---
 

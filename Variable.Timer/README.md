@@ -14,6 +14,22 @@ dotnet add package Variable.Timer
 
 ---
 
+## 🧠 The Mental Model
+
+| Type | Metaphor | Explanation |
+|------|----------|-------------|
+| **Timer** | **The Stopwatch** ⏱️ | Starts at 0. Counts UP. Used for things like "How long have I been running?" or "Casting a spell". |
+| **Cooldown** | **The Egg Timer** ⏲️ | Starts at Max. Counts DOWN. Used for "How long until I can use this again?". |
+
+## 👶 ELI5
+
+**"The Microwave vs The Race."** 🏃‍♂️🍿
+
+*   **Cooldown:** Think of a microwave. You set it to 2 minutes. It counts down. When it hits 0, it goes "DING!" (Ready).
+*   **Timer:** Think of a race. The gun goes off, and the clock starts at 0. It counts up until you cross the finish line.
+
+---
+
 ## 🚀 Features
 
 * **🔥 Cooldowns:** Manage ability availability effortlessly.

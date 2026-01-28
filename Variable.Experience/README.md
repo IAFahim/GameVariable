@@ -14,6 +14,25 @@ dotnet add package Variable.Experience
 
 ---
 
+## 🧠 The Mental Model
+
+**The Bucket Chain.** 🪣➡️🪣
+
+XP is just filling a bucket.
+*   **IsFull():** The bucket is full.
+*   **Level Up:** You empty the bucket, get a BIGGER bucket (new Max XP), and pour any leftover water (Overflow) into the new one.
+
+## 👶 ELI5
+
+**"The Sticker Book."** 📒
+
+*   You need **10 stickers** to finish Page 1.
+*   When you finish it, you turn the page (**Level Up!**).
+*   Now you need **20 stickers** for Page 2.
+*   If someone gives you **50 stickers** at once, you might finish Page 1, Page 2, *and* Page 3 in one go!
+
+---
+
 ## 🚀 Features
 
 * **📈 Smart Overflow:** If you gain 1,000,000 XP at level 1, it correctly calculates how many levels you gain.
