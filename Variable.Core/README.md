@@ -14,7 +14,9 @@ dotnet add package Variable.Core
 
 ---
 
-## 🧠 Why Does This Exist?
+## 🧠 The Mental Model
+
+**The Universal Adapter.** 🔌
 
 Imagine writing a UI Health Bar script.
 
@@ -29,6 +31,13 @@ public void UpdateBar(IBoundedInfo resource)
     fillImage.fillAmount = (float)resource.GetRatio(); // Works for EVERYTHING!
 }
 ```
+
+## 👶 ELI5
+
+**"The LEGO Bumps."** 🧱
+
+Think of `Variable.Core` as the shape of the bumps on top of LEGO bricks.
+It doesn't look like much on its own, but it's the reason you can snap a "Health Brick" and a "Timer Brick" onto the same "UI Baseplate" without needing glue.
 
 ---
 

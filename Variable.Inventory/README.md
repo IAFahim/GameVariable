@@ -14,6 +14,26 @@ dotnet add package Variable.Inventory
 
 ---
 
+## 🧠 The Mental Model
+
+**The Accountant.** 🧮
+
+`Variable.Inventory` doesn't own the warehouse (your List/Array). It just sits at the desk with a calculator.
+*   You ask: "Can I fit 50 more units?"
+*   It answers: "No, you only have space for 20. I will move 20 and leave 30 behind."
+
+It is **stateless logic** that operates on your data.
+
+## 👶 ELI5
+
+**"The Lunchbox."** 🍱
+
+*   You have a lunchbox that can fit **2 apples**.
+*   You have **5 apples** on the table.
+*   `TryAddPartial` is the logic that says: "Put 2 in the box. Leave 3 on the table."
+
+---
+
 ## 🚀 Features
 
 * **🧠 Pure Logic:** Static methods that work on `float`, `int`, `byte`.

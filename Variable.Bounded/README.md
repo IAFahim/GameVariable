@@ -14,6 +14,25 @@ dotnet add package Variable.Bounded
 
 ---
 
+## 🧠 The Mental Model
+
+| Type | Metaphor | Explanation |
+|------|----------|-------------|
+| **BoundedInt** | **The Cup** ☕ | It has a rim. You can pour coffee in, but once it hits the rim (Max), any extra just spills on the floor. It never gets "fuller" than full. |
+| **BoundedFloat** | **The Gauge** 🌡️ | Like a thermometer or speedometer. There is a physical stopper at the top and bottom. The needle literally *cannot* go past the red line. |
+
+## 👶 ELI5
+
+**"The Magic Bucket."** 🪣
+
+Imagine a bucket that can hold exactly 10 liters.
+*   If you try to pour **100 liters** into it, the bucket doesn't explode. It just fills to 10 and stops.
+*   If you try to take **20 liters** out, it just becomes empty (0). It never goes into "negative water".
+
+You don't have to be careful when pouring. The bucket handles the mess for you.
+
+---
+
 ## 🚀 Features
 
 * **🛡️ Bulletproof Clamping:** Values *cannot* escape their bounds.

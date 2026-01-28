@@ -16,6 +16,28 @@ dotnet add package Variable.Reservoir
 
 ---
 
+## 🧠 The Mental Model
+
+**The Clip & The Backpack.** 🎒
+
+It's the classic FPS pattern:
+*   **Volume (Clip):** The bullets currently in your gun.
+*   **Reserve (Backpack):** The boxes of bullets in your inventory.
+
+They are linked. When you `Refill()` (Reload), you take from the Backpack and put it in the Clip.
+
+## 👶 ELI5
+
+**"The Nerf Gun."** 🔫
+
+*   You have **6 darts** in the gun (Volume).
+*   You have **20 darts** in your pocket (Reserve).
+*   When you shoot, the gun number goes down.
+*   When you reload, you take darts from your pocket and put them in the gun.
+*   If your pocket is empty, you can't reload!
+
+---
+
 ## 🚀 Features
 
 * **🔫 Reload Logic:** Built-in `Refill()` handles the math of moving from Reserve to Volume.

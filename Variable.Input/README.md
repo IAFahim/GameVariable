@@ -1,10 +1,12 @@
-# Variable.Input - Combo System
+# 🎮 Variable.Input
 
 **A zero-allocation, Burst-compatible combo/skill system for Unity.**
 
 ---
 
-## 🧠 The Mental Model: It's Just a Tree of Moves!
+## 🧠 The Mental Model
+
+**It's Just a Tree of Moves!** 🌳
 
 Forget the technical terms. Think of your combo system as a **tree of moves**:
 
@@ -21,6 +23,16 @@ Forget the technical terms. Think of your combo system as a **tree of moves**:
 ```
 
 **That's it!** Each box is a "node" (a move), and each arrow is an "edge" (a button press that connects moves).
+
+## 👶 ELI5
+
+**"Street Fighter."** 🥊
+
+*   You press **A**. The character punches.
+*   You press **A** again *quickly*. The character does a double punch.
+*   You press **B** instead. The character kicks.
+
+`Variable.Input` watches what buttons you press and follows the map to decide which move comes next. It also remembers button presses (buffering) so if you press a button slightly too early, it still works.
 
 ---
 

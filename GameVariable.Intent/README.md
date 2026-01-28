@@ -1,14 +1,42 @@
-# GameVariable.Intent
+# 🧠 GameVariable.Intent
 
 **GameVariable.Intent** provides a high-performance, zero-allocation Hierarchical State Machine (HSM) implementation. It is designed for AI decision-making, character logic, and complex state management in games.
 
-## Installation
+---
+
+## 📦 Installation
 
 ```bash
 dotnet add package Variable.Intent
 ```
 
-## Features
+---
+
+## 🧠 The Mental Model
+
+**The Traffic Light.** 🚦
+
+`IntentState` controls the **Lifecycle** of a task. It is strict.
+*   **Created:** The car is in the garage.
+*   **Waiting To Run:** The engine is on.
+*   **Running:** The car is moving (Green Light).
+*   **Completed:** Arrived at destination.
+*   **Faulted:** Flat tire.
+
+## 👶 ELI5
+
+**"The Chore Chart."** 📋
+
+Your mom says "Clean your room" (The Intent).
+1.  **Created:** You haven't started yet.
+2.  **Waiting To Run:** You are standing at the door, ready to go.
+3.  **Running:** You are cleaning.
+4.  **Completed:** Done!
+5.  **Faulted:** You broke a lamp and can't finish.
+
+---
+
+## 🚀 Features
 
 * **IntentState**: A struct-based state machine optimized for performance.
 * **Zero Allocation**: No garbage collection overhead during state transitions.

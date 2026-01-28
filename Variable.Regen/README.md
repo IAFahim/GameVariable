@@ -14,6 +14,25 @@ dotnet add package Variable.Regen
 
 ---
 
+## 🧠 The Mental Model
+
+**The Faucet.** 🚰
+
+Imagine a **Cup** (`BoundedFloat`) sitting under a faucet.
+*   **Regeneration:** The faucet is dripping water *in* (+5 per second).
+*   **Decay:** The cup has a hole in the bottom, leaking water *out* (-5 per second).
+
+`Variable.Regen` is just the Cup + The Faucet wrapped together.
+
+## 👶 ELI5
+
+**"The Halo Shield."** 🛡️
+
+*   **Regen:** In games like Halo, your shield automatically recharges when you hide. That's a `RegenFloat` with a positive rate.
+*   **Decay:** In survival games, your "Hunger" bar slowly goes down over time. That's a `RegenFloat` with a negative rate.
+
+---
+
 ## 🚀 Features
 
 * **⚡ Auto-Tick:** Just call `.Tick(deltaTime)` and it handles the rest.
