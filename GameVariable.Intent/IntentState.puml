@@ -1,38 +1,61 @@
 @startuml
 hide empty description
 
+' Initial states
+state CREATED
+state INACTIVE
+state PENDING
+
+' Active states
+state RUNNING
+state BLOCKED
+
+' Terminal states
+state COMPLETED
+state FAULTED
+state CANCELLED
+
+
+' === Happy Path (green) ===
+[*] -down-> CREATED
+CREATED -[#green]-> INACTIVE : PREPARE
+CREATED -[#green]-> PENDING : ACTIVATE
+INACTIVE -[#green]-> PENDING : ACTIVATE
+PENDING -[#green]-> RUNNING : START
+RUNNING -[#green,bold]-> COMPLETED : COMPLETE
+
+' === Child Process Flow (blue) ===
+RUNNING -[#blue]-> BLOCKED : SPAWN_CHILD
+BLOCKED -[#blue]-> RUNNING : RESUME
+
+' === Recovery Flow (goldenrod) ===
+COMPLETED -[#goldenrod,dashed]-> PENDING : RESTART
+FAULTED -[#goldenrod,dashed]-> PENDING : RECOVER
+
+' === Error Flow (red) ===
+RUNNING -left[#red,dashed]-> FAULTED : FAIL
+BLOCKED -left[#red,dashed]-> FAULTED : ABORT
+
+' === Cancellation Flow (gray) ===
+CREATED -left[#gray,dotted]-> CANCELLED : CANCEL
+INACTIVE -left[#gray,dotted]-> CANCELLED : CANCEL
+PENDING -left[#gray,dotted]-> CANCELLED : CANCEL
+RUNNING -[#gray,dotted]-> CANCELLED : CANCEL
+BLOCKED -[#gray,dotted]-> CANCELLED : CANCEL
+FAULTED -left[#gray,dotted]-> CANCELLED : CANCEL
+
 /'! $CONFIG : toml
 SmRunnerSettings.transpilerId = "CSharp"
+
+[RenderConfig.CSharp]
+NameSpace = "GameVariable.Intent;"
+Usings = """
+    """
+ClassCode = """
+    """
+BaseList = "IIntent<IntentState.StateId, IntentState.EventId>"
+UseNullable = false
+UsePartialClass = true
 '/
-
-' 1. The Happy Path
-[*] --> CREATED
-CREATED --> WAITING_TO_RUN : ACTIVATED
-WAITING_TO_RUN --> RUNNING : START_RUNNING
-RUNNING --> RAN_TO_COMPLETION : COMPLETED_SUCCESSFULLY
-
-' 2. Loops and Retries
-RAN_TO_COMPLETION -up-> WAITING_TO_RUN : RUN_AGAIN
-FAULTED -up-> WAITING_TO_RUN : RECOVER_RETRY
-
-' 3. Side Processes
-CREATED -right-> WAITING_FOR_ACTIVATION : GET_READY
-WAITING_FOR_ACTIVATION --> WAITING_TO_RUN : ACTIVATED
-
-RUNNING -right-> WAITING_FOR_CHILDREN_TO_COMPLETE : CHILD_TASK_CREATED
-WAITING_FOR_CHILDREN_TO_COMPLETE -left-> RUNNING : ALL_CHILDREN_COMPLETED
-
-' 4. Error Handling
-RUNNING -left-> FAULTED : UNABLE_TO_COMPLETE
-WAITING_FOR_CHILDREN_TO_COMPLETE --> FAULTED : UNABLE_TO_RECOVER
-
-' 5. Cancellation (The Sink)
-
-CREATED --> CANCELED : CANCEL
-WAITING_FOR_ACTIVATION --> CANCELED : CANCEL
-WAITING_TO_RUN --> CANCELED : CANCEL
-RUNNING --> CANCELED : CANCEL
-WAITING_FOR_CHILDREN_TO_COMPLETE --> CANCELED : CANCEL
-FAULTED --> CANCELED : UNABLE_TO_RECOVER
 
 @enduml
