@@ -67,9 +67,9 @@ public static class BoundedInfoExtensions
     ///     This method is generic to avoid boxing when called on value types.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double GetRatio<T>(this T bounded) where T : IBoundedInfo
+    public static float GetRatio<T>(this T bounded) where T : IBoundedInfo
     {
         var range = bounded.Max - bounded.Min;
-        return Math.Abs(range) < MathConstants.Tolerance ? 0.0 : (bounded.Current - bounded.Min) / range;
+        return MathF.Abs(range) < MathConstants.Tolerance ? 0.0f : (bounded.Current - bounded.Min) / range;
     }
 }
