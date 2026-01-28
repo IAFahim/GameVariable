@@ -20,7 +20,7 @@ public class BoundedInfoTests
         {
             // All should have valid ratio between 0 and 1
             var ratio = impl.GetRatio();
-            Assert.InRange(ratio, 0.0, 1.0);
+            Assert.InRange(ratio, 0.0f, 1.0f);
         }
     }
 
@@ -67,9 +67,9 @@ public class BoundedInfoTests
             return Math.Abs(Current - Min) < float.Epsilon;
         }
 
-        public double GetRatio()
+        public float GetRatio()
         {
-            return Math.Abs(Max - Min) < float.Epsilon ? 0.0 : (Current - Min) / (Max - Min);
+            return Math.Abs(Max - Min) < float.Epsilon ? 0.0f : (Current - Min) / (Max - Min);
         }
     }
 
@@ -107,21 +107,21 @@ public class BoundedInfoTests
     public void GetRatio_ReturnsNormalizedValue()
     {
         IBoundedInfo bounded = new TestBounded(0f, 100f, 50f);
-        Assert.Equal(0.5, bounded.GetRatio(), 5);
+        Assert.Equal(0.5f, bounded.GetRatio(), 5);
     }
 
     [Fact]
     public void GetRatio_ReturnsZero_WhenRangeIsZero()
     {
         IBoundedInfo bounded = new TestBounded(50f, 50f, 50f);
-        Assert.Equal(0.0, bounded.GetRatio());
+        Assert.Equal(0.0f, bounded.GetRatio());
     }
 
     [Fact]
     public void GetRatio_WorksWithNegativeMin()
     {
         IBoundedInfo bounded = new TestBounded(-50f, 50f, 0f);
-        Assert.Equal(0.5, bounded.GetRatio(), 5);
+        Assert.Equal(0.5f, bounded.GetRatio(), 5);
     }
 
     #endregion

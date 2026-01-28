@@ -77,7 +77,7 @@ public static class CoreMath
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Min(float a, float b, out float result)
     {
-        result = Math.Min(a, b);
+        result = MathF.Min(a, b);
     }
 
     /// <summary>Returns the smaller of two int values.</summary>
@@ -107,7 +107,7 @@ public static class CoreMath
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Max(float a, float b, out float result)
     {
-        result = Math.Max(a, b);
+        result = MathF.Max(a, b);
     }
 
     /// <summary>Returns the larger of two int values.</summary>
@@ -136,7 +136,7 @@ public static class CoreMath
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Abs(float value, out float result)
     {
-        result = Math.Abs(value);
+        result = MathF.Abs(value);
     }
 
     /// <summary>Returns the absolute value of an int.</summary>
