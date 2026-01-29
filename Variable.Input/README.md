@@ -389,81 +389,45 @@ Moves:
 
 **For programmers who want maximum control and performance.**
 
-### Direct Graph Construction
+### Using ComboGraphBuilder
+
+The package includes a helper to build graphs without manual array indexing.
 
 ```csharp
-// DirectComboBuilder.cs
+// AdvancedComboBuilder.cs
 using Variable.Input;
 
-public static class DirectComboBuilder
+public class AdvancedComboBuilder
 {
-    /// <summary>
-    /// Builds: Idle --LMB--> Light --LMB--> LightLight
-    ///              --RMB--> Heavy --RMB--> HeavyHeavy
-    /// Returns managed arrays.
-    /// </summary>
-    public static (ComboNode[] nodes, ComboEdge[] edges) Build()
+    public (ComboNode[] nodes, ComboEdge[] edges) Build()
     {
-        // NODES: Each move in your combo tree
-        // =====================================
-        // Index 0: Idle (starting point, always index 0)
-        // Index 1: Light Attack
-        // Index 2: Heavy Attack  
-        // Index 3: Light-Light (finisher)
-        // Index 4: Heavy-Heavy (finisher)
-        
-        var nodes = new ComboNode[]
-        {
-            // Node 0: Idle
-            // - ActionID: What to do when entering this state (0 = idle/nothing)
-            // - EdgeStartIndex: Where do MY edges start in the edges array? (index 0)
-            // - EdgeCount: How many buttons can I press from here? (2: LMB or RMB)
-            new ComboNode { ActionID = 0,   EdgeStartIndex = 0, EdgeCount = 2 },
-            
-            // Node 1: Light Attack
-            // - ActionID: 100 (you'll check this to play "light attack" animation)
-            // - EdgeStartIndex: My edges start at index 2 in edges array
-            // - EdgeCount: 1 transition available (LMB to Light-Light)
-            new ComboNode { ActionID = 100, EdgeStartIndex = 2, EdgeCount = 1 },
-            
-            // Node 2: Heavy Attack
-            new ComboNode { ActionID = 200, EdgeStartIndex = 3, EdgeCount = 1 },
-            
-            // Node 3: Light-Light (no further combos)
-            new ComboNode { ActionID = 101, EdgeStartIndex = 4, EdgeCount = 0 },
-            
-            // Node 4: Heavy-Heavy (no further combos)
-            new ComboNode { ActionID = 201, EdgeStartIndex = 4, EdgeCount = 0 },
-        };
-        
-        // EDGES: "If button X pressed, go to node Y"
-        // ==========================================
-        // These are stored FLAT for performance (CSR format)
-        // Node 0's edges are at index 0-1
-        // Node 1's edges are at index 2
-        // Node 2's edges are at index 3
-        
-        var edges = new ComboEdge[]
-        {
-            // Edges for Node 0 (Idle) - starts at index 0
-            new ComboEdge { InputTrigger = Inputs.LMB, TargetNodeIndex = 1 }, // LMB -> Light
-            new ComboEdge { InputTrigger = Inputs.RMB, TargetNodeIndex = 2 }, // RMB -> Heavy
-            
-            // Edges for Node 1 (Light) - starts at index 2
-            new ComboEdge { InputTrigger = Inputs.LMB, TargetNodeIndex = 3 }, // LMB -> Light-Light
-            
-            // Edges for Node 2 (Heavy) - starts at index 3
-            new ComboEdge { InputTrigger = Inputs.RMB, TargetNodeIndex = 4 }, // RMB -> Heavy-Heavy
-            
-            // Nodes 3 & 4 have no edges (EdgeCount = 0), so nothing here for them
-        };
-        
-        return (nodes, edges);
+        var builder = new ComboGraphBuilder();
+
+        // 1. Create Nodes (Returns their index)
+        int idle = builder.AddNode(0);       // ID 0: Idle
+        int light = builder.AddNode(100);    // ID 100: Light Attack
+        int heavy = builder.AddNode(200);    // ID 200: Heavy Attack
+        int lightEnd = builder.AddNode(101); // ID 101: Light-Light
+        int heavyEnd = builder.AddNode(201); // ID 201: Heavy-Heavy
+
+        // 2. Define Transitions (Edges)
+        // From Idle
+        builder.AddEdge(idle, light, Inputs.LMB);
+        builder.AddEdge(idle, heavy, Inputs.RMB);
+
+        // From Light
+        builder.AddEdge(light, lightEnd, Inputs.LMB);
+
+        // From Heavy
+        builder.AddEdge(heavy, heavyEnd, Inputs.RMB);
+
+        // 3. Bake to Arrays
+        return builder.Build();
     }
 }
 ```
 
-### Understanding EdgeStartIndex and EdgeCount
+### Understanding the Generated Data (CSR Format)
 
 ```
 VISUAL REPRESENTATION:
@@ -619,7 +583,7 @@ buffer.Clear();
 | `ComboNode.cs`       | A single move (ActionID + edge pointers) |
 | `ComboEdge.cs`       | A transition (button → target node)      |
 | `ComboState.cs`      | Runtime state (current node + busy flag) |
-| `InputRingBuffer.cs` | Stores buffered button presses           |
+| `InputRingBuffer*.cs` | `InputRingBuffer` (8 inputs) and `InputRingBuffer16` (16 inputs) |
 | `ComboLogic.*.cs`    | Core traversal logic (stateless)         |
 | `*Extensions.cs`     | Convenience methods                      |
 
