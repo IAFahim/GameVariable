@@ -4,6 +4,10 @@ using System;
 
 namespace GameVariable.Intent.Tests
 {
+    /// <summary>
+    /// Comprehensive tests for the Intent State Machine.
+    /// Verifies all state transitions and event flows.
+    /// </summary>
     public class IntentTests
     {
         [Fact]
@@ -21,140 +25,245 @@ namespace GameVariable.Intent.Tests
             Assert.Equal(IntentState.StateId.CREATED, state.stateId);
         }
 
-        // Test: CREATED -> GET_READY -> WAITING_FOR_ACTIVATION
+        // === Happy Path Tests (Green Flow) ===
+
         [Fact]
-        public void Dispatch_Created_GetReady_GoesToWaitingForActivation()
+        public void HappyPath_Created_To_Inactive_Via_Prepare()
         {
             var state = new IntentState();
             state.Start();
-            state.DispatchEvent(IntentState.EventId.GET_READY);
+            state.DispatchEvent(IntentState.EventId.PREPARE);
 
-            Assert.Equal(IntentState.StateId.WAITING_FOR_ACTIVATION, state.stateId);
+            Assert.Equal(IntentState.StateId.INACTIVE, state.stateId);
         }
 
-        // Test: CREATED -> ACTIVATED -> WAITING_TO_RUN
         [Fact]
-        public void Dispatch_Created_Activated_GoesToWaitingToRun()
+        public void HappyPath_Inactive_To_Pending_Via_Activate()
         {
             var state = new IntentState();
             state.Start();
-            state.DispatchEvent(IntentState.EventId.ACTIVATED);
+            state.DispatchEvent(IntentState.EventId.PREPARE);
+            state.DispatchEvent(IntentState.EventId.ACTIVATE);
 
-            Assert.Equal(IntentState.StateId.WAITING_TO_RUN, state.stateId);
+            Assert.Equal(IntentState.StateId.PENDING, state.stateId);
         }
 
-        // Test: WAITING_TO_RUN -> START_RUNNING -> RUNNING
         [Fact]
-        public void Dispatch_WaitingToRun_StartRunning_GoesToRunning()
+        public void HappyPath_Created_To_Pending_Via_Activate()
         {
             var state = new IntentState();
             state.Start();
-            state.DispatchEvent(IntentState.EventId.ACTIVATED); // To WaitingToRun
-            state.DispatchEvent(IntentState.EventId.START_RUNNING);
+            state.DispatchEvent(IntentState.EventId.ACTIVATE);
+
+            Assert.Equal(IntentState.StateId.PENDING, state.stateId);
+        }
+
+        [Fact]
+        public void HappyPath_Pending_To_Running_Via_Start()
+        {
+            var state = new IntentState();
+            state.Start();
+            state.DispatchEvent(IntentState.EventId.ACTIVATE);
+            state.DispatchEvent(IntentState.EventId.START);
 
             Assert.Equal(IntentState.StateId.RUNNING, state.stateId);
         }
 
-        // Test: WAITING_TO_RUN -> CANCEL -> CANCELED
         [Fact]
-        public void Dispatch_WaitingToRun_Cancel_GoesToCanceled()
+        public void HappyPath_Running_To_Completed_Via_Complete()
         {
             var state = new IntentState();
             state.Start();
-            state.DispatchEvent(IntentState.EventId.ACTIVATED); // To WaitingToRun
-            state.DispatchEvent(IntentState.EventId.CANCEL);
+            state.DispatchEvent(IntentState.EventId.ACTIVATE);
+            state.DispatchEvent(IntentState.EventId.START);
+            state.DispatchEvent(IntentState.EventId.COMPLETE);
 
-            Assert.Equal(IntentState.StateId.CANCELED, state.stateId);
+            Assert.Equal(IntentState.StateId.COMPLETED, state.stateId);
         }
 
-        // Test: WAITING_FOR_ACTIVATION -> ACTIVATED -> WAITING_TO_RUN
+        // === Child Process Flow Tests (Blue Flow) ===
+
         [Fact]
-        public void Dispatch_WaitingForActivation_Activated_GoesToWaitingToRun()
+        public void ChildProcess_Running_To_Blocked_Via_SpawnChild()
         {
             var state = new IntentState();
             state.Start();
-            state.DispatchEvent(IntentState.EventId.GET_READY); // To WaitingForActivation
-            state.DispatchEvent(IntentState.EventId.ACTIVATED);
+            state.DispatchEvent(IntentState.EventId.ACTIVATE);
+            state.DispatchEvent(IntentState.EventId.START);
+            state.DispatchEvent(IntentState.EventId.SPAWN_CHILD);
 
-            Assert.Equal(IntentState.StateId.WAITING_TO_RUN, state.stateId);
+            Assert.Equal(IntentState.StateId.BLOCKED, state.stateId);
         }
 
-        // Test: RUNNING -> CHILD_TASK_CREATED -> WAITING_FOR_CHILDREN_TO_COMPLETE
         [Fact]
-        public void Dispatch_Running_ChildTaskCreated_GoesToWaitingForChildren()
+        public void ChildProcess_Blocked_To_Running_Via_Resume()
         {
             var state = new IntentState();
             state.Start();
-            state.DispatchEvent(IntentState.EventId.ACTIVATED);
-            state.DispatchEvent(IntentState.EventId.START_RUNNING);
-            state.DispatchEvent(IntentState.EventId.CHILD_TASK_CREATED);
+            state.DispatchEvent(IntentState.EventId.ACTIVATE);
+            state.DispatchEvent(IntentState.EventId.START);
+            state.DispatchEvent(IntentState.EventId.SPAWN_CHILD);
+            state.DispatchEvent(IntentState.EventId.RESUME);
 
-            Assert.Equal(IntentState.StateId.WAITING_FOR_CHILDREN_TO_COMPLETE, state.stateId);
+            Assert.Equal(IntentState.StateId.RUNNING, state.stateId);
         }
 
-        // Test: RUNNING -> UNABLE_TO_COMPLETE -> FAULTED
+        // === Recovery Flow Tests (Goldenrod Flow) ===
+
         [Fact]
-        public void Dispatch_Running_UnableToComplete_GoesToFaulted()
+        public void Recovery_Completed_To_Pending_Via_Restart()
         {
             var state = new IntentState();
             state.Start();
-            state.DispatchEvent(IntentState.EventId.ACTIVATED);
-            state.DispatchEvent(IntentState.EventId.START_RUNNING);
-            state.DispatchEvent(IntentState.EventId.UNABLE_TO_COMPLETE);
+            state.DispatchEvent(IntentState.EventId.ACTIVATE);
+            state.DispatchEvent(IntentState.EventId.START);
+            state.DispatchEvent(IntentState.EventId.COMPLETE);
+            state.DispatchEvent(IntentState.EventId.RESTART);
+
+            Assert.Equal(IntentState.StateId.PENDING, state.stateId);
+        }
+
+        [Fact]
+        public void Recovery_Faulted_To_Pending_Via_Recover()
+        {
+            var state = new IntentState();
+            state.Start();
+            state.DispatchEvent(IntentState.EventId.ACTIVATE);
+            state.DispatchEvent(IntentState.EventId.START);
+            state.DispatchEvent(IntentState.EventId.FAIL);
+            state.DispatchEvent(IntentState.EventId.RECOVER);
+
+            Assert.Equal(IntentState.StateId.PENDING, state.stateId);
+        }
+
+        // === Error Flow Tests (Red Flow) ===
+
+        [Fact]
+        public void Error_Running_To_Faulted_Via_Fail()
+        {
+            var state = new IntentState();
+            state.Start();
+            state.DispatchEvent(IntentState.EventId.ACTIVATE);
+            state.DispatchEvent(IntentState.EventId.START);
+            state.DispatchEvent(IntentState.EventId.FAIL);
 
             Assert.Equal(IntentState.StateId.FAULTED, state.stateId);
         }
 
-        // Test: RUNNING -> COMPLETED_SUCCESSFULLY -> RAN_TO_COMPLETION
         [Fact]
-        public void Dispatch_Running_CompletedSuccessfully_GoesToRanToCompletion()
+        public void Error_Blocked_To_Faulted_Via_Abort()
         {
             var state = new IntentState();
             state.Start();
-            state.DispatchEvent(IntentState.EventId.ACTIVATED);
-            state.DispatchEvent(IntentState.EventId.START_RUNNING);
-            state.DispatchEvent(IntentState.EventId.COMPLETED_SUCCESSFULLY);
+            state.DispatchEvent(IntentState.EventId.ACTIVATE);
+            state.DispatchEvent(IntentState.EventId.START);
+            state.DispatchEvent(IntentState.EventId.SPAWN_CHILD);
+            state.DispatchEvent(IntentState.EventId.ABORT);
 
-            Assert.Equal(IntentState.StateId.RAN_TO_COMPLETION, state.stateId);
+            Assert.Equal(IntentState.StateId.FAULTED, state.stateId);
         }
 
-        // Test: WAITING_FOR_CHILDREN_TO_COMPLETE -> ALL_CHILDREN_COMPLETED -> RUNNING
+        // === Cancellation Flow Tests (Gray Flow) ===
+
         [Fact]
-        public void Dispatch_WaitingForChildren_AllChildrenCompleted_GoesToRunning()
+        public void Cancellation_Created_To_Cancelled()
         {
             var state = new IntentState();
             state.Start();
-            state.DispatchEvent(IntentState.EventId.ACTIVATED);
-            state.DispatchEvent(IntentState.EventId.START_RUNNING);
-            state.DispatchEvent(IntentState.EventId.CHILD_TASK_CREATED);
-            state.DispatchEvent(IntentState.EventId.ALL_CHILDREN_COMPLETED);
+            state.DispatchEvent(IntentState.EventId.CANCEL);
 
-            Assert.Equal(IntentState.StateId.RUNNING, state.stateId);
+            Assert.Equal(IntentState.StateId.CANCELLED, state.stateId);
         }
 
-        // Test: RAN_TO_COMPLETION -> RUN_AGAIN -> WAITING_TO_RUN
         [Fact]
-        public void Dispatch_RanToCompletion_RunAgain_GoesToWaitingToRun()
+        public void Cancellation_Inactive_To_Cancelled()
         {
             var state = new IntentState();
             state.Start();
-            state.DispatchEvent(IntentState.EventId.ACTIVATED);
-            state.DispatchEvent(IntentState.EventId.START_RUNNING);
-            state.DispatchEvent(IntentState.EventId.COMPLETED_SUCCESSFULLY);
-            state.DispatchEvent(IntentState.EventId.RUN_AGAIN);
+            state.DispatchEvent(IntentState.EventId.PREPARE);
+            state.DispatchEvent(IntentState.EventId.CANCEL);
 
-            Assert.Equal(IntentState.StateId.WAITING_TO_RUN, state.stateId);
+            Assert.Equal(IntentState.StateId.CANCELLED, state.stateId);
         }
 
-        // Test: String conversion methods
         [Fact]
-        public void StringConversion_StateAndEvent_ReturnsCorrectStrings()
+        public void Cancellation_Pending_To_Cancelled()
         {
             var state = new IntentState();
-            Assert.Equal("RUNNING", state.StateIdToString(IntentState.StateId.RUNNING));
-            Assert.Equal("CANCELED", state.StateIdToString(IntentState.StateId.CANCELED));
-            Assert.Equal("COMPLETED_SUCCESSFULLY", state.EventIdToString(IntentState.EventId.COMPLETED_SUCCESSFULLY));
-            Assert.Equal("START_RUNNING", state.EventIdToString(IntentState.EventId.START_RUNNING));
+            state.Start();
+            state.DispatchEvent(IntentState.EventId.ACTIVATE);
+            state.DispatchEvent(IntentState.EventId.CANCEL);
+
+            Assert.Equal(IntentState.StateId.CANCELLED, state.stateId);
+        }
+
+        [Fact]
+        public void Cancellation_Running_To_Cancelled()
+        {
+            var state = new IntentState();
+            state.Start();
+            state.DispatchEvent(IntentState.EventId.ACTIVATE);
+            state.DispatchEvent(IntentState.EventId.START);
+            state.DispatchEvent(IntentState.EventId.CANCEL);
+
+            Assert.Equal(IntentState.StateId.CANCELLED, state.stateId);
+        }
+
+        [Fact]
+        public void Cancellation_Blocked_To_Cancelled()
+        {
+            var state = new IntentState();
+            state.Start();
+            state.DispatchEvent(IntentState.EventId.ACTIVATE);
+            state.DispatchEvent(IntentState.EventId.START);
+            state.DispatchEvent(IntentState.EventId.SPAWN_CHILD);
+            state.DispatchEvent(IntentState.EventId.CANCEL);
+
+            Assert.Equal(IntentState.StateId.CANCELLED, state.stateId);
+        }
+
+        [Fact]
+        public void Cancellation_Faulted_To_Cancelled()
+        {
+            var state = new IntentState();
+            state.Start();
+            state.DispatchEvent(IntentState.EventId.ACTIVATE);
+            state.DispatchEvent(IntentState.EventId.START);
+            state.DispatchEvent(IntentState.EventId.FAIL);
+            state.DispatchEvent(IntentState.EventId.CANCEL);
+
+            Assert.Equal(IntentState.StateId.CANCELLED, state.stateId);
+        }
+
+        // === String Conversion Tests ===
+
+        [Fact]
+        public void StringConversion_StateId_ReturnsCorrectStrings()
+        {
+            Assert.Equal("CREATED", IntentState.StateIdToString(IntentState.StateId.CREATED));
+            Assert.Equal("INACTIVE", IntentState.StateIdToString(IntentState.StateId.INACTIVE));
+            Assert.Equal("PENDING", IntentState.StateIdToString(IntentState.StateId.PENDING));
+            Assert.Equal("RUNNING", IntentState.StateIdToString(IntentState.StateId.RUNNING));
+            Assert.Equal("BLOCKED", IntentState.StateIdToString(IntentState.StateId.BLOCKED));
+            Assert.Equal("COMPLETED", IntentState.StateIdToString(IntentState.StateId.COMPLETED));
+            Assert.Equal("FAULTED", IntentState.StateIdToString(IntentState.StateId.FAULTED));
+            Assert.Equal("CANCELLED", IntentState.StateIdToString(IntentState.StateId.CANCELLED));
+        }
+
+        [Fact]
+        public void StringConversion_EventId_ReturnsCorrectStrings()
+        {
+            Assert.Equal("PREPARE", IntentState.EventIdToString(IntentState.EventId.PREPARE));
+            Assert.Equal("ACTIVATE", IntentState.EventIdToString(IntentState.EventId.ACTIVATE));
+            Assert.Equal("START", IntentState.EventIdToString(IntentState.EventId.START));
+            Assert.Equal("COMPLETE", IntentState.EventIdToString(IntentState.EventId.COMPLETE));
+            Assert.Equal("SPAWN_CHILD", IntentState.EventIdToString(IntentState.EventId.SPAWN_CHILD));
+            Assert.Equal("RESUME", IntentState.EventIdToString(IntentState.EventId.RESUME));
+            Assert.Equal("RESTART", IntentState.EventIdToString(IntentState.EventId.RESTART));
+            Assert.Equal("RECOVER", IntentState.EventIdToString(IntentState.EventId.RECOVER));
+            Assert.Equal("FAIL", IntentState.EventIdToString(IntentState.EventId.FAIL));
+            Assert.Equal("ABORT", IntentState.EventIdToString(IntentState.EventId.ABORT));
+            Assert.Equal("CANCEL", IntentState.EventIdToString(IntentState.EventId.CANCEL));
         }
     }
 }
