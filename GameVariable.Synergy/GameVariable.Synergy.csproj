@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\Variable.Bounded\Variable.Bounded.csproj" />
+        <ProjectReference Include="..\Variable.Timer\Variable.Timer.csproj" />
+        <ProjectReference Include="..\Variable.Regen\Variable.Regen.csproj" />
+        <ProjectReference Include="..\Variable.Experience\Variable.Experience.csproj" />
+        <ProjectReference Include="..\Variable.Core\Variable.Core.csproj" />
+    </ItemGroup>
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <Nullable>enable</Nullable>
+        <Version>1.0.0</Version>
+        <Authors>Md Ishtiaq Ahamed Fahim</Authors>
+        <Company>IAFahim</Company>
+        <Description>High-level composite structures demonstrating synergy between GameVariable packages.</Description>
+        <PackageTags>game;variable;synergy;gamedev;unity;integration</PackageTags>
+        <PackageProjectUrl>https://github.com/iafahim/GameVariable</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/iafahim/GameVariable</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>
