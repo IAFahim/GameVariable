@@ -389,85 +389,50 @@ Moves:
 
 **For programmers who want maximum control and performance.**
 
-### Direct Graph Construction
+### Using ComboGraphBuilder
+
+Use `ComboGraphBuilder` to programmatically construct the graph without worrying about indices.
 
 ```csharp
-// DirectComboBuilder.cs
 using Variable.Input;
 
-public static class DirectComboBuilder
+public class MyComboBuilder
 {
-    /// <summary>
-    /// Builds: Idle --LMB--> Light --LMB--> LightLight
-    ///              --RMB--> Heavy --RMB--> HeavyHeavy
-    /// Returns managed arrays.
-    /// </summary>
-    public static (ComboNode[] nodes, ComboEdge[] edges) Build()
+    public (ComboNode[] nodes, ComboEdge[] edges) BuildMyCombos()
     {
-        // NODES: Each move in your combo tree
-        // =====================================
-        // Index 0: Idle (starting point, always index 0)
-        // Index 1: Light Attack
-        // Index 2: Heavy Attack  
-        // Index 3: Light-Light (finisher)
-        // Index 4: Heavy-Heavy (finisher)
+        var builder = new ComboGraphBuilder();
+
+        // 1. Create Nodes (returns their index)
+        int idle = builder.AddNode(0);         // Action 0
+        int light = builder.AddNode(100);      // Action 100
+        int heavy = builder.AddNode(200);      // Action 200
+        int lightLight = builder.AddNode(101); // Action 101
+        int heavyHeavy = builder.AddNode(201); // Action 201
+
+        // 2. Connect Edges (From, To, InputTrigger)
+        // Idle -> Light (LMB)
+        builder.AddEdge(idle, light, Inputs.LMB);
         
-        var nodes = new ComboNode[]
-        {
-            // Node 0: Idle
-            // - ActionID: What to do when entering this state (0 = idle/nothing)
-            // - EdgeStartIndex: Where do MY edges start in the edges array? (index 0)
-            // - EdgeCount: How many buttons can I press from here? (2: LMB or RMB)
-            new ComboNode { ActionID = 0,   EdgeStartIndex = 0, EdgeCount = 2 },
-            
-            // Node 1: Light Attack
-            // - ActionID: 100 (you'll check this to play "light attack" animation)
-            // - EdgeStartIndex: My edges start at index 2 in edges array
-            // - EdgeCount: 1 transition available (LMB to Light-Light)
-            new ComboNode { ActionID = 100, EdgeStartIndex = 2, EdgeCount = 1 },
-            
-            // Node 2: Heavy Attack
-            new ComboNode { ActionID = 200, EdgeStartIndex = 3, EdgeCount = 1 },
-            
-            // Node 3: Light-Light (no further combos)
-            new ComboNode { ActionID = 101, EdgeStartIndex = 4, EdgeCount = 0 },
-            
-            // Node 4: Heavy-Heavy (no further combos)
-            new ComboNode { ActionID = 201, EdgeStartIndex = 4, EdgeCount = 0 },
-        };
-        
-        // EDGES: "If button X pressed, go to node Y"
-        // ==========================================
-        // These are stored FLAT for performance (CSR format)
-        // Node 0's edges are at index 0-1
-        // Node 1's edges are at index 2
-        // Node 2's edges are at index 3
-        
-        var edges = new ComboEdge[]
-        {
-            // Edges for Node 0 (Idle) - starts at index 0
-            new ComboEdge { InputTrigger = Inputs.LMB, TargetNodeIndex = 1 }, // LMB -> Light
-            new ComboEdge { InputTrigger = Inputs.RMB, TargetNodeIndex = 2 }, // RMB -> Heavy
-            
-            // Edges for Node 1 (Light) - starts at index 2
-            new ComboEdge { InputTrigger = Inputs.LMB, TargetNodeIndex = 3 }, // LMB -> Light-Light
-            
-            // Edges for Node 2 (Heavy) - starts at index 3
-            new ComboEdge { InputTrigger = Inputs.RMB, TargetNodeIndex = 4 }, // RMB -> Heavy-Heavy
-            
-            // Nodes 3 & 4 have no edges (EdgeCount = 0), so nothing here for them
-        };
-        
-        return (nodes, edges);
+        // Idle -> Heavy (RMB)
+        builder.AddEdge(idle, heavy, Inputs.RMB);
+
+        // Light -> LightLight (LMB)
+        builder.AddEdge(light, lightLight, Inputs.LMB);
+
+        // Heavy -> HeavyHeavy (RMB)
+        builder.AddEdge(heavy, heavyHeavy, Inputs.RMB);
+
+        // 3. Build arrays
+        return builder.Build();
     }
 }
 ```
 
-### Understanding EdgeStartIndex and EdgeCount
+### Understanding the Internal Structure (CSR)
+
+The builder produces a **Compressed Sparse Row (CSR)** structure:
 
 ```
-VISUAL REPRESENTATION:
-
 Nodes Array:
 ┌─────┬─────────┬────────────────┬───────────┐
 │ Idx │ ActionID│ EdgeStartIndex │ EdgeCount │
@@ -488,41 +453,6 @@ Edges Array:
 │  2  │     LMB      │        3        │ ← Light's edge
 │  3  │     RMB      │        4        │ ← Heavy's edge
 └─────┴──────────────┴─────────────────┘
-
-When at Node 0 (Idle):
-  - EdgeStartIndex = 0, EdgeCount = 2
-  - Check edges[0] and edges[1] for matching input
-  - If LMB pressed: edges[0] matches → go to node 1
-  - If RMB pressed: edges[1] matches → go to node 2
-```
-
-### Mermaid Diagram: CSR Structure
-
-```mermaid
-graph LR
-    subgraph Nodes["Nodes Array"]
-        direction TB
-        N0["Idx 0: Idle<br/>Start=0, Count=2"]
-        N1["Idx 1: Light<br/>Start=2, Count=1"]
-        N2["Idx 2: Heavy<br/>Start=3, Count=1"]
-    end
-
-    subgraph Edges["Edges Array"]
-        direction TB
-        E0["Idx 0: LMB -> Node 1"]
-        E1["Idx 1: RMB -> Node 2"]
-        E2["Idx 2: LMB -> Node 3"]
-        E3["Idx 3: RMB -> Node 4"]
-    end
-
-    N0 -.-> E0
-    N0 -.-> E1
-    N1 -.-> E2
-    N2 -.-> E3
-
-    style N0 fill:#2d2d2d,stroke:#fff,stroke-width:2px,color:#fff
-    style E0 fill:#1a1a1a,stroke:#666,stroke-width:1px,color:#fff
-    style E1 fill:#1a1a1a,stroke:#666,stroke-width:1px,color:#fff
 ```
 
 ### ECS/Jobs Usage
