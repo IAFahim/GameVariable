@@ -84,7 +84,37 @@ public struct Timer :
     /// <inheritdoc />
     public readonly override string ToString()
     {
-        return string.Format(CultureInfo.InvariantCulture, "{0:F2}/{1:F2}", Current, Duration);
+        Span<char> destination = stackalloc char[32];
+        return TryFormat(destination, out var charsWritten)
+            ? new string(destination.Slice(0, charsWritten))
+            : string.Format(CultureInfo.InvariantCulture, "{0:F2}/{1:F2}", Current, Duration);
+    }
+
+    /// <summary>
+    ///     Formats the timer into a character span (zero allocation).
+    /// </summary>
+    /// <param name="destination">The span to write the formatted value into.</param>
+    /// <param name="charsWritten">The number of characters written.</param>
+    /// <param name="format">Optional format string.</param>
+    /// <returns>True if formatting succeeded; false if destination was too small.</returns>
+    public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default)
+    {
+        charsWritten = 0;
+
+        // Default format: "Current/Duration" with 2 decimal places
+        if (!Current.TryFormat(destination, out var currentWritten, "F2", CultureInfo.InvariantCulture))
+            return false;
+        charsWritten = currentWritten;
+
+        if (charsWritten >= destination.Length)
+            return false;
+        destination[charsWritten++] = '/';
+
+        if (!Duration.TryFormat(destination.Slice(charsWritten), out var maxWritten, "F2", CultureInfo.InvariantCulture))
+            return false;
+        charsWritten += maxWritten;
+
+        return true;
     }
 
     /// <inheritdoc />
