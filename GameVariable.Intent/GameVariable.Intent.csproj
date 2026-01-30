@@ -4,7 +4,7 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Version>1.0.13</Version>
+        <Version>1.0.23</Version>
         <Authors>Md Ishtiaq Ahamed Fahim</Authors>
         <Company>IAFahim</Company>
         <Description>High-performance, zero-allocation Hierarchical State Machine (HSM) for AI and game logic.</Description>
@@ -15,6 +15,11 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <NoWarn>$(NoWarn);CS1591</NoWarn>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 
 </Project>
