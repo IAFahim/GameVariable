@@ -163,15 +163,15 @@ if !errorlevel! NEQ 0 (
 
 :: 4. Calculate Nupkg Name (Read PackageId from csproj, fallback to filename)
 for /f "usebackq tokens=*" %%P in (`powershell -NoProfile -Command ^
-    "$path = '%PROJ_PATH%'; " ^
-    "$content = Get-Content $path -Raw; " ^
+    "$content = Get-Content '%PROJ_PATH%' -Raw; " ^
     "$idMatch = [regex]::Match($content, '(?<=<PackageId>).*?(?=</PackageId>)'); " ^
-    "if ($idMatch.Success) { Write-Host $idMatch.Value; exit 0 } " ^
-    "Write-Host (Split-Path $path -LeafBase);"`) do (
+    "if ($idMatch.Success) { Write-Output $idMatch.Value; exit 0 } " ^
+    "$filename = Split-Path '%PROJ_PATH%' -Leaf; " ^
+    "Write-Output ($filename -replace '\.csproj$', ''); "`) do (
     set "PACKAGE_ID=%%P"
 )
 
-set "NUPKG=%OUTPUT_DIR%\%PACKAGE_ID%.%NEW_VERSION%.nupkg"
+set "NUPKG=%OUTPUT_DIR%\!PACKAGE_ID!.%NEW_VERSION%.nupkg"
 
 if not exist "%NUPKG%" (
     echo !RED![FAIL] Package file not found at %NUPKG%!NC!

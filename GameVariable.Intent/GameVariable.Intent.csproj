@@ -4,7 +4,8 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Version>1.0.23</Version>
+        <Version>1.0.25</Version>
+        <PackageId>Variable.Intent</PackageId>
         <Authors>Md Ishtiaq Ahamed Fahim</Authors>
         <Company>IAFahim</Company>
         <Description>High-performance, zero-allocation Hierarchical State Machine (HSM) for AI and game logic.</Description>
