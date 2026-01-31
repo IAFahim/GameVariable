@@ -84,7 +84,44 @@ public struct Cooldown :
     /// <inheritdoc />
     public readonly override string ToString()
     {
-        return TimerLogic.IsEmpty(Current) ? "Ready" : string.Format(CultureInfo.InvariantCulture, "{0:F2}s", Current);
+        Span<char> destination = stackalloc char[32];
+        return TryFormat(destination, out var charsWritten)
+            ? new string(destination.Slice(0, charsWritten))
+            : TimerLogic.IsEmpty(Current) ? "Ready" : string.Format(CultureInfo.InvariantCulture, "{0:F2}s", Current);
+    }
+
+    /// <summary>
+    ///     Formats the cooldown into a character span (zero allocation).
+    /// </summary>
+    /// <param name="destination">The span to write the formatted value into.</param>
+    /// <param name="charsWritten">The number of characters written.</param>
+    /// <param name="format">Optional format string.</param>
+    /// <returns>True if formatting succeeded; false if destination was too small.</returns>
+    public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default)
+    {
+        charsWritten = 0;
+
+        if (TimerLogic.IsEmpty(Current))
+        {
+            const string ready = "Ready";
+            if (ready.AsSpan().TryCopyTo(destination))
+            {
+                charsWritten = ready.Length;
+                return true;
+            }
+            return false;
+        }
+
+        // Default format: "Currents" with 2 decimal places
+        if (!Current.TryFormat(destination, out var currentWritten, "F2", CultureInfo.InvariantCulture))
+            return false;
+        charsWritten = currentWritten;
+
+        if (charsWritten >= destination.Length)
+            return false;
+        destination[charsWritten++] = 's';
+
+        return true;
     }
 
     /// <inheritdoc />

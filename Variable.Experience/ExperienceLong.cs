@@ -78,7 +78,72 @@ public struct ExperienceLong :
     /// <inheritdoc />
     public override string ToString()
     {
-        return string.Format(CultureInfo.InvariantCulture, "Lvl {0} ({1}/{2})", Level, Current, Max);
+        Span<char> destination = stackalloc char[64];
+        return TryFormat(destination, out var charsWritten)
+            ? new string(destination.Slice(0, charsWritten))
+            : string.Format(CultureInfo.InvariantCulture, "Lvl {0} ({1}/{2})", Level, Current, Max);
+    }
+
+    /// <summary>
+    ///     Formats the experience into a character span (zero allocation).
+    /// </summary>
+    /// <param name="destination">The span to write the formatted value into.</param>
+    /// <param name="charsWritten">The number of characters written.</param>
+    /// <param name="format">Optional format string. "L" = Level, "C" = Current/Max.</param>
+    /// <returns>True if formatting succeeded; false if destination was too small.</returns>
+    public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default)
+    {
+        charsWritten = 0;
+
+        if (format.Length > 0 && (format[0] == 'L' || format[0] == 'l'))
+        {
+            return Level.TryFormat(destination, out charsWritten, default, CultureInfo.InvariantCulture);
+        }
+
+        if (format.Length > 0 && (format[0] == 'C' || format[0] == 'c'))
+        {
+            if (!Current.TryFormat(destination, out var currentWritten, default, CultureInfo.InvariantCulture))
+                return false;
+            charsWritten = currentWritten;
+
+            if (charsWritten >= destination.Length) return false;
+            destination[charsWritten++] = '/';
+
+            if (!Max.TryFormat(destination.Slice(charsWritten), out var maxWritten, default, CultureInfo.InvariantCulture))
+                return false;
+            charsWritten += maxWritten;
+            return true;
+        }
+
+        // Default format: "Lvl {Level} ({Current}/{Max})"
+        const string lvl = "Lvl ";
+        if (!lvl.AsSpan().TryCopyTo(destination)) return false;
+        charsWritten = lvl.Length;
+
+        if (!Level.TryFormat(destination.Slice(charsWritten), out var levelWritten, default, CultureInfo.InvariantCulture))
+            return false;
+        charsWritten += levelWritten;
+
+        const string open = " (";
+        if (charsWritten + open.Length > destination.Length) return false;
+        open.AsSpan().CopyTo(destination.Slice(charsWritten));
+        charsWritten += open.Length;
+
+        if (!Current.TryFormat(destination.Slice(charsWritten), out var curWritten, default, CultureInfo.InvariantCulture))
+            return false;
+        charsWritten += curWritten;
+
+        if (charsWritten >= destination.Length) return false;
+        destination[charsWritten++] = '/';
+
+        if (!Max.TryFormat(destination.Slice(charsWritten), out var mWritten, default, CultureInfo.InvariantCulture))
+            return false;
+        charsWritten += mWritten;
+
+        if (charsWritten >= destination.Length) return false;
+        destination[charsWritten++] = ')';
+
+        return true;
     }
 
     /// <inheritdoc />
