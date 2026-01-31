@@ -97,14 +97,14 @@ public class ExperienceIntTests
     public void GetRatio_ReturnsCorrectValue()
     {
         var exp = new ExperienceInt(100, 50);
-        Assert.Equal(0.5, exp.GetRatio(), 5);
+        Assert.Equal(0.5f, exp.GetRatio(), 5);
     }
 
     [Fact]
     public void GetRatio_ReturnsZero_WhenMaxIsZero()
     {
         var exp = new ExperienceInt(0);
-        Assert.Equal(0.0, exp.GetRatio());
+        Assert.Equal(0.0f, exp.GetRatio());
     }
 
     #endregion

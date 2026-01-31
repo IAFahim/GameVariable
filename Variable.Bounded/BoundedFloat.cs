@@ -139,7 +139,7 @@ public struct BoundedFloat :
         if (format.ToUpperInvariant() == "R")
         {
             var ratio = this.GetRatio();
-            return $"{ratio * 100:F1}%";
+            return $"{ratio * 100f:F1}%";
         }
 
         return ToString();
@@ -163,7 +163,7 @@ public struct BoundedFloat :
         // Handle ratio format
         if (format.Length > 0 && (format[0] == 'R' || format[0] == 'r'))
         {
-            var ratio = this.GetRatio() * 100.0;
+            var ratio = this.GetRatio() * 100.0f;
             if (!ratio.TryFormat(destination, out var written, "F1"))
                 return false;
             charsWritten = written;

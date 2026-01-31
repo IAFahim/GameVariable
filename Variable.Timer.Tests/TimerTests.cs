@@ -190,14 +190,14 @@ public class TimerTests
     public void GetRatio_ReturnsCorrectValue()
     {
         var timer = new Timer(10f, 5f);
-        Assert.Equal(0.5, timer.GetRatio(), 5);
+        Assert.Equal(0.5f, timer.GetRatio(), 5);
     }
 
     [Fact]
     public void GetRatio_ReturnsZero_WhenDurationIsZero()
     {
         var timer = new Timer(0f);
-        Assert.Equal(0.0, timer.GetRatio());
+        Assert.Equal(0.0f, timer.GetRatio());
     }
 
     #endregion

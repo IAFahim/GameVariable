@@ -209,7 +209,7 @@ All bounded types implement `IBoundedInfo`. You can write **one** UI script for 
 public void UpdateBar(IBoundedInfo info)
 {
     // Works for Health, Mana, Timer, XP... anything!
-    barImage.fillAmount = (float)info.GetRatio();
+    barImage.fillAmount = info.GetRatio();
 }
 ```
 
