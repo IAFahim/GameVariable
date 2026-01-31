@@ -86,14 +86,14 @@ public class BoundedByteTests
     public void GetRatio_ReturnsCorrectRatio()
     {
         var bounded = new BoundedByte(100, 50);
-        Assert.Equal(0.5, bounded.GetRatio(), 5);
+        Assert.Equal(0.5f, bounded.GetRatio(), 5);
     }
 
     [Fact]
     public void GetRatio_ReturnsZero_WhenMaxIsZero()
     {
         var bounded = new BoundedByte(0, 0);
-        Assert.Equal(0.0, bounded.GetRatio());
+        Assert.Equal(0.0f, bounded.GetRatio());
     }
 
     #endregion

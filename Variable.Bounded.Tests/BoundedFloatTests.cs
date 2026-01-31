@@ -121,21 +121,21 @@ public class BoundedFloatTests
     public void GetRatio_ReturnsCorrectRatio()
     {
         var bounded = new BoundedFloat(100f, 0f, 50f);
-        Assert.Equal(0.5, bounded.GetRatio(), 5);
+        Assert.Equal(0.5f, bounded.GetRatio(), 5);
     }
 
     [Fact]
     public void GetRatio_ReturnsZero_WhenRangeIsZero()
     {
         var bounded = new BoundedFloat(0f, 0f, 0f);
-        Assert.Equal(0.0, bounded.GetRatio());
+        Assert.Equal(0.0f, bounded.GetRatio());
     }
 
     [Fact]
     public void GetRatio_WorksWithNegativeMin()
     {
         var bounded = new BoundedFloat(50f, -50f, 0f);
-        Assert.Equal(0.5, bounded.GetRatio(), 5); // 0 is 50% between -50 and 50
+        Assert.Equal(0.5f, bounded.GetRatio(), 5); // 0 is 50% between -50 and 50
     }
 
     #endregion
