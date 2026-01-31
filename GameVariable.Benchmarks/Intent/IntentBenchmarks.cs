@@ -25,6 +25,6 @@ public class IntentBenchmarks
     {
         var state = new IntentState();
         state.Start();
-        state.DispatchEvent(IntentState.EventId.ACTIVATED);
+        state.DispatchEvent(IntentState.EventId.ACTIVATE);
     }
 }
