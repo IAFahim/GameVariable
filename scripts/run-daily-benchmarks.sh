@@ -5,6 +5,7 @@ set -e
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REPO_ROOT="$SCRIPT_DIR/.."
 HISTORY_DIR="$SCRIPT_DIR/benchmark_history"
+LAST_RUN_FILE="$SCRIPT_DIR/last_run_commit"
 
 # Artifacts are generated in the current working directory by default.
 # We will change to REPO_ROOT to ensure consistency.
@@ -16,6 +17,25 @@ mkdir -p "$HISTORY_DIR"
 # Ensure .NET is in PATH (in case it wasn't added permanently or we are in a new shell without source)
 export PATH="$HOME/.dotnet:$PATH"
 
+# Check for changes
+if [ -f "$LAST_RUN_FILE" ]; then
+    LAST_COMMIT=$(cat "$LAST_RUN_FILE")
+    echo "Checking for changes since $LAST_COMMIT..."
+
+    # Check if there are changes in the tracked files
+    CHANGED_FILES=$(git diff --name-only "$LAST_COMMIT" HEAD)
+
+    if [ -z "$CHANGED_FILES" ]; then
+        echo "No code changes detected since last run ($LAST_COMMIT). Skipping benchmarks."
+        exit 0
+    else
+        echo "Changes detected:"
+        echo "$CHANGED_FILES"
+    fi
+else
+    echo "No last run record found. Running benchmarks for the first time/baseline."
+fi
+
 # Build
 echo "Building benchmarks..."
 dotnet build -c Release "$REPO_ROOT/GameVariable.Benchmarks/GameVariable.Benchmarks.csproj"
@@ -25,8 +45,14 @@ echo "Running benchmarks..."
 # Using --join to get a single combined report.
 # Note: --join might create a report named "BenchmarkRun-report-full.json" or similar.
 # Allow passing a filter as the first argument, default to "*"
-FILTER="${1:-*}"
-dotnet run -c Release --project "$REPO_ROOT/GameVariable.Benchmarks/GameVariable.Benchmarks.csproj" -- --filter "$FILTER" --join
+if [ "$#" -gt 0 ]; then
+    FILTER="$1"
+    shift
+else
+    FILTER="*"
+fi
+
+dotnet run -c Release --project "$REPO_ROOT/GameVariable.Benchmarks/GameVariable.Benchmarks.csproj" -- --filter "$FILTER" --join "$@"
 
 # Find the generated JSON report
 # We look for the most recently modified json file in the artifacts directory
@@ -62,3 +88,7 @@ if [ -n "$PREV_HISTORY_FILE" ]; then
 else
     echo "No previous history to compare with. This is likely the first run."
 fi
+
+# Update last run commit
+git rev-parse HEAD > "$LAST_RUN_FILE"
+echo "Updated last run commit hash to $(cat "$LAST_RUN_FILE")."
