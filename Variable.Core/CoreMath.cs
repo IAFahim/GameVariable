@@ -147,4 +147,45 @@ public static class CoreMath
     {
         result = Math.Abs(value);
     }
+
+    /// <summary>Linearly interpolates between two float values (unclamped).</summary>
+    /// <param name="start">The start value.</param>
+    /// <param name="end">The end value.</param>
+    /// <param name="progress">The interpolation progress (usually 0-1, but can be outside).</param>
+    /// <param name="result">The interpolated value.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void Lerp(in float start, in float end, in float progress, out float result)
+    {
+        result = start + (end - start) * progress;
+    }
+
+    /// <summary>Calculates the linear parameter (ratio) that produces the value within the range [start, end] (unclamped).</summary>
+    /// <param name="start">The start value.</param>
+    /// <param name="end">The end value.</param>
+    /// <param name="value">The value between start and end.</param>
+    /// <param name="result">The progress ratio.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void InverseLerp(in float start, in float end, in float value, out float result)
+    {
+        if (Math.Abs(end - start) < 1e-9f) // Avoid division by zero
+        {
+            result = 0f;
+            return;
+        }
+        result = (value - start) / (end - start);
+    }
+
+    /// <summary>Remaps a value from one range to another (unclamped).</summary>
+    /// <param name="value">The value to remap.</param>
+    /// <param name="inputMin">The minimum of the input range.</param>
+    /// <param name="inputMax">The maximum of the input range.</param>
+    /// <param name="outputMin">The minimum of the output range.</param>
+    /// <param name="outputMax">The maximum of the output range.</param>
+    /// <param name="result">The remapped value.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void Remap(in float value, in float inputMin, in float inputMax, in float outputMin, in float outputMax, out float result)
+    {
+        InverseLerp(in inputMin, in inputMax, in value, out float ratio);
+        Lerp(in outputMin, in outputMax, in ratio, out result);
+    }
 }
