@@ -106,17 +106,34 @@ graph LR
 
 ### 🧐 Which package do I need?
 
-| If you need to build... | Use this package |
-|-------------------------|------------------|
-| **Health, Mana, Stamina** | [**Variable.Bounded**](./Variable.Bounded) |
-| **Cooldowns, Casting Bars** | [**Variable.Timer**](./Variable.Timer) |
-| **Regenerating Shields** | [**Variable.Regen**](./Variable.Regen) |
-| **Ammo, Batteries, Fuel** | [**Variable.Reservoir**](./Variable.Reservoir) |
-| **Leveling, Skills, XP** | [**Variable.Experience**](./Variable.Experience) |
-| **Combos, Input Buffers** | [**Variable.Input**](./Variable.Input) |
-| **Complex Stats (Armor/Resist)** | [**Variable.RPG**](./Variable.RPG) |
-| **Inventory Limits** | [**Variable.Inventory**](./Variable.Inventory) |
-| **AI State Machines** | [**GameVariable.Intent**](./GameVariable.Intent) |
+| If you need to build... | Use this package | Mental Model |
+|-------------------------|------------------|--------------|
+| **Health, Mana, Stamina** | [**Variable.Bounded**](./Variable.Bounded) | 🥤 **Cup** (It fills and empties) |
+| **Cooldowns, Casting Bars** | [**Variable.Timer**](./Variable.Timer) | ⏱️ **Stopwatch** (Counts time) |
+| **Regenerating Shields** | [**Variable.Regen**](./Variable.Regen) | 🌊 **Fountain** (Fills over time) |
+| **Ammo, Batteries, Fuel** | [**Variable.Reservoir**](./Variable.Reservoir) | 🔋 **Battery** (Active + Reserve) |
+| **Leveling, Skills, XP** | [**Variable.Experience**](./Variable.Experience) | ⭐ **XP Bar** (Fills -> Level Up -> Empty) |
+| **Combos, Input Buffers** | [**Variable.Input**](./Variable.Input) | 🌲 **Tree** (Branching paths) |
+| **Complex Stats (Armor/Resist)** | [**Variable.RPG**](./Variable.RPG) | 💎 **Diamond** (Many sources -> One value) |
+| **Inventory Limits** | [**Variable.Inventory**](./Variable.Inventory) | 🎒 **Backpack** (Space management) |
+| **AI State Machines** | [**GameVariable.Intent**](./GameVariable.Intent) | 🚦 **Traffic Light** (Red -> Green -> Yellow) |
+| **Performance Testing** | [**GameVariable.Benchmarks**](./GameVariable.Benchmarks) | 🏎️ **Wind Tunnel** (Test the speed) |
+
+---
+
+## 🏎️ Performance & Benchmarking
+
+We don't just *say* it's fast. We prove it.
+The **[GameVariable.Benchmarks](./GameVariable.Benchmarks)** project acts as our **Wind Tunnel**.
+
+*   **Zero Allocation** verified via `BenchmarkDotNet`.
+*   **Nanosecond Precision** for all core math.
+*   **Unity Burst Compatible** logic.
+
+Run them yourself:
+```bash
+dotnet run -c Release --project GameVariable.Benchmarks
+```
 
 ---
 
