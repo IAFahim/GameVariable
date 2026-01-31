@@ -5,6 +5,21 @@ set -e
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REPO_ROOT="$SCRIPT_DIR/.."
 HISTORY_DIR="$SCRIPT_DIR/benchmark_history"
+LAST_RUN_FILE="$SCRIPT_DIR/last_run_commit"
+
+# Check for changes
+CURRENT_COMMIT=$(git rev-parse HEAD)
+
+if [ -f "$LAST_RUN_FILE" ]; then
+    LAST_COMMIT=$(cat "$LAST_RUN_FILE")
+    if [ "$CURRENT_COMMIT" == "$LAST_COMMIT" ]; then
+        echo "No changes detected since last run (Commit: $CURRENT_COMMIT). Exiting."
+        exit 0
+    fi
+    echo "Changes detected. Previous: $LAST_COMMIT, Current: $CURRENT_COMMIT"
+else
+    echo "No last run record found. Starting fresh run on commit: $CURRENT_COMMIT"
+fi
 
 # Artifacts are generated in the current working directory by default.
 # We will change to REPO_ROOT to ensure consistency.
@@ -26,7 +41,8 @@ echo "Running benchmarks..."
 # Note: --join might create a report named "BenchmarkRun-report-full.json" or similar.
 # Allow passing a filter as the first argument, default to "*"
 FILTER="${1:-*}"
-dotnet run -c Release --project "$REPO_ROOT/GameVariable.Benchmarks/GameVariable.Benchmarks.csproj" -- --filter "$FILTER" --join
+shift 1 || true # Shift only if there's an argument
+dotnet run -c Release --project "$REPO_ROOT/GameVariable.Benchmarks/GameVariable.Benchmarks.csproj" -- --filter "$FILTER" --join "$@"
 
 # Find the generated JSON report
 # We look for the most recently modified json file in the artifacts directory
@@ -62,3 +78,7 @@ if [ -n "$PREV_HISTORY_FILE" ]; then
 else
     echo "No previous history to compare with. This is likely the first run."
 fi
+
+# Update last run commit
+echo "$CURRENT_COMMIT" > "$LAST_RUN_FILE"
+echo "Updated last run commit to $CURRENT_COMMIT"

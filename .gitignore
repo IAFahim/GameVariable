@@ -11,3 +11,4 @@ TestResults/
 *.log
 *-report*
 nul
+scripts/last_run_commit
