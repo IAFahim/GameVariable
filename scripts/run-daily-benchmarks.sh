@@ -13,6 +13,29 @@ ARTIFACTS_DIR="$REPO_ROOT/BenchmarkDotNet.Artifacts/results"
 
 mkdir -p "$HISTORY_DIR"
 
+# Check for changes since last run
+LAST_RUN_FILE="$SCRIPT_DIR/last_run_commit"
+
+if [ -f "$LAST_RUN_FILE" ]; then
+    LAST_COMMIT=$(cat "$LAST_RUN_FILE")
+    echo "Last run commit: $LAST_COMMIT"
+
+    # Check for changes
+    # We ignore the scripts directory to avoid triggering runs on report updates
+    CHANGED_FILES=$(git diff --name-only "$LAST_COMMIT" HEAD -- . ':!scripts/')
+
+    if [ -z "$CHANGED_FILES" ]; then
+        echo "No changes detected in code since last run. Skipping benchmarks."
+        exit 0
+    else
+        echo "Changes detected:"
+        echo "$CHANGED_FILES" | head -n 5
+        if [ $(echo "$CHANGED_FILES" | wc -l) -gt 5 ]; then echo "..."; fi
+    fi
+else
+    echo "No last run record found. Forcing run."
+fi
+
 # Ensure .NET is in PATH (in case it wasn't added permanently or we are in a new shell without source)
 export PATH="$HOME/.dotnet:$PATH"
 
@@ -26,7 +49,12 @@ echo "Running benchmarks..."
 # Note: --join might create a report named "BenchmarkRun-report-full.json" or similar.
 # Allow passing a filter as the first argument, default to "*"
 FILTER="${1:-*}"
-dotnet run -c Release --project "$REPO_ROOT/GameVariable.Benchmarks/GameVariable.Benchmarks.csproj" -- --filter "$FILTER" --join
+if [ "$#" -ge 1 ]; then
+    shift
+fi
+
+# Pass remaining arguments (like --job short) to dotnet run
+dotnet run -c Release --project "$REPO_ROOT/GameVariable.Benchmarks/GameVariable.Benchmarks.csproj" -- --filter "$FILTER" --join "$@"
 
 # Find the generated JSON report
 # We look for the most recently modified json file in the artifacts directory
@@ -62,3 +90,7 @@ if [ -n "$PREV_HISTORY_FILE" ]; then
 else
     echo "No previous history to compare with. This is likely the first run."
 fi
+
+# Update last run commit
+git rev-parse HEAD > "$LAST_RUN_FILE"
+echo "Updated last run commit to $(cat "$LAST_RUN_FILE")"
