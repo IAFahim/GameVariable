@@ -77,7 +77,29 @@ public void AddExperience(int amount)
 }
 ```
 
-### 3. Long XP (MMOs)
+### 3. Advanced Leveling (Zero Allocation Loop)
+
+Want to automate the while-loop? Use the `Add` extension with a formula struct! This handles multi-level jumps in one go.
+
+```csharp
+// 1. Define your formula (Struct based = Zero Allocation)
+public struct LinearFormula : INextMaxFormula<int>
+{
+    public int Calculate(int level) => level * 1000;
+}
+
+// 2. Use it
+var formula = new LinearFormula();
+int levelsGained = xp.Add(5000, formula);
+
+if (levelsGained > 0)
+{
+    PlayLevelUpSound();
+    SpawnParticles(levelsGained); // Spawn 5 particle bursts!
+}
+```
+
+### 4. Long XP (MMOs)
 
 Building an MMO where players have billions of XP? Use `ExperienceLong`.
 

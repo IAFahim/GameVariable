@@ -124,5 +124,19 @@ public class BoundedInfoTests
         Assert.Equal(0.5, bounded.GetRatio(), 5);
     }
 
+    [Fact]
+    public void GetRange_ReturnsCorrectRange()
+    {
+        IBoundedInfo bounded = new TestBounded(10f, 110f, 50f);
+        Assert.Equal(100f, bounded.GetRange());
+    }
+
+    [Fact]
+    public void GetRemaining_ReturnsCorrectRemaining()
+    {
+        IBoundedInfo bounded = new TestBounded(0f, 100f, 25f);
+        Assert.Equal(75f, bounded.GetRemaining());
+    }
+
     #endregion
 }
