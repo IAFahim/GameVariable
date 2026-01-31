@@ -234,7 +234,7 @@ Tests are organized by flow type:
 
 ## License
 
-[Your License Here]
+MIT License. See LICENSE file in repository root for details.
 
 ## Contributing
 

@@ -6,50 +6,90 @@
 namespace GameVariable.Intent;
 
 // Generated state machine
+/// <summary>
+/// A high-performance, zero-allocation Hierarchical State Machine (HSM) for managing game AI behaviors.
+/// </summary>
 public partial struct IntentState : IIntent<IntentState.StateId, IntentState.EventId>
 {
 
+    /// <summary>
+    /// Events that trigger state transitions in the intent machine.
+    /// </summary>
     public enum EventId
     {
+        /// <summary>Aborts a blocked intent, moving it to FAULTED.</summary>
         ABORT = 0,
+        /// <summary>Activates a created or inactive intent, moving it to PENDING.</summary>
         ACTIVATE = 1,
+        /// <summary>Cancels the intent from any state, moving it to CANCELLED.</summary>
         CANCEL = 2,
+        /// <summary>Completes a running intent, moving it to COMPLETED.</summary>
         COMPLETE = 3,
+        /// <summary>Signals failure of a running intent, moving it to FAULTED.</summary>
         FAIL = 4,
+        /// <summary>Prepares a created intent without activating, moving it to INACTIVE.</summary>
         PREPARE = 5,
+        /// <summary>Recovers a faulted intent, moving it back to PENDING.</summary>
         RECOVER = 6,
+        /// <summary>Restarts a completed intent, moving it back to PENDING.</summary>
         RESTART = 7,
+        /// <summary>Resumes a blocked intent (e.g., after child completion), moving it back to RUNNING.</summary>
         RESUME = 8,
+        /// <summary>Spawns a child process, moving the intent to BLOCKED.</summary>
         SPAWN_CHILD = 9,
+        /// <summary>Starts a pending intent, moving it to RUNNING.</summary>
         START = 10,
     }
 
+    /// <summary>The total number of defined events.</summary>
     public const int EventIdCount = 11;
 
+    /// <summary>
+    /// The possible states of the intent machine.
+    /// </summary>
     public enum StateId
     {
+        /// <summary>The root state containing all other states.</summary>
         ROOT = 0,
+        /// <summary>The intent is waiting for a child process or external condition.</summary>
         BLOCKED = 1,
+        /// <summary>The intent has been cancelled.</summary>
         CANCELLED = 2,
+        /// <summary>The intent has successfully completed.</summary>
         COMPLETED = 3,
+        /// <summary>The initial state upon creation.</summary>
         CREATED = 4,
+        /// <summary>The intent has failed.</summary>
         FAULTED = 5,
+        /// <summary>The intent is prepared but not yet active.</summary>
         INACTIVE = 6,
+        /// <summary>The intent is ready to run but hasn't started yet.</summary>
         PENDING = 7,
+        /// <summary>The intent is actively executing.</summary>
         RUNNING = 8,
     }
 
+    /// <summary>The total number of defined states.</summary>
     public const int StateIdCount = 9;
 
     // Used internally by state machine. Feel free to inspect, but don't modify.
+    /// <summary>
+    /// The current state identifier.
+    /// </summary>
     public StateId stateId;
 
     // State machine constructor. Must be called before start or dispatch event functions. Not thread safe.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IntentState"/> struct.
+    /// </summary>
     public IntentState()
     {
     }
 
     // Starts the state machine. Must be called before dispatching events. Not thread safe.
+    /// <summary>
+    /// Starts the state machine, transitioning to the initial state (CREATED).
+    /// </summary>
     public void Start()
     {
         ROOT_enter();
@@ -81,6 +121,10 @@ public partial struct IntentState : IIntent<IntentState.StateId, IntentState.Eve
 
     // Dispatches an event to the state machine. Not thread safe.
     // Note! This function assumes that the `eventId` parameter is valid.
+    /// <summary>
+    /// Dispatches an event to the state machine to trigger a transition.
+    /// </summary>
+    /// <param name="eventId">The event to dispatch.</param>
     public void DispatchEvent(EventId eventId)
     {
         switch (this.stateId)
@@ -664,6 +708,11 @@ public partial struct IntentState : IIntent<IntentState.StateId, IntentState.Eve
     }
 
     // Thread safe.
+    /// <summary>
+    /// Converts a <see cref="StateId"/> to its string representation.
+    /// </summary>
+    /// <param name="id">The state ID.</param>
+    /// <returns>The string name of the state.</returns>
     public static string StateIdToString(StateId id)
     {
         switch (id)
@@ -682,6 +731,11 @@ public partial struct IntentState : IIntent<IntentState.StateId, IntentState.Eve
     }
 
     // Thread safe.
+    /// <summary>
+    /// Converts a <see cref="EventId"/> to its string representation.
+    /// </summary>
+    /// <param name="id">The event ID.</param>
+    /// <returns>The string name of the event.</returns>
     public static string EventIdToString(EventId id)
     {
         switch (id)
