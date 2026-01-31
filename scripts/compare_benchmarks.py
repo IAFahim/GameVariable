@@ -43,7 +43,18 @@ def main():
         print("Failed to load benchmark data.")
         sys.exit(1)
 
-    baseline_map = {get_benchmark_key(bm): bm for bm in baseline_data.get('Benchmarks', [])}
+    baseline_map = {}
+    for bm in baseline_data.get('Benchmarks', []):
+        key = get_benchmark_key(bm)
+        mean = bm.get('Statistics', {}).get('Mean', 0)
+
+        # Prioritize non-zero mean
+        if key not in baseline_map:
+            baseline_map[key] = bm
+        else:
+            existing_mean = baseline_map[key].get('Statistics', {}).get('Mean', 0)
+            if existing_mean == 0 and mean > 0:
+                baseline_map[key] = bm
     current_benchmarks = current_data.get('Benchmarks', [])
 
     print("# Benchmark Comparison Report\n")
