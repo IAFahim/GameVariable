@@ -26,7 +26,10 @@ echo "Running benchmarks..."
 # Note: --join might create a report named "BenchmarkRun-report-full.json" or similar.
 # Allow passing a filter as the first argument, default to "*"
 FILTER="${1:-*}"
-dotnet run -c Release --project "$REPO_ROOT/GameVariable.Benchmarks/GameVariable.Benchmarks.csproj" -- --filter "$FILTER" --join
+if [ "$#" -ge 1 ]; then
+    shift
+fi
+dotnet run -c Release --project "$REPO_ROOT/GameVariable.Benchmarks/GameVariable.Benchmarks.csproj" -- --filter "$FILTER" --join "$@"
 
 # Find the generated JSON report
 # We look for the most recently modified json file in the artifacts directory
