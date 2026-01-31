@@ -14,7 +14,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Clamp(in float value, in float min, in float max, out float result)
     {
-        CoreMath.Clamp(value, min, max, out result);
+        result = Math.Clamp(value, min, max);
     }
 
     /// <summary>Sets a value within bounds.</summary>
@@ -25,7 +25,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Set(ref float current, in float min, in float max, in float value)
     {
-        CoreMath.Clamp(value, min, max, out current);
+        current = Math.Clamp(value, min, max);
     }
 
     /// <summary>Normalizes the current value to be within bounds.</summary>
@@ -35,7 +35,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Normalize(ref float current, in float min, in float max)
     {
-        CoreMath.Clamp(current, min, max, out current);
+        current = Math.Clamp(current, min, max);
     }
 
     /// <summary>Checks if the value is full (at max) within a tolerance.</summary>
@@ -100,7 +100,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Clamp(in int value, in int min, in int max, out int result)
     {
-        CoreMath.Clamp(value, min, max, out result);
+        result = Math.Clamp(value, min, max);
     }
 
     /// <summary>Sets an int value within bounds.</summary>
@@ -111,7 +111,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Set(ref int current, in int min, in int max, in int value)
     {
-        CoreMath.Clamp(value, min, max, out current);
+        current = Math.Clamp(value, min, max);
     }
 
     /// <summary>Normalizes the current int value to be within bounds.</summary>
@@ -121,7 +121,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Normalize(ref int current, in int min, in int max)
     {
-        CoreMath.Clamp(current, min, max, out current);
+        current = Math.Clamp(current, min, max);
     }
 
     /// <summary>Checks if the int value is full (at max).</summary>
@@ -183,7 +183,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Clamp(in byte value, in byte max, out byte result)
     {
-        CoreMath.Clamp(value, max, out result);
+        result = Math.Min(value, max);
     }
 
     /// <summary>Clamps an int value to a byte range [0, max].</summary>
@@ -193,7 +193,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Clamp(in int value, in byte max, out byte result)
     {
-        CoreMath.Clamp(value, max, out result);
+        result = (byte)Math.Clamp(value, 0, max);
     }
 
     /// <summary>Sets a byte value within bounds.</summary>
@@ -203,7 +203,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Set(ref byte current, in byte max, in byte value)
     {
-        CoreMath.Clamp(value, max, out current);
+        current = Math.Min(value, max);
     }
 
     /// <summary>Normalizes the current byte value to be within bounds.</summary>
@@ -212,7 +212,7 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Normalize(ref byte current, in byte max)
     {
-        CoreMath.Clamp(current, max, out current);
+        current = Math.Min(current, max);
     }
 
     /// <summary>Checks if the byte value is full (at max).</summary>
@@ -272,7 +272,6 @@ public static class BoundedLogic
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Add(in int current, in int min, in int max, in int amount, out int result)
     {
-        CoreMath.Clamp((long)current + amount, min, max, out var temp);
-        result = (int)temp;
+        result = (int)Math.Clamp((long)current + amount, min, max);
     }
 }
