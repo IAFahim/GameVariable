@@ -1,8 +1,32 @@
 # ⏱️ Variable.Timer
 
-**Time management for games, solved.** ⌛
+**The Egg Timer.** 🥚
 
-**Variable.Timer** gives you `Timer` (count up) and `Cooldown` (count down) structs that just work. No more spaghetti `float timer = 0f;` and `timer += Time.deltaTime;` checks scattered everywhere.
+**Variable.Timer** provides dedicated structs for counting Time. Stop using loose `float` variables that you forget to decrement.
+
+---
+
+## 🧠 Mental Model: The Egg Timer
+
+Think of `Cooldown` as a kitchen **Egg Timer**.
+1.  You twist it to 5 minutes (`Reset()`).
+2.  It ticks down automatically (`Tick()`).
+3.  When it hits 0, it DINGS! (`IsReady()`).
+
+Think of `Timer` as a **Stopwatch**.
+1.  You start at 0.
+2.  It ticks up.
+3.  When it hits the target, it stops.
+
+---
+
+## 👶 ELI5: "Is it ready yet?"
+
+Imagine a kid in the back seat asking "Are we there yet?"
+*   **Timer:** "We have driven 1 hour out of 5." (Counts Up)
+*   **Cooldown:** "We have 4 hours left." (Counts Down)
+
+Both answer the same question: "When does this end?"
 
 ---
 
@@ -14,73 +38,68 @@ dotnet add package Variable.Timer
 
 ---
 
-## 🚀 Features
+## 🚀 Usage Guide
 
-* **🔥 Cooldowns:** Manage ability availability effortlessly.
-* **⏳ Timers:** Track durations (casting, loading, buffs).
-* **🧠 Logic Separation:** Tick logic is separated from state.
-* **⚡ Zero Allocation:** Pure structs, Burst compatible.
+### 1. Cooldowns (Abilities)
 
----
-
-## 🎮 Usage Guide
-
-### 1. Cooldowns (The "Can I do this yet?" Pattern)
+Perfect for Dashes, Spells, or Fire Rates.
 
 ```csharp
 using Variable.Timer;
 
 public class Hero
 {
-    // 3 second cooldown, starts READY
+    // 3 second cooldown. Starts READY (0).
     public Cooldown DashCd = new Cooldown(3f);
 
     public void Update(float dt)
     {
-        // 1. Tick the cooldown
-        // TickAndCheckReady returns true if it hits 0 THIS FRAME
+        // Decrements time. Returns TRUE the exact frame it hits 0.
         if (DashCd.TickAndCheckReady(dt))
         {
-            PlayReadySound();
+            // Just became ready!
+            Ui.FlashGreen();
         }
 
-        // 2. Use Ability
-        if (Input.GetButton("Dash") && DashCd.IsReady())
+        if (Input.Pressed && DashCd.IsReady())
         {
-            DoDash();
-            DashCd.Reset(); // Sets value to 3.0
+            Dash();
+            DashCd.Reset(); // Sets time back to 3.0
         }
     }
 }
 ```
 
-### 2. Timers (The "Are we there yet?" Pattern)
+### 2. Timers (Casting/Loading)
+
+Perfect for "Hold to interact" or "Casting Fireball".
 
 ```csharp
-// 5 second cast time
-public Timer CastTimer = new Timer(5f);
+// 2 second cast time. Starts at 0.
+public Timer CastTimer = new Timer(2f);
 
 public void Update(float dt)
 {
-    // TickAndCheckComplete returns true if it hits Duration THIS FRAME
+    // Increments time. Returns TRUE when it hits 2.0.
     if (CastTimer.TickAndCheckComplete(dt))
     {
-        SpawnFireball();
-        CastTimer.Reset(); // Sets value to 0.0
+        Fireball();
+        CastTimer.Reset(); // Back to 0
     }
 }
 ```
 
-### 3. Progress Bars (UI)
+### 3. Visuals (UI)
 
-Since `Timer` and `Cooldown` implement `IBoundedInfo`, they work with standard UI code!
+Since they are `IBoundedInfo`, they plug right into your standard UI bars.
 
 ```csharp
-// 0.0 to 1.0
-float progress = (float)CastTimer.GetRatio();
+// Returns 0.0 -> 1.0 (Empty -> Full)
+float fill = (float)CastTimer.GetRatio();
 
-// 1.0 to 0.0 (inverse for cooldowns usually)
-float cdProgress = (float)DashCd.GetProgress();
+// Returns 1.0 -> 0.0 (Full -> Empty)
+// Perfect for darkening an icon!
+float darkOverlay = (float)DashCd.GetRatio();
 ```
 
 ---
@@ -88,21 +107,16 @@ float cdProgress = (float)DashCd.GetProgress();
 ## 🔧 API Reference
 
 ### `Cooldown` (Counts DOWN 📉)
-- `Reset()`: Sets current time to Duration.
-- `Finish()`: Sets current time to 0 (Ready).
-- `IsReady()`: True if time <= 0.
-- `TickAndCheckReady(dt)`: Advances time, returns true if it *just* became ready.
+- `Reset()`: Set to `Duration`.
+- `Finish()`: Set to `0`.
+- `IsReady()`: Is `Current <= 0`?
+- `Tick(dt)`: `Current -= dt`.
 
 ### `Timer` (Counts UP 📈)
-- `Reset()`: Sets current time to 0.
-- `Finish()`: Sets current time to Duration.
-- `IsFull()`: True if time >= Duration.
-- `TickAndCheckComplete(dt)`: Advances time, returns true if it *just* finished.
-
-### Common
-- `Current`: The raw time value.
-- `Duration`: The target time.
-- `GetRatio()`: Normalized progress.
+- `Reset()`: Set to `0`.
+- `Finish()`: Set to `Duration`.
+- `IsComplete()`: Is `Current >= Duration`?
+- `Tick(dt)`: `Current += dt`.
 
 ---
 

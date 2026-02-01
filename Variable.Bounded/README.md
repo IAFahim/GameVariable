@@ -1,8 +1,32 @@
 # 📊 Variable.Bounded
 
-**Health bars, Ammo, Stamina, Mana... Solved.** ✅
+**The Cup.** 🥤
 
 **Variable.Bounded** gives you zero-allocation structs that *know their limits*. No more manually checking `if (health < 0) health = 0;` spread across 50 different scripts.
+
+---
+
+## 🧠 Mental Model: The Cup
+
+Think of `BoundedFloat` as a physical **Cup**.
+*   **Max:** The size of the cup.
+*   **Current:** The amount of liquid inside.
+*   **Min:** Empty (usually 0).
+
+If you try to pour a gallon of water into a pint glass, it just overflows. The glass doesn't break; the extra water just disappears.
+If you try to drink from an empty cup, you just get air.
+
+**Variable.Bounded** enforces the physics of the cup automatically.
+
+---
+
+## 👶 ELI5: "I can't have 110% Health!"
+
+If your character has 100 Max Health, and they drink a Potion that heals 500 HP... they should still have 100 HP. They shouldn't explode.
+
+**Variable.Bounded** makes sure math works like video games, not like algebra.
+*   `100 + 500 = 100` (Clamped to Max)
+*   `0 - 50 = 0` (Clamped to Min)
 
 ---
 
@@ -14,46 +38,27 @@ dotnet add package Variable.Bounded
 
 ---
 
-## 🚀 Features
-
-* **🛡️ Bulletproof Clamping:** Values *cannot* escape their bounds.
-* **⚡ Zero Allocation:** Pure `struct` design. No GC pressure. Burst compatible.
-* **➕ Natural Math:** Use `+`, `-`, `++`, `--` just like normal numbers.
-* **📏 Standardized:** Implements `IBoundedInfo` for easy UI integration.
-
----
-
-## 📚 Types Available
-
-| Type | Use Case | Size |
-|------|----------|------|
-| `BoundedFloat` | Health, Mana, Stamina, Temperature | 12 bytes |
-| `BoundedInt` | Ammo count, Inventory slots, Skill points | 12 bytes |
-| `BoundedByte` | Small counts (0-255), Grid coordinates | 2 bytes |
-
----
-
-## 🎮 Usage Guide
+## 🚀 Usage Guide
 
 ### 1. The Basics (Health System)
 
 ```csharp
 using Variable.Bounded;
 
-// Create health: 0 to 100
+// Create a cup of size 100. Starts full.
 var health = new BoundedFloat(100f);
 
 // Take damage
-health -= 25f;  // Automatically clamps! No if-checks needed.
+health -= 25f;  // Result: 75. No if-checks needed!
 
-// Check status
+// Check status (using Variable.Core extensions)
 if (health.IsEmpty())
 {
     Die();
 }
 
 // Heal
-health += 50f;  // Clamps to 100. Can't over-heal.
+health += 50f;  // Result: 100. Can't over-heal.
 
 // UI
 float fillAmount = (float)health.GetRatio(); // 0.0 to 1.0
@@ -61,16 +66,18 @@ float fillAmount = (float)health.GetRatio(); // 0.0 to 1.0
 
 ### 2. Advanced Ranges (Temperature)
 
-Not everything starts at 0!
+Not every cup starts at 0. Some start at -50!
 
 ```csharp
 // Range: -50 to +50. Starting at 20.
 var temperature = new BoundedFloat(50f, -50f, 20f);
 
-temperature -= 100f; // Clamps to -50f (Min)
+temperature -= 100f; // Clamps to -50f (Absolute Zero-ish)
 ```
 
 ### 3. Ammo Clips (Integers)
+
+Use `BoundedInt` for discrete things like bullets or inventory slots.
 
 ```csharp
 var ammo = new BoundedInt(12); // Max 12, Current 12
@@ -81,16 +88,6 @@ if (!ammo.IsEmpty())
     ammo--;
     FireBullet();
 }
-```
-
-### 4. Tiny Values (Bytes)
-
-Perfect for tile grids or small inventory stacks.
-
-```csharp
-// Max 10 items
-var stack = new BoundedByte(10);
-stack += 5; // Clamped to 10
 ```
 
 ---
@@ -119,24 +116,13 @@ health.Normalize(); // Snaps value back to bounds
 
 ---
 
-## 🔧 API Reference
+## 📚 Types Available
 
-### Properties
-- `Current`: The raw value.
-- `Min`: The floor (0 for Byte).
-- `Max`: The ceiling.
-
-### Operations
-- `+`, `-`, `*`, `/`: Standard math (result is always clamped).
-- `++`, `--`: Increment/Decrement by 1.
-- `implicit operator`: Treat `BoundedFloat` as `float` for comparisons (`if (hp > 50)`).
-
-### Extensions
-- `IsFull()`: Is `Current == Max`?
-- `IsEmpty()`: Is `Current == Min`?
-- `GetRatio()`: Percentage (0.0 to 1.0).
-- `GetRange()`: Size of the range (`Max - Min`).
-- `TryConsume(amount)`: Tries to subtract. Returns `false` if not enough.
+| Type | Use Case | Size |
+|------|----------|------|
+| `BoundedFloat` | Health, Mana, Stamina, Temperature | 12 bytes |
+| `BoundedInt` | Ammo count, Inventory slots, Skill points | 12 bytes |
+| `BoundedByte` | Small counts (0-255), Grid coordinates | 2 bytes |
 
 ---
 

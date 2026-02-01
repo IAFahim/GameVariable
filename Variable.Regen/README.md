@@ -1,8 +1,30 @@
 # ♻️ Variable.Regen
 
-**Automatic Resource Regeneration & Decay.** 🌱
+**The Faucet.** 🚰
 
-**Variable.Regen** wraps a bounded value with a `Rate` of change per second. It handles the math of "X per second" so you don't have to.
+**Variable.Regen** creates resources that fill up (or drain) automatically over time. It's `Variable.Bounded` but with a motor attached.
+
+---
+
+## 🧠 Mental Model: The Faucet
+
+Imagine a **Bathtub (BoundedFloat)** with a **Faucet (Rate)** turned on.
+*   **Positive Rate:** The faucet is filling the tub.
+*   **Negative Rate:** The drain is open.
+*   **Zero Rate:** The water is still.
+
+You just tell it how much time passed (`Tick(dt)`), and it calculates the water level.
+
+---
+
+## 👶 ELI5: "It comes back on its own!"
+
+*   **Mana** is a cup that refills itself.
+*   **Stamina** refills when you stop running.
+*   **Shields** recharge after 5 seconds.
+*   **Radiation Poisoning** kills you slowly.
+
+They all work the same way: `Current += Rate * Time`.
 
 ---
 
@@ -14,69 +36,66 @@ dotnet add package Variable.Regen
 
 ---
 
-## 🚀 Features
+## 🚀 Usage Guide
 
-* **⚡ Auto-Tick:** Just call `.Tick(deltaTime)` and it handles the rest.
-* **🧪 Decay:** Negative rates work perfectly for poison, radiation, or hunger.
-* **🛡️ Clamped:** Respects Min/Max bounds automatically.
-* **🏗️ Zero Allocation:** Pure structs, Burst compatible.
-
----
-
-## 🎮 Usage Guide
-
-### 1. Mana Regeneration (Positive Rate)
+### 1. Mana (Regeneration)
 
 ```csharp
 using Variable.Regen;
 
-// Max 100, Current 0, +10 per second
+// Max 100, Start at 0, +10 Mana per second
 var mana = new RegenFloat(100f, 0f, 10f);
 
 void Update()
 {
-    // Automatically adds 10 * deltaTime
-    // Clamps to 100
+    // Add (10 * dt) to current.
+    // Automatically stops at 100.
     mana.Tick(Time.deltaTime);
 }
-```
 
-### 2. Hunger/Decay (Negative Rate)
-
-```csharp
-// Max 100, Current 100, -5 per second
-var hunger = new RegenFloat(100f, 100f, -5f);
-
-void Update()
+void CastSpell()
 {
-    // Automatically subtracts 5 * deltaTime
-    // Clamps to 0
-    hunger.Tick(Time.deltaTime);
-
-    if (hunger.IsEmpty())
+    // Access the underlying BoundedFloat via .Value
+    if (mana.Value.Current >= 20f)
     {
-        TakeStarvationDamage();
+        mana.Value -= 20f;
+        Fire();
     }
 }
 ```
 
-### 3. Modifying Values
-
-Since `RegenFloat` wraps a `BoundedFloat`, you can modify it directly or via extensions.
+### 2. Hunger (Decay)
 
 ```csharp
-// Consume mana (spell cast)
-// 'Value' gives access to the underlying BoundedFloat
-if (mana.Value.Current >= 20f)
+// Max 100, Start Full, -5 Hunger per second
+var hunger = new RegenFloat(100f, 100f, -5f);
+
+void Update()
 {
-    mana.Value.Current -= 20f;
+    // Subtracts (5 * dt). Stops at 0.
+    hunger.Tick(Time.deltaTime);
+
+    // IsEmpty checks the underlying value
+    if (hunger.Value.IsEmpty())
+    {
+        DieOfStarvation();
+    }
+}
+```
+
+### 3. Rate Modifications (Buffs/Debuffs)
+
+You can change the speed of the faucet at any time.
+
+```csharp
+public void OnDrinkCoffee()
+{
+    stamina.Rate *= 2f; // Double regen speed!
 }
 
-// Or use Bounded extensions directly on the wrapper (implicit conversion often handles this,
-// but accessing .Value is clearer)
-if (mana.Value.TryConsume(20f))
+public void OnPoisoned()
 {
-    CastSpell();
+    health.Rate = -5f; // Start draining health!
 }
 ```
 
@@ -84,14 +103,13 @@ if (mana.Value.TryConsume(20f))
 
 ## 🔧 API Reference
 
-### `RegenFloat`
-- `Value`: The underlying `BoundedFloat` (Current, Min, Max).
-- `Rate`: Units per second.
+### Properties
+- `Value`: The `BoundedFloat` container (Current, Min, Max).
+- `Rate`: How much to add per second.
 
-### Extensions
-- `Tick(deltaTime)`: Applies `Rate * deltaTime` to `Value`.
-- `IsFull()`: Is it at max capacity?
-- `IsEmpty()`: Is it at min capacity?
+### Methods
+- `Tick(float deltaTime)`: Updates the value based on the rate.
+- `implicit operator float`: Returns `Value.Current`.
 
 ---
 
