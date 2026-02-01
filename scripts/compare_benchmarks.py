@@ -15,7 +15,9 @@ def get_benchmark_key(bm):
     return bm.get('FullName', bm.get('DisplayInfo', 'Unknown'))
 
 def format_time(ns):
-    if ns < 1000:
+    if ns < 1.0:
+        return f"{ns:.4f} ns"
+    elif ns < 1000:
         return f"{ns:.2f} ns"
     elif ns < 1000000:
         return f"{ns/1000:.2f} us"
