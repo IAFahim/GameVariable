@@ -1,0 +1,3 @@
+## 2025-02-01 - Allocation-Free String Formatting for Bounded Types
+**Learning:** In `netstandard2.1`, standard `ToString()` overrides and string interpolation for value types (like `float` and `int`) often lead to unnecessary heap allocations due to boxing and internal `string.Format` calls. Implementing `TryFormat` with `stackalloc char` buffers and using them in `ToString()` significantly reduces allocation overhead and improves throughput for common game-engine operations like updating UI text.
+**Action:** Always prefer `Span<char>`-based `TryFormat` and `stackalloc` for string formatting in performance-critical structs.
