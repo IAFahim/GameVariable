@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Variable.Bounded\Variable.Bounded.csproj" />
+    <ProjectReference Include="..\Variable.Timer\Variable.Timer.csproj" />
+    <ProjectReference Include="..\Variable.Regen\Variable.Regen.csproj" />
+    <ProjectReference Include="..\Variable.Experience\Variable.Experience.csproj" />
+    <ProjectReference Include="..\Variable.Core\Variable.Core.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
