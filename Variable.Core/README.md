@@ -1,8 +1,29 @@
 # 🔷 Variable.Core
 
-**The Foundation of GameVariable.** 🧱
+**The Universal Adapter.** 🔌
 
-**Variable.Core** isn't just a package; it's the *blueprint* for the entire GameVariable ecosystem. It defines the shared DNA that makes `Health`, `Mana`, `Cooldowns`, and `Experience` all speak the same language.
+**Variable.Core** is the shared DNA of the entire GameVariable ecosystem. It defines the common interfaces that let Health, Mana, Cooldowns, and XP all speak the same language.
+
+---
+
+## 🧠 Mental Model: The Universal Adapter
+
+Imagine you have a US plug, a UK plug, and a Japanese plug. Usually, you need three different sockets.
+
+**Variable.Core** is the Universal Travel Adapter. It turns *any* distinct game mechanic (Health, Timer, Ammo) into a generic "Thing with a Value" that your UI and Systems can understand without knowing the details.
+
+---
+
+## 👶 ELI5: "How full is the cup?"
+
+A **Health Bar** is just a cup of water.
+A **Cooldown Timer** is an hourglass (sand falling).
+A **Gun Magazine** is a box of bullets.
+
+They are all totally different things, but they all share one question:
+**"How full are you right now?"**
+
+`Variable.Core` asks that question. It doesn't care *what* the thing is, only *how full* it is.
 
 ---
 
@@ -14,87 +35,60 @@ dotnet add package Variable.Core
 
 ---
 
-## 🧠 Why Does This Exist?
+## 🚀 Usage Guide
 
-Imagine writing a UI Health Bar script.
+### 1. The "One Script to Rule Them All" (UI)
 
-**Without Core:**
-You write one script for `PlayerHealth`, another for `EnemyHealth`, another for `Mana`, another for `Stamina`... because they are all different classes. 😫
+Stop writing `HealthBar.cs`, `ManaBar.cs`, and `StaminaBar.cs`. Write **one** script.
 
-**With Core:**
-You write **ONE** script that takes `IBoundedInfo`.
 ```csharp
-public void UpdateBar(IBoundedInfo resource)
+using Variable.Core;
+
+public class ResourceBar : MonoBehaviour
 {
-    fillImage.fillAmount = (float)resource.GetRatio(); // Works for EVERYTHING!
+    public Image FillImage;
+
+    // Takes Health, Mana, Timer, Ammo... ANYTHING!
+    public void UpdateView(IBoundedInfo resource)
+    {
+        // GetRatio() returns 0.0 to 1.0 automatically.
+        FillImage.fillAmount = (float)resource.GetRatio();
+    }
 }
 ```
 
----
+### 2. Magic Extensions ✨
 
-## 🔑 Key Interfaces
+Just by importing `Variable.Core`, any object implementing `IBoundedInfo` gets these superpowers:
 
-### `IBoundedInfo`
-**"I have limits!"** 🛑
-
-Anything that has a `Min`, `Max`, and `Current` value.
-- **Health:** 0 to 100
-- **Ammo:** 0 to 30
-- **Temperature:** -50 to +50
-
-**Properties:**
-- `float Min`
-- `float Max`
-- `float Current`
-
-### `ICompletable`
-**"Are we there yet?"** ⏱️
-
-Anything that finishes over time.
-- **Timer:** Counts UP to duration.
-- **Cooldown:** Counts DOWN to zero.
-
-**Properties:**
-- `bool IsComplete`
-
----
-
-## 🛠️ Extensions (The Magic ✨)
-
-Importing `Variable.Core` gives you superpowers on *any* `IBoundedInfo`:
-
-| Method | What it does | Example |
-|--------|--------------|---------|
-| `IsFull()` | `Current >= Max` | Is mana full? |
-| `IsEmpty()` | `Current <= Min` | Is health zero? |
-| `GetRatio()` | `(Current-Min) / Range` | Health bar % (0.0 to 1.0) |
-| `GetRange()` | `Max - Min` | Total capacity |
-| `GetRemaining()` | `Max - Current` | How much more XP needed? |
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `GetRatio()` | `0.0` - `1.0` | Percentage full. |
+| `IsFull()` | `bool` | Is `Current == Max`? |
+| `IsEmpty()` | `bool` | Is `Current == Min`? |
+| `GetRange()` | `float` | `Max - Min` (Capacity). |
+| `GetRemaining()` | `float` | `Max - Current` (Space left). |
 
 ---
 
 ## 🏗️ For Plugin Creators
 
-Building your own variable type? Implement `IBoundedInfo` to instantly gain compatibility with the entire ecosystem (UI tools, save systems, etc.).
+Want to make your own custom variable? Implement `IBoundedInfo`.
 
 ```csharp
-using Variable.Core;
-
 public struct Shield : IBoundedInfo
 {
     public float Integrity;
     public float MaxIntegrity;
     
-    // Explicit implementation keeps your public API clean!
+    // Interface Implementation
     float IBoundedInfo.Min => 0f;
     float IBoundedInfo.Max => MaxIntegrity;
     float IBoundedInfo.Current => Integrity;
 }
-
-// Now you can do:
-var shield = new Shield { ... };
-if (shield.IsFull()) PlayShieldSound();
 ```
+
+Now your Shield works with your UI bars automatically! 🤯
 
 ---
 

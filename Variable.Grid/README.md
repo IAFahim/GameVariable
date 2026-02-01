@@ -1,61 +1,124 @@
 # 🕸️ Variable.Grid
 
-### High-Performance 2D Grid Primitives for C#
+**The Spreadsheet.** 📊
 
-**The "Excel Sheet" for your Game State.** 📊
-Stop allocating `List<List<T>>` or `Tile[,]`. Use a flat array with 2D superpowers.
+**Variable.Grid** wraps a simple 1D array (`T[]`) with math that makes it behave like a 2D grid (`T[,]`). This gives you the performance of a flat array with the convenience of coordinates.
 
-## 🧠 Mental Model
+---
 
-Imagine a **Chessboard**.
-*   Instead of making 64 individual squares, we take a **long strip of 64 squares** and chop it into 8 rows.
-*   `Variable.Grid` handles the math to pretend that long strip is a 2D board.
-*   This is how your computer memory actually works. We just made it friendly.
+## 🧠 Mental Model: The Spreadsheet
 
-## 👶 ELI5 (Explain Like I'm 5)
+Memory is a long strip of tape (1D).
+A Grid is a Spreadsheet (2D).
 
-*   You have a big box of Legos lined up in a row.
-*   You want to build a wall 10 bricks wide.
-*   `Variable.Grid` is the magic ruler that tells you: "Brick #23 goes in Row 2, Column 3!"
+**Variable.Grid** is the math that says "Cell C5 is actually Index 22 on the tape."
 
-## 🚀 Installation
+Because it's just a flat array underneath:
+1.  It is **Cache Friendly** (CPU loves reading it).
+2.  It is **Zero Allocation** to index.
+3.  It serializes easily (just save the array!).
+
+---
+
+## 👶 ELI5: "It's just a long line."
+
+Imagine you have a long line of 100 LEGOs.
+You want to make a 10x10 floor.
+You chop the line every 10 bricks and stack them.
+
+**Variable.Grid** does the "chopping" in its head, so you can say "Row 2, Column 5" without actually cutting the LEGO line.
+
+---
+
+## 📦 Installation
 
 ```bash
 dotnet add package Variable.Grid
 ```
 
-## 🛠️ Usage
+---
 
-### 1. Create a Grid
+## 🚀 Usage Guide
+
+### 1. Creating a Map
+
+Stop using `Tile[,]` (slow) or `List<List<Tile>>` (garbage city).
+
 ```csharp
 using Variable.Grid;
 
-// Create a 10x10 map of integers
+// Create a 10x10 grid of ints
 var map = new Grid2D<int>(10, 10);
+
+// It allocates ONE array of size 100.
 ```
 
-### 2. Access Cells
-```csharp
-// Set values like a 2D array
-map[5, 5] = 99;
+### 2. Accessing Data
 
-// Or use the raw index if you need speed!
-map[55] = 99;
+Use `[x, y]` like normal.
+
+```csharp
+// Write
+map[2, 5] = 1;
+
+// Read
+int value = map[2, 5];
+
+// It uses 'ref', so you can modify structs in-place!
+ref int cell = ref map[2, 5];
+cell++;
 ```
 
-### 3. Check Bounds
+### 3. High Performance Iteration
+
+If you need to process the whole map (e.g., pathfinding cleanup), don't use X/Y loops. Use the flat array!
+
 ```csharp
-if (map.IsValid(12, 0))
-{
-    // Safe!
-}
+// ❌ Slow (CPU jumps around)
+for (int y = 0; y < map.Height; y++)
+    for (int x = 0; x < map.Width; x++)
+        map[x, y] = 0;
+
+// ✅ Fast (Linear memory access)
+for (int i = 0; i < map.Length; i++)
+    map[i] = 0;
+
+// 🚀 Turbo (Span/MemSet)
+map.Data.AsSpan().Fill(0);
 ```
 
-### 4. Extensions
-```csharp
-// Fill the whole map with 0
-map.Fill(0);
+### 4. Rows and Columns
 
-// Get the 3rd row (Zero allocation!)
+```csharp
+// Get Row 3 as a Span (Zero allocation view)
 Span<int> row = map.GetRow(3);
+
+// Copy Column 2 into a buffer
+Span<int> colBuffer = stackalloc int[map.Height];
+map.CopyColumn(2, colBuffer);
 ```
+
+---
+
+## 🔧 API Reference
+
+### `Grid2D<T>`
+- `Data`: The raw `T[]` array.
+- `Width` / `Height`
+- `this[x, y]`: Access cell by coordinate.
+- `this[i]`: Access cell by flat index.
+- `IsValid(x, y)`: Bounds check.
+
+### Extensions
+- `GetRow(y)`: Returns `Span<T>`.
+- `CopyColumn(x, dest)`: Copies column data.
+- `Fill(value)`: Sets every cell.
+
+---
+
+<div align="center">
+
+**Part of the [GameVariable](https://github.com/iafahim/GameVariable) Ecosystem**
+*Made with ❤️ for game developers*
+
+</div>

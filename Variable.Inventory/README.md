@@ -1,8 +1,30 @@
 # 🎒 Variable.Inventory
 
-**The Math of Stuff.** 🍎
+**The Accountant.** 🧾
 
-**Variable.Inventory** is a pure logic library for handling inventory mathematics. It doesn't tell you *how* to store your items (List, Array, Dictionary) — it just handles the "Can I fit this?" and "Move this there" logic.
+**Variable.Inventory** doesn't care if your inventory is a Grid, a List, or a Dictionary. It cares about **The Numbers**. It handles the math of moving items, checking limits, and calculating weight.
+
+---
+
+## 🧠 Mental Model: The Accountant
+
+You are the Warehouse Manager. You don't move the boxes; you just update the ledger.
+
+*   "Can I fit 50 apples?" -> `CanAccept()`
+*   "Move 10 apples from Box A to Box B." -> `TryTransferPartial()`
+*   "I need 5 wood to build this." -> `TryRemoveExact()`
+
+**Variable.Inventory** is the set of rules that ensures you never have negative apples or overflow your warehouse.
+
+---
+
+## 👶 ELI5: "I found 100 Gold, but my wallet is full!"
+
+You have space for 50 Gold. You find a pile of 100.
+*   **Without Logic:** You pick up 100, now you have 150/50. (Bug!)
+*   **With Logic (`TryAddPartial`):** You pick up 50 (Wallet Full), and leave 50 on the ground.
+
+**Variable.Inventory** handles the "Partial Add" math so you don't have to write `min(space, amount)` every time.
 
 ---
 
@@ -14,98 +36,93 @@ dotnet add package Variable.Inventory
 
 ---
 
-## 🚀 Features
+## 🚀 Usage Guide
 
-* **🧠 Pure Logic:** Static methods that work on `float`, `int`, `byte`.
-* **⚖️ Weight Support:** Logic for transferring items with weight limits.
-* **🌊 Partial vs Exact:** "Fill it as much as possible" vs "Only if it fits".
-* **⚡ Burst Compatible:** All methods are `[AggressiveInlining]`.
+### 1. Looting (The Overflow Problem)
 
----
-
-## 🎮 Usage Guide
-
-### 1. Looting (Partial Add)
-
-You found 100 Gold, but can only carry 50 more.
+The most common bug in RPGs: picking up more than you can carry.
 
 ```csharp
 using Variable.Inventory;
 
-float goldInBag = 950f;
+float myGold = 950f;
 float maxGold = 1000f;
-float goldOnGround = 100f;
+float lootPile = 100f;
 
-// Try to add as much as possible
-bool addedAny = InventoryLogic.TryAddPartial(
-    ref goldInBag,
-    goldOnGround,
-    maxGold,
-    out float addedAmount,
-    out float overflow
+// 1. Try to pick it all up
+InventoryLogic.TryAddPartial(
+    ref myGold,      // My Wallet (Modified)
+    lootPile,        // Amount to add
+    maxGold,         // Capacity
+    out float taken, // How much I actually took (50)
+    out float left   // How much is left (50)
 );
 
-// Result:
-// goldInBag = 1000
-// addedAmount = 50
-// overflow = 50 (remains on ground)
+// 2. Update the world
+lootPile = left;
+if (lootPile == 0) Destroy(pileObject);
 ```
 
-### 2. Crafting (Exact Remove)
+### 2. Crafting (All or Nothing)
 
-You need exactly 5 Wood to build a chair.
+When crafting, you can't use "half" the required items.
 
 ```csharp
 float wood = 3f;
 float cost = 5f;
 
-// Try to remove EXACTLY 5.
-// Returns false if you have less (and removes nothing).
+// TryRemoveExact returns FALSE if you don't have enough.
+// It DOES NOT modify 'wood' if it returns false.
 if (InventoryLogic.TryRemoveExact(ref wood, cost))
 {
-    BuildChair();
+    CraftChair(); // Success! Wood is now -2... wait, no, logic prevents that!
+    // Wood is essentially treated atomically here.
+    // If successful, wood is reduced.
 }
 else
 {
-    Console.WriteLine("Not enough wood!");
+    Ui.ShowError("Not enough wood!");
 }
 ```
 
-### 3. Transferring Items (Chest to Player)
+### 3. Transfer (Chest to Bag)
 
-Move items from Container A to Container B.
+Moving items between two containers.
 
 ```csharp
-float chestCount = 100;
-float bagCount = 10;
-float bagMax = 50;
+float chest = 100f;
+float bag = 10f;
+float bagMax = 50f;
 
 InventoryLogic.TryTransferPartial(
-    ref chestCount,  // Source (decreases)
-    ref bagCount,    // Destination (increases)
-    bagMax,          // Dest Capacity
-    1000,            // Try to move everything
-    out float moved
+    ref chest,   // Source (Will decrease)
+    ref bag,     // Destination (Will increase)
+    bagMax,      // Dest Limit
+    1000f,       // Amount to try moving (Move All)
+    out float movedAmount
 );
 
 // Result:
-// chestCount = 60 (100 - 40)
-// bagCount = 50 (Full)
-// moved = 40
+// Bag fills to 50 (+40).
+// Chest drops to 60 (-40).
 ```
 
 ---
 
 ## 🔧 API Reference
 
-### `InventoryLogic`
-- `TryAddPartial`: Fills up to max. Returns overflow.
-- `TryAddExact`: Adds only if total <= max.
-- `TryRemovePartial`: Removes up to amount (empties it).
-- `TryRemoveExact`: Removes only if current >= amount.
-- `TryTransferPartial`: Moves items between variables.
-- `CanAccept`: Checks if `current + amount <= max`.
-- `HasEnough`: Checks if `current >= required`.
+### Logic Methods
+All methods are `static` and `pure`.
+- `TryAddPartial`: Fills until full. Returns overflow.
+- `TryAddExact`: Adds only if the *whole* amount fits.
+- `TryRemovePartial`: Removes everything up to amount.
+- `TryRemoveExact`: Removes only if you have enough.
+- `TryTransferPartial`: Moves from A to B.
+
+### Checks
+- `CanAccept()`: Will this fit?
+- `HasEnough()`: Can I afford this?
+- `IsFull()` / `IsEmpty()`
 
 ---
 

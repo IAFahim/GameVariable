@@ -62,7 +62,7 @@ cooldown.Tick(deltaTime);
 if (cooldown.IsFull()) UseAbility();
 
 // Handles massive level-ups automatically
-experience.Add(5000);
+experience.Add(5000, curve);
 // Result: Level 50! 🚀
 ```
 
@@ -72,54 +72,24 @@ experience.Add(5000);
 
 ---
 
-## 📦 Packages
+## 📦 Packages & Metaphors
 
-**Choose your weapon!** ⚔️
+We explain each package with a simple "Mental Model" so you know exactly what it does.
 
-```mermaid
-graph LR
-    subgraph Core["🔷 Variable.Core"]
-        IBoundedInfo["IBoundedInfo"]
-    end
-    
-    Bounded["📊 Variable.Bounded"] --> Core
-    Timer["⏱️ Variable.Timer"] --> Core
-    Regen["♻️ Variable.Regen"] --> Bounded
-    Reservoir["🔋 Variable.Reservoir"] --> Bounded
-    Experience["⭐ Variable.Experience"] --> Core
-    RPG["📈 Variable.RPG"] --> Core
-    Inventory["🎒 Variable.Inventory"] --> Core
-    Input["🎮 Variable.Input"] --> Core
-    Intent["🧠 GameVariable.Intent"]
-    Grid["🕸️ Variable.Grid"]
-    
-    style Core fill:#4a9eff,stroke:#2980b9,stroke-width:2px,color:#fff
-    style Bounded fill:#2ecc71,stroke:#27ae60,color:#fff
-    style Timer fill:#e74c3c,stroke:#c0392b,color:#fff
-    style Regen fill:#f39c12,stroke:#d68910,color:#fff
-    style Reservoir fill:#3498db,stroke:#2980b9,color:#fff
-    style Experience fill:#e67e22,stroke:#d35400,color:#fff
-    style RPG fill:#1abc9c,stroke:#16a085,color:#fff
-    style Inventory fill:#95a5a6,stroke:#7f8c8d,color:#fff
-    style Input fill:#9b59b6,stroke:#8e44ad,color:#fff
-    style Intent fill:#34495e,stroke:#2c3e50,color:#fff
-    style Grid fill:#6c5ce7,stroke:#a29bfe,color:#fff
-```
-
-### 🧐 Which package do I need?
-
-| If you need to build... | Use this package |
-|-------------------------|------------------|
-| **Health, Mana, Stamina** | [**Variable.Bounded**](./Variable.Bounded) |
-| **Cooldowns, Casting Bars** | [**Variable.Timer**](./Variable.Timer) |
-| **Regenerating Shields** | [**Variable.Regen**](./Variable.Regen) |
-| **Ammo, Batteries, Fuel** | [**Variable.Reservoir**](./Variable.Reservoir) |
-| **Leveling, Skills, XP** | [**Variable.Experience**](./Variable.Experience) |
-| **Combos, Input Buffers** | [**Variable.Input**](./Variable.Input) |
-| **Complex Stats (Armor/Resist)** | [**Variable.RPG**](./Variable.RPG) |
-| **Inventory Limits** | [**Variable.Inventory**](./Variable.Inventory) |
-| **AI State Machines** | [**GameVariable.Intent**](./GameVariable.Intent) |
-| **Spatial Data, Maps, Boards** | [**Variable.Grid**](./Variable.Grid) |
+| Package | Metaphor | Description |
+|:--------|:---------|:------------|
+| [**Variable.Core**](./Variable.Core) | 🔌 **The Universal Adapter** | The shared interface for everything. |
+| [**Variable.Bounded**](./Variable.Bounded) | 🥤 **The Cup** | Health, Mana, Stamina. Things with limits. |
+| [**Variable.Timer**](./Variable.Timer) | 🥚 **The Egg Timer** | Cooldowns and Durations. |
+| [**Variable.Regen**](./Variable.Regen) | 🚰 **The Faucet** | Shields and Mana that refill over time. |
+| [**Variable.Reservoir**](./Variable.Reservoir) | 🎒 **The Magazine** | Ammo clips and Backpacks. |
+| [**Variable.Experience**](./Variable.Experience) | 🪣 **The Bucket Chain** | Leveling up and overflowing XP. |
+| [**Variable.RPG**](./Variable.RPG) | 💎 **The Diamond** | Complex Stats (Base + Equipment + Buffs). |
+| [**Variable.Inventory**](./Variable.Inventory) | 🧾 **The Accountant** | Logic for moving items and checking limits. |
+| [**Variable.Input**](./Variable.Input) | 🌳 **The Combo Tree** | Fighting game combos and input buffers. |
+| [**Variable.Grid**](./Variable.Grid) | 📊 **The Spreadsheet** | Fast 2D maps using flat arrays. |
+| [**GameVariable.Intent**](./GameVariable.Intent) | 🚦 **The Traffic Light** | State Machines for Tasks and AI. |
+| [**GameVariable.Benchmarks**](./GameVariable.Benchmarks) | 💨 **The Wind Tunnel** | Performance proofs. |
 
 ---
 
