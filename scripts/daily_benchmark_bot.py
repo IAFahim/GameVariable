@@ -58,7 +58,8 @@ def run_benchmarks():
     # Run the bash script
     # pass through arguments if needed, but for now just run it
     # Use --job short to avoid timeouts in CI/Sandbox environments
-    proc = subprocess.run([BENCHMARK_SCRIPT, "*", "--job", "short"], cwd=SCRIPT_DIR)
+    filter_arg = sys.argv[1] if len(sys.argv) > 1 else "*"
+    proc = subprocess.run([BENCHMARK_SCRIPT, filter_arg, "--job", "short"], cwd=SCRIPT_DIR)
 
     if proc.returncode != 0:
         print("Benchmark run failed!")
