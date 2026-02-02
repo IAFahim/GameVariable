@@ -122,4 +122,45 @@ public class GridTests
         Assert.Equal(4, col1[1]);
         Assert.Equal(7, col1[2]);
     }
+
+    [Fact]
+    public void UnsafeGet_Works()
+    {
+        var grid = new Grid2D<int>(3, 3);
+        grid[1, 1] = 42;
+
+        ref int val = ref grid.UnsafeGet(1, 1);
+        Assert.Equal(42, val);
+
+        val = 99; // modify via ref
+        Assert.Equal(99, grid[1, 1]);
+    }
+
+    [Fact]
+    public void UnsafeGet_Flat_Works()
+    {
+        var grid = new Grid2D<int>(3, 3);
+        grid[4] = 42; // index 4 is (1, 1)
+
+        ref int val = ref grid.UnsafeGet(4);
+        Assert.Equal(42, val);
+
+        val = 100;
+        Assert.Equal(100, grid[4]);
+    }
+
+    [Fact]
+    public void AsSpan_Works()
+    {
+        var grid = new Grid2D<int>(3, 3);
+        grid.Fill(7);
+
+        var span = grid.AsSpan();
+        Assert.Equal(9, span.Length);
+        Assert.Equal(7, span[0]);
+        Assert.Equal(7, span[8]);
+
+        span[0] = 123;
+        Assert.Equal(123, grid[0]);
+    }
 }

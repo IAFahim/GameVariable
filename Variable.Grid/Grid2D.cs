@@ -121,6 +121,41 @@ public struct Grid2D<T> : IEquatable<Grid2D<T>>
         return (uint)x < (uint)Width && (uint)y < (uint)Height;
     }
 
+    /// <summary>
+    ///     Accesses the element at the specified 2D coordinates without bounds checking.
+    ///     <para>Warning: Extreme danger. Use only when you are 100% sure the coordinates are valid.</para>
+    /// </summary>
+    /// <param name="x">The X coordinate.</param>
+    /// <param name="y">The Y coordinate.</param>
+    /// <returns>A reference to the element.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ref T UnsafeGet(int x, int y)
+    {
+        // y * Width + x might overflow if the grid is massive (over 2 billion elements),
+        // but standard array indexing has the same limit.
+        return ref Unsafe.Add(ref MemoryMarshal.GetReference(new Span<T>(Data)), y * Width + x);
+    }
+
+    /// <summary>
+    ///     Accesses the element at the specified flat index without bounds checking.
+    /// </summary>
+    /// <param name="index">The flat index.</param>
+    /// <returns>A reference to the element.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ref T UnsafeGet(int index)
+    {
+        return ref Unsafe.Add(ref MemoryMarshal.GetReference(new Span<T>(Data)), index);
+    }
+
+    /// <summary>
+    ///     Returns the grid data as a Span.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Span<T> AsSpan()
+    {
+        return new Span<T>(Data);
+    }
+
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly bool Equals(Grid2D<T> other)
