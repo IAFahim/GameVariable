@@ -92,6 +92,7 @@ graph LR
     Input["🎮 Variable.Input"] --> Core
     Intent["🧠 GameVariable.Intent"]
     Grid["🕸️ Variable.Grid"]
+    Benchmarks["💨 GameVariable.Benchmarks"]
     
     style Core fill:#4a9eff,stroke:#2980b9,stroke-width:2px,color:#fff
     style Bounded fill:#2ecc71,stroke:#27ae60,color:#fff
@@ -104,22 +105,24 @@ graph LR
     style Input fill:#9b59b6,stroke:#8e44ad,color:#fff
     style Intent fill:#34495e,stroke:#2c3e50,color:#fff
     style Grid fill:#6c5ce7,stroke:#a29bfe,color:#fff
+    style Benchmarks fill:#bdc3c7,stroke:#7f8c8d,color:#fff
 ```
 
 ### 🧐 Which package do I need?
 
-| If you need to build... | Use this package |
-|-------------------------|------------------|
-| **Health, Mana, Stamina** | [**Variable.Bounded**](./Variable.Bounded) |
-| **Cooldowns, Casting Bars** | [**Variable.Timer**](./Variable.Timer) |
-| **Regenerating Shields** | [**Variable.Regen**](./Variable.Regen) |
-| **Ammo, Batteries, Fuel** | [**Variable.Reservoir**](./Variable.Reservoir) |
-| **Leveling, Skills, XP** | [**Variable.Experience**](./Variable.Experience) |
-| **Combos, Input Buffers** | [**Variable.Input**](./Variable.Input) |
-| **Complex Stats (Armor/Resist)** | [**Variable.RPG**](./Variable.RPG) |
-| **Inventory Limits** | [**Variable.Inventory**](./Variable.Inventory) |
-| **AI State Machines** | [**GameVariable.Intent**](./GameVariable.Intent) |
-| **Spatial Data, Maps, Boards** | [**Variable.Grid**](./Variable.Grid) |
+| Package | Mental Model | Best For... |
+|---------|--------------|-------------|
+| [**Variable.Bounded**](./Variable.Bounded) | **The Cup** ☕ | Health, Mana, Stamina |
+| [**Variable.Timer**](./Variable.Timer) | **Egg Timer** 🥚 | Cooldowns, Casting Bars |
+| [**Variable.Regen**](./Variable.Regen) | **The Faucet** 🚰 | Regenerating Shields, Poison |
+| [**Variable.Reservoir**](./Variable.Reservoir) | **Clip & Backpack** 🎒 | Ammo, Batteries, Fuel |
+| [**Variable.Experience**](./Variable.Experience) | **Bucket Chain** 🪣 | Leveling, Skills, XP |
+| [**Variable.Input**](./Variable.Input) | **Tree of Moves** 🌳 | Combos, Input Buffers |
+| [**Variable.RPG**](./Variable.RPG) | **Diamond Logic** 💎 | Armor, Resistance, Damage |
+| [**Variable.Inventory**](./Variable.Inventory) | **The Accountant** 📝 | Inventory Limits, Looting |
+| [**GameVariable.Intent**](./GameVariable.Intent) | **Traffic Light** 🚦 | AI State Machines, Quests |
+| [**Variable.Grid**](./Variable.Grid) | **Spreadsheet** 📊 | Maps, Boards, Spatial Data |
+| [**GameVariable.Benchmarks**](./GameVariable.Benchmarks) | **Wind Tunnel** 💨 | Performance Testing |
 
 ---
 

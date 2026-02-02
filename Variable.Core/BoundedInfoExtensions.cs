@@ -72,4 +72,26 @@ public static class BoundedInfoExtensions
         var range = bounded.Max - bounded.Min;
         return Math.Abs(range) < MathConstants.Tolerance ? 0.0 : (bounded.Current - bounded.Min) / range;
     }
+
+    /// <summary>
+    ///     Gets the total range of the bounded value (Max - Min).
+    /// </summary>
+    /// <param name="bounded">The bounded value to query.</param>
+    /// <returns>The difference between Max and Min.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float GetRange<T>(this T bounded) where T : IBoundedInfo
+    {
+        return bounded.Max - bounded.Min;
+    }
+
+    /// <summary>
+    ///     Gets the remaining value needed to reach the maximum bound.
+    /// </summary>
+    /// <param name="bounded">The bounded value to query.</param>
+    /// <returns>The difference between Max and Current.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float GetRemaining<T>(this T bounded) where T : IBoundedInfo
+    {
+        return bounded.Max - bounded.Current;
+    }
 }

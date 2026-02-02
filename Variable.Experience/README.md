@@ -1,8 +1,21 @@
 # ⭐ Variable.Experience
 
-**Level Up Your Leveling System.** 🆙
+**Level up your game without the math mess.** 📈
 
-**Variable.Experience** handles the core loop of RPG progression: Gaining XP, checking for level-ups, and handling the "overflow" (e.g., getting enough XP to jump 2 levels at once).
+**Variable.Experience** handles XP, Levels, and the "Next Level Requirement" curve. It supports custom formulas so you can define exactly how hard it is to reach level 99.
+
+---
+
+## 🧠 Mental Model: "The Bucket Chain" 🪣
+
+Think of leveling like a series of buckets, each bigger than the last.
+- **Current XP:** Water in the current bucket.
+- **Max XP:** Size of the current bucket.
+- **Level Up:** When the bucket overflows, you pour the *extra* water into the next (bigger) bucket and call it "Level 2".
+
+## 👶 ELI5: "Filling the Bar"
+
+You have a bar. When you fill it up, *Ding!* You are now Level 2, and you get a new, empty, bigger bar to fill.
 
 ---
 
@@ -14,90 +27,87 @@ dotnet add package Variable.Experience
 
 ---
 
-## 🚀 Features
+## 🛠️ Usage Guide
 
-* **📈 Smart Overflow:** If you gain 1,000,000 XP at level 1, it correctly calculates how many levels you gain.
-* **🔧 Flexible Curves:** It doesn't force a formula on you. You decide what "Max XP" is for each level.
-* **⚡ Zero Allocation:** Pure structs.
-
----
-
-## 🎮 Usage Guide
-
-### 1. Basic Setup
+### 1. The Basic Setup (ExperienceInt)
 
 ```csharp
 using Variable.Experience;
 
-// Level 1, 0 XP, Need 100 to level up
-var xp = new ExperienceInt(100, 0, 1);
-
-public void OnKillSlime()
+public struct Player
 {
-    // Add 50 XP
-    // The operator+ creates a new struct with updated values
-    xp += 50;
+    // Max XP for Lvl 1 is 1000.
+    public ExperienceInt XP;
 
-    // Check if we leveled up
-    if (xp.IsFull())
+    public Player()
     {
-        LevelUp();
+        XP = new ExperienceInt(1000);
     }
 }
 ```
 
-### 2. Handling Level Ups (The Smart Way)
+### 2. Adding XP & Leveling Up
 
-Real games have overflow. If I need 10 XP and I gain 500 XP, I should level up multiple times!
+You can manually handle it, or use the automated formula system.
 
+#### Method A: Manual (The Hard Way)
 ```csharp
-public void AddExperience(int amount)
+hero.XP += 500; // Add 500 XP
+
+if (hero.XP.IsFull()) // Did we ding?
 {
-    // Add the XP
-    xp += amount;
-
-    // Loop until we stop leveling up
-    while (xp.IsFull())
-    {
-        // 1. Calculate surplus XP (Current - Max)
-        int overflow = xp.Current - xp.Max;
-
-        // 2. Increase Level
-        int newLevel = xp.Level + 1;
-
-        // 3. Calculate new Max XP (Your custom formula!)
-        // Example: Level * 1000 (1000, 2000, 3000...)
-        int newMax = newLevel * 1000;
-
-        // 4. Create new state
-        xp = new ExperienceInt(newMax, overflow, newLevel);
-
-        PlayLevelUpSound();
-    }
+    hero.XP.Level++;
+    hero.XP.Current -= hero.XP.Max; // Carry over overflow
+    hero.XP.Max = (int)(hero.XP.Max * 1.5f); // Next level is 50% harder
+    Console.WriteLine($"DING! Level {hero.XP.Level}");
 }
 ```
 
-### 3. Long XP (MMOs)
+#### Method B: Automated Formula (The Easy Way) ✨
 
-Building an MMO where players have billions of XP? Use `ExperienceLong`.
+Define a formula struct once, and reuse it everywhere.
 
 ```csharp
-var xp = new ExperienceLong(1_000_000_000, 0, 1);
+// Define your curve: Next Level = Current Level * 1000
+public struct LinearRPGFormula : INextMaxFormula<int>
+{
+    public int Calculate(int level) => level * 1000;
+}
+
+// ... usage ...
+var formula = new LinearRPGFormula();
+
+// Adds XP and handles MULTIPLE level ups automatically!
+// Returns number of levels gained.
+int levelsGained = hero.XP.Add(5000, formula);
+
+if (levelsGained > 0)
+{
+    PlayLevelUpSound();
+}
+```
+
+### 3. High Numbers (MMORPG Style)
+
+Need trillions of XP? Use `ExperienceLong`.
+
+```csharp
+var paragonXP = new ExperienceLong(1_000_000_000_000);
 ```
 
 ---
 
 ## 🔧 API Reference
 
-### `ExperienceInt` / `ExperienceLong`
-- `Current`: Current XP.
-- `Max`: XP required for *next* level.
-- `Level`: Current level.
+### Fields
+- **`Current`**: XP earned towards next level.
+- **`Max`**: XP required for next level.
+- **`Level`**: Current Level (starts at 1).
 
-### Logic
-- `IsFull()`: Ready to level up?
-- `GetRatio()`: Progress bar (0.0 to 1.0).
-- `GetRemaining()`: XP needed for next level.
+### Extensions
+- **`Add(amount, formula)`**: Adds XP, handles overflow, updates Max based on formula. Returns levels gained.
+- **`IsFull()`**: Is Current >= Max?
+- **`GetRatio()`**: Progress bar value (0.0 to 1.0).
 
 ---
 

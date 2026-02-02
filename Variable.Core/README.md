@@ -1,8 +1,25 @@
 # 🔷 Variable.Core
 
-**The Foundation of GameVariable.** 🧱
+**The "Universal Adapter" for Game Mechanics.** 🧱
 
-**Variable.Core** isn't just a package; it's the *blueprint* for the entire GameVariable ecosystem. It defines the shared DNA that makes `Health`, `Mana`, `Cooldowns`, and `Experience` all speak the same language.
+**Variable.Core** is the shared DNA of the entire GameVariable ecosystem. It defines the common language (`IBoundedInfo`, `ICompletable`) that allows Health, Mana, XP, Ammo, and Timers to talk to your UI, Save System, and AI seamlessly.
+
+---
+
+## 🧠 Mental Model: "The Universal Adapter"
+
+Imagine you are building a house. You have power tools from different brands (Makita, DeWalt, Milwaukee). Normally, the batteries don't fit each other.
+
+**Variable.Core** is the adapter that makes **any** battery fit **any** tool.
+- Your UI script is the "Tool".
+- Your Health/Mana/XP classes are the "Batteries".
+- `IBoundedInfo` is the shape of the connector.
+
+Because they all implement `IBoundedInfo`, you can plug *anything* into your UI bar script, and it just works.
+
+## 👶 ELI5: "The Lego Baseplate"
+
+Think of this package as the green Lego baseplate. It doesn't look like a castle or a spaceship yet, but it's the thing you snap all your other blocks onto so they don't fall apart.
 
 ---
 
@@ -14,86 +31,122 @@ dotnet add package Variable.Core
 
 ---
 
-## 🧠 Why Does This Exist?
+## 🔑 Key Interfaces
 
-Imagine writing a UI Health Bar script.
+### 1. `IBoundedInfo` (The "Container")
+Represents anything that has a **Current** value between a **Min** and **Max**.
 
-**Without Core:**
-You write one script for `PlayerHealth`, another for `EnemyHealth`, another for `Mana`, another for `Stamina`... because they are all different classes. 😫
-
-**With Core:**
-You write **ONE** script that takes `IBoundedInfo`.
 ```csharp
-public void UpdateBar(IBoundedInfo resource)
+public interface IBoundedInfo
 {
-    fillImage.fillAmount = (float)resource.GetRatio(); // Works for EVERYTHING!
+    float Min { get; }
+    float Max { get; }
+    float Current { get; }
 }
+```
+
+**Common uses:**
+- Health (0 to 100)
+- Ammo (0 to 30)
+- Temperature (-50 to +50)
+- Progress Bars (0.0 to 1.0)
+
+### 2. `ICompletable` (The "Timer")
+Represents anything that eventually "finishes".
+
+```csharp
+public interface ICompletable
+{
+    bool IsComplete { get; }
+}
+```
+
+**Common uses:**
+- Cooldowns (Ready when time <= 0)
+- Timers (Finished when time >= Duration)
+- Quests (Complete when objectives met)
+
+---
+
+## ✨ Features & Extensions
+
+Importing `Variable.Core` gives you superpowers on *any* class that implements `IBoundedInfo`.
+
+### Logic Checkers
+Stop writing `if (health <= 0)` manually!
+
+```csharp
+// Is it full? (Current >= Max)
+bool isFull = myMana.IsFull();
+
+// Is it empty? (Current <= Min)
+bool isDead = myHealth.IsEmpty();
+```
+
+### Math Helpers
+Get useful numbers without doing the math yourself.
+
+```csharp
+// Get a 0.0 to 1.0 value for UI sliders
+float percent = (float)myXP.GetRatio();
+
+// How big is the tank? (Max - Min)
+float capacity = myFuel.GetRange();
+
+// How much more to fill it? (Max - Current)
+float needed = myShield.GetRemaining();
 ```
 
 ---
 
-## 🔑 Key Interfaces
+## 🛠️ Usage Example
 
-### `IBoundedInfo`
-**"I have limits!"** 🛑
+### The "One Script to Rule Them All" (UI)
 
-Anything that has a `Min`, `Max`, and `Current` value.
-- **Health:** 0 to 100
-- **Ammo:** 0 to 30
-- **Temperature:** -50 to +50
-
-**Properties:**
-- `float Min`
-- `float Max`
-- `float Current`
-
-### `ICompletable`
-**"Are we there yet?"** ⏱️
-
-Anything that finishes over time.
-- **Timer:** Counts UP to duration.
-- **Cooldown:** Counts DOWN to zero.
-
-**Properties:**
-- `bool IsComplete`
-
----
-
-## 🛠️ Extensions (The Magic ✨)
-
-Importing `Variable.Core` gives you superpowers on *any* `IBoundedInfo`:
-
-| Method | What it does | Example |
-|--------|--------------|---------|
-| `IsFull()` | `Current >= Max` | Is mana full? |
-| `IsEmpty()` | `Current <= Min` | Is health zero? |
-| `GetRatio()` | `(Current-Min) / Range` | Health bar % (0.0 to 1.0) |
-| `GetRange()` | `Max - Min` | Total capacity |
-| `GetRemaining()` | `Max - Current` | How much more XP needed? |
-
----
-
-## 🏗️ For Plugin Creators
-
-Building your own variable type? Implement `IBoundedInfo` to instantly gain compatibility with the entire ecosystem (UI tools, save systems, etc.).
+Because of `Variable.Core`, you only need **one** script to handle every progress bar in your game.
 
 ```csharp
 using Variable.Core;
 
-public struct Shield : IBoundedInfo
+public class ResourceBar : MonoBehaviour
 {
-    public float Integrity;
-    public float MaxIntegrity;
+    public Image FillImage;
     
-    // Explicit implementation keeps your public API clean!
-    float IBoundedInfo.Min => 0f;
-    float IBoundedInfo.Max => MaxIntegrity;
-    float IBoundedInfo.Current => Integrity;
+    // Accepts Health, Mana, XP, Ammo... anything!
+    public void UpdateView(IBoundedInfo resource)
+    {
+        // GetRatio() comes from Variable.Core extensions
+        FillImage.fillAmount = (float)resource.GetRatio();
+
+        if (resource.IsEmpty())
+        {
+            FillImage.color = Color.red; // Danger!
+        }
+    }
+}
+```
+
+### The "Custom Container"
+
+You can make your own weird containers compatible with the ecosystem just by adding `: IBoundedInfo`.
+
+```csharp
+public struct MagicBucket : IBoundedInfo
+{
+    public float WaterAmount;
+
+    // Implement the interface
+    public float Min => 0f;
+    public float Max => 10f;
+    public float Current => WaterAmount;
 }
 
-// Now you can do:
-var shield = new Shield { ... };
-if (shield.IsFull()) PlayShieldSound();
+// Now you can use extensions on it!
+var bucket = new MagicBucket { WaterAmount = 10f };
+if (bucket.IsFull())
+{
+    Console.WriteLine("Bucket is full!");
+}
 ```
 
 ---

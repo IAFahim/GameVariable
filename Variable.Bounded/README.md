@@ -1,8 +1,27 @@
 # 📊 Variable.Bounded
 
-**Health bars, Ammo, Stamina, Mana... Solved.** ✅
+**The "Cup" that never spills.** ☕
 
-**Variable.Bounded** gives you zero-allocation structs that *know their limits*. No more manually checking `if (health < 0) health = 0;` spread across 50 different scripts.
+**Variable.Bounded** gives you numeric types that *know their limits*. They automatically clamp themselves between a minimum and maximum value, so you never have to write `if (health < 0) health = 0;` ever again.
+
+---
+
+## 🧠 Mental Model: "The Cup"
+
+Think of a `BoundedFloat` like a coffee cup.
+- **Min:** The bottom of the cup (usually 0).
+- **Max:** The rim of the cup (Capacity).
+- **Current:** The coffee inside.
+
+If you pour too much coffee in (add value), it just overflows neatly (clamps to Max). It doesn't explode.
+If you drink too much (subtract value), you just hit the bottom (clamps to Min). You can't drink negative coffee.
+
+## 👶 ELI5: "The Magic Box"
+
+Imagine a box that can hold 10 toys.
+- If you try to put 100 toys in, the box just says "Nope, I'm full" and keeps exactly 10.
+- If you try to take 20 toys out, the box says "I only have 0 left" and stops at 0.
+It does the math for you so you don't make mistakes!
 
 ---
 
@@ -14,129 +33,126 @@ dotnet add package Variable.Bounded
 
 ---
 
-## 🚀 Features
+## 🛠️ Types Available
 
-* **🛡️ Bulletproof Clamping:** Values *cannot* escape their bounds.
-* **⚡ Zero Allocation:** Pure `struct` design. No GC pressure. Burst compatible.
-* **➕ Natural Math:** Use `+`, `-`, `++`, `--` just like normal numbers.
-* **📏 Standardized:** Implements `IBoundedInfo` for easy UI integration.
-
----
-
-## 📚 Types Available
-
-| Type | Use Case | Size |
-|------|----------|------|
-| `BoundedFloat` | Health, Mana, Stamina, Temperature | 12 bytes |
-| `BoundedInt` | Ammo count, Inventory slots, Skill points | 12 bytes |
-| `BoundedByte` | Small counts (0-255), Grid coordinates | 2 bytes |
+| Type | Size | Best For... |
+|------|------|-------------|
+| **`BoundedFloat`** | 12 bytes | Health, Mana, Stamina, Temperature |
+| **`BoundedInt`** | 12 bytes | Ammo, Inventory Slots, Skill Points |
+| **`BoundedByte`** | 2 bytes | Grid Coordinates, Small Counts (0-255) |
 
 ---
 
-## 🎮 Usage Guide
+## ✨ Features
 
-### 1. The Basics (Health System)
+### 1. Auto-Clamping Math
+Just use normal math operators. The safety is built-in.
+
+```csharp
+var health = new BoundedFloat(100f); // Max 100, Current 100
+
+health -= 50f;  // Current is 50
+health += 1000f; // Current is 100 (Clamped!)
+health -= 9999f; // Current is 0 (Clamped!)
+```
+
+### 2. Logic & Checks
+Ask the variable about its state.
+
+```csharp
+if (ammo.IsEmpty()) Reload();
+if (mana.IsFull()) CastSuperSpell();
+if (health.GetRatio() < 0.3f) PlayLowHealthSound();
+```
+
+### 3. Consumption Check
+Try to use a resource, but only if you have enough.
+
+```csharp
+// "TryConsume" subtracts if possible, returns false if not.
+if (mana.TryConsume(50f))
+{
+    CastFireball(); // Only runs if we had 50 mana!
+}
+else
+{
+    ShowNoManaError();
+}
+```
+
+---
+
+## 🎮 Usage Examples
+
+### The "Health Bar" (Standard 0-100)
 
 ```csharp
 using Variable.Bounded;
 
-// Create health: 0 to 100
-var health = new BoundedFloat(100f);
-
-// Take damage
-health -= 25f;  // Automatically clamps! No if-checks needed.
-
-// Check status
-if (health.IsEmpty())
+public struct Character
 {
-    Die();
-}
+    public BoundedFloat Health;
 
-// Heal
-health += 50f;  // Clamps to 100. Can't over-heal.
+    public Character(float maxHp)
+    {
+        // 0 to maxHp, starts full
+        Health = new BoundedFloat(maxHp);
+    }
 
-// UI
-float fillAmount = (float)health.GetRatio(); // 0.0 to 1.0
-```
-
-### 2. Advanced Ranges (Temperature)
-
-Not everything starts at 0!
-
-```csharp
-// Range: -50 to +50. Starting at 20.
-var temperature = new BoundedFloat(50f, -50f, 20f);
-
-temperature -= 100f; // Clamps to -50f (Min)
-```
-
-### 3. Ammo Clips (Integers)
-
-```csharp
-var ammo = new BoundedInt(12); // Max 12, Current 12
-
-// Fire!
-if (!ammo.IsEmpty())
-{
-    ammo--;
-    FireBullet();
+    public void TakeDamage(float amount)
+    {
+        Health -= amount;
+        if (Health.IsEmpty()) Die();
+    }
 }
 ```
 
-### 4. Tiny Values (Bytes)
+### The "Temperature" (Negative Ranges)
 
-Perfect for tile grids or small inventory stacks.
+Not everything starts at zero!
 
 ```csharp
-// Max 10 items
-var stack = new BoundedByte(10);
-stack += 5; // Clamped to 10
+// Thermometer: -50°C to +50°C. Starts at Room Temp (20°C).
+var thermometer = new BoundedFloat(50f, -50f, 20f);
+
+// It gets cold...
+thermometer -= 40f;
+// Result: -20f. (20 - 40 = -20). Within bounds!
+
+// Absolute zero freeze!
+thermometer -= 100f;
+// Result: -50f. (Clamped to Min).
+```
+
+### The "Inventory Stack" (BoundedInt)
+
+Use Integers for things that can't be fractions (like bullets or apples).
+
+```csharp
+// Stack of 64 items. Starts with 1.
+var arrows = new BoundedInt(64, 0, 1);
+
+arrows += 10; // 11 arrows.
 ```
 
 ---
 
-## ⚠️ Important: The "Public Field" Trap
+## ⚠️ Important: Direct Modification
 
-For maximum performance (Unity ECS/Burst), we expose public fields. This is great for speed, but requires care.
+For performance (Unity ECS/Burst), the fields `Current`, `Min`, and `Max` are public.
+**Be careful!** If you set `Current` directly, you bypass the safety checks.
 
-### ❌ The Wrong Way
 ```csharp
-health.Current = 9999f; // 😱 OH NO!
-// You just bypassed the limits! The struct doesn't know you changed this.
+// ❌ DANGEROUS: Bypasses clamping!
+health.Current = 9999f;
+
+// ✅ SAFE: Uses extension method to clamp.
+health.Set(9999f);
+
+// ✅ MANUAL SAFETY: If you MUST modify Current directly...
+health.Current += 10f;
+health.Normalize(); // Snaps it back to valid range.
 ```
-
-### ✅ The Right Way (Extension Methods)
-```csharp
-health.Set(9999f); // Correct! Will clamp to Max.
-```
-
-### ✅ The "I Know What I'm Doing" Way
-If you *must* modify fields directly (e.g. inside a Job), you **must** normalize afterwards:
-```csharp
-health.Current += calculation;
-health.Normalize(); // Snaps value back to bounds
-```
-
----
-
-## 🔧 API Reference
-
-### Properties
-- `Current`: The raw value.
-- `Min`: The floor (0 for Byte).
-- `Max`: The ceiling.
-
-### Operations
-- `+`, `-`, `*`, `/`: Standard math (result is always clamped).
-- `++`, `--`: Increment/Decrement by 1.
-- `implicit operator`: Treat `BoundedFloat` as `float` for comparisons (`if (hp > 50)`).
-
-### Extensions
-- `IsFull()`: Is `Current == Max`?
-- `IsEmpty()`: Is `Current == Min`?
-- `GetRatio()`: Percentage (0.0 to 1.0).
-- `GetRange()`: Size of the range (`Max - Min`).
-- `TryConsume(amount)`: Tries to subtract. Returns `false` if not enough.
 
 ---
 
