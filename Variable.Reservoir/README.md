@@ -1,10 +1,26 @@
 # 🔋 Variable.Reservoir
 
-**Magazines, Tanks, and Batteries.** 🔫
+**Two-stage resources: Active vs Reserve.** 🎒
 
-**Variable.Reservoir** manages the classic "Active + Reserve" pattern found in almost every game.
-- **Active (Volume):** What's in the clip/tank right now.
-- **Reserve:** What's in your backpack/stockpile.
+**Variable.Reservoir** models resources that have a "Clip" (Active) and a "Backpack" (Reserve). It handles the logic of reloading/refilling from the reserve into the active container.
+
+---
+
+## 🧠 Mental Model: "The Clip & Backpack" 🔫
+
+Think of a shooter game.
+- **Volume (The Clip):** The ammo currently in your gun. Bounded (0 to 12).
+- **Reserve (The Backpack):** The total ammo you are carrying. Unbounded (or just a large int).
+- **Refill (Reload):** Moves ammo from Backpack to Clip, up to the Clip's limit.
+
+It's not just for guns!
+- **Stamina:** Sprint Energy (Volume) vs Exhaustion Limit (Reserve).
+- **Batteries:** Flashlight charge (Volume) vs Spare Batteries (Reserve).
+
+## 👶 ELI5: "Pocket vs Backpack"
+
+You have 5 candies in your pocket (Volume) and a big bag of 50 candies in your backpack (Reserve).
+When you eat the candies in your pocket, you can grab more from the backpack to fill your pocket again. But you can't hold more than 5 in your pocket at once.
 
 ---
 
@@ -16,67 +32,68 @@ dotnet add package Variable.Reservoir
 
 ---
 
-## 🚀 Features
+## 🛠️ Usage Guide
 
-* **🔫 Reload Logic:** Built-in `Refill()` handles the math of moving from Reserve to Volume.
-* **🔢 Int & Float:** `ReservoirInt` (Ammo) and `ReservoirFloat` (Fuel/Energy).
-* **🛡️ Safe Limits:** Can't reload more than capacity, can't take more than you have.
-
----
-
-## 🎮 Usage Guide
-
-### 1. Weapon Ammo (Integers)
+### 1. The "FPS Reload" (ReservoirInt)
 
 ```csharp
 using Variable.Reservoir;
 
-public class Gun
+public struct Gun
 {
-    // Clip: 30, Current: 30, Backpack: 120
-    public ReservoirInt Ammo = new ReservoirInt(30, 30, 120);
+    // Clip Size 12. Starts Full (12). Reserve has 36 rounds.
+    public ReservoirInt Ammo;
+
+    public Gun()
+    {
+        Ammo = new ReservoirInt(12, 12, 36);
+    }
 
     public void Fire()
     {
-        if (Ammo > 0) // Implicit conversion to current volume!
+        if (Ammo.Volume > 0)
         {
-            Ammo.Volume--;
-            SpawnBullet();
+            Ammo.Volume--; // Reduces Clip
+            Console.WriteLine("Bang!");
         }
         else
         {
-            Reload();
+            Console.WriteLine("Click... Need reload!");
         }
     }
 
     public void Reload()
     {
-        // Moves ammo from Reserve to Volume
-        // Returns amount actually moved (e.g. 5 bullets)
+        // Moves from Reserve -> Volume
+        // Returns amount actually moved (e.g., 5 rounds)
         int reloaded = Ammo.Refill();
-
-        if (reloaded > 0) PlayReloadSound();
-        else PlayClickSound(); // No ammo left!
+        Console.WriteLine($"Reloaded {reloaded} rounds.");
     }
 }
 ```
 
-### 2. Jetpack Fuel (Floats)
+### 2. The "Energy Shield" (ReservoirFloat)
+
+Maybe your shield regenerates from a battery pack.
 
 ```csharp
-// Tank: 50.0, Current: 50.0, Reserve Tank: 200.0
-public ReservoirFloat Fuel = new ReservoirFloat(50f, 50f, 200f);
-
-public void Fly(float dt)
+public struct Robot
 {
-    if (Fuel.Volume.TryConsume(10f * dt))
+    // Shield 100.0. Battery 500.0.
+    public ReservoirFloat Shield;
+
+    public void Update(float dt)
     {
-        ApplyThrust();
-    }
-    else
-    {
-        // Auto-refill from reserve tank?
-        Fuel.Refill();
+        // Auto-recharge shield from battery if shield is low
+        if (!Shield.Volume.IsFull() && Shield.Reserve > 0)
+        {
+            // Calculate how much to transfer this frame
+            float transfer = 10f * dt;
+
+            // Manual transfer logic (custom refill)
+            // Or just use Refill() for instant full recharge
+            Shield.Refill();
+        }
     }
 }
 ```
@@ -85,13 +102,13 @@ public void Fly(float dt)
 
 ## 🔧 API Reference
 
-### `ReservoirInt` / `ReservoirFloat`
-- `Volume`: The active `Bounded` value (Clip/Tank).
-- `Reserve`: The available backup supply.
+### Fields
+- **`Volume`**: The active container (`BoundedInt` / `BoundedFloat`).
+- **`Reserve`**: The backup supply (`int` / `float`).
 
 ### Extensions
-- `Refill()`: Fills `Volume` to Max using `Reserve`. Decreases Reserve. Returns amount moved.
-- `Refill(amount)`: Tries to move specific `amount` from Reserve to Volume.
+- **`Refill()`**: Fills `Volume` to Max using `Reserve`. Decreases `Reserve` by amount used. Returns amount transferred.
+- **Implicit Conversion**: `ReservoirInt` converts to `int` (returns Volume.Current).
 
 ---
 

@@ -1,8 +1,21 @@
 # ♻️ Variable.Regen
 
-**Automatic Resource Regeneration & Decay.** 🌱
+**Resources that fill (or empty) themselves.** 🔋
 
-**Variable.Regen** wraps a bounded value with a `Rate` of change per second. It handles the math of "X per second" so you don't have to.
+**Variable.Regen** adds a time-based component to `BoundedFloat`. It's perfect for Mana that regenerates, Shields that recharge, or Poison that decays health over time.
+
+---
+
+## 🧠 Mental Model: "The Faucet" 🚰
+
+Imagine a bathtub (`BoundedFloat`).
+- **Regen:** You leave the faucet on (`Rate > 0`). The tub fills up over time until it hits the rim (Max).
+- **Decay:** You pull the plug (`Rate < 0`). The tub drains over time until it's empty (Min).
+- **Tick:** Every frame, you check how much water flowed (`Tick(deltaTime)`).
+
+## 👶 ELI5: "Wolverine Healing"
+
+You know how Wolverine gets hurt but then his health bar slowly goes back up? That's `Variable.Regen`. You just tell it "Heal 5 HP per second" and it does the rest.
 
 ---
 
@@ -14,84 +27,78 @@ dotnet add package Variable.Regen
 
 ---
 
-## 🚀 Features
+## 🛠️ Usage Guide
 
-* **⚡ Auto-Tick:** Just call `.Tick(deltaTime)` and it handles the rest.
-* **🧪 Decay:** Negative rates work perfectly for poison, radiation, or hunger.
-* **🛡️ Clamped:** Respects Min/Max bounds automatically.
-* **🏗️ Zero Allocation:** Pure structs, Burst compatible.
-
----
-
-## 🎮 Usage Guide
-
-### 1. Mana Regeneration (Positive Rate)
+### 1. The "Mana Bar" (Regeneration)
 
 ```csharp
 using Variable.Regen;
 
-// Max 100, Current 0, +10 per second
-var mana = new RegenFloat(100f, 0f, 10f);
-
-void Update()
+public struct Wizard
 {
-    // Automatically adds 10 * deltaTime
-    // Clamps to 100
-    mana.Tick(Time.deltaTime);
+    // Max 100, Starts at 50, Regens 10 per second
+    public RegenFloat Mana;
+
+    public Wizard()
+    {
+        Mana = new RegenFloat(100f, 50f, 10f);
+    }
+
+    public void Update(float dt)
+    {
+        // Must call Tick() to apply the change!
+        Mana.Tick(dt);
+    }
 }
 ```
 
-### 2. Hunger/Decay (Negative Rate)
+### 2. The "Poison" (Decay)
+
+Negative rates work too!
 
 ```csharp
-// Max 100, Current 100, -5 per second
-var hunger = new RegenFloat(100f, 100f, -5f);
+// Max 100 toxicity. Starts at 100. Decays by 5 per second.
+var toxicity = new RegenFloat(100f, 100f, -5f);
 
-void Update()
+void Update(float dt)
 {
-    // Automatically subtracts 5 * deltaTime
-    // Clamps to 0
-    hunger.Tick(Time.deltaTime);
+    toxicity.Tick(dt);
 
-    if (hunger.IsEmpty())
+    if (toxicity.IsEmpty())
     {
-        TakeStarvationDamage();
+        Console.WriteLine("You are cured!");
     }
 }
 ```
 
 ### 3. Modifying Values
 
-Since `RegenFloat` wraps a `BoundedFloat`, you can modify it directly or via extensions.
+Since `RegenFloat` wraps a `BoundedFloat`, you access the current value via `.Value`.
 
 ```csharp
-// Consume mana (spell cast)
-// 'Value' gives access to the underlying BoundedFloat
-if (mana.Value.Current >= 20f)
-{
-    mana.Value.Current -= 20f;
-}
+// Take damage (reduce mana)
+hero.Mana.Value -= 20f;
 
-// Or use Bounded extensions directly on the wrapper (implicit conversion often handles this,
-// but accessing .Value is clearer)
-if (mana.Value.TryConsume(20f))
-{
-    CastSpell();
-}
+// Drink Potion (add mana)
+hero.Mana.Value += 50f;
+
+// Change Regen Rate (Buff)
+hero.Mana.Rate = 20f; // Double regen speed!
 ```
 
 ---
 
 ## 🔧 API Reference
 
-### `RegenFloat`
-- `Value`: The underlying `BoundedFloat` (Current, Min, Max).
-- `Rate`: Units per second.
+### Fields
+- **`Value`**: The underlying `BoundedFloat` (Current, Min, Max).
+- **`Rate`**: Units per second to add (can be negative).
 
 ### Extensions
-- `Tick(deltaTime)`: Applies `Rate * deltaTime` to `Value`.
-- `IsFull()`: Is it at max capacity?
-- `IsEmpty()`: Is it at min capacity?
+- **`Tick(deltaTime)`**: Applies `Rate * deltaTime` to `Value`. Clamps result.
+- **`IsFull()`**: Is `Value.Current >= Value.Max`?
+- **`IsEmpty()`**: Is `Value.Current <= Value.Min`?
+- **`GetRatio()`**: Progress (0.0 to 1.0).
 
 ---
 
