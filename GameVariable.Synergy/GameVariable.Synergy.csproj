@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Authors>Md Ishtiaq Ahamed Fahim</Authors>
+        <Company>IAFahim</Company>
+        <Description>Integration layer for GameVariable packages ("The Orchestra").</Description>
+        <PackageTags>game;variable;synergy;integration;gamedev</PackageTags>
+        <PackageProjectUrl>https://github.com/iafahim/GameVariable</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/iafahim/GameVariable</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Variable.Core\Variable.Core.csproj"/>
+        <ProjectReference Include="..\Variable.Bounded\Variable.Bounded.csproj"/>
+        <ProjectReference Include="..\Variable.Timer\Variable.Timer.csproj"/>
+        <ProjectReference Include="..\Variable.Regen\Variable.Regen.csproj"/>
+        <ProjectReference Include="..\Variable.Experience\Variable.Experience.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>
