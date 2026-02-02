@@ -60,11 +60,18 @@ public static class GridExtensions
         // Manual loop is necessary as columns are not contiguous in memory
         int height = grid.Height;
         int width = grid.Width;
-        var data = grid.Data;
+
+        // God Level Optimization: Pointer Arithmetic
+        // Instead of calculating (y * width + x) each iteration (multiplication),
+        // we start at x and add width (stride) each iteration (addition).
+        // We also use references to avoid array bounds checks inside the loop.
+        ref T src = ref Unsafe.Add(ref MemoryMarshal.GetReference(new Span<T>(grid.Data)), x);
+        ref T dest = ref MemoryMarshal.GetReference(destination);
 
         for (int y = 0; y < height; y++)
         {
-            destination[y] = data[y * width + x];
+            Unsafe.Add(ref dest, y) = src;
+            src = ref Unsafe.Add(ref src, width);
         }
     }
 }
