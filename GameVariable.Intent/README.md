@@ -1,251 +1,125 @@
-# GameVariable.Intent
+# 🧠 GameVariable.Intent
 
-A high-performance, zero-allocation Hierarchical State Machine (HSM) for managing game AI behaviors, quest systems, and complex task workflows in Unity.
+**The Traffic Light for Game Logic.** 🚦
 
-## Overview
+**GameVariable.Intent** is a high-performance, zero-allocation **Hierarchical State Machine (HSM)**. It manages complex behaviors (like AI, Quests, or Cutscenes) so your code doesn't turn into a plate of spaghetti.
 
-`GameVariable.Intent` provides a robust, event-driven state machine implementation designed for performance-critical game systems. The Intent system is particularly well-suited for:
+---
 
-- **Game AI Behavior Management** - Controlling NPC/intent behaviors with complex state transitions
-- **Quest/Task Systems** - Managing game objectives, prerequisites, and completion states
-- **Workflow Orchestration** - Sequential and parallel task execution with error handling
-- **Hierarchical Task Networks** - Complex task decomposition and child-process coordination
+## 🧠 Mental Model: The Traffic Light 🚦
 
-## Architecture
+Think of a **Traffic Light**.
+*   **Green (RUNNING):** "Go! Do the thing!"
+*   **Red (FAULTED):** "Stop! Something broke!"
+*   **Yellow (PENDING):** "Get ready..."
+*   **Off (INACTIVE):** "Not working right now."
 
-The Intent system follows the **Data-Oriented Design (DOD)** principles:
+**GameVariable.Intent** manages these states for *Tasks*.
+Instead of `bool isRunning`, `bool isDone`, `bool isFailed` scattered everywhere, you have **One State** to rule them all.
 
-### Zero-Allocation Struct-Based Design
-- Implemented as a `struct` for stack allocation and cache efficiency
-- No heap allocations during state transitions
-- Ideal for Burst compiler optimization
+---
 
-### Thread-Unsafe Single-Threaded Design
-- Optimized for Unity's main thread game loop
-- No locking overhead
-- Predictable performance characteristics
+## 📦 Installation
 
-### Event-Driven State Transitions
-- Discrete event-based state changes
-- No polling required
-- Clear audit trail of state changes
-
-## State Machine Diagram
-
-```
-                    ┌─────────────────────────────────────────────────────────────┐
-                    │                        HAPPY PATH (Green)                    │
-                    └─────────────────────────────────────────────────────────────┘
-
-    [*] ──► CREATED ──PREPARE──► INACTIVE ──ACTIVATE──► PENDING ──START──► RUNNING
-        │                                                          │
-        │                                                          └──COMPLETE──► COMPLETED
-        │
-        └──ACTIVATE──► PENDING
-
-                    ┌─────────────────────────────────────────────────────────────┐
-                    │                    CHILD PROCESS FLOW (Blue)                 │
-                    └─────────────────────────────────────────────────────────────┘
-
-                                    RUNNING ──SPAWN_CHILD──► BLOCKED
-                                                               │
-                                                               └──RESUME──► RUNNING
-
-                    ┌─────────────────────────────────────────────────────────────┐
-                    │                     RECOVERY FLOW (Goldenrod)                │
-                    └─────────────────────────────────────────────────────────────┘
-
-                    COMPLETED ──RESTART──► PENDING    FAULTED ──RECOVER──► PENDING
-
-                    ┌─────────────────────────────────────────────────────────────┐
-                    │                       ERROR FLOW (Red)                       │
-                    └─────────────────────────────────────────────────────────────┘
-
-                    RUNNING ──FAIL──► FAULTED         BLOCKED ──ABORT──► FAULTED
-
-                    ┌─────────────────────────────────────────────────────────────┐
-                    │                    CANCELLATION FLOW (Gray)                  │
-                    └─────────────────────────────────────────────────────────────┘
-
-    CREATED ──┐
-    INACTIVE ──┤
-    PENDING ───┴──CANCEL──► CANCELLED ◄──CANCEL──┬── RUNNING
-    FAULTED ─────────────────────────────────────┤
-                                                  └── BLOCKED
+```bash
+dotnet add package GameVariable.Intent
 ```
 
-## States
+---
 
-| State | Description | Terminal |
-|-------|-------------|----------|
-| `CREATED` | Initial state after `Start()` is called | No |
-| `INACTIVE` | Intent prepared but not yet activated | No |
-| `PENDING` | Intent ready to execute | No |
-| `RUNNING` | Intent actively executing | No |
-| `BLOCKED` | Waiting for child processes to complete | No |
-| `COMPLETED` | Intent successfully completed | Yes |
-| `FAULTED` | Intent failed with error | Yes |
-| `CANCELLED` | Intent was cancelled | Yes |
+## 🚀 Features
 
-## Events
+*   **⚡ Zero Allocation:** Pure `struct` based. No GC pressure.
+*   **🏗️ Hierarchical:** Supports Parent-Child relationships (Tasks inside Tasks).
+*   **🧵 Thread-Unsafe:** Designed for the Main Thread (Unity Loop) for maximum speed.
+*   **🤖 Autogenerated:** Powered by [StateSmith](https://github.com/StateSmith/StateSmith) for bulletproof logic.
 
-| Event | Source States | Target State | Description |
-|-------|---------------|--------------|-------------|
-| `PREPARE` | CREATED | INACTIVE | Prepare intent without activating |
-| `ACTIVATE` | CREATED, INACTIVE | PENDING | Activate intent for execution |
-| `START` | PENDING | RUNNING | Begin execution |
-| `COMPLETE` | RUNNING | COMPLETED | Mark execution as successful |
-| `SPAWN_CHILD` | RUNNING | BLOCKED | Spawn child process, wait for completion |
-| `RESUME` | BLOCKED | RUNNING | Resume after child process completes |
-| `RESTART` | COMPLETED | PENDING | Restart a completed intent |
-| `RECOVER` | FAULTED | PENDING | Recover from a failed intent |
-| `FAIL` | RUNNING | FAULTED | Mark execution as failed |
-| `ABORT` | BLOCKED | FAULTED | Abort blocked intent |
-| `CANCEL` | * | CANCELLED | Cancel intent (from any state) |
+---
 
-## Quick Start
+## 🚦 The States
 
-### Basic Usage
+| State | Color | Meaning |
+|-------|-------|---------|
+| `CREATED` | ⚪ | Just born. Knows nothing. |
+| `INACTIVE` | 🌑 | Prepared, but turned off. |
+| `PENDING` | 🟡 | Queueing... ready to start. |
+| `RUNNING` | 🟢 | **ACTION!** The task is happening. |
+| `BLOCKED` | 🟠 | "Hold on, I'm waiting for my kid (Child Task)." |
+| `COMPLETED`| 🏁 | Finished successfully. |
+| `FAULTED` | 🔴 | Error! Something exploded. |
+| `CANCELLED`| ⚫ | "Nevermind, forget it." |
+
+---
+
+## 🎮 Usage Guide
+
+### 1. The Happy Path (Success)
 
 ```csharp
 using GameVariable.Intent;
 
-// Create and initialize the state machine
-var intentState = new IntentState();
-intentState.Start();
+var task = new IntentState();
+task.Start(); // Enters CREATED
 
-// Activate and start the intent
-intentState.DispatchEvent(IntentState.EventId.ACTIVATE);
-intentState.DispatchEvent(IntentState.EventId.START);
+// 1. Activate it
+task.DispatchEvent(IntentState.EventId.ACTIVATE); // -> PENDING
 
-// Check current state
-if (intentState.stateId == IntentState.StateId.RUNNING)
-{
-    // Intent is running
-}
+// 2. Start doing work
+task.DispatchEvent(IntentState.EventId.START); // -> RUNNING
 
-// Mark as completed
-intentState.DispatchEvent(IntentState.EventId.COMPLETE);
+// ... Doing work ...
 
-// Restart for another execution
-intentState.DispatchEvent(IntentState.EventId.RESTART);
+// 3. We finished!
+task.DispatchEvent(IntentState.EventId.COMPLETE); // -> COMPLETED
 ```
 
-### Error Handling
+### 2. The Sad Path (Failure & Recovery)
 
 ```csharp
-var intentState = new IntentState();
-intentState.Start();
-intentState.DispatchEvent(IntentState.EventId.ACTIVATE);
-intentState.DispatchEvent(IntentState.EventId.START);
+// ... Oops, enemy died while we were targeting it
+task.DispatchEvent(IntentState.EventId.FAIL); // -> FAULTED
 
-// Something went wrong
-intentState.DispatchEvent(IntentState.EventId.FAIL);
-
-// Recover from failure
-if (intentState.stateId == IntentState.StateId.FAULTED)
+// Check if it failed
+if (task.stateId == IntentState.StateId.FAULTED)
 {
-    intentState.DispatchEvent(IntentState.EventId.RECOVER);
+    Console.WriteLine("Task failed!");
+
+    // Retry?
+    task.DispatchEvent(IntentState.EventId.RECOVER); // -> PENDING
 }
 ```
 
-### Child Process Coordination
+### 3. Parenting (Blocking)
+
+"I can't finish this Quest until I kill 10 rats."
 
 ```csharp
-var intentState = new IntentState();
-intentState.Start();
-intentState.DispatchEvent(IntentState.EventId.ACTIVATE);
-intentState.DispatchEvent(IntentState.EventId.START);
+// Parent is RUNNING
+parentTask.DispatchEvent(IntentState.EventId.SPAWN_CHILD);
+// Parent -> BLOCKED (Waiting for child)
 
-// Spawn child task
-intentState.DispatchEvent(IntentState.EventId.SPAWN_CHILD);
+// ... Child task runs ...
 
-// Current state is now BLOCKED
-// ... child task executes ...
-
-// Resume when child completes
-intentState.DispatchEvent(IntentState.EventId.RESUME);
+// Child finishes
+parentTask.DispatchEvent(IntentState.EventId.RESUME);
+// Parent -> RUNNING (Back in action)
 ```
 
-### Cancellation
+---
 
-```csharp
-var intentState = new IntentState();
-intentState.Start();
+## 🏗️ Architecture
 
-// Cancel from any state
-intentState.DispatchEvent(IntentState.EventId.CANCEL);
+This library follows the **Data-Logic-Extension Triad**:
 
-// Current state is now CANCELLED
-```
+1.  **Layer A (Data):** `IntentState` struct. Just memory.
+2.  **Layer B (Logic):** Event handlers. Pure math/state transitions.
+3.  **Layer C (API):** `IIntent` interface. The buttons you press.
 
-## Design Philosophy
+---
 
-This library follows the **"Performance by Structure, Readability by Naming"** philosophy:
+<div align="center">
 
-### Clean Code Principles
+**Part of the [GameVariable](https://github.com/iafahim/GameVariable) Ecosystem**
+*Made with ❤️ for game developers*
 
-1. **No Mental Mapping** - Variable names are self-explanatory. No single-letter variables or cryptic abbreviations.
-2. **Pronounceable Names** - All identifiers can be read aloud in a code review.
-3. **Searchable Names** - Names are unique enough for instant `Ctrl+F` navigation.
-4. **No Type Encoding** - No Hungarian notation. The IDE handles types.
-
-### Data-Logic-Extension Triad
-
-While the generated code is from StateSmith, the design follows a clean separation:
-
-- **Layer A (Data)**: `IntentState` struct - Pure memory storage
-- **Layer B (Logic)**: Event handlers - Stateless computation
-- **Layer C (Adapter)**: `IIntent<TState, TEvent>` interface - Public API
-
-## Performance Characteristics
-
-- **Zero Allocations**: No heap allocations during state transitions
-- **Cache-Friendly**: Struct-based design with sequential memory layout
-- **Burst Compatible**: Can be compiled with Unity Burst Compiler
-- **Predictable**: O(1) event dispatch with no dynamic branching
-
-## Thread Safety
-
-**The Intent state machine is NOT thread-safe.** It is designed for single-threaded Unity game loops. If you need multi-threaded state machines, implement external synchronization.
-
-## State Machine Generation
-
-This state machine is generated using [StateSmith](https://github.com/StateSmith/StateSmith) v0.19.0. To modify the state machine:
-
-1. Edit `IntentState.puml` (PlantUML source)
-2. Run StateSmith to regenerate `IntentState.cs`
-3. Update tests to match new behavior
-
-## Testing
-
-The library includes comprehensive unit tests covering all state transitions and event flows:
-
-```bash
-dotnet test GameVariable.Intent.Tests
-```
-
-Tests are organized by flow type:
-- **Happy Path Tests** - Normal execution flow
-- **Child Process Tests** - Parent-child task coordination
-- **Recovery Tests** - Error recovery scenarios
-- **Error Tests** - Failure state transitions
-- **Cancellation Tests** - Cancellation from all states
-
-## License
-
-[Your License Here]
-
-## Contributing
-
-Contributions are welcome! Please ensure:
-1. All tests pass
-2. Code follows the project's Clean Code mandates
-3. XML documentation is included for public APIs
-4. Tests are added for new state transitions
-
-## See Also
-
-- [StateSmith Documentation](https://github.com/StateSmith/StateSmith/wiki)
-- PlantUML diagram: `IntentState.puml`
-- Interactive simulator: `IntentState.sim.html`
+</div>

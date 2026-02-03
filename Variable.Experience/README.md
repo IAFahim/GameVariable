@@ -6,6 +6,17 @@
 
 ---
 
+## 🧠 Mental Model: The Bucket Chain 🪣
+
+Think of **Buckets** of water.
+*   You have a **Small Bucket** (Level 1). You pour XP (water) into it.
+*   When it fills up, you empty it and pour the *extra water* into a **Bigger Bucket** (Level 2).
+*   You keep doing this until you run out of water.
+
+**Variable.Experience** manages this chain of buckets, ensuring no drop of XP is ever lost during a level-up.
+
+---
+
 ## 📦 Installation
 
 ```bash

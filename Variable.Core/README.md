@@ -1,8 +1,18 @@
 # 🔷 Variable.Core
 
-**The Foundation of GameVariable.** 🧱
+**The Universal Adapter.** 🔌
 
 **Variable.Core** isn't just a package; it's the *blueprint* for the entire GameVariable ecosystem. It defines the shared DNA that makes `Health`, `Mana`, `Cooldowns`, and `Experience` all speak the same language.
+
+---
+
+## 🧠 Mental Model: The Universal Adapter
+
+Imagine traveling to a different country. Your plug doesn't fit the wall. You need an adapter.
+**Variable.Core** is that adapter for your game data.
+*   It doesn't matter if it's Health (0-100), Ammo (0-30), or a Timer (0-5s).
+*   They are all just "Something with a Max and a Current value".
+*   This package lets you write **one UI script** that works for *everything*.
 
 ---
 
@@ -14,7 +24,7 @@ dotnet add package Variable.Core
 
 ---
 
-## 🧠 Why Does This Exist?
+## 🚀 Why Does This Exist?
 
 Imagine writing a UI Health Bar script.
 

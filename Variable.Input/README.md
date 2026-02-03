@@ -4,9 +4,9 @@
 
 ---
 
-## 🧠 The Mental Model: It's Just a Tree of Moves!
+## 🧠 Mental Model: The Combo Tree 🌳
 
-Forget the technical terms. Think of your combo system as a **tree of moves**:
+Forget the technical terms. Think of your combo system as a **Tree of Moves**:
 
 ```
          [Idle]
@@ -21,6 +21,14 @@ Forget the technical terms. Think of your combo system as a **tree of moves**:
 ```
 
 **That's it!** Each box is a "node" (a move), and each arrow is an "edge" (a button press that connects moves).
+
+---
+
+## 📦 Installation
+
+```bash
+dotnet add package Variable.Input
+```
 
 ---
 
@@ -294,24 +302,6 @@ public class ComboAsset : ScriptableObject
         
         return (nodes, edges);
     }
-    
-    #if UNITY_EDITOR
-    [ContextMenu("Validate")]
-    void Validate()
-    {
-        for (int i = 0; i < Moves.Count; i++)
-        {
-            foreach (var t in Moves[i].Transitions)
-            {
-                if (t.GoToMoveIndex < 0 || t.GoToMoveIndex >= Moves.Count)
-                {
-                    Debug.LogError($"Move '{Moves[i].Name}' has invalid target index: {t.GoToMoveIndex}");
-                }
-            }
-        }
-        Debug.Log("<color=green>Validation passed!</color>");
-    }
-    #endif
 }
 ```
 
@@ -460,6 +450,24 @@ public static class DirectComboBuilder
         
         return (nodes, edges);
     }
+
+    #if UNITY_EDITOR
+    [ContextMenu("Validate")]
+    void Validate()
+    {
+        for (int i = 0; i < Moves.Count; i++)
+        {
+            foreach (var t in Moves[i].Transitions)
+            {
+                if (t.GoToMoveIndex < 0 || t.GoToMoveIndex >= Moves.Count)
+                {
+                    Debug.LogError($"Move '{Moves[i].Name}' has invalid target index: {t.GoToMoveIndex}");
+                }
+            }
+        }
+        Debug.Log("<color=green>Validation passed!</color>");
+    }
+    #endif
 }
 ```
 

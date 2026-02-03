@@ -1,6 +1,28 @@
-﻿# Variable.RPG
+# Variable.RPG
 
-**Diamond Architecture for RPG Attributes and Damage Pipelines** — AAA-grade, zero-allocation, framework-agnostic.
+**Diamond Architecture for RPG Attributes.** 💎
+
+**Variable.RPG** is a complete RPG stat system implementing the "Diamond Architecture" pattern: Multiple damage sources → Aggregation → Pipeline → Single Result. AAA-grade, zero-allocation, framework-agnostic.
+
+---
+
+## 🧠 Mental Model: The Diamond Architecture 💎
+
+Imagine a beam of light passing through a prism.
+*   **Sources:** Fire Damage, Physical Damage, Poison (Multiple Inputs).
+*   **The Diamond (Aggregation):** All these inputs enter the "Diamond".
+*   **Pipeline:** Inside, they are modified by Armor, Resistances, and Buffs.
+*   **Result:** A single number comes out the other side: "82 Damage".
+
+**Variable.RPG** constructs this diamond pipeline for you.
+
+---
+
+## 📦 Installation
+
+```bash
+dotnet add package Variable.RPG
+```
 
 ---
 

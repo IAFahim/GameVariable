@@ -120,6 +120,7 @@ graph LR
 | **Inventory Limits** | [**Variable.Inventory**](./Variable.Inventory) |
 | **AI State Machines** | [**GameVariable.Intent**](./GameVariable.Intent) |
 | **Spatial Data, Maps, Boards** | [**Variable.Grid**](./Variable.Grid) |
+| **Performance Testing** | [**GameVariable.Benchmarks**](./GameVariable.Benchmarks) |
 
 ---
 
