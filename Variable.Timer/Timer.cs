@@ -84,7 +84,74 @@ public struct Timer :
     /// <inheritdoc />
     public readonly override string ToString()
     {
-        return string.Format(CultureInfo.InvariantCulture, "{0:F2}/{1:F2}", Current, Duration);
+        Span<char> buffer = stackalloc char[128];
+        return TryFormat(buffer, out var charsWritten) ? new string(buffer.Slice(0, charsWritten)) : string.Empty;
+    }
+
+    /// <summary>
+    ///     Formats the timer with custom format strings.
+    /// </summary>
+    /// <param name="format">
+    ///     Format code: "R" = Ratio (percentage), null = default format.
+    /// </param>
+    /// <param name="formatProvider">Format provider for culture-specific formatting.</param>
+    /// <returns>Formatted string.</returns>
+    public readonly string ToString(string? format, IFormatProvider? formatProvider)
+    {
+        Span<char> buffer = stackalloc char[128];
+        return TryFormat(buffer, out var charsWritten, format, formatProvider)
+            ? new string(buffer.Slice(0, charsWritten))
+            : string.Empty;
+    }
+
+    /// <summary>
+    ///     Formats the timer into a character span (zero allocation).
+    /// </summary>
+    /// <param name="destination">The span to write the formatted value into.</param>
+    /// <param name="charsWritten">The number of characters written.</param>
+    /// <param name="format">Optional format string. "R" for ratio percentage.</param>
+    /// <param name="provider">Optional format provider. Defaults to <see cref="CultureInfo.InvariantCulture" />.</param>
+    /// <returns>True if formatting succeeded; false if destination was too small.</returns>
+    /// <remarks>
+    ///     This method is allocation-free and suitable for hot paths.
+    /// </remarks>
+    public readonly bool TryFormat(
+        Span<char> destination,
+        out int charsWritten,
+        ReadOnlySpan<char> format = default,
+        IFormatProvider? provider = null)
+    {
+        provider ??= CultureInfo.InvariantCulture;
+        charsWritten = 0;
+
+        // Handle ratio format
+        if (format.Length > 0 && (format[0] == 'R' || format[0] == 'r'))
+        {
+            var ratio = this.GetRatio() * 100.0;
+            if (!ratio.TryFormat(destination, out var written, "F1", provider))
+                return false;
+            charsWritten = written;
+
+            if (charsWritten >= destination.Length)
+                return false;
+            destination[charsWritten++] = '%';
+            return true;
+        }
+
+        // Default format: "Current/Max" with F2
+        if (!Current.TryFormat(destination, out var currentWritten, "F2", provider))
+            return false;
+        charsWritten = currentWritten;
+
+        if (charsWritten >= destination.Length)
+            return false;
+        destination[charsWritten++] = '/';
+
+        if (!Duration.TryFormat(destination.Slice(charsWritten), out var maxWritten, "F2", provider))
+            return false;
+        charsWritten += maxWritten;
+
+        return true;
     }
 
     /// <inheritdoc />
