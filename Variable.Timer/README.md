@@ -6,6 +6,16 @@
 
 ---
 
+## 🧠 Mental Model: The Egg Timer 🥚
+
+Think of an **Egg Timer**.
+*   **Cooldown:** You twist it to 5 minutes, and it ticks down to 0. When it rings (0), it's ready to be used again.
+*   **Timer:** You start a stopwatch at 0 and watch it count up. When it hits 10 seconds, you stop.
+
+**Variable.Timer** separates the *State* (how much time is left) from the *Logic* (ticking).
+
+---
+
 ## 📦 Installation
 
 ```bash

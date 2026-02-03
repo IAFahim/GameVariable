@@ -8,6 +8,17 @@
 
 ---
 
+## 🧠 Mental Model: The Clip & Backpack 🎒
+
+Think of a **Shooter Game**.
+*   **Volume:** The Ammo in your **Gun's Clip** (Active). You shoot from here.
+*   **Reserve:** The Ammo in your **Backpack** (Storage). You can't shoot from here.
+*   **Refill:** You take ammo from the Backpack to fill the Clip.
+
+**Variable.Reservoir** handles this 2-stage resource system effortlessly.
+
+---
+
 ## 📦 Installation
 
 ```bash

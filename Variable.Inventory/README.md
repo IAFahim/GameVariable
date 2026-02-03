@@ -6,6 +6,18 @@
 
 ---
 
+## 🧠 Mental Model: The Accountant 👨‍💼
+
+Think of an **Accountant** standing between your Chest and your Backpack.
+*   He doesn't hold the items.
+*   He just counts them and approves transactions.
+*   **"Can I fit 100 gold?"** -> Accountant checks the books (Math) and says "No, only 50".
+*   **"Move 10 apples."** -> Accountant updates the numbers on both sides.
+
+**Variable.Inventory** is that Accountant. It calculates the logic, you provide the storage.
+
+---
+
 ## 📦 Installation
 
 ```bash

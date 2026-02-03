@@ -6,6 +6,17 @@
 
 ---
 
+## 🧠 Mental Model: The Faucet 🚰
+
+Think of a **Faucet** filling a sink.
+*   **Positive Rate:** The faucet is ON. Water flows IN (+5 per second).
+*   **Negative Rate:** The drain is OPEN. Water flows OUT (-5 per second).
+*   **Bounded:** If the sink is full, water spills over (clamps to Max). If it's empty, it stops draining (clamps to Min).
+
+**Variable.Regen** automates this flow over time.
+
+---
+
 ## 📦 Installation
 
 ```bash

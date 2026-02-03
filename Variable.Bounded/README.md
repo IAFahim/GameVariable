@@ -6,6 +6,19 @@
 
 ---
 
+## 🧠 Mental Model: The Cup 🥛
+
+Think of a **Cup**.
+*   It has a size (**Max**).
+*   It can be empty (**Min**).
+*   It has liquid inside (**Current**).
+*   If you pour too much in, it just overflows (Clamps to Max). It doesn't magically grow bigger.
+*   If you drink it all, it's empty (Clamps to Min). You can't drink "negative water".
+
+**Variable.Bounded** is that Cup. It handles the overflowing and emptying logic for you.
+
+---
+
 ## 📦 Installation
 
 ```bash
