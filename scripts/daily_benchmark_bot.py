@@ -50,15 +50,23 @@ def check_for_changes(last_commit, current_commit):
         print(f"Warning: Could not diff against {last_commit}. Assuming changes.")
         return True
 
-def run_benchmarks():
+def run_benchmarks(args=None):
     print("Running benchmarks...")
     # Ensure the script is executable
     subprocess.run(["chmod", "+x", BENCHMARK_SCRIPT], check=True)
 
-    # Run the bash script
-    # pass through arguments if needed, but for now just run it
+    # Prepare command
+    cmd = [BENCHMARK_SCRIPT]
+    if args:
+        cmd.extend(args)
+    else:
+        cmd.append("*")
+
     # Use --job short to avoid timeouts in CI/Sandbox environments
-    proc = subprocess.run([BENCHMARK_SCRIPT, "*", "--job", "short"], cwd=SCRIPT_DIR)
+    cmd.extend(["--job", "short"])
+
+    # Run the bash script
+    proc = subprocess.run(cmd, cwd=SCRIPT_DIR)
 
     if proc.returncode != 0:
         print("Benchmark run failed!")
@@ -97,7 +105,8 @@ def main():
             should_run = False
 
     if should_run:
-        run_benchmarks()
+        # Pass command line arguments to run_benchmarks
+        run_benchmarks(sys.argv[1:])
         update_last_run_commit(current_commit)
     else:
         print("Skipping benchmarks.")
