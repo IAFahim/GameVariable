@@ -1,0 +1,3 @@
+## 2025-05-15 - String Representation Optimization
+**Learning:** `string.Format` and string interpolation (`$"{val}"`) for value types in `netstandard2.1` cause boxing and multiple heap allocations, leading to GC pressure in hot paths. Replacing them with `stackalloc char` buffers and `TryFormat` (ISpanFormattable-style) reduces allocations significantly (e.g., from 88 B to 40 B per call for a simple 'Current/Max' string).
+**Action:** Always prefer `TryFormat` with `stackalloc char` and a final `new string(span)` for `ToString()` overrides in performance-critical structs. Use at least 128 characters for the buffer to safely handle large `float` values.

@@ -89,7 +89,75 @@ public struct BoundedByte :
     /// <inheritdoc />
     public override string ToString()
     {
-        return string.Format(CultureInfo.InvariantCulture, "{0}/{1}", Current, Max);
+        Span<char> buffer = stackalloc char[128];
+        return TryFormat(buffer, out var charsWritten) ? new string(buffer.Slice(0, charsWritten)) : string.Empty;
+    }
+
+    /// <summary>
+    ///     Formats the bounded byte with custom format strings.
+    /// </summary>
+    /// <param name="format">
+    ///     Format code: "R" = Ratio (percentage), null = default format.
+    /// </param>
+    /// <param name="formatProvider">Format provider for culture-specific formatting.</param>
+    /// <returns>Formatted string.</returns>
+    public readonly string ToString(string? format, IFormatProvider? formatProvider)
+    {
+        Span<char> buffer = stackalloc char[128];
+        return TryFormat(buffer, out var charsWritten, format, formatProvider)
+            ? new string(buffer.Slice(0, charsWritten))
+            : string.Empty;
+    }
+
+    /// <summary>
+    ///     Formats the bounded byte into a character span (zero allocation).
+    /// </summary>
+    /// <param name="destination">The span to write the formatted value into.</param>
+    /// <param name="charsWritten">The number of characters written.</param>
+    /// <param name="format">Optional format string. "R" for ratio percentage.</param>
+    /// <param name="provider">Optional format provider. Defaults to <see cref="CultureInfo.InvariantCulture" />.</param>
+    /// <returns>True if formatting succeeded; false if destination was too small.</returns>
+    /// <remarks>
+    ///     This method is allocation-free and suitable for hot paths.
+    ///     Example usage: Span&lt;char&gt; buffer = stackalloc char[32]; bounded.TryFormat(buffer, out var len);
+    /// </remarks>
+    public readonly bool TryFormat(
+        Span<char> destination,
+        out int charsWritten,
+        ReadOnlySpan<char> format = default,
+        IFormatProvider? provider = null)
+    {
+        provider ??= CultureInfo.InvariantCulture;
+        charsWritten = 0;
+
+        // Handle ratio format
+        if (format.Length > 0 && (format[0] == 'R' || format[0] == 'r'))
+        {
+            var ratio = this.GetRatio() * 100.0;
+            if (!ratio.TryFormat(destination, out var written, "F1", provider))
+                return false;
+            charsWritten = written;
+
+            if (charsWritten >= destination.Length)
+                return false;
+            destination[charsWritten++] = '%';
+            return true;
+        }
+
+        // Default format: "Current/Max"
+        if (!Current.TryFormat(destination, out var currentWritten, default, provider))
+            return false;
+        charsWritten = currentWritten;
+
+        if (charsWritten >= destination.Length)
+            return false;
+        destination[charsWritten++] = '/';
+
+        if (!Max.TryFormat(destination.Slice(charsWritten), out var maxWritten, default, provider))
+            return false;
+        charsWritten += maxWritten;
+
+        return true;
     }
 
     /// <inheritdoc />
