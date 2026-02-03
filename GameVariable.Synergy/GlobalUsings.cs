@@ -1,0 +1,10 @@
+global using System;
+global using System.Runtime.CompilerServices;
+global using System.Runtime.InteropServices;
+global using System.Diagnostics;
+global using System.Globalization;
+global using Variable.Bounded;
+global using Variable.Regen;
+global using Variable.Timer;
+global using Variable.Experience;
+global using Variable.Core;
