@@ -33,7 +33,8 @@ public struct Timer :
     ICompletable,
     IEquatable<Timer>,
     IComparable<Timer>,
-    IComparable
+    IComparable,
+    IFormattable
 {
     /// <summary>The current elapsed time.</summary>
     public float Current;
@@ -84,7 +85,55 @@ public struct Timer :
     /// <inheritdoc />
     public readonly override string ToString()
     {
-        return string.Format(CultureInfo.InvariantCulture, "{0:F2}/{1:F2}", Current, Duration);
+        return ToString(null, null);
+    }
+
+    /// <summary>
+    ///     Formats the timer with custom format strings.
+    /// </summary>
+    /// <param name="format">Unused for now.</param>
+    /// <param name="formatProvider">The provider to use for formatting.</param>
+    /// <returns>Formatted string.</returns>
+    public readonly string ToString(string? format, IFormatProvider? formatProvider)
+    {
+        Span<char> buffer = stackalloc char[128];
+        if (TryFormat(buffer, out var charsWritten, format, formatProvider))
+            return new string(buffer.Slice(0, charsWritten));
+
+        return string.Format(formatProvider ?? CultureInfo.InvariantCulture, "{0:F2}/{1:F2}", Current, Duration);
+    }
+
+    /// <summary>
+    ///     Formats the timer into a character span (zero allocation).
+    /// </summary>
+    /// <param name="destination">The span to write the formatted value into.</param>
+    /// <param name="charsWritten">The number of characters written.</param>
+    /// <param name="format">Optional format string.</param>
+    /// <param name="provider">Optional format provider. Defaults to InvariantCulture.</param>
+    /// <returns>True if formatting succeeded; false if destination was too small.</returns>
+    /// <remarks>
+    ///     This method is allocation-free and suitable for hot paths.
+    ///     Example usage: Span&lt;char&gt; buffer = stackalloc char[128]; timer.TryFormat(buffer, out var len);
+    /// </remarks>
+    public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default,
+        IFormatProvider? provider = default)
+    {
+        charsWritten = 0;
+        provider ??= CultureInfo.InvariantCulture;
+
+        if (!Current.TryFormat(destination, out var currentWritten, "F2", provider))
+            return false;
+        charsWritten = currentWritten;
+
+        if (charsWritten >= destination.Length)
+            return false;
+        destination[charsWritten++] = '/';
+
+        if (!Duration.TryFormat(destination.Slice(charsWritten), out var durationWritten, "F2", provider))
+            return false;
+        charsWritten += durationWritten;
+
+        return true;
     }
 
     /// <inheritdoc />

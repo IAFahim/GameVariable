@@ -33,7 +33,8 @@ public struct Cooldown :
     ICompletable,
     IEquatable<Cooldown>,
     IComparable<Cooldown>,
-    IComparable
+    IComparable,
+    IFormattable
 {
     /// <summary>The current remaining cooldown time.</summary>
     public float Current;
@@ -84,7 +85,62 @@ public struct Cooldown :
     /// <inheritdoc />
     public readonly override string ToString()
     {
-        return TimerLogic.IsEmpty(Current) ? "Ready" : string.Format(CultureInfo.InvariantCulture, "{0:F2}s", Current);
+        return ToString(null, null);
+    }
+
+    /// <summary>
+    ///     Formats the cooldown with custom format strings.
+    /// </summary>
+    /// <param name="format">Unused for now.</param>
+    /// <param name="formatProvider">The provider to use for formatting.</param>
+    /// <returns>Formatted string.</returns>
+    public readonly string ToString(string? format, IFormatProvider? formatProvider)
+    {
+        Span<char> buffer = stackalloc char[128];
+        if (TryFormat(buffer, out var charsWritten, format, formatProvider))
+            return new string(buffer.Slice(0, charsWritten));
+
+        return TimerLogic.IsEmpty(Current)
+            ? "Ready"
+            : string.Format(formatProvider ?? CultureInfo.InvariantCulture, "{0:F2}s", Current);
+    }
+
+    /// <summary>
+    ///     Formats the cooldown into a character span (zero allocation).
+    /// </summary>
+    /// <param name="destination">The span to write the formatted value into.</param>
+    /// <param name="charsWritten">The number of characters written.</param>
+    /// <param name="format">Optional format string.</param>
+    /// <param name="provider">Optional format provider. Defaults to InvariantCulture.</param>
+    /// <returns>True if formatting succeeded; false if destination was too small.</returns>
+    /// <remarks>
+    ///     This method is allocation-free and suitable for hot paths.
+    ///     Example usage: Span&lt;char&gt; buffer = stackalloc char[128]; cooldown.TryFormat(buffer, out var len);
+    /// </remarks>
+    public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default,
+        IFormatProvider? provider = default)
+    {
+        charsWritten = 0;
+        provider ??= CultureInfo.InvariantCulture;
+
+        if (TimerLogic.IsEmpty(Current))
+        {
+            const string ready = "Ready";
+            if (ready.Length > destination.Length) return false;
+            ready.AsSpan().CopyTo(destination);
+            charsWritten = ready.Length;
+            return true;
+        }
+
+        if (!Current.TryFormat(destination, out var written, "F2", provider))
+            return false;
+        charsWritten = written;
+
+        if (charsWritten >= destination.Length)
+            return false;
+        destination[charsWritten++] = 's';
+
+        return true;
     }
 
     /// <inheritdoc />
