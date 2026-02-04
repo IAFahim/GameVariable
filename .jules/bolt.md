@@ -1,0 +1,3 @@
+## 2025-02-04 - Zero-Allocation String Formatting in netstandard2.1
+**Learning:** In netstandard2.1, `ISpanFormattable` is not available, but primitive types like `float` and `int` already implement `TryFormat` (Span-based). By implementing a manual `TryFormat` method on custom structs and using `stackalloc char[128]`, we can eliminate all heap allocations during `ToString()` except for the resulting string itself. This bypasses the expensive boxing and parsing overhead of `string.Format`.
+**Action:** Always implement a `TryFormat` pattern for core structs and refactor `ToString()` to use it with a stack buffer. Ensure `CultureInfo.InvariantCulture` is the default provider to maintain game logic consistency.

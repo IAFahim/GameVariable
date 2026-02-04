@@ -27,7 +27,8 @@ public struct BoundedInt :
     IBoundedInfo,
     IEquatable<BoundedInt>,
     IComparable<BoundedInt>,
-    IComparable
+    IComparable,
+    IFormattable
 {
     /// <summary>The current value, always clamped between <see cref="Min" /> and <see cref="Max" />.</summary>
     public int Current;
@@ -108,7 +109,24 @@ public struct BoundedInt :
     /// <inheritdoc />
     public readonly override string ToString()
     {
-        return string.Format(CultureInfo.InvariantCulture, "{0}/{1}", Current, Max);
+        return ToString(null, null);
+    }
+
+    /// <summary>
+    ///     Formats the bounded int with custom format strings.
+    /// </summary>
+    /// <param name="format">
+    ///     Format code: "R" = Ratio (percentage), null = default format.
+    /// </param>
+    /// <param name="formatProvider">The provider to use for formatting.</param>
+    /// <returns>Formatted string.</returns>
+    public readonly string ToString(string? format, IFormatProvider? formatProvider)
+    {
+        Span<char> buffer = stackalloc char[128];
+        if (TryFormat(buffer, out var charsWritten, format, formatProvider))
+            return new string(buffer.Slice(0, charsWritten));
+
+        return string.Format(formatProvider ?? CultureInfo.InvariantCulture, "{0}/{1}", Current, Max);
     }
 
     /// <summary>
@@ -117,20 +135,23 @@ public struct BoundedInt :
     /// <param name="destination">The span to write the formatted value into.</param>
     /// <param name="charsWritten">The number of characters written.</param>
     /// <param name="format">Optional format string. "R" for ratio percentage.</param>
+    /// <param name="provider">Optional format provider. Defaults to InvariantCulture.</param>
     /// <returns>True if formatting succeeded; false if destination was too small.</returns>
     /// <remarks>
     ///     This method is allocation-free and suitable for hot paths.
-    ///     Example usage: Span&lt;char&gt; buffer = stackalloc char[32]; bounded.TryFormat(buffer, out var len);
+    ///     Example usage: Span&lt;char&gt; buffer = stackalloc char[128]; bounded.TryFormat(buffer, out var len);
     /// </remarks>
-    public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default)
+    public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default,
+        IFormatProvider? provider = default)
     {
         charsWritten = 0;
+        provider ??= CultureInfo.InvariantCulture;
 
         // Handle ratio format
         if (format.Length > 0 && (format[0] == 'R' || format[0] == 'r'))
         {
             var ratio = this.GetRatio() * 100.0;
-            if (!ratio.TryFormat(destination, out var written, "F1"))
+            if (!ratio.TryFormat(destination, out var written, "F1", provider))
                 return false;
             charsWritten = written;
 
@@ -141,7 +162,7 @@ public struct BoundedInt :
         }
 
         // Default format: "Current/Max"
-        if (!Current.TryFormat(destination, out var currentWritten))
+        if (!Current.TryFormat(destination, out var currentWritten, default, provider))
             return false;
         charsWritten = currentWritten;
 
@@ -149,7 +170,7 @@ public struct BoundedInt :
             return false;
         destination[charsWritten++] = '/';
 
-        if (!Max.TryFormat(destination.Slice(charsWritten), out var maxWritten))
+        if (!Max.TryFormat(destination.Slice(charsWritten), out var maxWritten, default, provider))
             return false;
         charsWritten += maxWritten;
 
