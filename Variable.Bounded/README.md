@@ -6,6 +6,24 @@
 
 ---
 
+## 🧠 Mental Model
+
+Think of **The Cup**.
+*   A cup has a size (`Max`).
+*   It has liquid inside (`Current`).
+*   If you pour too much, it just overflows (doesn't go above `Max`).
+*   If you drink it all, it's empty (doesn't go below `0`).
+
+---
+
+## 👶 ELI5 (Explain Like I'm 5)
+
+*   You know how you can't have **105% Health**?
+*   And you can't have **-5 Bullets**?
+*   **Variable.Bounded** makes sure those numbers make sense automatically, so you never have bugs where you have negative HP.
+
+---
+
 ## 📦 Installation
 
 ```bash

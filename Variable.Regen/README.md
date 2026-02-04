@@ -6,6 +6,24 @@
 
 ---
 
+## 🧠 Mental Model
+
+Think of **The Faucet**.
+*   **Variable.Bounded** is the Sink.
+*   **Variable.Regen** is the Faucet dripping water into it.
+*   If the Faucet is on (Positive Rate), the sink fills up over time.
+*   If the Drain is open (Negative Rate), the sink empties over time.
+
+---
+
+## 👶 ELI5 (Explain Like I'm 5)
+
+*   **Mana** comes back slowly.
+*   **Poison** hurts you slowly.
+*   **Variable.Regen** does the "slowly" part for you. You just say "Add 5 per second" and it happens.
+
+---
+
 ## 📦 Installation
 
 ```bash
