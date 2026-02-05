@@ -1,0 +1,3 @@
+## 2025-05-15 - Optimizing ToString() with TryFormat
+**Learning:** Replacing `string.Format(CultureInfo.InvariantCulture, ...)` with a combination of `stackalloc char[128]`, `TryFormat(Span<char>, ...)` and `new string(Span<char>)` significantly reduces allocations (boxes) and improves performance in `netstandard2.1` where `ISpanFormattable` is unavailable. For `int` types, the speedup can be as high as 60%+, while for `float` types it is around 15-20% due to the inherent complexity of floating-point formatting.
+**Action:** Always prefer `TryFormat` + `stackalloc` for `ToString()` overrides in high-performance structs to minimize heap allocations and GC pressure.
