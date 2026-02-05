@@ -108,7 +108,26 @@ public struct BoundedInt :
     /// <inheritdoc />
     public readonly override string ToString()
     {
-        return string.Format(CultureInfo.InvariantCulture, "{0}/{1}", Current, Max);
+        Span<char> buffer = stackalloc char[128];
+        return TryFormat(buffer, out var charsWritten)
+            ? new string(buffer.Slice(0, charsWritten))
+            : string.Format(CultureInfo.InvariantCulture, "{0}/{1}", Current, Max);
+    }
+
+    /// <summary>
+    ///     Formats the bounded int with custom format strings.
+    /// </summary>
+    /// <param name="format">
+    ///     Format code: "R" = Ratio (percentage), null = default format.
+    /// </param>
+    /// <param name="formatProvider">Unused, for IFormattable compatibility.</param>
+    /// <returns>Formatted string.</returns>
+    public readonly string ToString(string? format, IFormatProvider? formatProvider)
+    {
+        Span<char> buffer = stackalloc char[128];
+        return TryFormat(buffer, out var charsWritten, format)
+            ? new string(buffer.Slice(0, charsWritten))
+            : ToString();
     }
 
     /// <summary>
@@ -130,7 +149,7 @@ public struct BoundedInt :
         if (format.Length > 0 && (format[0] == 'R' || format[0] == 'r'))
         {
             var ratio = this.GetRatio() * 100.0;
-            if (!ratio.TryFormat(destination, out var written, "F1"))
+            if (!ratio.TryFormat(destination, out var written, "F1", CultureInfo.InvariantCulture))
                 return false;
             charsWritten = written;
 
@@ -141,7 +160,7 @@ public struct BoundedInt :
         }
 
         // Default format: "Current/Max"
-        if (!Current.TryFormat(destination, out var currentWritten))
+        if (!Current.TryFormat(destination, out var currentWritten, provider: CultureInfo.InvariantCulture))
             return false;
         charsWritten = currentWritten;
 
@@ -149,7 +168,7 @@ public struct BoundedInt :
             return false;
         destination[charsWritten++] = '/';
 
-        if (!Max.TryFormat(destination.Slice(charsWritten), out var maxWritten))
+        if (!Max.TryFormat(destination.Slice(charsWritten), out var maxWritten, provider: CultureInfo.InvariantCulture))
             return false;
         charsWritten += maxWritten;
 

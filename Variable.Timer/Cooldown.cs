@@ -84,7 +84,73 @@ public struct Cooldown :
     /// <inheritdoc />
     public readonly override string ToString()
     {
-        return TimerLogic.IsEmpty(Current) ? "Ready" : string.Format(CultureInfo.InvariantCulture, "{0:F2}s", Current);
+        Span<char> buffer = stackalloc char[128];
+        return TryFormat(buffer, out var charsWritten)
+            ? new string(buffer.Slice(0, charsWritten))
+            : TimerLogic.IsEmpty(Current) ? "Ready" : string.Format(CultureInfo.InvariantCulture, "{0:F2}s", Current);
+    }
+
+    /// <summary>
+    ///     Formats the cooldown with custom format strings.
+    /// </summary>
+    /// <param name="format">
+    ///     Format code: "R" = Ratio (percentage), null = default format.
+    /// </param>
+    /// <param name="formatProvider">Unused, for IFormattable compatibility.</param>
+    /// <returns>Formatted string.</returns>
+    public readonly string ToString(string? format, IFormatProvider? formatProvider)
+    {
+        Span<char> buffer = stackalloc char[128];
+        return TryFormat(buffer, out var charsWritten, format)
+            ? new string(buffer.Slice(0, charsWritten))
+            : ToString();
+    }
+
+    /// <summary>
+    ///     Formats the cooldown into a character span (zero allocation).
+    /// </summary>
+    /// <param name="destination">The span to write the formatted value into.</param>
+    /// <param name="charsWritten">The number of characters written.</param>
+    /// <param name="format">Optional format string. "R" for ratio percentage.</param>
+    /// <returns>True if formatting succeeded; false if destination was too small.</returns>
+    public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default)
+    {
+        charsWritten = 0;
+
+        // Handle ratio format
+        if (format.Length > 0 && (format[0] == 'R' || format[0] == 'r'))
+        {
+            var ratioPercentage = this.GetRatio() * 100.0;
+            if (!ratioPercentage.TryFormat(destination, out var written, "F1", CultureInfo.InvariantCulture))
+                return false;
+            charsWritten = written;
+
+            if (charsWritten >= destination.Length)
+                return false;
+            destination[charsWritten++] = '%';
+            return true;
+        }
+
+        // Default format: "Ready" or "Current s"
+        if (TimerLogic.IsEmpty(Current))
+        {
+            const string ready = "Ready";
+            if (ready.Length > destination.Length)
+                return false;
+            ready.AsSpan().CopyTo(destination);
+            charsWritten = ready.Length;
+            return true;
+        }
+
+        if (!Current.TryFormat(destination, out var currentWritten, "F2", CultureInfo.InvariantCulture))
+            return false;
+        charsWritten = currentWritten;
+
+        if (charsWritten >= destination.Length)
+            return false;
+        destination[charsWritten++] = 's';
+
+        return true;
     }
 
     /// <inheritdoc />

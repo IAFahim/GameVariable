@@ -84,7 +84,67 @@ public struct Timer :
     /// <inheritdoc />
     public readonly override string ToString()
     {
-        return string.Format(CultureInfo.InvariantCulture, "{0:F2}/{1:F2}", Current, Duration);
+        Span<char> buffer = stackalloc char[128];
+        return TryFormat(buffer, out var charsWritten)
+            ? new string(buffer.Slice(0, charsWritten))
+            : string.Format(CultureInfo.InvariantCulture, "{0:F2}/{1:F2}", Current, Duration);
+    }
+
+    /// <summary>
+    ///     Formats the timer with custom format strings.
+    /// </summary>
+    /// <param name="format">
+    ///     Format code: "R" = Ratio (percentage), null = default format.
+    /// </param>
+    /// <param name="formatProvider">Unused, for IFormattable compatibility.</param>
+    /// <returns>Formatted string.</returns>
+    public readonly string ToString(string? format, IFormatProvider? formatProvider)
+    {
+        Span<char> buffer = stackalloc char[128];
+        return TryFormat(buffer, out var charsWritten, format)
+            ? new string(buffer.Slice(0, charsWritten))
+            : ToString();
+    }
+
+    /// <summary>
+    ///     Formats the timer into a character span (zero allocation).
+    /// </summary>
+    /// <param name="destination">The span to write the formatted value into.</param>
+    /// <param name="charsWritten">The number of characters written.</param>
+    /// <param name="format">Optional format string. "R" for ratio percentage.</param>
+    /// <returns>True if formatting succeeded; false if destination was too small.</returns>
+    public readonly bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default)
+    {
+        charsWritten = 0;
+
+        // Handle ratio format
+        if (format.Length > 0 && (format[0] == 'R' || format[0] == 'r'))
+        {
+            var ratioPercentage = this.GetRatio() * 100.0;
+            if (!ratioPercentage.TryFormat(destination, out var written, "F1", CultureInfo.InvariantCulture))
+                return false;
+            charsWritten = written;
+
+            if (charsWritten >= destination.Length)
+                return false;
+            destination[charsWritten++] = '%';
+            return true;
+        }
+
+        // Default format: "Current/Duration"
+        if (!Current.TryFormat(destination, out var currentWritten, "F2", CultureInfo.InvariantCulture))
+            return false;
+        charsWritten = currentWritten;
+
+        if (charsWritten >= destination.Length)
+            return false;
+        destination[charsWritten++] = '/';
+
+        if (!Duration.TryFormat(destination.Slice(charsWritten), out var durationWritten, "F2", CultureInfo.InvariantCulture))
+            return false;
+        charsWritten += durationWritten;
+
+        return true;
     }
 
     /// <inheritdoc />
