@@ -210,7 +210,7 @@ public class ExperienceLongTests
     {
         var a = new ExperienceLong(100, 50, 5);
         var b = new ExperienceLong(100, 75, 5);
-        
+
         Assert.True(a < b);
         Assert.True(a <= b);
         Assert.True(b > a);
