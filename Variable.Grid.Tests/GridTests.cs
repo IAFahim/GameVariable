@@ -71,7 +71,7 @@ public class GridTests
         var grid = new Grid2D<int>(3, 3);
         grid.Fill(99);
 
-        for(int i=0; i<grid.Length; i++)
+        for (int i = 0; i < grid.Length; i++)
         {
             Assert.Equal(99, grid[i]);
         }
@@ -84,7 +84,7 @@ public class GridTests
         grid.Fill(99);
         grid.Clear();
 
-        for(int i=0; i<grid.Length; i++)
+        for (int i = 0; i < grid.Length; i++)
         {
             Assert.Equal(0, grid[i]);
         }
@@ -97,7 +97,7 @@ public class GridTests
         // Row 0: 0, 1, 2
         // Row 1: 3, 4, 5
         // Row 2: 6, 7, 8
-        for(int i=0; i<grid.Length; i++) grid[i] = i;
+        for (int i = 0; i < grid.Length; i++) grid[i] = i;
 
         var row1 = grid.GetRow(1);
         Assert.Equal(3, row1.Length);
@@ -113,7 +113,7 @@ public class GridTests
         // Row 0: 0, 1, 2
         // Row 1: 3, 4, 5
         // Row 2: 6, 7, 8
-        for(int i=0; i<grid.Length; i++) grid[i] = i;
+        for (int i = 0; i < grid.Length; i++) grid[i] = i;
 
         Span<int> col1 = stackalloc int[3];
         grid.CopyColumn(1, col1); // Should be 1, 4, 7
